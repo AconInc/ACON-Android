@@ -1,11 +1,8 @@
 package com.acon.feature.profile.screen.profileMod
 
-import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import com.acon.core.designsystem.component.textfield.TextFieldStatus
-import com.acon.core.designsystem.theme.AconTheme
 import com.acon.domain.repository.UploadRepository
-import com.acon.feature.profile.R
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.viewmodel.container
@@ -71,9 +68,10 @@ class ProfileModViewModel @Inject constructor(
     fun onBirthdayChanged(text: String) = intent {
         val formattedText = formatBirthdayInput(text)
         val errors = mutableListOf<String>()
+        var isValidDate : Boolean = false
 
         if (formattedText.length == 10) {
-            val isValidDate = validateBirthday(formattedText)
+            isValidDate = validateBirthday(formattedText)
             if (!isValidDate) {
                 errors.add("정확한 생년월일을 적어주세요")
             }
@@ -83,7 +81,8 @@ class ProfileModViewModel @Inject constructor(
             state.copy(
                 birthdayState = formattedText,
                 birthdayFieldStatus = if (formattedText.isNotEmpty() && errors.isEmpty()) TextFieldStatus.Active else TextFieldStatus.Error,
-                birthdayErrorMessages = errors
+                birthdayErrorMessages = errors,
+                isBirthdayValid = isValidDate
             )
         }
     }
@@ -138,7 +137,10 @@ data class ProfileModState(
 
     val birthdayFieldStatus: TextFieldStatus = TextFieldStatus.Inactive,
     val birthdayState: String = "",
-    val birthdayErrorMessages: List<String> = emptyList()
+    val birthdayErrorMessages: List<String> = emptyList(),
+    val isBirthdayValid: Boolean = false,
+
+    val verifiedAreaList: List<String> = emptyList()
 )
 
 sealed interface ProfileModSideEffect {
