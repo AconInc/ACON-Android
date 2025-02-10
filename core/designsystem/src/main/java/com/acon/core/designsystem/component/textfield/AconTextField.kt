@@ -50,7 +50,7 @@ fun AconTextField(
     val focusManager = LocalFocusManager.current
 
     val backgroundColor = when (status) {
-        TextFieldStatus.Inactive -> AconColors.Gray8
+        TextFieldStatus.Inactive -> AconColors.Gray9
         TextFieldStatus.Focused -> AconColors.Gray9
         TextFieldStatus.Active -> AconColors.Gray9
         TextFieldStatus.Error -> AconColors.Gray9
@@ -60,8 +60,8 @@ fun AconTextField(
     val borderColor = when (status) {
         TextFieldStatus.Inactive -> AconColors.Gray6
         TextFieldStatus.Focused -> AconColors.Gray6
-        TextFieldStatus.Active -> AconColors.Error_red1
-        TextFieldStatus.Error -> AconColors.Gray6
+        TextFieldStatus.Active -> AconColors.Gray6
+        TextFieldStatus.Error -> AconColors.Error_red1
         TextFieldStatus.Disabled -> AconColors.Gray6
     }
 
@@ -69,7 +69,7 @@ fun AconTextField(
         TextFieldStatus.Inactive -> AconColors.Gray5
         TextFieldStatus.Focused -> AconColors.Gray5
         TextFieldStatus.Active -> AconColors.White
-        TextFieldStatus.Error -> AconColors.Gray6
+        TextFieldStatus.Error -> AconColors.Gray5
         TextFieldStatus.Disabled -> AconColors.Gray5
     }
 
@@ -78,9 +78,9 @@ fun AconTextField(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .background(backgroundColor, shape = RoundedCornerShape(8.dp))
-            .border(1.dp, borderColor, shape = RoundedCornerShape(8.dp))
-            .padding(horizontal = 12.dp, vertical = 8.dp),
+            .background(backgroundColor, shape = RoundedCornerShape(4.dp))
+            .border(1.dp, borderColor, shape = RoundedCornerShape(4.dp))
+            .padding(horizontal = 12.dp, vertical = 10.dp),
         contentAlignment = Alignment.CenterStart
     ){
         BasicTextField(

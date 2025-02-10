@@ -9,4 +9,7 @@ interface ProfileRoute {
 
     @Serializable
     data object Profile : ProfileRoute
+
+    @Serializable
+    data object ProfileMod : ProfileRoute
 }

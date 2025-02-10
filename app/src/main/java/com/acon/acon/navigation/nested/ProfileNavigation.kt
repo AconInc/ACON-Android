@@ -10,13 +10,14 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import com.acon.feature.profile.ProfileRoute
 import com.acon.feature.profile.screen.profile.composable.ProfileScreenContainer
+import com.acon.feature.profile.screen.profileMod.composable.ProfileModScreenContainer
 
 internal fun NavGraphBuilder.profileNavigation(
     navController: NavHostController
 ) {
 
     navigation<ProfileRoute.Graph>(
-        startDestination = ProfileRoute.Profile,
+        startDestination = ProfileRoute.ProfileMod,
         enterTransition = {
             EnterTransition.None
         }, exitTransition = {
@@ -26,6 +27,12 @@ internal fun NavGraphBuilder.profileNavigation(
 
         composable<ProfileRoute.Profile> {
             ProfileScreenContainer(
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+
+        composable<ProfileRoute.ProfileMod> {
+            ProfileModScreenContainer(
                 modifier = Modifier.fillMaxSize()
             )
         }
