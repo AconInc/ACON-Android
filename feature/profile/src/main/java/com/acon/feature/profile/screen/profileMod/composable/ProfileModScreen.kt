@@ -62,6 +62,7 @@ fun ProfileModScreenContainer(
         onBackClicked = onBackClicked,
         onNavigateToProfile = onNavigateToProfile,
         onNavigateToAreaVerification = onNavigateToAreaVerification,
+        onRemoveArea = viewModel::removeVerifiedArea,
     )
 }
 
@@ -75,6 +76,7 @@ fun ProfileModScreen(
     onBackClicked: () -> Unit,
     onNavigateToProfile: () -> Unit,
     onNavigateToAreaVerification: () -> Unit,
+    onRemoveArea: (String) -> Unit = {},
 ) {
     val focusManager = LocalFocusManager.current
 
@@ -240,10 +242,9 @@ fun ProfileModScreen(
                 Spacer(modifier = Modifier.height(12.dp))
                 VerifiedAreaChip(
                     modifier = Modifier,
-                    //areaList = emptyList(),
-                    areaList = listOf("도봉동"),
+                    areaList = state.verifiedAreaList,
                     onAddArea = { onNavigateToAreaVerification() }, //동네인증 페이지로 이동
-                    onRemoveArea = {  }, //areaList에서 현재 동네를 삭제
+                    onRemoveArea = onRemoveArea , //areaList에서 현재 동네를 삭제
                     errorMessage = "로컬도토리를 위해 최소 1개의 동네를 인증해주세요"
                 )
             }
@@ -260,8 +261,11 @@ fun ProfileModScreen(
                         .fillMaxWidth()
                         .padding(bottom = 36.dp),
                     disabledBackgroundColor = AconTheme.color.Gray7,
-                    enabledBackgroundColor = AconTheme.color.Gray7,
-                    onClick = onNavigateToProfile
+                    enabledBackgroundColor = AconTheme.color.Gray5,
+                    disabledTextColor = AconTheme.color.Gray5,
+                    enabledTextColor = AconTheme.color.White,
+                    onClick = onNavigateToProfile,
+                    isEnabled = state.isNicknameValid && state.isBirthdayValid && state.verifiedAreaList.isNotEmpty()
                 )
             }
         }
@@ -287,5 +291,6 @@ private fun ProfileModScreenPreview() {
         onBackClicked = {},
         onNavigateToProfile = {},
         onNavigateToAreaVerification = {},
+        onRemoveArea = {}
     )
 }

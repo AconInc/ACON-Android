@@ -10,7 +10,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ProfileModViewModel @Inject constructor(
-    private val profileRepository: UploadRepository
+    private val profileRepository: UploadRepository //바꿔야 함
 ) : ViewModel(), ContainerHost<ProfileModState, ProfileModSideEffect> {
 
     override val container = container<ProfileModState, ProfileModSideEffect>(ProfileModState())
@@ -122,6 +122,16 @@ class ProfileModViewModel @Inject constructor(
         return true
     }
 
+    fun fetchVerifiedAreaList(){
+        //서버 통해서 사용자가 인증 받은 동네 리스트 가져오기
+        //가져온 리스트로 verifiedAreaList 관리하기
+    }
+
+    fun removeVerifiedArea(area: String){
+        //서버 통해서 area를 인증 받은 동네 리스트에서 삭제
+        //그리고 업데이트된 동네 리스트를 verifiedAreaList로 업데이트 (?)
+    }
+
     private fun navigateBack() = intent {
         postSideEffect(ProfileModSideEffect.NavigateBack)
     }
@@ -140,7 +150,7 @@ data class ProfileModState(
     val birthdayErrorMessages: List<String> = emptyList(),
     val isBirthdayValid: Boolean = false,
 
-    val verifiedAreaList: List<String> = emptyList()
+    val verifiedAreaList: List<String> = listOf("쌍문동")
 )
 
 sealed interface ProfileModSideEffect {
