@@ -38,6 +38,7 @@ import com.acon.core.designsystem.component.textfield.addFocusCleaner
 import com.acon.core.designsystem.component.topbar.AconTopBar
 import com.acon.core.designsystem.theme.AconTheme
 import com.acon.feature.profile.R
+import com.acon.feature.profile.component.VerifiedAreaChip
 import com.acon.feature.profile.screen.profileMod.ProfileModState
 import com.acon.feature.profile.screen.profileMod.ProfileModViewModel
 import org.orbitmvi.orbit.compose.collectAsState
@@ -47,6 +48,7 @@ fun ProfileModScreenContainer(
     modifier: Modifier = Modifier,
     viewModel: ProfileModViewModel = hiltViewModel(),
     onNavigateToProfile: () -> Unit = {},
+    onNavigateToAreaVerification: () -> Unit = {},
     onBackClicked: () -> Unit = {}
 ) {
     val state = viewModel.collectAsState().value
@@ -59,6 +61,7 @@ fun ProfileModScreenContainer(
         onFocusChanged = viewModel::onFocusChanged,
         onBackClicked = onBackClicked,
         onNavigateToProfile = onNavigateToProfile,
+        onNavigateToAreaVerification = onNavigateToAreaVerification,
     )
 }
 
@@ -71,6 +74,7 @@ fun ProfileModScreen(
     onFocusChanged: (Boolean) -> Unit = {},
     onBackClicked: () -> Unit,
     onNavigateToProfile: () -> Unit,
+    onNavigateToAreaVerification: () -> Unit,
 ) {
     val focusManager = LocalFocusManager.current
 
@@ -234,7 +238,14 @@ fun ProfileModScreen(
                     Text(text = "*", style = AconTheme.typography.head8_16_sb, color = AconTheme.color.Main_org1)
                 }
                 Spacer(modifier = Modifier.height(12.dp))
-                //동네 추가하기 컴포넌트
+                VerifiedAreaChip(
+                    modifier = Modifier,
+                    //areaList = emptyList(),
+                    areaList = listOf("도봉동"),
+                    onAddArea = { onNavigateToAreaVerification() }, //동네인증 페이지로 이동
+                    onRemoveArea = {  }, //areaList에서 현재 동네를 삭제
+                    errorMessage = "로컬도토리를 위해 최소 1개의 동네를 인증해주세요"
+                )
             }
 
             Spacer(modifier = Modifier.height(150.dp))
@@ -274,6 +285,7 @@ private fun ProfileModScreenPreview() {
         onBirthdayChanged = { newValue -> birthdayState.value = newValue },
         onFocusChanged = {},
         onBackClicked = {},
-        onNavigateToProfile = {}
+        onNavigateToProfile = {},
+        onNavigateToAreaVerification = {},
     )
 }
