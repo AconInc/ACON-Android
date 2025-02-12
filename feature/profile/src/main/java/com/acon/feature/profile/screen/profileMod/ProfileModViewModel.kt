@@ -132,6 +132,18 @@ class ProfileModViewModel @Inject constructor(
         //그리고 업데이트된 동네 리스트를 verifiedAreaList로 업데이트 (?)
     }
 
+    fun showDialog() = intent {
+        reduce {
+            state.copy(showDialog = true)
+        }
+    }
+
+    fun hideDialog() = intent {
+        reduce {
+            state.copy(showDialog = false)
+        }
+    }
+
     private fun navigateBack() = intent {
         postSideEffect(ProfileModSideEffect.NavigateBack)
     }
@@ -150,7 +162,9 @@ data class ProfileModState(
     val birthdayErrorMessages: List<String> = emptyList(),
     val isBirthdayValid: Boolean = false,
 
-    val verifiedAreaList: List<String> = listOf("쌍문동")
+    val verifiedAreaList: List<String> = listOf("쌍문동"),
+
+    val showDialog: Boolean = false,
 )
 
 sealed interface ProfileModSideEffect {

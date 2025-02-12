@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="alert_profile_preparing">지금은 공사중이에요!</string>
+    <string name="profile_mod_alert_title">변경사항이 저장되지 않았어요</string>
+    <string name="profile_mod_alert_description">지금 나가면 변경한 내용이 삭제돼요</string>
+    <string name="profile_mod_alert_left_btn">나가기</string>
+    <string name="profile_mod_alert_right_btn">계속 작성하기</string>
 </resources>

@@ -1,5 +1,6 @@
 package com.acon.feature.profile.screen.profileMod.composable
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -27,11 +28,13 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.acon.core.designsystem.component.button.AconFilledLargeButton
+import com.acon.core.designsystem.component.dialog.AconTwoButtonDialog
 import com.acon.core.designsystem.component.textfield.AconTextField
 import com.acon.core.designsystem.component.textfield.TextFieldStatus
 import com.acon.core.designsystem.component.textfield.addFocusCleaner
@@ -49,9 +52,28 @@ fun ProfileModScreenContainer(
     viewModel: ProfileModViewModel = hiltViewModel(),
     onNavigateToProfile: () -> Unit = {},
     onNavigateToAreaVerification: () -> Unit = {},
-    onBackClicked: () -> Unit = {}
 ) {
     val state = viewModel.collectAsState().value
+
+    if (state.showDialog) {
+        AconTwoButtonDialog(
+            title = stringResource(R.string.profile_mod_alert_title),
+            content = stringResource(R.string.profile_mod_alert_description),
+            leftButtonContent = stringResource(R.string.profile_mod_alert_left_btn),
+            rightButtonContent = stringResource(R.string.profile_mod_alert_right_btn),
+            contentImage = 0,
+            onDismissRequest = {
+                viewModel.hideDialog()
+            },
+            onClickLeft = { // 나가기 (프로필 뷰로 이동)
+                onNavigateToProfile()
+            },
+            onClickRight = { // 계속 작성하기
+                viewModel.hideDialog()
+            },
+            isImageEnabled = false
+        )
+    }
 
     ProfileModScreen(
         modifier = modifier,
@@ -59,7 +81,7 @@ fun ProfileModScreenContainer(
         onNicknameChanged = viewModel::onNicknameChanged,
         onBirthdayChanged = viewModel::onBirthdayChanged,
         onFocusChanged = viewModel::onFocusChanged,
-        onBackClicked = onBackClicked,
+        onBackClicked = viewModel::showDialog,
         onNavigateToProfile = onNavigateToProfile,
         onNavigateToAreaVerification = onNavigateToAreaVerification,
         onRemoveArea = viewModel::removeVerifiedArea,
@@ -79,6 +101,11 @@ fun ProfileModScreen(
     onRemoveArea: (String) -> Unit = {},
 ) {
     val focusManager = LocalFocusManager.current
+
+    //뒤로가기 눌렀을 때 다이얼로그 뜨게 처리
+    BackHandler(enabled = true) {
+        onBackClicked()
+    }
 
     Column(
         modifier = modifier

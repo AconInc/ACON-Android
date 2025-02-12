@@ -11,6 +11,7 @@ import androidx.navigation.compose.navigation
 import com.acon.feature.profile.ProfileRoute
 import com.acon.feature.profile.screen.profile.composable.ProfileScreenContainer
 import com.acon.feature.profile.screen.profileMod.composable.ProfileModScreenContainer
+import com.acon.feature.spot.com.acon.feature.spot.SpotRoute
 
 internal fun NavGraphBuilder.profileNavigation(
     navController: NavHostController
@@ -33,7 +34,10 @@ internal fun NavGraphBuilder.profileNavigation(
 
         composable<ProfileRoute.ProfileMod> {
             ProfileModScreenContainer(
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
+                onNavigateToProfile = {
+                    navController.navigate(ProfileRoute.Profile)
+                }
             )
         }
     }
