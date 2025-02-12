@@ -2,6 +2,7 @@ package com.acon.core.designsystem.component.textfield
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,6 +18,7 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
@@ -27,8 +29,11 @@ import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.acon.core.designsystem.theme.AconColors
@@ -104,22 +109,37 @@ fun AconTextField(
                 }
             ),
             decorationBox = { innerTextField ->
-                Row(
-                    horizontalArrangement = Arrangement.Start,
-                    verticalAlignment = Alignment.CenterVertically
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.CenterStart
                 ) {
-                    if (text.isEmpty()) {
-                        Text(
-                            text = placeholder,
-                            style = AconTheme.typography.body2_14_reg,
-                            color = textColor,
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        if (text.isEmpty()) {
+                            Text(
+                                text = placeholder,
+                                style = AconTheme.typography.body2_14_reg,
+                                color = textColor,
+                            )
+                        }
+                        innerTextField()
+                    }
+                    if (text.isNotEmpty()) {
+                        Icon(
+                            modifier = Modifier
+                                .align(Alignment.CenterEnd)
+                                .clickable { onTextChanged("") },
+                            imageVector = ImageVector.vectorResource(com.acon.core.designsystem.R.drawable.ic_dissmiss_circle_gray),
+                            contentDescription = "Clear text",
+                            tint = Color.Unspecified
                         )
                     }
-
-                    Spacer(modifier = Modifier.width(4.dp))
-                    innerTextField()
                 }
-            },
+            }
+            ,
         )
     }
 }

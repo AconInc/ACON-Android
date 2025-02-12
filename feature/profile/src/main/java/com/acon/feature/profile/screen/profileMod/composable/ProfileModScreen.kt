@@ -303,7 +303,8 @@ fun ProfileModScreen(
 
             //생년월일 필드
             Column(
-                modifier = Modifier.padding(horizontal = 16.dp)
+                modifier = Modifier.padding(horizontal = 16.dp),
+                verticalArrangement = Arrangement.SpaceEvenly
             ){
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -320,6 +321,7 @@ fun ProfileModScreen(
                     onFocusChanged = onFocusChanged,
                     placeholder = "ex) 2025.01.01",
                 )
+                Spacer(modifier = Modifier.height(8.dp))
                 if (state.birthdayErrorMessages.isNotEmpty()){
                     Row(
                         verticalAlignment = Alignment.CenterVertically

@@ -1,9 +1,7 @@
 package com.acon.feature.profile.screen.profileMod
 
-import androidx.compose.runtime.Composable
 import androidx.lifecycle.ViewModel
 import com.acon.core.designsystem.component.textfield.TextFieldStatus
-import com.acon.core.utils.feature.permission.CheckAndRequestPhotoPermission
 import com.acon.domain.repository.UploadRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.orbitmvi.orbit.ContainerHost
@@ -27,19 +25,28 @@ class ProfileModViewModel @Inject constructor(
     }
 
     fun onNicknameChanged(text: String) = intent {
+        val filteredText = text.filter { it.isAllowedChar() }
         val errors = mutableListOf<String>()
-        val isValid = validateNickname(text, errors)
+        val isValid = validateNickname(filteredText, errors)
 
-        if (text.length <= 16){
+        if (filteredText.length <= 16){
             reduce {
                 state.copy(
-                    nickNameState = text,
-                    nickNameFieldStatus = if (text.isNotEmpty()) TextFieldStatus.Active else TextFieldStatus.Focused,
+                    nickNameState = filteredText,
+                    nickNameFieldStatus = if (filteredText.isNotEmpty()) TextFieldStatus.Active else TextFieldStatus.Focused,
                     nickNameErrorMessages = errors,
                     isNicknameValid = isValid
                 )
             }
         }
+    }
+
+    private fun Char.isAllowedChar(): Boolean {
+        return this in 'a'..'z' ||
+                this in 'A'..'Z' ||
+                this in '0'..'9' ||
+                this in '가'..'힣' ||
+                this == '.' || this == '_'
     }
 
     private fun validateNickname(text: String, errors:MutableList<String>): Boolean {
@@ -50,15 +57,15 @@ class ProfileModViewModel @Inject constructor(
             isValid = false
         }
 
-        if (!text.matches("^[a-zA-Z0-9가-힣._]*$".toRegex())) {
-            errors.add("._ 이외의 특수기호는 사용할 수 없어요")
-            isValid = false
-        }
-
-        if (text.any { it !in ('a'..'z') && it !in ('A'..'Z') && it !in ('0'..'9') && it !in '가'..'힣' && it !in listOf('.', '_') }) {
-            errors.add("한국어, 영어 이외의 언어는 사용할 수 없어요")
-            isValid = false
-        }
+//        if (!text.matches("^[a-zA-Z0-9가-힣._]*$".toRegex())) {
+//            errors.add("._ 이외의 특수기호는 사용할 수 없어요")
+//            isValid = false
+//        }
+//
+//        if (text.any { it !in ('a'..'z') && it !in ('A'..'Z') && it !in ('0'..'9') && it !in '가'..'힣' && it !in listOf('.', '_') }) {
+//            errors.add("한국어, 영어 이외의 언어는 사용할 수 없어요")
+//            isValid = false
+//        }
 
         if (errors.isEmpty()) {
             errors.add("사용할 수 있는 닉네임이에요")
