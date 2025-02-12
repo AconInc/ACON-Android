@@ -8,10 +8,10 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
+import com.acon.feature.areaverification.AreaVerificationRoute
 import com.acon.feature.profile.ProfileRoute
 import com.acon.feature.profile.screen.profile.composable.ProfileScreenContainer
 import com.acon.feature.profile.screen.profileMod.composable.ProfileModScreenContainer
-import com.acon.feature.spot.com.acon.feature.spot.SpotRoute
 
 internal fun NavGraphBuilder.profileNavigation(
     navController: NavHostController
@@ -37,6 +37,9 @@ internal fun NavGraphBuilder.profileNavigation(
                 modifier = Modifier.fillMaxSize(),
                 onNavigateToProfile = {
                     navController.navigate(ProfileRoute.Profile)
+                },
+                onNavigateToAreaVerification = {
+                    navController.navigate(AreaVerificationRoute.RequireAreaVerification)
                 }
             )
         }

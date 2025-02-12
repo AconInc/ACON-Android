@@ -75,6 +75,26 @@ fun ProfileModScreenContainer(
         )
     }
 
+    if (state.showAreaDeleteDialog) {
+        AconTwoButtonDialog(
+            title = stringResource(R.string.delete_area_alert_title),
+            content = "",
+            leftButtonContent = stringResource(R.string.delete_area_alert_left_btn),
+            rightButtonContent = stringResource(R.string.delete_area_alert_right_btn),
+            contentImage = 0,
+            onDismissRequest = {
+                viewModel.hideAreaDeleteDialog()
+            },
+            onClickLeft = { // 취소
+                viewModel.hideAreaDeleteDialog()
+            },
+            onClickRight = { // 선택한 동네 삭제하기
+                state.selectedArea?.let { viewModel.removeVerifiedArea(it) }
+            },
+            isImageEnabled = false
+        )
+    }
+
     ProfileModScreen(
         modifier = modifier,
         state = state,
@@ -84,7 +104,7 @@ fun ProfileModScreenContainer(
         onBackClicked = viewModel::showDialog,
         onNavigateToProfile = onNavigateToProfile,
         onNavigateToAreaVerification = onNavigateToAreaVerification,
-        onRemoveArea = viewModel::removeVerifiedArea,
+        onRemoveArea = viewModel::showAreaDeleteDialog,
     )
 }
 

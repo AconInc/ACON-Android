@@ -122,16 +122,6 @@ class ProfileModViewModel @Inject constructor(
         return true
     }
 
-    fun fetchVerifiedAreaList(){
-        //서버 통해서 사용자가 인증 받은 동네 리스트 가져오기
-        //가져온 리스트로 verifiedAreaList 관리하기
-    }
-
-    fun removeVerifiedArea(area: String){
-        //서버 통해서 area를 인증 받은 동네 리스트에서 삭제
-        //그리고 업데이트된 동네 리스트를 verifiedAreaList로 업데이트 (?)
-    }
-
     fun showDialog() = intent {
         reduce {
             state.copy(showDialog = true)
@@ -141,6 +131,37 @@ class ProfileModViewModel @Inject constructor(
     fun hideDialog() = intent {
         reduce {
             state.copy(showDialog = false)
+        }
+    }
+
+    fun fetchVerifiedAreaList(){
+        //서버 통해서 사용자가 인증 받은 동네 리스트 가져오기
+        //가져온 리스트로 verifiedAreaList 관리하기
+    }
+
+    fun removeVerifiedArea(area: String) = intent {
+        val updatedList = state.verifiedAreaList.filterNot { it == area }
+
+        reduce {
+            state.copy(
+                verifiedAreaList = updatedList,
+                showAreaDeleteDialog = false
+            )
+        }
+    }
+
+    fun showAreaDeleteDialog(area: String) = intent {
+        reduce {
+            state.copy(
+                showAreaDeleteDialog = true,
+                selectedArea = area
+            )
+        }
+    }
+
+    fun hideAreaDeleteDialog() = intent {
+        reduce {
+            state.copy(showAreaDeleteDialog = false)
         }
     }
 
@@ -165,6 +186,8 @@ data class ProfileModState(
     val verifiedAreaList: List<String> = listOf("쌍문동"),
 
     val showDialog: Boolean = false,
+    val showAreaDeleteDialog: Boolean = false,
+    val selectedArea: String? = null
 )
 
 sealed interface ProfileModSideEffect {
