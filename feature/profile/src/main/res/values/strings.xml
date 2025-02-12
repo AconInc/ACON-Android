@@ -5,7 +5,7 @@
     <string name="profile_mod_alert_description">지금 나가면 변경한 내용이 삭제돼요</string>
     <string name="profile_mod_alert_left_btn">나가기</string>
     <string name="profile_mod_alert_right_btn">계속 작성하기</string>
-    <string name="delete_area_alert_title">00동을 삭제할까요?</string>
+    <string name="delete_area_alert_title">\'%s\'을 삭제할까요?</string>
     <string name="delete_area_alert_left_btn">취소</string>
     <string name="delete_area_alert_right_btn">삭제하기</string>
 </resources>

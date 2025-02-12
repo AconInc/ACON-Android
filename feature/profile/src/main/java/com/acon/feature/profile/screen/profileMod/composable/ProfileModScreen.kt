@@ -77,7 +77,7 @@ fun ProfileModScreenContainer(
 
     if (state.showAreaDeleteDialog) {
         AconTwoButtonDialog(
-            title = stringResource(R.string.delete_area_alert_title),
+            title = stringResource(R.string.delete_area_alert_title, state.selectedArea ?: "이 동네"),
             content = "",
             leftButtonContent = stringResource(R.string.delete_area_alert_left_btn),
             rightButtonContent = stringResource(R.string.delete_area_alert_right_btn),
