@@ -1,8 +1,18 @@
 package com.acon.feature.profile.screen.profileMod.composable
 
+import android.Manifest
+import android.content.Intent
+import android.net.Uri
+import android.os.Build
+import android.provider.Settings
+import android.util.Log
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,6 +29,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -26,6 +37,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -40,12 +52,15 @@ import com.acon.core.designsystem.component.textfield.TextFieldStatus
 import com.acon.core.designsystem.component.textfield.addFocusCleaner
 import com.acon.core.designsystem.component.topbar.AconTopBar
 import com.acon.core.designsystem.theme.AconTheme
+import com.acon.core.utils.feature.permission.CheckAndRequestPhotoPermission
 import com.acon.feature.profile.R
 import com.acon.feature.profile.component.VerifiedAreaChip
+import com.acon.feature.profile.screen.profileMod.ProfileModSideEffect
 import com.acon.feature.profile.screen.profileMod.ProfileModState
 import com.acon.feature.profile.screen.profileMod.ProfileModViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun ProfileModScreenContainer(
     modifier: Modifier = Modifier,
@@ -54,6 +69,36 @@ fun ProfileModScreenContainer(
     onNavigateToAreaVerification: () -> Unit = {},
 ) {
     val state = viewModel.collectAsState().value
+    val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        viewModel.container.sideEffectFlow.collect { effect ->
+            when (effect) {
+                is ProfileModSideEffect.NavigateToSettings -> {
+                    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                        data = Uri.fromParts("package", effect.packageName, null)
+                    }
+                    context.startActivity(intent)
+                }
+                ProfileModSideEffect.NavigateBack -> {
+                    onNavigateToProfile() // 변경사항 있으면 저장 안할거냐고 다이얼로그 띄운 다음에 보내야 하나?
+                }
+            }
+        }
+    }
+
+    if (state.requestPhotoPermission) {
+        CheckAndRequestPhotoPermission(
+            onPermissionGranted = {
+                //openGallery(context)
+                viewModel.onPermissionHandled()
+            },
+            onPermissionDenied = {
+                viewModel.showPermissionDialog()
+                viewModel.onPermissionHandled()
+            }
+        )
+    }
 
     if (state.showDialog) {
         AconTwoButtonDialog(
@@ -95,6 +140,20 @@ fun ProfileModScreenContainer(
         )
     }
 
+    if (state.showPermissionDialog) {
+        AconTwoButtonDialog(
+            title = stringResource(R.string.photo_permission_alert_title),
+            content = stringResource(R.string.photo_permission_alert_subtitle),
+            leftButtonContent = stringResource(R.string.photo_permission_alert_left_btn),
+            rightButtonContent = stringResource(R.string.photo_permission_alert_right_btn),
+            contentImage = 0,
+            onDismissRequest = { viewModel.hidePermissionDialog() },
+            onClickLeft = { viewModel.hidePermissionDialog() },
+            onClickRight = { viewModel.onPermissionSettingClick(context.packageName) },
+            isImageEnabled = false
+        )
+    }
+
     ProfileModScreen(
         modifier = modifier,
         state = state,
@@ -105,6 +164,7 @@ fun ProfileModScreenContainer(
         onNavigateToProfile = onNavigateToProfile,
         onNavigateToAreaVerification = onNavigateToAreaVerification,
         onRemoveArea = viewModel::showAreaDeleteDialog,
+        onProfileClicked = viewModel::onProfileClicked,
     )
 }
 
@@ -119,6 +179,7 @@ fun ProfileModScreen(
     onNavigateToProfile: () -> Unit,
     onNavigateToAreaVerification: () -> Unit,
     onRemoveArea: (String) -> Unit = {},
+    onProfileClicked: () -> Unit = {},
 ) {
     val focusManager = LocalFocusManager.current
 
@@ -159,7 +220,10 @@ fun ProfileModScreen(
                 .padding(horizontal = 130.dp)
         ){
             Image(
-                modifier = Modifier.fillMaxWidth().padding(20.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(20.dp)
+                    .clickable { onProfileClicked() },
                 painter = painterResource(id = R.drawable.img_profile_basic_80),
                 contentDescription = "profile",
                 contentScale = ContentScale.Crop,
@@ -212,7 +276,9 @@ fun ProfileModScreen(
                                                     else ImageVector.vectorResource(R.drawable.and_ic_error_20),
                                     contentDescription = "Error Icon",
                                     tint = Color.Unspecified,
-                                    modifier = Modifier.padding(horizontal = 2.dp).size(16.dp)
+                                    modifier = Modifier
+                                        .padding(horizontal = 2.dp)
+                                        .size(16.dp)
                                 )
                                 Text(
                                     text = errorMessage,
@@ -263,7 +329,9 @@ fun ProfileModScreen(
                             else ImageVector.vectorResource(R.drawable.and_ic_error_20),
                             contentDescription = "Error Icon",
                             tint = AconTheme.color.Error_red1,
-                            modifier = Modifier.padding(horizontal = 2.dp).size(16.dp)
+                            modifier = Modifier
+                                .padding(horizontal = 2.dp)
+                                .size(16.dp)
                         )
                         Text(
                             text = state.birthdayErrorMessages.first(),

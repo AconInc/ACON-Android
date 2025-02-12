@@ -1,7 +1,9 @@
 package com.acon.feature.profile.screen.profileMod
 
+import androidx.compose.runtime.Composable
 import androidx.lifecycle.ViewModel
 import com.acon.core.designsystem.component.textfield.TextFieldStatus
+import com.acon.core.utils.feature.permission.CheckAndRequestPhotoPermission
 import com.acon.domain.repository.UploadRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.orbitmvi.orbit.ContainerHost
@@ -165,6 +167,37 @@ class ProfileModViewModel @Inject constructor(
         }
     }
 
+    fun onProfileClicked() = intent {
+        reduce {
+            state.copy(requestPhotoPermission = true)
+        }
+    }
+
+    fun onPermissionHandled() = intent {
+        reduce {
+            state.copy(requestPhotoPermission = false)
+        }
+    }
+
+    fun showPermissionDialog() = intent {
+        reduce {
+            state.copy(showPermissionDialog = true)
+        }
+    }
+
+    fun hidePermissionDialog() = intent {
+        reduce {
+            state.copy(showPermissionDialog = false)
+        }
+    }
+
+    fun onPermissionSettingClick(packageName: String) = intent {
+        postSideEffect(ProfileModSideEffect.NavigateToSettings(packageName))
+        reduce {
+            state.copy(showPermissionDialog = false)
+        }
+    }
+
     private fun navigateBack() = intent {
         postSideEffect(ProfileModSideEffect.NavigateBack)
     }
@@ -187,10 +220,13 @@ data class ProfileModState(
 
     val showDialog: Boolean = false,
     val showAreaDeleteDialog: Boolean = false,
-    val selectedArea: String? = null
-)
+    val selectedArea: String? = null,
+
+    val requestPhotoPermission: Boolean = false,
+    val showPermissionDialog: Boolean = false,
+    )
 
 sealed interface ProfileModSideEffect {
-    data object NavigateToSuccess : ProfileModSideEffect
     data object NavigateBack : ProfileModSideEffect
+    data class NavigateToSettings(val packageName: String) : ProfileModSideEffect
 }

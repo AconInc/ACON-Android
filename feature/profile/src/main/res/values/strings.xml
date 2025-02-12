@@ -1,11 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="alert_profile_preparing">지금은 공사중이에요!</string>
+
     <string name="profile_mod_alert_title">변경사항이 저장되지 않았어요</string>
     <string name="profile_mod_alert_description">지금 나가면 변경한 내용이 삭제돼요</string>
     <string name="profile_mod_alert_left_btn">나가기</string>
     <string name="profile_mod_alert_right_btn">계속 작성하기</string>
+
     <string name="delete_area_alert_title">\'%s\'을 삭제할까요?</string>
     <string name="delete_area_alert_left_btn">취소</string>
     <string name="delete_area_alert_right_btn">삭제하기</string>
+
+    <string name="photo_permission_alert_title">\'acon\'에 대해 라이브러리\n읽기\/쓰기 권한이 없어요</string>
+    <string name="photo_permission_alert_subtitle">설정에서 라이브러리 읽기\/쓰기\n권한을 켜시겠어요?</string>
+    <string name="photo_permission_alert_left_btn">취소</string>
+    <string name="photo_permission_alert_right_btn">설정으로 가기</string>
 </resources>
