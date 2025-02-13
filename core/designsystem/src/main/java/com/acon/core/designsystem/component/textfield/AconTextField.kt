@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -36,6 +37,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.acon.core.designsystem.R
 import com.acon.core.designsystem.theme.AconColors
 import com.acon.core.designsystem.theme.AconTheme
 
@@ -49,6 +51,7 @@ fun AconTextField(
     onFocusChanged: (Boolean) -> Unit = {},
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
+    isTyping: Boolean = false,
 ) {
 
     val focusRequester = remember { FocusRequester() }
@@ -128,14 +131,26 @@ fun AconTextField(
                         innerTextField()
                     }
                     if (text.isNotEmpty()) {
-                        Icon(
-                            modifier = Modifier
-                                .align(Alignment.CenterEnd)
-                                .clickable { onTextChanged("") },
-                            imageVector = ImageVector.vectorResource(com.acon.core.designsystem.R.drawable.ic_dissmiss_circle_gray),
-                            contentDescription = "Clear text",
-                            tint = Color.Unspecified
-                        )
+                        if (isTyping){
+                            Icon(
+                                modifier = Modifier
+                                    .align(Alignment.CenterEnd)
+                                    .size(20.dp),
+                                imageVector = ImageVector.vectorResource(R.drawable.and_ic_progress_w_28),
+                                contentDescription = "Progress Icon",
+                                tint = Color.Unspecified
+                            )
+                        } else {
+                            Icon(
+                                modifier = Modifier
+                                    .align(Alignment.CenterEnd)
+                                    .clickable { onTextChanged("") }
+                                    .size(20.dp),
+                                imageVector = ImageVector.vectorResource(com.acon.core.designsystem.R.drawable.ic_dissmiss_circle_gray),
+                                contentDescription = "Clear text",
+                                tint = Color.Unspecified
+                            )
+                        }
                     }
                 }
             }

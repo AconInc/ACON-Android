@@ -11,6 +11,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.SurfaceCoroutineScope
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -32,6 +33,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -54,10 +56,12 @@ import com.acon.core.designsystem.component.topbar.AconTopBar
 import com.acon.core.designsystem.theme.AconTheme
 import com.acon.core.utils.feature.permission.CheckAndRequestPhotoPermission
 import com.acon.feature.profile.R
+import com.acon.feature.profile.component.NicknameErrMessageRow
 import com.acon.feature.profile.component.VerifiedAreaChip
 import com.acon.feature.profile.screen.profileMod.ProfileModSideEffect
 import com.acon.feature.profile.screen.profileMod.ProfileModState
 import com.acon.feature.profile.screen.profileMod.ProfileModViewModel
+import kotlinx.coroutines.CoroutineScope
 import org.orbitmvi.orbit.compose.collectAsState
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -256,6 +260,7 @@ fun ProfileModScreen(
                     onTextChanged = onNicknameChanged,
                     onFocusChanged = onFocusChanged,
                     placeholder = "16자 이내 영문, 한글, 숫자, ., _만 사용 가능",
+                    isTyping = state.isTyping
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Row(
@@ -267,26 +272,37 @@ fun ProfileModScreen(
                         verticalArrangement = Arrangement.Top,
                         horizontalAlignment = Alignment.Start
                     ) {
-                        state.nickNameErrorMessages.forEach { errorMessage ->
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Icon(
-                                    imageVector = if (state.isNicknameValid) ImageVector.vectorResource(R.drawable.and_ic_local_check_mark_20)
-                                                    else ImageVector.vectorResource(R.drawable.and_ic_error_20),
-                                    contentDescription = "Error Icon",
-                                    tint = Color.Unspecified,
-                                    modifier = Modifier
-                                        .padding(horizontal = 2.dp)
-                                        .size(16.dp)
-                                )
-                                Text(
-                                    text = errorMessage,
-                                    style = AconTheme.typography.subtitle2_14_med,
-                                    color = if (state.isNicknameValid) AconTheme.color.Success_blue1 else AconTheme.color.Error_red1
-                                )
-                            }
-                            Spacer(modifier = Modifier.height(4.dp))
+                        if (state.hasInvalidChar) {
+                            NicknameErrMessageRow(
+                                modifier = modifier,
+                                iconRes = ImageVector.vectorResource(R.drawable.and_ic_error_20),
+                                errMessage = "._ 이외의 특수기호는 사용할 수 없어요",
+                                textColor = AconTheme.color.Error_red1
+                            )
+                        }
+                        if (state.hasInvalidLang) {
+                            NicknameErrMessageRow(
+                                modifier = modifier,
+                                iconRes = ImageVector.vectorResource(R.drawable.and_ic_error_20),
+                                errMessage = "한국어, 영어 이외의 언어는 사용할 수 없어요",
+                                textColor = AconTheme.color.Error_red1
+                            )
+                        }
+                        if (state.alreadyUsedName) {
+                            NicknameErrMessageRow(
+                                modifier = modifier,
+                                iconRes = ImageVector.vectorResource(R.drawable.and_ic_error_20),
+                                errMessage = "이미 사용 중인 닉네임이에요",
+                                textColor = AconTheme.color.Error_red1
+                            )
+                        }
+                        if (state.isNicknameValid) {
+                            NicknameErrMessageRow(
+                                modifier = modifier,
+                                iconRes = ImageVector.vectorResource(R.drawable.and_ic_local_check_mark_20),
+                                errMessage = "사용할 수 있는 닉네임이에요",
+                                textColor = AconTheme.color.Success_blue1
+                            )
                         }
                     }
 
@@ -298,7 +314,6 @@ fun ProfileModScreen(
                         Text(text = "/16", style = AconTheme.typography.subtitle2_14_med, color = AconTheme.color.Gray5)
                     }
                 }
-
             }
 
             //생년월일 필드

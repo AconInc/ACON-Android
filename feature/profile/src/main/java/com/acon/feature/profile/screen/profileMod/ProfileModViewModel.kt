@@ -1,9 +1,13 @@
 package com.acon.feature.profile.screen.profileMod
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.acon.core.designsystem.component.textfield.TextFieldStatus
 import com.acon.domain.repository.UploadRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.viewmodel.container
 import javax.inject.Inject
@@ -24,23 +28,6 @@ class ProfileModViewModel @Inject constructor(
         }
     }
 
-    fun onNicknameChanged(text: String) = intent {
-        val filteredText = text.filter { it.isAllowedChar() }
-        val errors = mutableListOf<String>()
-        val isValid = validateNickname(filteredText, errors)
-
-        if (filteredText.length <= 16){
-            reduce {
-                state.copy(
-                    nickNameState = filteredText,
-                    nickNameFieldStatus = if (filteredText.isNotEmpty()) TextFieldStatus.Active else TextFieldStatus.Focused,
-                    nickNameErrorMessages = errors,
-                    isNicknameValid = isValid
-                )
-            }
-        }
-    }
-
     private fun Char.isAllowedChar(): Boolean {
         return this in 'a'..'z' ||
                 this in 'A'..'Z' ||
@@ -49,29 +36,58 @@ class ProfileModViewModel @Inject constructor(
                 this == '.' || this == '_'
     }
 
-    private fun validateNickname(text: String, errors:MutableList<String>): Boolean {
-        var isValid = true
-
-        if (text.isEmpty()){
-            errors.add("닉네임을 입력해주세요")
-            isValid = false
+    fun onNicknameChanged(text: String) = intent {
+        val filteredText = text.filter { it.isAllowedChar() } //허용된 문자만 써지도록 입력 마스크 적용
+        reduce {
+            state.copy(nickNameState = filteredText, isTyping = true) //작성하는 텍스트 계속 보이기, 작성 중인 경우 잠시 대기
         }
 
-//        if (!text.matches("^[a-zA-Z0-9가-힣._]*$".toRegex())) {
-//            errors.add("._ 이외의 특수기호는 사용할 수 없어요")
-//            isValid = false
-//        }
-//
-//        if (text.any { it !in ('a'..'z') && it !in ('A'..'Z') && it !in ('0'..'9') && it !in '가'..'힣' && it !in listOf('.', '_') }) {
-//            errors.add("한국어, 영어 이외의 언어는 사용할 수 없어요")
-//            isValid = false
-//        }
+        delay(500L) // 입력이 0.5초간 멈춘 후 유효성 검사 시작
+        // 특수문자, 제3언어 확인
+        val invalidChars = text.any { it in "!@#$%^&*()-=+[]{};:'\",<>/?\\|" }
+        val invalidLang = text.any { it !in 'a'..'z' && it !in 'A'..'Z' && it !in '0'..'9' && it !in '가'..'힣' && it !in listOf('.', '_') }
 
-        if (errors.isEmpty()) {
-            errors.add("사용할 수 있는 닉네임이에요")
+        reduce {
+            state.copy(
+                hasInvalidChar = invalidChars, // 이 상태에 따라 UI에서 알아서 에러 메시지 띄움
+                hasInvalidLang = invalidLang,
+                isTyping = false,
+            )
         }
 
-        return isValid
+        //2초 뒤에 경고 문구 없애기
+        if (invalidChars || invalidLang) {
+            viewModelScope.launch {
+                delay(2000L) // 2초 후 에러 메시지 숨기기
+
+                intent {
+                    reduce {
+                        state.copy(
+                            hasInvalidChar = false,
+                            hasInvalidLang = false
+                        )
+                    }
+                }
+            }
+        }
+
+        // 중복 닉네임 확인하기
+        val alreadyUsedName : Boolean = false  // <- 여기서 서버로 요청 보내서 true/false 값 받아오도록 함. 0.5마다 자동으로 요청 보내서 바뀌면 됨.
+        reduce {
+            state.copy(alreadyUsedName = alreadyUsedName, isTyping = false)  // 이 상태에 따라 UI에서 알아서 에러 메시지 띄움
+        }
+
+        //모든 검사를 통과한 경우 (위 2개 조건은 어차피 필터링에서 걸리므로 상관 X)
+        if (filteredText.length <= 16 && !alreadyUsedName){
+            reduce {
+                state.copy(
+                    nickNameState = filteredText,
+                    nickNameFieldStatus = if (filteredText.isNotEmpty()) TextFieldStatus.Active else TextFieldStatus.Focused,
+                    isNicknameValid = true, // alreadyUsedName 까지 통과되면 자동으로 valid해짐 (모든 조건 통과)
+                    isTyping = false
+                )
+            }
+        }
     }
 
     fun onBirthdayChanged(text: String) = intent {
@@ -213,10 +229,17 @@ class ProfileModViewModel @Inject constructor(
 
 data class ProfileModState(
 
+    val isTyping: Boolean = false,
+
     val nickNameFieldStatus: TextFieldStatus = TextFieldStatus.Inactive,
     val nickNameState: String = "",
-    val nickNameErrorMessages: List<String> = listOf("닉네임을 입력해주세요"),
     val isNicknameValid: Boolean = false,
+
+
+    //닉네임 에러 상태 구분
+    val hasInvalidChar: Boolean = false, // 특수기호 에러 상태
+    val hasInvalidLang: Boolean = false, // 제3언어 에러 상태
+    val alreadyUsedName: Boolean = false, //이미 사용 중인 상태
 
     val birthdayFieldStatus: TextFieldStatus = TextFieldStatus.Inactive,
     val birthdayState: String = "",
