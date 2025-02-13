@@ -42,7 +42,9 @@ class ProfileModViewModel @Inject constructor(
             state.copy(nickNameState = filteredText, isTyping = true) //작성하는 텍스트 계속 보이기, 작성 중인 경우 잠시 대기
         }
 
-        delay(500L) // 입력이 0.5초간 멈춘 후 유효성 검사 시작
+        // 입력이 0.5초간 멈춘 후 유효성 검사 시작
+        delay(500L)
+
         // 특수문자, 제3언어 확인
         val invalidChars = text.any { it in "!@#$%^&*()-=+[]{};:'\",<>/?\\|" }
         val invalidLang = text.any { it !in 'a'..'z' && it !in 'A'..'Z' && it !in '0'..'9' && it !in '가'..'힣' && it !in listOf('.', '_') }
@@ -57,17 +59,12 @@ class ProfileModViewModel @Inject constructor(
 
         //2초 뒤에 경고 문구 없애기
         if (invalidChars || invalidLang) {
-            viewModelScope.launch {
-                delay(2000L) // 2초 후 에러 메시지 숨기기
-
-                intent {
-                    reduce {
-                        state.copy(
-                            hasInvalidChar = false,
-                            hasInvalidLang = false
-                        )
-                    }
-                }
+            delay(2000L)
+            reduce {
+                state.copy(
+                    hasInvalidChar = false,
+                    hasInvalidLang = false
+                )
             }
         }
 
