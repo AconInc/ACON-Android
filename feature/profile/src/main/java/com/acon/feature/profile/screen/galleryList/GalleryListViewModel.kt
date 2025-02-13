@@ -1,4 +1,4 @@
-package com.acon.feature.profile.screen.customGallery
+package com.acon.feature.profile.screen.galleryList
 
 import android.app.Application
 import android.content.Context
@@ -12,11 +12,11 @@ import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
-class CustomGalleryViewModel @Inject constructor(
+class GalleryListViewModel @Inject constructor(
     private val application: Application
-) : ViewModel(), ContainerHost<CustomGalleryState, CustomGallerySideEffect> {
+) : ViewModel(), ContainerHost<GalleryListState, GalleryListSideEffect> {
 
-    override val container = container<CustomGalleryState, CustomGallerySideEffect>(CustomGalleryState())
+    override val container = container<GalleryListState, GalleryListSideEffect>(GalleryListState())
 
     private fun getAlbumList(context: Context): List<Album> {
         val albumMap = mutableMapOf<String, Album>()
@@ -60,19 +60,17 @@ class CustomGalleryViewModel @Inject constructor(
         reduce { state.copy(albumList = albums) }
     }
 
-    fun onAlbumSelected(albumId: String) = intent {
-        postSideEffect(CustomGallerySideEffect.NavigateToAlbumGrid(albumId))
-    }
-
-
+//    fun onAlbumSelected(albumId: String, albumName: String) = intent {
+//        postSideEffect(GalleryListSideEffect.NavigateToAlbumGrid(albumId, albumName))
+//    }
 }
 
-data class CustomGalleryState(
+data class GalleryListState(
     val albumList: List<Album> = mutableListOf()
 )
 
-sealed interface CustomGallerySideEffect {
-    data class NavigateToAlbumGrid(val albumId: String) : CustomGallerySideEffect
+sealed interface GalleryListSideEffect {
+    data class NavigateToAlbumGrid(val albumId: String, val albumName: String) : GalleryListSideEffect
 }
 
 data class Album(

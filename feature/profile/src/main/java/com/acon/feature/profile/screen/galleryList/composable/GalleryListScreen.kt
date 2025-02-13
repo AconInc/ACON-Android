@@ -1,4 +1,4 @@
-package com.acon.feature.profile.screen.customGallery.composable
+package com.acon.feature.profile.screen.galleryList.composable
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -31,17 +31,17 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.rememberAsyncImagePainter
 import com.acon.core.designsystem.component.topbar.AconTopBar
 import com.acon.core.designsystem.theme.AconTheme
-import com.acon.feature.profile.screen.customGallery.Album
-import com.acon.feature.profile.screen.customGallery.CustomGalleryState
-import com.acon.feature.profile.screen.customGallery.CustomGalleryViewModel
+import com.acon.feature.profile.screen.galleryList.Album
+import com.acon.feature.profile.screen.galleryList.GalleryListState
+import com.acon.feature.profile.screen.galleryList.GalleryListViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 
 @Composable
-fun CustomGalleryContainer(
+fun GalleryListContainer(
     modifier : Modifier = Modifier,
-    viewModel: CustomGalleryViewModel = hiltViewModel(),
+    viewModel: GalleryListViewModel = hiltViewModel(),
+    onAlbumSelected: (String, String) -> Unit = {_,_ -> },
     onBackClicked: () -> Unit = {},
-    onAlbumSelected: (String) -> Unit = {},
 ){
     val state = viewModel.collectAsState().value
 
@@ -49,21 +49,21 @@ fun CustomGalleryContainer(
         viewModel.loadAlbums()
     }
 
-    CustomGalleryScreen(
+    GalleryListScreen(
         modifier = modifier,
         state = state,
         albumList = state.albumList,
-        onAlbumSelected = viewModel::onAlbumSelected,
+        onAlbumSelected = onAlbumSelected,
         onBackClicked = onBackClicked,
     )
 }
 
 @Composable
-fun CustomGalleryScreen(
+fun GalleryListScreen(
     modifier: Modifier = Modifier,
-    state: CustomGalleryState,
+    state: GalleryListState,
     albumList: List<Album>,
-    onAlbumSelected: (String) -> Unit,
+    onAlbumSelected: (String, String) -> Unit,
     onBackClicked: () -> Unit,
 ){
     Column(
@@ -100,11 +100,11 @@ fun CustomGalleryScreen(
 }
 
 @Composable
-fun AlbumItem(album: Album, onAlbumSelected: (String) -> Unit) {
+fun AlbumItem(album: Album, onAlbumSelected: (String, String) -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onAlbumSelected(album.id) }
+            .clickable { onAlbumSelected(album.id, album.name) }
             .padding(vertical = 8.dp, horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Start
@@ -138,5 +138,5 @@ fun AlbumItem(album: Album, onAlbumSelected: (String) -> Unit) {
 @Preview()
 @Composable
 fun PreviewCustomGalleryScreen(){
-    CustomGalleryContainer()
+    GalleryListContainer()
 }

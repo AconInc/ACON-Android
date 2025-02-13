@@ -10,9 +10,11 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
+import androidx.navigation.toRoute
 import com.acon.feature.areaverification.AreaVerificationRoute
 import com.acon.feature.profile.ProfileRoute
-import com.acon.feature.profile.screen.customGallery.composable.CustomGalleryContainer
+import com.acon.feature.profile.screen.galleryGrid.composable.GalleryGridContainer
+import com.acon.feature.profile.screen.galleryList.composable.GalleryListContainer
 import com.acon.feature.profile.screen.profile.composable.ProfileScreenContainer
 import com.acon.feature.profile.screen.profileMod.composable.ProfileModScreenContainer
 
@@ -46,17 +48,33 @@ internal fun NavGraphBuilder.profileNavigation(
                     navController.navigate(AreaVerificationRoute.RequireAreaVerification)
                 },
                 onNavigateToCustomGallery = {
-                    navController.navigate(ProfileRoute.CustomGallery)
+                    navController.navigate(ProfileRoute.GalleryList)
                 }
             )
         }
 
-        composable<ProfileRoute.CustomGallery> {
-            CustomGalleryContainer(
+        composable<ProfileRoute.GalleryList> {
+            GalleryListContainer(
                 modifier = Modifier.fillMaxSize(),
+                onAlbumSelected = { albumId, albumName ->
+                    navController.navigate(ProfileRoute.GalleryGrid(albumId, albumName))
+                },
                 onBackClicked = {
                     navController.popBackStack()
                 }
+            )
+        }
+
+        composable<ProfileRoute.GalleryGrid> { backStackEntry ->
+            val route = backStackEntry.toRoute<ProfileRoute.GalleryGrid>()
+
+            GalleryGridContainer(
+                modifier = Modifier.fillMaxSize(),
+                albumId = route.albumId,
+                albumName = route.albumName,
+                onBackClicked = {
+                    navController.popBackStack()
+                },
             )
         }
     }

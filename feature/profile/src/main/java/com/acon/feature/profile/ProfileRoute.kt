@@ -14,5 +14,8 @@ interface ProfileRoute {
     data object ProfileMod : ProfileRoute
 
     @Serializable
-    data object CustomGallery : ProfileRoute
+    data object GalleryList : ProfileRoute
+
+    @Serializable
+    data class GalleryGrid(val albumId: String, val albumName: String) : ProfileRoute
 }
