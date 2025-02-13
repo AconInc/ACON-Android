@@ -65,7 +65,7 @@ acon은 “No more research”라는 슬로건을 가진 지도앱입니다.
 ## 📁 *****Foldering*****
 
 ```
-📦com.android.acon
+📦com.acon.android
 ├─📂app
 │  ├─📂di
 │  ├─📂navigation
