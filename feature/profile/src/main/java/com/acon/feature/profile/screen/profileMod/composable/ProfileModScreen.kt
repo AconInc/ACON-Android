@@ -72,6 +72,7 @@ fun ProfileModScreenContainer(
     viewModel: ProfileModViewModel = hiltViewModel(),
     onNavigateToProfile: () -> Unit = {},
     onNavigateToAreaVerification: () -> Unit = {},
+    onNavigateToCustomGallery: () -> Unit = {},
 ) {
     val state = viewModel.collectAsState().value
     val context = LocalContext.current
@@ -88,6 +89,9 @@ fun ProfileModScreenContainer(
                 ProfileModSideEffect.NavigateBack -> {
                     onNavigateToProfile() // 변경사항 있으면 저장 안할거냐고 다이얼로그 띄운 다음에 보내야 하나?
                 }
+                ProfileModSideEffect.NavigateToCustomGallery -> {
+                    onNavigateToCustomGallery()
+                }
             }
         }
     }
@@ -95,8 +99,8 @@ fun ProfileModScreenContainer(
     if (state.requestPhotoPermission) {
         CheckAndRequestPhotoPermission(
             onPermissionGranted = {
-                //openGallery(context)
                 viewModel.onPermissionHandled()
+                onNavigateToCustomGallery()
             },
             onPermissionDenied = {
                 viewModel.showPermissionDialog()
@@ -225,7 +229,7 @@ fun ProfileModScreen(
                 .padding(horizontal = 130.dp)
         ){
             Box(
-                modifier = Modifier.fillMaxWidth().padding(20.dp),
+                modifier = Modifier.size(80.dp),
                 contentAlignment = Alignment.Center
             ){
                 Icon(

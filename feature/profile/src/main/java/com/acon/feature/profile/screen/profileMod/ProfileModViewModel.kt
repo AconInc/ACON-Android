@@ -1,5 +1,6 @@
 package com.acon.feature.profile.screen.profileMod
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -256,4 +257,5 @@ data class ProfileModState(
 sealed interface ProfileModSideEffect {
     data object NavigateBack : ProfileModSideEffect
     data class NavigateToSettings(val packageName: String) : ProfileModSideEffect
+    data object NavigateToCustomGallery : ProfileModSideEffect
 }

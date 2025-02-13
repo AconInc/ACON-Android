@@ -12,4 +12,7 @@ interface ProfileRoute {
 
     @Serializable
     data object ProfileMod : ProfileRoute
+
+    @Serializable
+    data object CustomGallery : ProfileRoute
 }
