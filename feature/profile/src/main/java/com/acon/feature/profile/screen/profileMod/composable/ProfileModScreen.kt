@@ -15,6 +15,7 @@ import androidx.compose.foundation.SurfaceCoroutineScope
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -223,15 +224,24 @@ fun ProfileModScreen(
                 .fillMaxWidth()
                 .padding(horizontal = 130.dp)
         ){
-            Image(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(20.dp)
-                    .clickable { onProfileClicked() },
-                painter = painterResource(id = R.drawable.img_profile_basic_80),
-                contentDescription = "profile",
-                contentScale = ContentScale.Crop,
-            )
+            Box(
+                modifier = Modifier.fillMaxWidth().padding(20.dp),
+                contentAlignment = Alignment.Center
+            ){
+                Icon(
+                    imageVector = ImageVector.vectorResource(R.drawable.img_profile_basic_80),
+                    contentDescription = "Profile Image",
+                    tint = Color.Unspecified,
+                )
+                Icon(
+                    imageVector = ImageVector.vectorResource(R.drawable.and_ic_profile_img_edit),
+                    contentDescription = "Profile edit icon",
+                    tint = Color.Unspecified,
+                    modifier = Modifier
+                        .align(alignment = Alignment.BottomEnd)
+                        .clickable{ onProfileClicked() }
+                )
+            }
         }
 
         Column(
