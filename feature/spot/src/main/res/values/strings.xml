@@ -12,6 +12,8 @@
 
     <string name="before_sales">영업전</string>
     <string name="after_business">영업중</string>
+    <string name="max_acon_count">999+</string>
+    <string name="font_width_text">8888</string>
 
     <string name="spot_detail_navigate_button">길 찾기</string>
     <string name="spot_gps_icon">위치 아이콘</string>

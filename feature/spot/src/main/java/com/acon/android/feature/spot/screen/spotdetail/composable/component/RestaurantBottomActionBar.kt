@@ -45,16 +45,16 @@ fun RestaurantBottomActionBar(
             aconCount = basicAcornCount.toString(),
             aconContentDescription = stringResource(com.acon.android.feature.spot.R.string.visitor_acon_content_description),
         )
-        Spacer(modifier = Modifier.weight(1f))
-        Spacer(modifier = Modifier.width(24.dp))
+        Spacer(modifier = Modifier.width(16.dp))
 
         AconFilledLargeButton(
             text = stringResource(com.acon.android.feature.spot.R.string.spot_detail_navigate_button),
             textStyle = AconTheme.typography.subtitle1_16_med,
             enabledBackgroundColor = AconTheme.color.Main_org1,
             disabledBackgroundColor = AconTheme.color.Main_org1,
+            modifier = Modifier.fillMaxWidth(),
             onClick = onClickFindDirections,
-            contentPadding = PaddingValues(horizontal = 66.dp, vertical = 12.dp),
+            contentPadding = PaddingValues(vertical = 12.dp),
         )
     }
 }
@@ -69,11 +69,11 @@ fun AconIconAndCount(
 
     val displayedCount = if (aconCount.length < 4) {
         val currentWidth = textMeasurer.measure(aconCount).size.width
-        val desiredWidth = textMeasurer.measure("8888").size.width
+        val desiredWidth = textMeasurer.measure(stringResource(com.acon.android.feature.spot.R.string.font_width_text)).size.width
         val spaceWidth = desiredWidth - currentWidth
-        aconCount + " ".repeat((spaceWidth / textMeasurer.measure(" ").size.width).toInt())
+        aconCount + " ".repeat((spaceWidth / textMeasurer.measure(" ").size.width))
     } else {
-        if(aconCount.toInt() > 1000) { "999+" }
+        if(aconCount.toInt() > 1000) { stringResource(com.acon.android.feature.spot.R.string.max_acon_count) }
         else { aconCount }
     }
 

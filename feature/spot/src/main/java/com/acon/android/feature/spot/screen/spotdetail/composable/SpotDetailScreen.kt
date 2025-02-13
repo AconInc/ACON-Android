@@ -103,7 +103,7 @@ internal fun SpotDetailScreen(
                                 .padding(top = 52.dp)
                                 .hazeSource(LocalHazeState.current)
                         ) {
-                            Box() {
+                            Box {
                                 AsyncImage(
                                     model = state.spotDetailInfo.imageList[0],
                                     contentDescription = stringResource(com.acon.android.feature.spot.R.string.spot_store_image),
@@ -233,7 +233,7 @@ internal fun SpotDetailScreen(
                             onFindWayButtonClick()
                         },
                         modifier = Modifier
-                            .background(AconTheme.color.Black)
+                            .background(AconTheme.color.Gray9)
                             .defaultHazeEffect(
                                 hazeState = LocalHazeState.current,
                                 tintColor = AconTheme.color.Dim_b_30,
