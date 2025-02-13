@@ -219,6 +219,12 @@ class ProfileModViewModel @Inject constructor(
         }
     }
 
+    fun updateProfileImage(photoUri: Uri?) = intent {
+        reduce {
+            state.copy(selectedPhotoUri = photoUri)
+        }
+    }
+
     private fun navigateBack() = intent {
         postSideEffect(ProfileModSideEffect.NavigateBack)
     }
@@ -232,7 +238,6 @@ data class ProfileModState(
     val nickNameFieldStatus: TextFieldStatus = TextFieldStatus.Inactive,
     val nickNameState: String = "",
     val isNicknameValid: Boolean = false,
-
 
     //닉네임 에러 상태 구분
     val hasInvalidChar: Boolean = false, // 특수기호 에러 상태
@@ -252,10 +257,13 @@ data class ProfileModState(
 
     val requestPhotoPermission: Boolean = false,
     val showPermissionDialog: Boolean = false,
+
+    val selectedPhotoUri: Uri? = null
     )
 
 sealed interface ProfileModSideEffect {
     data object NavigateBack : ProfileModSideEffect
     data class NavigateToSettings(val packageName: String) : ProfileModSideEffect
     data object NavigateToCustomGallery : ProfileModSideEffect
+    data class UpdateProfileImage(val imageUri: Uri) : ProfileModSideEffect
 }

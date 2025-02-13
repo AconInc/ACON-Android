@@ -47,6 +47,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.acon.core.designsystem.component.button.AconFilledLargeButton
 import com.acon.core.designsystem.component.dialog.AconTwoButtonDialog
@@ -70,6 +71,7 @@ import org.orbitmvi.orbit.compose.collectAsState
 fun ProfileModScreenContainer(
     modifier: Modifier = Modifier,
     viewModel: ProfileModViewModel = hiltViewModel(),
+    selectedPhotoUri: String?,
     onNavigateToProfile: () -> Unit = {},
     onNavigateToAreaVerification: () -> Unit = {},
     onNavigateToCustomGallery: () -> Unit = {},
@@ -86,11 +88,16 @@ fun ProfileModScreenContainer(
                     }
                     context.startActivity(intent)
                 }
-                ProfileModSideEffect.NavigateBack -> {
+                is ProfileModSideEffect.NavigateBack -> {
                     onNavigateToProfile() // 변경사항 있으면 저장 안할거냐고 다이얼로그 띄운 다음에 보내야 하나?
                 }
-                ProfileModSideEffect.NavigateToCustomGallery -> {
+                is ProfileModSideEffect.NavigateToCustomGallery -> {
                     onNavigateToCustomGallery()
+                }
+                is ProfileModSideEffect.UpdateProfileImage -> { //갤러리 접근해서 사진 Uri 갖고 돌아오는 경우
+                    selectedPhotoUri?.let {
+                        viewModel.updateProfileImage(selectedPhotoUri.toUri())
+                    }
                 }
             }
         }
@@ -233,7 +240,7 @@ fun ProfileModScreen(
                 contentAlignment = Alignment.Center
             ){
                 Icon(
-                    imageVector = ImageVector.vectorResource(R.drawable.img_profile_basic_80),
+                    imageVector = (state.selectedPhotoUri ?: ImageVector.vectorResource(R.drawable.img_profile_basic_80)) as ImageVector,
                     contentDescription = "Profile Image",
                     tint = Color.Unspecified,
                 )

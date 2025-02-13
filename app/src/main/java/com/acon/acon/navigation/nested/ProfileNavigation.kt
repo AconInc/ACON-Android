@@ -1,10 +1,12 @@
 package com.acon.acon.navigation.nested
 
+import android.net.Uri
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -38,9 +40,13 @@ internal fun NavGraphBuilder.profileNavigation(
             )
         }
 
-        composable<ProfileRoute.ProfileMod> {
+        composable<ProfileRoute.ProfileMod> { backStackEntry ->
+            val route = backStackEntry.toRoute<ProfileRoute.ProfileMod>()
+            val selectedPhotoUri = route.photoUri?.let { Uri.parse(it) }
+
             ProfileModScreenContainer(
                 modifier = Modifier.fillMaxSize(),
+                selectedPhotoUri = selectedPhotoUri.toString(),
                 onNavigateToProfile = {
                     navController.navigate(ProfileRoute.Profile)
                 },
@@ -75,6 +81,11 @@ internal fun NavGraphBuilder.profileNavigation(
                 onBackClicked = {
                     navController.popBackStack()
                 },
+                returnToProfileModScreen = { uri ->
+                    navController.navigate(ProfileRoute.ProfileMod(uri)) {
+                        popUpTo(ProfileRoute.ProfileMod) {inclusive = false}
+                    }
+                }
             )
         }
     }

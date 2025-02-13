@@ -54,9 +54,9 @@ class GalleryGridViewModel @Inject constructor(
         reduce { state.copy(selectedPhotoUri = photoUri) }
     }
 
-    fun confirmSelection() = intent {
+    fun confirmSelection(photoUri: Uri) = intent {
         state.selectedPhotoUri?.let {
-            postSideEffect(GalleryGridSideEffect.PhotoSelected(it))
+            postSideEffect(GalleryGridSideEffect.ReturnToProfileModScreen(photoUri))
         }
     }
 }
@@ -68,8 +68,7 @@ data class GalleryGridState(
 )
 
 sealed interface GalleryGridSideEffect {
-    data class NavigateToAlbumGrid(val albumId: String, val albumName: String) : GalleryGridSideEffect
-    data class PhotoSelected(val uri: Uri) : GalleryGridSideEffect
+    data class ReturnToProfileModScreen(val uri: Uri) : GalleryGridSideEffect
 }
 
 

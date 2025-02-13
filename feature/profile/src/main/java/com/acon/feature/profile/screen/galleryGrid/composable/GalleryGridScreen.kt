@@ -1,6 +1,8 @@
 package com.acon.feature.profile.screen.galleryGrid.composable
 
+import android.content.Intent
 import android.net.Uri
+import android.provider.Settings
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -29,8 +31,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.rememberAsyncImagePainter
 import com.acon.core.designsystem.component.topbar.AconTopBar
 import com.acon.core.designsystem.theme.AconTheme
+import com.acon.feature.profile.screen.galleryGrid.GalleryGridSideEffect
 import com.acon.feature.profile.screen.galleryGrid.GalleryGridState
 import com.acon.feature.profile.screen.galleryGrid.GalleryGridViewModel
+import com.acon.feature.profile.screen.profileMod.ProfileModSideEffect
 import org.orbitmvi.orbit.compose.collectAsState
 
 @Composable
@@ -40,11 +44,22 @@ fun GalleryGridContainer(
     albumId: String,
     albumName: String,
     onBackClicked: () -> Unit = {},
+    returnToProfileModScreen: (String) -> Unit = {},
 ){
     val state = viewModel.collectAsState().value
 
     LaunchedEffect(albumId) {
         viewModel.loadPhotos(albumId)
+
+        viewModel.container.sideEffectFlow.collect { effect ->
+            when(effect) {
+                is GalleryGridSideEffect.ReturnToProfileModScreen -> {
+                    state.selectedPhotoUri?.let { uri ->
+                        returnToProfileModScreen(uri.toString())
+                    }
+                }
+            }
+        }
     }
 
     GalleryGridScreen(
@@ -52,6 +67,7 @@ fun GalleryGridContainer(
         state = state,
         albumName = albumName,
         onPhotoSelected = viewModel::onPhotoSelected,
+        onConfirmSelected = viewModel::confirmSelection,
         onBackClicked = onBackClicked,
     )
 }
@@ -62,6 +78,7 @@ fun GalleryGridScreen(
     state: GalleryGridState,
     albumName: String,
     onPhotoSelected: (Uri) -> Unit,
+    onConfirmSelected: (Uri) -> Unit,
     onBackClicked: () -> Unit
 ) {
     Column(
@@ -90,7 +107,7 @@ fun GalleryGridScreen(
             },
             trailingIcon = {
                 TextButton(
-                    onClick = { state.selectedPhotoUri?.let { onPhotoSelected(it) } }
+                    onClick = { state.selectedPhotoUri?.let { onConfirmSelected(it) } }
                 ) {
                     Text(
                         text = "선택",
