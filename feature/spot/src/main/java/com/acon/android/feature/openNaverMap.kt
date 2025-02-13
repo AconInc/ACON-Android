@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.net.Uri
+import com.acon.android.core.utils.feature.constants.AppURL
 
 internal fun openNaverMap(
     context: Context,
@@ -13,9 +14,10 @@ internal fun openNaverMap(
     destinationLng: Double,
     destinationName: String
 ) {
-    val url = "nmap://route/walk?slat=${location.latitude}&slng=${location.longitude}&sname=내 위치&" +
-            "dlat=$destinationLat&dlng=$destinationLng&dname=$destinationName&" +
-            "appname=com.acon.android"
+    val url = AppURL.getNaverMapRouteURL(
+        location.latitude, location.longitude,
+        destinationLat, destinationLng, destinationName
+    )
 
     val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url)).apply {
         addCategory(Intent.CATEGORY_BROWSABLE)
@@ -27,7 +29,7 @@ internal fun openNaverMap(
     if (resolveInfoList.isEmpty()) {
         val playStoreIntent = Intent(
             Intent.ACTION_VIEW,
-            Uri.parse("market://details?id=com.nhn.android.nmap")
+            Uri.parse(AppURL.NAVER_MAP)
         )
         context.startActivity(playStoreIntent)
     } else {
