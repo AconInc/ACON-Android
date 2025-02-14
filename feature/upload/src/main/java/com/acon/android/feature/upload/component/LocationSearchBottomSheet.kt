@@ -58,7 +58,7 @@ fun LocationSearchBottomSheet(
     val state by viewModel.container.stateFlow.collectAsStateWithLifecycle()
     var currentLocation by remember { mutableStateOf<Location?>(null) }
     var showVerificationFailDialog by remember { mutableStateOf(false) }
-    var processingLocation by remember { mutableStateOf<com.acon.android.domain.model.upload.SpotListItem?>(null) }
+    var processingLocation by remember { mutableStateOf<SpotListItem?>(null) }
 
     LaunchedEffect(state.locationVerificationResult) {
         when (state.locationVerificationResult) {
@@ -190,7 +190,7 @@ fun LocationSearchBottomSheet(
                                 isSelected = false,
                                 onClick = {
                                     val spotItem =
-                                        com.acon.android.domain.model.upload.SpotListItem(
+                                        SpotListItem(
                                             spotId = suggestion.spotId,
                                             name = suggestion.spotName,
                                             address = "",

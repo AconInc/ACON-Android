@@ -4,6 +4,7 @@ import android.location.Location
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.viewModelScope
 import com.acon.android.core.utils.feature.base.BaseContainerHost
+import com.acon.android.domain.model.spot.Condition
 import com.acon.android.domain.model.spot.Spot
 import com.acon.android.domain.repository.MapRepository
 import com.acon.android.domain.repository.SpotRepository
@@ -38,7 +39,7 @@ class SpotListViewModel @Inject constructor(
             spotRepository.fetchSpotList(
                 latitude = location.latitude,
                 longitude = location.longitude,
-                condition = com.acon.android.domain.model.spot.Condition.Default,
+                condition = Condition.Default,
             )
         }
 
@@ -77,7 +78,7 @@ class SpotListViewModel @Inject constructor(
                 spotRepository.fetchSpotList(
                     latitude = newLocation.latitude,
                     longitude = newLocation.longitude,
-                    condition = state.currentCondition?.toCondition() ?: com.acon.android.domain.model.spot.Condition.Default,
+                    condition = state.currentCondition?.toCondition() ?: Condition.Default,
                 )
             }
 

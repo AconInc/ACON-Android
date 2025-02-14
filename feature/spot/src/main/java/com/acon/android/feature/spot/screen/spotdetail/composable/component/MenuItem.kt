@@ -28,7 +28,7 @@ import com.acon.android.feature.spot.toPrice
 
 @Composable
 fun MenuItem(
-    menu: com.acon.android.domain.model.spot.SpotDetailMenu,
+    menu: SpotDetailMenu,
     modifier: Modifier = Modifier,
 ) {
     Row(

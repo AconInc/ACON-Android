@@ -1,6 +1,8 @@
 package com.acon.android.feature.spot.state
 
 import androidx.compose.runtime.Immutable
+import com.acon.android.domain.model.spot.Condition
+import com.acon.android.domain.model.spot.Filter
 import com.acon.android.domain.type.CategoryType
 import com.acon.android.domain.type.OptionType
 import com.acon.android.domain.type.SpotType
@@ -21,8 +23,8 @@ data class ConditionState(
     val cafePriceRange: CafePriceRangeType
 ) {
 
-    fun toCondition(): com.acon.android.domain.model.spot.Condition {
-        return com.acon.android.domain.model.spot.Condition(
+    fun toCondition(): Condition {
+        return Condition(
             spotType = spotType,
             filterList = getFilterList(),
             walkingTime = getWalkingTime(),
@@ -44,15 +46,15 @@ data class ConditionState(
         }
     }
 
-    private fun getFilterList() : List<com.acon.android.domain.model.spot.Filter> {
+    private fun getFilterList() : List<Filter> {
         return when (spotType) {
             SpotType.RESTAURANT -> {
                 listOf(
-                    com.acon.android.domain.model.spot.Filter(
+                    Filter(
                         category = CategoryType.RESTAURANT_FEATURE,
                         optionList = restaurantFeatureOptionType
                     ),
-                    com.acon.android.domain.model.spot.Filter(
+                    Filter(
                         category = CategoryType.COMPANION_TYPE,
                         optionList = companionTypeOptionType
                     ),
@@ -61,11 +63,11 @@ data class ConditionState(
 
             SpotType.CAFE -> {
                 listOf(
-                    com.acon.android.domain.model.spot.Filter(
+                    Filter(
                         category = CategoryType.CAFE_FEATURE,
                         optionList = cafeFeatureOptionType
                     ),
-                    com.acon.android.domain.model.spot.Filter(
+                    Filter(
                         category = CategoryType.VISIT_PURPOSE,
                         optionList = visitPurposeOptionType
                     ),

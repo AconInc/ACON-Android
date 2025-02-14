@@ -36,7 +36,6 @@ class OnboardingRepositoryImpl @Inject constructor(
                 favoriteSpotRank = favoriteSpotRank
             )
 
-            // 요청 데이터 로그 출력
             val requestJson = Json.encodeToString(request)
             Log.d("OnboardingRequest", "Request Data: $requestJson")
 

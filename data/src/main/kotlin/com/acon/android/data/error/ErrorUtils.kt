@@ -1,9 +1,10 @@
 package com.acon.android.data.error
 
+import com.acon.android.domain.error.RootError
 import kotlin.coroutines.cancellation.CancellationException
 
 internal inline fun <R> runCatchingWith(
-    vararg definedErrors: com.acon.android.domain.error.RootError,
+    vararg definedErrors: RootError,
     block: () -> R
 ): Result<R> {
     return try {

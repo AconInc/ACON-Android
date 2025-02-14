@@ -8,13 +8,13 @@ import com.acon.android.domain.type.SpotType
 @Immutable
 data class Condition(
     val spotType: SpotType?,
-    val filterList: List<com.acon.android.domain.model.spot.Filter>?,
+    val filterList: List<Filter>?,
     val walkingTime: Int,
     val priceRange: Int?
 ) {
 
     companion object {
-        val Default = com.acon.android.domain.model.spot.Condition(
+        val Default = Condition(
             spotType = null,
             filterList = null,
             walkingTime = 15,

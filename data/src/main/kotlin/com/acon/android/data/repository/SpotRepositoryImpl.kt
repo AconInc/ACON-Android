@@ -8,8 +8,12 @@ import com.acon.android.data.dto.request.SpotListRequest
 import com.acon.android.data.error.runCatchingWith
 import com.acon.android.domain.error.spot.FetchRecentNavigationLocationError
 import com.acon.android.domain.error.spot.FetchSpotListError
+import com.acon.android.domain.error.spot.GetSpotDetailInfoError
+import com.acon.android.domain.error.spot.GetSpotMenuListError
 import com.acon.android.domain.model.spot.Condition
 import com.acon.android.domain.model.spot.Spot
+import com.acon.android.domain.model.spot.SpotDetailInfo
+import com.acon.android.domain.model.spot.SpotDetailMenu
 import com.acon.android.domain.repository.SpotRepository
 import javax.inject.Inject
 
@@ -53,16 +57,16 @@ class SpotRepositoryImpl @Inject constructor(
 
     override suspend fun getSpotDetailInfo(
         spotId: Long,
-    ): Result<com.acon.android.domain.model.spot.SpotDetailInfo> {
-        return runCatchingWith(*com.acon.android.domain.error.spot.GetSpotDetailInfoError.createErrorInstances()) {
+    ): Result<SpotDetailInfo> {
+        return runCatchingWith(*GetSpotDetailInfoError.createErrorInstances()) {
             spotRemoteDataSource.getSpotDetailInfo(spotId).toSpotDetailInfo()
         }
     }
 
     override suspend fun getSpotMenuList(
         spotId: Long
-    ): Result<List<com.acon.android.domain.model.spot.SpotDetailMenu>> {
-        return runCatchingWith(*com.acon.android.domain.error.spot.GetSpotMenuListError.createErrorInstances()) {
+    ): Result<List<SpotDetailMenu>> {
+        return runCatchingWith(*GetSpotMenuListError.createErrorInstances()) {
             spotRemoteDataSource.getSpotMenuList(spotId).menuList.map { it.toSpotDetailMenu() }
         }
     }

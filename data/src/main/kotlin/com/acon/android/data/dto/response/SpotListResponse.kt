@@ -1,5 +1,6 @@
 package com.acon.android.data.dto.response
 
+import com.acon.android.domain.model.spot.Spot
 import com.acon.android.domain.type.SpotType
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -19,7 +20,7 @@ data class SpotResponse(
     @SerialName("walkingTime") val walkingTime: Int,
 ) {
 
-    fun toSpot() = com.acon.android.domain.model.spot.Spot(
+    fun toSpot() = Spot(
         id = id,
         image = image,
         matchingRate = matchingRate ?: -1,

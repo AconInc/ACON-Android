@@ -30,7 +30,6 @@ import com.acon.android.core.designsystem.theme.AconTheme
 import com.acon.android.core.utils.feature.action.BackOnPressed
 import com.acon.android.core.utils.feature.permission.CheckAndRequestLocationPermission
 import com.acon.android.feature.areaverification.component.AreaVerificationButton
-import com.acon.android.feature.areaverification.R
 import dev.chrisbanes.haze.hazeSource
 
 @Composable

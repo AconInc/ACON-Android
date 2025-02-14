@@ -9,7 +9,7 @@ data class UploadGetSpotVerifyResponse(
     @SerialName("success")
     val success: Boolean
 ) {
-    fun toSpotVerification() = com.acon.android.domain.model.upload.SpotVerification(
+    fun toSpotVerification() = SpotVerification(
         success = success
     )
 }

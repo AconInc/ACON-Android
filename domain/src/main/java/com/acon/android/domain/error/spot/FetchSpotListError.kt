@@ -1,6 +1,9 @@
 package com.acon.android.domain.error.spot
 
-sealed class FetchSpotListError : com.acon.android.domain.error.RootError() {
+import com.acon.android.domain.error.ErrorFactory
+import com.acon.android.domain.error.RootError
+
+sealed class FetchSpotListError : RootError() {
 
     class InvalidSpotType : FetchSpotListError() {
         override val code: Int = 40018
@@ -18,8 +21,8 @@ sealed class FetchSpotListError : com.acon.android.domain.error.RootError() {
         override val code: Int = 40022
     }
 
-    companion object : com.acon.android.domain.error.ErrorFactory {
-        override fun createErrorInstances(): Array<com.acon.android.domain.error.RootError> {
+    companion object : ErrorFactory {
+        override fun createErrorInstances(): Array<RootError> {
             return arrayOf(
                 InvalidSpotType(),
                 InvalidCategory(),

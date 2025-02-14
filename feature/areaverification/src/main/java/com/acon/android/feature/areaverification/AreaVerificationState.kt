@@ -1,5 +1,7 @@
 package com.acon.android.feature.areaverification
 
+import com.acon.android.domain.model.area.Area
+
 data class AreaVerificationState(
     val isNewLocationSelected: Boolean = false,
     val isButtonEnabled: Boolean = true,
@@ -11,5 +13,5 @@ data class AreaVerificationState(
     val isLoading: Boolean = false,
     val error: String? = null,
     val areaName: String = "",
-    val verifiedArea: com.acon.android.domain.model.area.Area? = null
+    val verifiedArea: Area? = null
 )
