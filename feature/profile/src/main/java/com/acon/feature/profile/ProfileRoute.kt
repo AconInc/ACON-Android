@@ -19,4 +19,7 @@ interface ProfileRoute {
 
     @Serializable
     data class GalleryGrid(val albumId: String, val albumName: String) : ProfileRoute
+
+    @Serializable
+    data class PhotoCrop(val photoId: String) : ProfileRoute
 }

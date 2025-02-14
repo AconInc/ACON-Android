@@ -17,6 +17,7 @@ import com.acon.feature.areaverification.AreaVerificationRoute
 import com.acon.feature.profile.ProfileRoute
 import com.acon.feature.profile.screen.galleryGrid.composable.GalleryGridContainer
 import com.acon.feature.profile.screen.galleryList.composable.GalleryListContainer
+import com.acon.feature.profile.screen.photoCrop.composable.PhotoCropContainer
 import com.acon.feature.profile.screen.profile.composable.ProfileScreenContainer
 import com.acon.feature.profile.screen.profileMod.composable.ProfileModScreenContainer
 
@@ -82,10 +83,23 @@ internal fun NavGraphBuilder.profileNavigation(
                 onBackClicked = {
                     navController.popBackStack()
                 },
-                returnToProfileModScreen = {
-                    navController.navigate(ProfileRoute.ProfileMod) {
-                        popUpTo(ProfileRoute.ProfileMod) {inclusive = false}
-                    }
+                onConfirmSelected = { photoId ->
+                    navController.navigate(ProfileRoute.PhotoCrop(photoId))
+                }
+            )
+        }
+
+        composable<ProfileRoute.PhotoCrop> { backStackEntry ->
+            val route = backStackEntry.toRoute<ProfileRoute.PhotoCrop>()
+
+            PhotoCropContainer(
+                modifier = Modifier.fillMaxSize(),
+                photoId = route.photoId,
+                onCloseClicked = {
+                    navController.popBackStack()
+                },
+                onCompleteSelected = { photoId : String ->
+//                    navController.navigate(ProfileRoute.ProfileMod(photoId)) // 얘가 String형 인자 받도록 수정해야 함.
                 }
             )
         }

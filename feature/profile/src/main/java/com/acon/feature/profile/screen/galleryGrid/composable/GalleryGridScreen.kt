@@ -44,23 +44,14 @@ fun GalleryGridContainer(
     albumId: String,
     albumName: String,
     onBackClicked: () -> Unit = {},
-    returnToProfileModScreen: () -> Unit = {},
+    onConfirmSelected: (String) -> Unit = {},
 ){
     val state = viewModel.collectAsState().value
 
     LaunchedEffect(albumId) {
         viewModel.loadPhotos(albumId)
 
-        viewModel.container.sideEffectFlow.collect { effect ->
-            when(effect) {
-                is GalleryGridSideEffect.ReturnToProfileModScreen -> {
-//                    state.selectedPhotoUri?.let { uri ->
-//                        returnToProfileModScreen(uri.toString())
-//                    }
-                    returnToProfileModScreen() // 일단은 안 넘기고 그냥 돌아가기
-                }
-            }
-        }
+        //SideEffect를 안쓰고 넘기면 되네??...
     }
 
     GalleryGridScreen(
@@ -68,7 +59,7 @@ fun GalleryGridContainer(
         state = state,
         albumName = albumName,
         onPhotoSelected = viewModel::onPhotoSelected,
-        onConfirmSelected = viewModel::confirmSelection,
+        onConfirmSelected = onConfirmSelected,
         onBackClicked = onBackClicked,
     )
 }
@@ -79,7 +70,7 @@ fun GalleryGridScreen(
     state: GalleryGridState,
     albumName: String,
     onPhotoSelected: (Uri) -> Unit,
-    onConfirmSelected: (Uri) -> Unit,
+    onConfirmSelected: (String) -> Unit,
     onBackClicked: () -> Unit
 ) {
     Column(
@@ -108,7 +99,7 @@ fun GalleryGridScreen(
             },
             trailingIcon = {
                 TextButton(
-                    onClick = { state.selectedPhotoUri?.let { onConfirmSelected(it) } }
+                    onClick = { state.selectedPhotoUri?.let { onConfirmSelected(it.toString()) } }
                 ) {
                     Text(
                         text = "선택",

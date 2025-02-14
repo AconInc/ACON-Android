@@ -24,7 +24,8 @@ class GalleryListViewModel @Inject constructor(
         val projection = arrayOf(
             MediaStore.Images.Media.BUCKET_DISPLAY_NAME,
             MediaStore.Images.Media.BUCKET_ID,
-            MediaStore.Images.Media.DATA
+            MediaStore.Images.Media.DATA,
+            MediaStore.Images.Media._ID
         )
 
         val sortOrder = "${MediaStore.Images.Media.DATE_ADDED} DESC"
@@ -39,11 +40,14 @@ class GalleryListViewModel @Inject constructor(
             val bucketColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_DISPLAY_NAME)
             val bucketIdColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_ID)
             val dataColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+            val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
 
             while (cursor.moveToNext()) {
                 val albumName = cursor.getString(bucketColumn) ?: "기타"
                 val albumId = cursor.getString(bucketIdColumn)
-                val coverUri = Uri.fromFile(File(cursor.getString(dataColumn)))
+
+                val imageId = cursor.getLong(idColumn)
+                val coverUri = Uri.withAppendedPath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, imageId.toString())
 
                 if (!albumMap.containsKey(albumId)) {
                     albumMap[albumId] = Album(albumId, albumName, coverUri)
@@ -60,9 +64,6 @@ class GalleryListViewModel @Inject constructor(
         reduce { state.copy(albumList = albums) }
     }
 
-//    fun onAlbumSelected(albumId: String, albumName: String) = intent {
-//        postSideEffect(GalleryListSideEffect.NavigateToAlbumGrid(albumId, albumName))
-//    }
 }
 
 data class GalleryListState(

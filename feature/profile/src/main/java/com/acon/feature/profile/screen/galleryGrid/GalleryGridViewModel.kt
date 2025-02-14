@@ -22,7 +22,7 @@ class GalleryGridViewModel @Inject constructor(
     private fun getPhotoList(albumId: String, context: Context): List<Uri> {
         val photoList = mutableListOf<Uri>()
 
-        val projection = arrayOf(MediaStore.Images.Media.DATA)
+        val projection = arrayOf(MediaStore.Images.Media._ID)
         val selection = "${MediaStore.Images.Media.BUCKET_ID} = ?"
         val selectionArgs = arrayOf(albumId)
         val sortOrder = "${MediaStore.Images.Media.DATE_ADDED} DESC"
@@ -34,10 +34,12 @@ class GalleryGridViewModel @Inject constructor(
             selectionArgs,
             sortOrder
         )?.use { cursor ->
-            val dataColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+            val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
 
             while (cursor.moveToNext()) {
-                val photoUri = Uri.fromFile(File(cursor.getString(dataColumn)))
+                val imageId = cursor.getLong(idColumn)
+                val photoUri = Uri.withAppendedPath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, imageId.toString())
+
                 photoList.add(photoUri)
             }
         }
@@ -53,13 +55,6 @@ class GalleryGridViewModel @Inject constructor(
     fun onPhotoSelected(photoUri: Uri) = intent {
         reduce { state.copy(selectedPhotoUri = photoUri) }
     }
-
-    fun confirmSelection(photoUri: Uri) = intent {
-        state.selectedPhotoUri?.let {
-            //postSideEffect(GalleryGridSideEffect.ReturnToProfileModScreen(photoUri))
-            postSideEffect(GalleryGridSideEffect.ReturnToProfileModScreen)
-        }
-    }
 }
 
 data class GalleryGridState(
@@ -69,8 +64,7 @@ data class GalleryGridState(
 )
 
 sealed interface GalleryGridSideEffect {
-    //data class ReturnToProfileModScreen(val uri: Uri) : GalleryGridSideEffect
-    data object ReturnToProfileModScreen : GalleryGridSideEffect
+    data class NavigateToPhotoCropScreen(val photoUri: String) : GalleryGridSideEffect //이거 안쓰네..
 }
 
 
