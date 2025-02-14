@@ -12,7 +12,7 @@ interface ProfileRoute {
     data object Profile : ProfileRoute
 
     @Serializable
-    data class ProfileMod(val photoUri: String? = null) : ProfileRoute
+    data object ProfileMod : ProfileRoute
 
     @Serializable
     data object GalleryList : ProfileRoute

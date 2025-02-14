@@ -41,12 +41,13 @@ internal fun NavGraphBuilder.profileNavigation(
         }
 
         composable<ProfileRoute.ProfileMod> { backStackEntry ->
-            val route = backStackEntry.toRoute<ProfileRoute.ProfileMod>()
-            val selectedPhotoUri = route.photoUri?.let { Uri.parse(it) }
+//            val route = backStackEntry.toRoute<ProfileRoute.ProfileMod>()
+//            val selectedPhotoUri = route.photoUri?.let { Uri.parse(it) }
 
             ProfileModScreenContainer(
                 modifier = Modifier.fillMaxSize(),
-                selectedPhotoUri = selectedPhotoUri.toString(),
+                //selectedPhotoUri = selectedPhotoUri.toString(),
+                selectedPhotoUri = "",
                 onNavigateToProfile = {
                     navController.navigate(ProfileRoute.Profile)
                 },
@@ -81,8 +82,8 @@ internal fun NavGraphBuilder.profileNavigation(
                 onBackClicked = {
                     navController.popBackStack()
                 },
-                returnToProfileModScreen = { uri ->
-                    navController.navigate(ProfileRoute.ProfileMod(photoUri = uri.toString())) {
+                returnToProfileModScreen = {
+                    navController.navigate(ProfileRoute.ProfileMod) {
                         popUpTo(ProfileRoute.ProfileMod) {inclusive = false}
                     }
                 }

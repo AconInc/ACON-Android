@@ -44,7 +44,7 @@ fun GalleryGridContainer(
     albumId: String,
     albumName: String,
     onBackClicked: () -> Unit = {},
-    returnToProfileModScreen: (String) -> Unit = {},
+    returnToProfileModScreen: () -> Unit = {},
 ){
     val state = viewModel.collectAsState().value
 
@@ -54,9 +54,10 @@ fun GalleryGridContainer(
         viewModel.container.sideEffectFlow.collect { effect ->
             when(effect) {
                 is GalleryGridSideEffect.ReturnToProfileModScreen -> {
-                    state.selectedPhotoUri?.let { uri ->
-                        returnToProfileModScreen(uri.toString())
-                    }
+//                    state.selectedPhotoUri?.let { uri ->
+//                        returnToProfileModScreen(uri.toString())
+//                    }
+                    returnToProfileModScreen() // 일단은 안 넘기고 그냥 돌아가기
                 }
             }
         }
