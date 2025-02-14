@@ -27,7 +27,7 @@ import com.acon.android.core.designsystem.blur.LocalHazeState
 import com.acon.android.core.designsystem.component.topbar.AconTopBar
 import com.acon.android.core.designsystem.noRippleClickable
 import com.acon.android.core.designsystem.theme.AconTheme
-import com.acon.android.feature.profile.composable.component.LoginBottomSheet
+import com.acon.android.core.designsystem.component.bottomsheet.LoginBottomSheet
 import com.acon.android.feature.profile.composable.component.ProfileInfo
 import com.acon.android.feature.profile.composable.screen.ProfileUiState
 import com.acon.android.feature.profile.composable.type.ProfileInfoType

@@ -19,13 +19,4 @@
     <string name="content_description_edit_profile">프로필 수정</string>
     <string name="content_description_settings">설정 화면 이동</string>
     <string name="content_description_go_login">로그인 창으로 이동</string>
-    <string name="content_description_dismiss_bottom_sheet">로그인 창 닫기</string>
-
-    <!-- login BottomSheet -->
-    <string name="login_bottom_sheet_title">acon에 로그인</string>
-    <string name="login_bottom_sheet_content">지금 당신의 위치에서\n 최고의 맛집을 추천받아보세요</string>
-    <string name="login_bottom_sheet_google_login">Google로 계속하기</string>
-    <string name="login_bottom_sheet_policy_agreement">가입을 진행할 경우,\n아래의 정책에 대해 동의한 것으로 간주합니다.</string>
-    <string name="login_bottom_sheet_term_of_use">이용약관</string>
-    <string name="login_bottom_sheet_private_policy">개인정보처리방침</string>
 </resources>

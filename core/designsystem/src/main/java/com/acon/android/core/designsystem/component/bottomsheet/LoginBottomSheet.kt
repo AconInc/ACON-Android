@@ -1,4 +1,4 @@
-package com.acon.android.feature.profile.composable.component
+package com.acon.android.core.designsystem.component.bottomsheet
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -29,12 +29,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.acon.android.core.designsystem.blur.LocalHazeState
+import com.acon.android.core.designsystem.R
 import com.acon.android.core.designsystem.blur.defaultHazeEffect
 import com.acon.android.core.designsystem.component.button.AconGoogleLoginButton
 import com.acon.android.core.designsystem.noRippleClickable
 import com.acon.android.core.designsystem.theme.AconTheme
-import com.acon.android.feature.profile.R
 import dev.chrisbanes.haze.HazeState
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -63,7 +62,7 @@ fun LoginBottomSheet(
                    .fillMaxHeight(0.6f)
                    .background(AconTheme.color.Gray9.copy(alpha = 0.5f))
                    .defaultHazeEffect(
-                       hazeState = LocalHazeState.current,
+                       hazeState = hazeState,
                        tintColor = AconTheme.color.Gray8,
                        alpha = 0.7f,
                        blurRadius = 20.dp
@@ -84,7 +83,7 @@ fun LoginBottomSheet(
                    contentAlignment = Alignment.Center
                ) {
                    Icon(
-                       imageVector = ImageVector.vectorResource(com.acon.android.core.designsystem.R.drawable.ic_dissmiss_28),
+                       imageVector = ImageVector.vectorResource(R.drawable.ic_dissmiss_28),
                        contentDescription = stringResource(R.string.content_description_dismiss_bottom_sheet),
                        modifier = Modifier
                            .align(Alignment.CenterEnd)
