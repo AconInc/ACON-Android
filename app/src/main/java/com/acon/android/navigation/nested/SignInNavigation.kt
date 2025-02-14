@@ -20,9 +20,6 @@ internal fun NavGraphBuilder.signInNavigationNavigation(
     ) {
         composable<SignInRoute.SignIn> {
             SignInScreenContainer(
-                navigateToSignInScreen = {
-                    navController.navigate(SignInRoute.SignIn)
-                },
                 navigateToSpotListView = {
                     navController.navigate(SpotRoute.SpotList)
                 },

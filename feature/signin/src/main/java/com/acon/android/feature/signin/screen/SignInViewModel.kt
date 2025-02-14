@@ -1,6 +1,7 @@
 package com.acon.android.feature.signin.screen
 
 import com.acon.android.core.utils.feature.base.BaseContainerHost
+import com.acon.android.domain.error.user.CredentialException
 import com.acon.android.domain.repository.AuthRepository
 import com.acon.android.domain.repository.SocialRepository
 import com.acon.android.domain.repository.TokenRepository
@@ -19,7 +20,7 @@ class SignInViewModel @Inject constructor(
 
     override val container: Container<SignInUiState, SignInSideEffect> =
         container(initialState = SignInUiState.Loading) {
-            isTokenValid()
+            isTokenValid() // 자동로그인 검증
         }
 
     fun googleLogin(socialRepository: SocialRepository) = intent {
@@ -27,42 +28,44 @@ class SignInViewModel @Inject constructor(
             .onSuccess {
                 reduce { SignInUiState.Success }
                 postSideEffect(SignInSideEffect.NavigateToAreaVerification)
-            }.onFailure { error ->
+            }
+            .onFailure { error ->
                 when (error) {
+                    is CredentialException.UserCanceled -> {
+                        reduce { SignInUiState.Loading }
+                    }
+
                     is CancellationException -> {
                         reduce { SignInUiState.Loading }
                     }
-                    is NoSuchElementException -> {
+
+                    is CredentialException.NoStoredCredentials -> {
+                        tokenRepository.removeGoogleIdToken()
                         reduce { SignInUiState.Loading }
                     }
+
                     is SecurityException -> {
+                        tokenRepository.removeGoogleIdToken()
                         reduce { SignInUiState.Loading }
                     }
+
                     else -> {
+                        tokenRepository.removeGoogleIdToken()
                         reduce { SignInUiState.Loading }
+                        postSideEffect(SignInSideEffect.ShowToastMessage)
                     }
                 }
-        }
+            }
     }
-
 
     private fun isTokenValid() = intent {
         tokenRepository.getGoogleIdToken().onSuccess { googleIdToken ->
             if (!googleIdToken.isNullOrEmpty()) {
                 authRepository.postLogin(SocialType.GOOGLE, googleIdToken)
-                    .onSuccess {
-                        postSideEffect(SignInSideEffect.NavigateToSpotListView)
-                    }.onFailure {
-                        tokenRepository.removeGoogleIdToken()
-                    }
+                    .onSuccess { postSideEffect(SignInSideEffect.NavigateToSpotListView) }
+                    .onFailure { tokenRepository.removeGoogleIdToken() }
             }
         }
-    }
-
-    private fun navigateToSignInScreen() = intent {
-        postSideEffect(
-            SignInSideEffect.NavigateToSignInScreen
-        )
     }
 
     fun navigateToSpotListView() = intent {
@@ -92,7 +95,7 @@ sealed interface SignInUiState {
 }
 
 sealed interface SignInSideEffect {
-    data object NavigateToSignInScreen : SignInSideEffect
+    data object ShowToastMessage : SignInSideEffect
     data object NavigateToSpotListView : SignInSideEffect
     data object NavigateToAreaVerification: SignInSideEffect
     data object OnClickTermsOfUse : SignInSideEffect

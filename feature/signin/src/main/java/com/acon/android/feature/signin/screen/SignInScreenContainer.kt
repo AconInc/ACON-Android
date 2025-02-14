@@ -9,14 +9,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.acon.android.core.utils.feature.constants.AppURL
+import com.acon.android.core.utils.feature.toast.showToast
 import com.acon.android.domain.repository.SocialRepository
+import com.acon.android.feature.signin.R
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
 fun SignInScreenContainer(
     socialRepository: SocialRepository,
-    navigateToSignInScreen: () -> Unit,
     navigateToSpotListView: () -> Unit,
     navigateToAreaVerification: () -> Unit,
     modifier: Modifier = Modifier,
@@ -38,7 +39,7 @@ fun SignInScreenContainer(
 
     viewModel.collectSideEffect { sideEffect ->
         when(sideEffect) {
-            is SignInSideEffect.NavigateToSignInScreen -> { navigateToSignInScreen() }
+            is SignInSideEffect.ShowToastMessage -> { context.showToast(R.string.signin_login_failed_toast) }
             is SignInSideEffect.NavigateToSpotListView -> { navigateToSpotListView() }
             is SignInSideEffect.NavigateToAreaVerification -> { navigateToAreaVerification() }
             is SignInSideEffect.OnClickTermsOfUse -> {

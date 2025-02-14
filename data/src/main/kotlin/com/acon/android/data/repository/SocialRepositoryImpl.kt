@@ -12,15 +12,15 @@ class SocialRepositoryImpl @Inject constructor(
     private val tokenRemoteDataSource: TokenRemoteDataSource,
     private val authRepository: AuthRepository,
     private val tokenLocalDataSource: TokenLocalDataSource
-): SocialRepository {
+) : SocialRepository {
     override suspend fun signIn(): Result<Unit> {
         return runCatchingWith() {
             val idToken = tokenRemoteDataSource.signIn().getOrThrow()
             tokenLocalDataSource.saveGoogleIdToken(idToken)
+
             authRepository.postLogin(
-                socialType = SocialType.GOOGLE,
-                idToken = idToken
-            )
+                socialType = SocialType.GOOGLE, idToken = idToken
+            ).getOrThrow()
         }
     }
 }
