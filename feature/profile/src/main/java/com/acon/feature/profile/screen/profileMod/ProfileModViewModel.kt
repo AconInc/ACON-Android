@@ -219,9 +219,9 @@ class ProfileModViewModel @Inject constructor(
         }
     }
 
-    fun updateProfileImage(photoUri: Uri?) = intent {
+    fun updateProfileImage(photoUri: String?) = intent {
         reduce {
-            state.copy(selectedPhotoUri = photoUri)
+            state.copy(selectedPhotoUri = photoUri?.let { Uri.parse(it) })
         }
     }
 
@@ -265,5 +265,5 @@ sealed interface ProfileModSideEffect {
     data object NavigateBack : ProfileModSideEffect
     data class NavigateToSettings(val packageName: String) : ProfileModSideEffect
     data object NavigateToCustomGallery : ProfileModSideEffect
-    data class UpdateProfileImage(val imageUri: Uri) : ProfileModSideEffect
+    data class UpdateProfileImage(val imageUri: String?) : ProfileModSideEffect
 }

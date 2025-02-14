@@ -82,7 +82,7 @@ internal fun NavGraphBuilder.profileNavigation(
                     navController.popBackStack()
                 },
                 returnToProfileModScreen = { uri ->
-                    navController.navigate(ProfileRoute.ProfileMod(uri)) {
+                    navController.navigate(ProfileRoute.ProfileMod(photoUri = uri.toString())) {
                         popUpTo(ProfileRoute.ProfileMod) {inclusive = false}
                     }
                 }

@@ -96,7 +96,7 @@ fun ProfileModScreenContainer(
                 }
                 is ProfileModSideEffect.UpdateProfileImage -> { //갤러리 접근해서 사진 Uri 갖고 돌아오는 경우
                     selectedPhotoUri?.let {
-                        viewModel.updateProfileImage(selectedPhotoUri.toUri())
+                        viewModel.updateProfileImage(effect.imageUri)
                     }
                 }
             }

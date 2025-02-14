@@ -1,5 +1,6 @@
 package com.acon.feature.profile
 
+import android.net.Uri
 import kotlinx.serialization.Serializable
 
 interface ProfileRoute {
