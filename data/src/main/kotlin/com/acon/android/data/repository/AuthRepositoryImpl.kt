@@ -4,7 +4,7 @@ import com.acon.android.data.datasource.local.TokenLocalDataSource
 import com.acon.android.data.datasource.remote.AuthRemoteDataSource
 import com.acon.android.data.dto.request.GoogleTokenRequest
 import com.acon.android.data.error.runCatchingWith
-//import com.acon.android.domain.error.auth.PostLoginError
+import com.acon.android.domain.error.user.PostLoginError
 import com.acon.android.domain.repository.AuthRepository
 import com.acon.android.domain.type.SocialType
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,7 +24,7 @@ class AuthRepositoryImpl @Inject constructor(
         socialType: SocialType,
         idToken: String
     ): Result<Unit> {
-        return runCatchingWith() {
+        return runCatchingWith(*PostLoginError.createErrorInstances()) {
             val googleLoginResponse = authRemoteDataSource.postLogin(
                 GoogleTokenRequest(
                     socialType = socialType,
