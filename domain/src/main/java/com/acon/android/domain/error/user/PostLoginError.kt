@@ -1,4 +1,4 @@
-package com.acon.android.domain.error.auth
+package com.acon.android.domain.error.user
 
 import com.acon.android.domain.error.ErrorFactory
 import com.acon.android.domain.error.RootError
