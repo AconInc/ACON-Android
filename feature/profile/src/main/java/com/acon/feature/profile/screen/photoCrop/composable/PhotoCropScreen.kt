@@ -4,9 +4,11 @@ import android.net.Uri
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -79,7 +81,8 @@ fun PhotoCropScreen(
             .fillMaxSize()
             .background(color = AconTheme.color.Gray9)
             .statusBarsPadding()
-            .navigationBarsPadding()
+            .navigationBarsPadding(),
+        verticalArrangement = Arrangement.Center
     ) {
 
         AconTopBar(
@@ -112,7 +115,7 @@ fun PhotoCropScreen(
         )
 
         BoxWithConstraints(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxWidth().aspectRatio(1f).weight(1f),
             contentAlignment = Alignment.Center
         ) {
             val imageWidth = maxWidth
@@ -124,15 +127,15 @@ fun PhotoCropScreen(
             val circleCenter = Offset(imageWidthPx / 2, imageHeightPx / 2)
 
             Box(
-                modifier = Modifier
-                    .width(imageWidth)
-                    .height(imageHeight)
+                modifier = Modifier.width(imageWidth).height(imageHeight),
+                contentAlignment = Alignment.Center
             ) {
                 Image(
                     painter = rememberAsyncImagePainter(Uri.parse(photoId)),
                     modifier = Modifier.fillMaxSize(),
                     contentDescription = "선택한 프로필 사진",
-                    contentScale = ContentScale.Crop
+                    contentScale = ContentScale.Crop,
+                    alignment = Alignment.Center
                 )
 
                 Canvas(

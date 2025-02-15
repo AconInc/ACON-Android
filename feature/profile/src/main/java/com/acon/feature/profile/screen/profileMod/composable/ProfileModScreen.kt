@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -62,6 +63,7 @@ import com.acon.core.designsystem.theme.AconTheme
 import com.acon.core.utils.feature.permission.CheckAndRequestPhotoPermission
 import com.acon.feature.profile.R
 import com.acon.feature.profile.component.NicknameErrMessageRow
+import com.acon.feature.profile.component.ProfilePhotoBox
 import com.acon.feature.profile.component.VerifiedAreaChip
 import com.acon.feature.profile.screen.profileMod.ProfileModSideEffect
 import com.acon.feature.profile.screen.profileMod.ProfileModState
@@ -74,7 +76,7 @@ import org.orbitmvi.orbit.compose.collectAsState
 fun ProfileModScreenContainer(
     modifier: Modifier = Modifier,
     viewModel: ProfileModViewModel = hiltViewModel(),
-    selectedPhotoId: String? = "",
+    selectedPhotoId: String = "",
     onNavigateToProfile: () -> Unit = {},
     onNavigateToAreaVerification: () -> Unit = {},
     onNavigateToCustomGallery: () -> Unit = {},
@@ -83,7 +85,7 @@ fun ProfileModScreenContainer(
     val context = LocalContext.current
 
     LaunchedEffect(selectedPhotoId){ //갤러리 접근해서 사진 String 갖고 돌아오는 경우, ViewModel의 State 값에 uri로 parse해서 저장해줌
-        selectedPhotoId?.let {
+        selectedPhotoId.let {
             viewModel.updateProfileImage(selectedPhotoId)
         }
     }
@@ -104,7 +106,7 @@ fun ProfileModScreenContainer(
                     onNavigateToCustomGallery()
                 }
                 is ProfileModSideEffect.UpdateProfileImage -> {
-                    selectedPhotoId?.let {
+                    selectedPhotoId.let {
                         viewModel.updateProfileImage(selectedPhotoId)
                     }
                 }
@@ -242,32 +244,17 @@ fun ProfileModScreen(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 130.dp)
+                .padding(horizontal = 130.dp),
+            horizontalArrangement = Arrangement.Center
         ){
             Box(
                 modifier = Modifier.size(80.dp),
                 contentAlignment = Alignment.Center
             ){
-                if (state.selectedPhotoUri != "") {
-                    Box(
-                        modifier = Modifier
-                            .size(80.dp).clip(CircleShape)
-                    ) {
-                        Image(
-                            painter = rememberAsyncImagePainter(Uri.parse(state.selectedPhotoUri)),
-                            contentDescription = "선택한 프로필 사진",
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier.fillMaxSize()
-                        )
-                    }
-                } else {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(R.drawable.img_profile_basic_80),
-                        contentDescription = "Profile Image",
-                        tint = Color.Unspecified,
-                    )
-                }
-
+                ProfilePhotoBox(
+                    modifier = modifier,
+                    photoUri = state.selectedPhotoUri
+                )
                 Icon(
                     imageVector = ImageVector.vectorResource(R.drawable.and_ic_profile_img_edit),
                     contentDescription = "Profile edit icon",
