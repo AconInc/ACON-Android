@@ -221,7 +221,8 @@ fun ProfileModScreen(
             .background(color = AconTheme.color.Gray9)
             .statusBarsPadding()
             .navigationBarsPadding()
-            .addFocusCleaner(focusManager)
+            .addFocusCleaner(focusManager),
+        verticalArrangement = Arrangement.Center
     ) {
         AconTopBar(
             leadingIcon = {
@@ -244,15 +245,16 @@ fun ProfileModScreen(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 130.dp),
+                .padding(vertical = 10.dp),
             horizontalArrangement = Arrangement.Center
         ){
+            Spacer(modifier = Modifier.weight(1f))
             Box(
-                modifier = Modifier.size(80.dp),
+                modifier = Modifier.weight(1f).aspectRatio(1f),
                 contentAlignment = Alignment.Center
             ){
                 ProfilePhotoBox(
-                    modifier = modifier,
+                    modifier = Modifier.fillMaxSize().align(Alignment.Center),
                     photoUri = state.selectedPhotoUri
                 )
                 Icon(
@@ -264,6 +266,7 @@ fun ProfileModScreen(
                         .clickable{ onProfileClicked() }
                 )
             }
+            Spacer(modifier = Modifier.weight(1f))
         }
 
         Column(
@@ -274,7 +277,7 @@ fun ProfileModScreen(
 
             //닉네임 입력 필드
             Column(
-                modifier = Modifier.padding(horizontal = 16.dp),
+                modifier = Modifier.padding(horizontal = 16.dp).weight(1f),
                 verticalArrangement = Arrangement.SpaceEvenly
             ){
                 Row(
@@ -350,7 +353,7 @@ fun ProfileModScreen(
 
             //생년월일 필드
             Column(
-                modifier = Modifier.padding(horizontal = 16.dp),
+                modifier = Modifier.padding(horizontal = 16.dp).weight(1f),
                 verticalArrangement = Arrangement.SpaceEvenly
             ){
                 Row(
@@ -393,7 +396,7 @@ fun ProfileModScreen(
 
             //동네인증 필드
             Column(
-                modifier = Modifier.padding(horizontal = 16.dp)
+                modifier = Modifier.padding(horizontal = 16.dp).weight(1f)
             ){
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -413,10 +416,8 @@ fun ProfileModScreen(
                 )
             }
 
-            Spacer(modifier = Modifier.height(150.dp))
-
             Column(
-                modifier = Modifier.padding(horizontal = 20.dp)
+                modifier = Modifier.padding(top = 20.dp)
             ) {
                 AconFilledLargeButton(
                     text = "저장",

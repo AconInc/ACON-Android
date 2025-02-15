@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.layout.ContentScale
 import coil3.compose.rememberAsyncImagePainter
 import android.net.Uri
+import androidx.compose.foundation.background
 import androidx.compose.material3.Icon
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -30,17 +31,13 @@ fun ProfilePhotoBox(
     photoUri: String = "",
 ){
     BoxWithConstraints(
-        modifier = modifier
-            .size(80.dp)
-            .aspectRatio(1f)
-            .clip(CircleShape)
+        modifier = modifier.fillMaxSize()
     ) {
-
         if (photoUri != ""){
             val imageWidth = maxWidth
-
             Box(
-                modifier = Modifier.width(imageWidth).height(imageWidth)
+                modifier = Modifier.fillMaxSize().width(imageWidth).height(imageWidth).clip(CircleShape),
+                contentAlignment = Alignment.Center
             ) {
                 Image(
                     painter = rememberAsyncImagePainter(Uri.parse(photoUri)),
@@ -52,6 +49,7 @@ fun ProfilePhotoBox(
             }
         } else {
             Icon(
+                modifier = Modifier.fillMaxSize(),
                 imageVector = ImageVector.vectorResource(R.drawable.img_profile_basic_80),
                 contentDescription = "Profile Image",
                 tint = Color.Unspecified,
