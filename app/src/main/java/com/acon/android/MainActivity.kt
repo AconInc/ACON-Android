@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
 import androidx.navigation.compose.rememberNavController
 import com.acon.android.core.designsystem.theme.AconTheme
+import com.acon.android.domain.repository.AuthRepository
 import com.acon.android.domain.repository.SocialRepository
 import com.acon.android.navigation.AconNavigation
 import dagger.hilt.android.AndroidEntryPoint
@@ -20,6 +21,9 @@ import javax.inject.Inject
 class MainActivity : ComponentActivity() {
     @Inject
     lateinit var socialRepository: SocialRepository
+
+    @Inject
+    lateinit var authRepository: AuthRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,6 +40,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     navController = rememberNavController(),
                     socialRepository = socialRepository,
+                    authRepository = authRepository,
                 )
             }
         }
