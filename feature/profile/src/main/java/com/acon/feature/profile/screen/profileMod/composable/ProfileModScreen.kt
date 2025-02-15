@@ -27,6 +27,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -37,6 +38,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
@@ -49,6 +51,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil3.compose.rememberAsyncImagePainter
 import com.acon.core.designsystem.component.button.AconFilledLargeButton
 import com.acon.core.designsystem.component.dialog.AconTwoButtonDialog
 import com.acon.core.designsystem.component.textfield.AconTextField
@@ -71,7 +74,7 @@ import org.orbitmvi.orbit.compose.collectAsState
 fun ProfileModScreenContainer(
     modifier: Modifier = Modifier,
     viewModel: ProfileModViewModel = hiltViewModel(),
-    selectedPhotoUri: String?,
+    selectedPhotoUri: String? = "",
     onNavigateToProfile: () -> Unit = {},
     onNavigateToAreaVerification: () -> Unit = {},
     onNavigateToCustomGallery: () -> Unit = {},
@@ -94,7 +97,7 @@ fun ProfileModScreenContainer(
                 is ProfileModSideEffect.NavigateToCustomGallery -> {
                     onNavigateToCustomGallery()
                 }
-                is ProfileModSideEffect.UpdateProfileImage -> { //갤러리 접근해서 사진 Uri 갖고 돌아오는 경우
+                is ProfileModSideEffect.UpdateProfileImage -> { //갤러리 접근해서 사진 String 갖고 돌아오는 경우, ViewModel의 State 값에 uri로 parse해서 저장해줌
                     selectedPhotoUri?.let {
                         viewModel.updateProfileImage(effect.imageUri)
                     }
@@ -239,11 +242,21 @@ fun ProfileModScreen(
                 modifier = Modifier.size(80.dp),
                 contentAlignment = Alignment.Center
             ){
-                Icon(
-                    imageVector = (state.selectedPhotoUri ?: ImageVector.vectorResource(R.drawable.img_profile_basic_80)) as ImageVector,
-                    contentDescription = "Profile Image",
-                    tint = Color.Unspecified,
-                )
+                if (state.selectedPhotoUri != null) {
+                    Image(
+                        painter = rememberAsyncImagePainter(Uri.parse(state.selectedPhotoUri)),
+                        modifier = Modifier.fillMaxSize().clip(CircleShape),
+                        contentDescription = "선택한 프로필 사진",
+                        contentScale = ContentScale.Crop
+                    )
+                } else {
+                    Icon( //crop을 해야할듯. 원형 모양으로
+                        imageVector = ImageVector.vectorResource(R.drawable.img_profile_basic_80),
+                        contentDescription = "Profile Image",
+                        tint = Color.Unspecified,
+                    )
+                }
+
                 Icon(
                     imageVector = ImageVector.vectorResource(R.drawable.and_ic_profile_img_edit),
                     contentDescription = "Profile edit icon",

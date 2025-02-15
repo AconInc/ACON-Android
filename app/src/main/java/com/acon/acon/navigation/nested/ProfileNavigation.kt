@@ -42,13 +42,11 @@ internal fun NavGraphBuilder.profileNavigation(
         }
 
         composable<ProfileRoute.ProfileMod> { backStackEntry ->
-//            val route = backStackEntry.toRoute<ProfileRoute.ProfileMod>()
-//            val selectedPhotoUri = route.photoUri?.let { Uri.parse(it) }
+            val route = backStackEntry.toRoute<ProfileRoute.ProfileMod>()
 
             ProfileModScreenContainer(
                 modifier = Modifier.fillMaxSize(),
-                //selectedPhotoUri = selectedPhotoUri.toString(),
-                selectedPhotoUri = "",
+                //selectedPhotoUri = route.photoId ?: "", //PhotoCrop에서 돌아올 시 보내줌
                 onNavigateToProfile = {
                     navController.navigate(ProfileRoute.Profile)
                 },
@@ -99,7 +97,9 @@ internal fun NavGraphBuilder.profileNavigation(
                     navController.popBackStack()
                 },
                 onCompleteSelected = { photoId : String ->
-//                    navController.navigate(ProfileRoute.ProfileMod(photoId)) // 얘가 String형 인자 받도록 수정해야 함.
+//                    navController.navigate(ProfileRoute.ProfileMod(photoId)) {
+//                        popUpTo(ProfileRoute.ProfileMod) { inclusive = false}
+//                    }
                 }
             )
         }

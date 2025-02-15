@@ -19,19 +19,12 @@ class PhotoCropViewModel @Inject constructor(
     override val container = container<PhotoCropState, PhotoCropSideEffect>(PhotoCropState())
 
 
-
 }
 
 data class PhotoCropState(
-    val albumList: List<Album> = mutableListOf()
+    val selectedPhotoUri: String = ""
 )
 
 sealed interface PhotoCropSideEffect {
-    data class NavigateToAlbumGrid(val albumId: String, val albumName: String) : PhotoCropSideEffect
+    data class NavigateToProfileMod(val selectedPhotoUri: String) : PhotoCropSideEffect
 }
-
-data class Album(
-    val id: String,
-    val name: String,
-    val coverUri: Uri
-)

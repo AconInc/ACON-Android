@@ -221,7 +221,7 @@ class ProfileModViewModel @Inject constructor(
 
     fun updateProfileImage(photoUri: String?) = intent {
         reduce {
-            state.copy(selectedPhotoUri = photoUri?.let { Uri.parse(it) })
+            state.copy(selectedPhotoUri = photoUri)
         }
     }
 
@@ -258,7 +258,7 @@ data class ProfileModState(
     val requestPhotoPermission: Boolean = false,
     val showPermissionDialog: Boolean = false,
 
-    val selectedPhotoUri: Uri? = null
+    val selectedPhotoUri: String? = null
     )
 
 sealed interface ProfileModSideEffect {

@@ -105,7 +105,7 @@ fun PhotoCropScreen(
                     Text(
                         text = "완료",
                         style = AconTheme.typography.subtitle1_16_med,
-                        color = AconTheme.color.Gray5
+                        color = AconTheme.color.White
                     )
                 }
             }
@@ -120,15 +120,14 @@ fun PhotoCropScreen(
             val imageHeight = maxHeight
             val imageHeightPx = with(LocalDensity.current) { imageHeight.toPx() }
 
-            val circleRadius = imageWidth / 2  // 원형 크기 = 화면 너비
-            val circleCenter = Offset(imageWidthPx / 2, imageHeightPx / 2) // 화면 중앙
+            val circleRadius = imageWidth / 2
+            val circleCenter = Offset(imageWidthPx / 2, imageHeightPx / 2)
 
             Box(
                 modifier = Modifier
                     .width(imageWidth)
                     .height(imageHeight)
             ) {
-                // 선택한 사진 표시
                 Image(
                     painter = rememberAsyncImagePainter(Uri.parse(photoId)),
                     modifier = Modifier.fillMaxSize(),
