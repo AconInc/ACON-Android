@@ -84,8 +84,7 @@ sealed interface ProfileUiState {
     data class Success(
         val profileImage: String ="",
         val aconCount: Int = 0,
-        val verifiedArea: String = "",
-        val isLogin: Boolean = false
+        val verifiedArea: String = ""
     ) : ProfileUiState
 
     data object Loading : ProfileUiState
