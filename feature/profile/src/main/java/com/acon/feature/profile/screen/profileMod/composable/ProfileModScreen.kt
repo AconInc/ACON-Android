@@ -68,6 +68,7 @@ import com.acon.feature.profile.R
 import com.acon.feature.profile.component.NicknameErrMessageRow
 import com.acon.feature.profile.component.ProfilePhotoBox
 import com.acon.feature.profile.component.VerifiedAreaChip
+import com.acon.feature.profile.screen.profileMod.NicknameStatus
 import com.acon.feature.profile.screen.profileMod.ProfileModSideEffect
 import com.acon.feature.profile.screen.profileMod.ProfileModState
 import com.acon.feature.profile.screen.profileMod.ProfileModViewModel
@@ -300,49 +301,45 @@ fun ProfileModScreen(
                         onTextChanged = onNicknameChanged,
                         onFocusChanged = onFocusChanged,
                         placeholder = "16자 이내 영문, 한글, 숫자, ., _만 사용 가능",
-                        isTyping = state.isTyping
+                        isTyping = (state.nicknameStatus == NicknameStatus.Typing)
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Row(
                         modifier = Modifier.fillMaxWidth()
                     ){
-                        // 에러 메시지 영역
-                        Column( // 에러 메시지를 세로로 나열
+                        Column(
                             modifier = Modifier.weight(1f),
                             verticalArrangement = Arrangement.Top,
                             horizontalAlignment = Alignment.Start
                         ) {
-                            if (state.hasInvalidChar) {
-                                NicknameErrMessageRow(
-                                    modifier = modifier,
-                                    iconRes = ImageVector.vectorResource(R.drawable.and_ic_error_20),
-                                    errMessage = "._ 이외의 특수기호는 사용할 수 없어요",
-                                    textColor = AconTheme.color.Error_red1
-                                )
-                            }
-                            if (state.hasInvalidLang) {
-                                NicknameErrMessageRow(
-                                    modifier = modifier,
-                                    iconRes = ImageVector.vectorResource(R.drawable.and_ic_error_20),
-                                    errMessage = "한국어, 영어 이외의 언어는 사용할 수 없어요",
-                                    textColor = AconTheme.color.Error_red1
-                                )
-                            }
-                            if (state.alreadyUsedName) {
-                                NicknameErrMessageRow(
-                                    modifier = modifier,
-                                    iconRes = ImageVector.vectorResource(R.drawable.and_ic_error_20),
-                                    errMessage = "이미 사용 중인 닉네임이에요",
-                                    textColor = AconTheme.color.Error_red1
-                                )
-                            }
-                            if (state.isNicknameValid) {
-                                NicknameErrMessageRow(
-                                    modifier = modifier,
-                                    iconRes = ImageVector.vectorResource(R.drawable.and_ic_local_check_mark_20),
-                                    errMessage = "사용할 수 있는 닉네임이에요",
-                                    textColor = AconTheme.color.Success_blue1
-                                )
+                            when (val status = state.nicknameStatus) {
+                                is NicknameStatus.Empty -> {
+                                    NicknameErrMessageRow(
+                                        modifier = modifier,
+                                        iconRes = ImageVector.vectorResource(R.drawable.and_ic_error_20),
+                                        errMessage = "닉네임을 입력해 주세요",
+                                        textColor = AconTheme.color.Error_red1
+                                    )
+                                }
+                                is NicknameStatus.Error -> {
+                                    status.errorTypes.forEach { error ->
+                                        NicknameErrMessageRow(
+                                            modifier = modifier,
+                                            iconRes = ImageVector.vectorResource(R.drawable.and_ic_error_20),
+                                            errMessage = error.message,
+                                            textColor = AconTheme.color.Error_red1
+                                        )
+                                    }
+                                }
+                                is NicknameStatus.Valid -> {
+                                    NicknameErrMessageRow(
+                                        modifier = modifier,
+                                        iconRes = ImageVector.vectorResource(R.drawable.and_ic_local_check_mark_20),
+                                        errMessage = "사용할 수 있는 닉네임이에요",
+                                        textColor = AconTheme.color.Success_blue1
+                                    )
+                                }
+                                else -> Unit //Typing 상태일 때는 표시 X
                             }
                         }
 
@@ -381,7 +378,7 @@ fun ProfileModScreen(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Icon(
-                                imageVector = if (state.isNicknameValid) ImageVector.vectorResource(R.drawable.and_ic_local_check_mark_20)
+                                imageVector = if (state.isBirthdayValid) ImageVector.vectorResource(R.drawable.and_ic_local_check_mark_20)
                                 else ImageVector.vectorResource(R.drawable.and_ic_error_20),
                                 contentDescription = "Error Icon",
                                 tint = AconTheme.color.Error_red1,
@@ -432,13 +429,13 @@ fun ProfileModScreen(
                 textStyle = AconTheme.typography.head8_16_sb,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 36.dp),
+                    .padding(bottom = 10.dp),
                 disabledBackgroundColor = AconTheme.color.Gray7,
                 enabledBackgroundColor = AconTheme.color.Gray5,
                 disabledTextColor = AconTheme.color.Gray5,
                 enabledTextColor = AconTheme.color.White,
                 onClick = onNavigateToProfile,
-                isEnabled = state.isNicknameValid && state.isBirthdayValid && state.verifiedAreaList.isNotEmpty()
+                isEnabled = (state.nicknameStatus == NicknameStatus.Valid) && state.isBirthdayValid && state.verifiedAreaList.isNotEmpty()
             )
         }
     }
