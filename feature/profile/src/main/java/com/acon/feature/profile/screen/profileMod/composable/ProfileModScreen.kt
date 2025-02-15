@@ -74,13 +74,19 @@ import org.orbitmvi.orbit.compose.collectAsState
 fun ProfileModScreenContainer(
     modifier: Modifier = Modifier,
     viewModel: ProfileModViewModel = hiltViewModel(),
-    selectedPhotoUri: String? = "",
+    selectedPhotoId: String? = "",
     onNavigateToProfile: () -> Unit = {},
     onNavigateToAreaVerification: () -> Unit = {},
     onNavigateToCustomGallery: () -> Unit = {},
 ) {
     val state = viewModel.collectAsState().value
     val context = LocalContext.current
+
+    LaunchedEffect(selectedPhotoId){ //갤러리 접근해서 사진 String 갖고 돌아오는 경우, ViewModel의 State 값에 uri로 parse해서 저장해줌
+        selectedPhotoId?.let {
+            viewModel.updateProfileImage(selectedPhotoId)
+        }
+    }
 
     LaunchedEffect(Unit) {
         viewModel.container.sideEffectFlow.collect { effect ->
@@ -97,9 +103,9 @@ fun ProfileModScreenContainer(
                 is ProfileModSideEffect.NavigateToCustomGallery -> {
                     onNavigateToCustomGallery()
                 }
-                is ProfileModSideEffect.UpdateProfileImage -> { //갤러리 접근해서 사진 String 갖고 돌아오는 경우, ViewModel의 State 값에 uri로 parse해서 저장해줌
-                    selectedPhotoUri?.let {
-                        viewModel.updateProfileImage(effect.imageUri)
+                is ProfileModSideEffect.UpdateProfileImage -> {
+                    selectedPhotoId?.let {
+                        viewModel.updateProfileImage(selectedPhotoId)
                     }
                 }
             }
@@ -242,15 +248,20 @@ fun ProfileModScreen(
                 modifier = Modifier.size(80.dp),
                 contentAlignment = Alignment.Center
             ){
-                if (state.selectedPhotoUri != null) {
-                    Image(
-                        painter = rememberAsyncImagePainter(Uri.parse(state.selectedPhotoUri)),
-                        modifier = Modifier.fillMaxSize().clip(CircleShape),
-                        contentDescription = "선택한 프로필 사진",
-                        contentScale = ContentScale.Crop
-                    )
+                if (state.selectedPhotoUri != "") {
+                    Box(
+                        modifier = Modifier
+                            .size(80.dp).clip(CircleShape)
+                    ) {
+                        Image(
+                            painter = rememberAsyncImagePainter(Uri.parse(state.selectedPhotoUri)),
+                            contentDescription = "선택한 프로필 사진",
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
                 } else {
-                    Icon( //crop을 해야할듯. 원형 모양으로
+                    Icon(
                         imageVector = ImageVector.vectorResource(R.drawable.img_profile_basic_80),
                         contentDescription = "Profile Image",
                         tint = Color.Unspecified,

@@ -1,11 +1,14 @@
 package com.acon.feature.profile.screen.profileMod
 
 import android.net.Uri
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.toRoute
 import com.acon.core.designsystem.component.textfield.TextFieldStatus
 import com.acon.domain.repository.UploadRepository
+import com.acon.feature.profile.ProfileRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -15,8 +18,11 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ProfileModViewModel @Inject constructor(
-    private val profileRepository: UploadRepository //바꿔야 함
+    private val profileRepository: UploadRepository, //바꿔야 함
+    savedStateHandle: SavedStateHandle
 ) : ViewModel(), ContainerHost<ProfileModState, ProfileModSideEffect> {
+
+    private val photoId = savedStateHandle.toRoute<ProfileRoute.ProfileMod>().photoId
 
     override val container = container<ProfileModState, ProfileModSideEffect>(ProfileModState())
 
@@ -219,9 +225,9 @@ class ProfileModViewModel @Inject constructor(
         }
     }
 
-    fun updateProfileImage(photoUri: String?) = intent {
+    fun updateProfileImage(selectedPhotoUri: String?) = intent {
         reduce {
-            state.copy(selectedPhotoUri = photoUri)
+            state.copy(selectedPhotoUri = selectedPhotoUri)
         }
     }
 

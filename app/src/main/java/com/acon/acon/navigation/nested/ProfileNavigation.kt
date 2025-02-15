@@ -27,7 +27,7 @@ internal fun NavGraphBuilder.profileNavigation(
 ) {
 
     navigation<ProfileRoute.Graph>(
-        startDestination = ProfileRoute.ProfileMod,
+        startDestination = ProfileRoute.ProfileMod.applyDefault(),
         enterTransition = {
             EnterTransition.None
         }, exitTransition = {
@@ -46,7 +46,7 @@ internal fun NavGraphBuilder.profileNavigation(
 
             ProfileModScreenContainer(
                 modifier = Modifier.fillMaxSize(),
-                //selectedPhotoUri = route.photoId ?: "", //PhotoCrop에서 돌아올 시 보내줌
+                selectedPhotoId = route.photoId,
                 onNavigateToProfile = {
                     navController.navigate(ProfileRoute.Profile)
                 },
@@ -97,9 +97,11 @@ internal fun NavGraphBuilder.profileNavigation(
                     navController.popBackStack()
                 },
                 onCompleteSelected = { photoId : String ->
-//                    navController.navigate(ProfileRoute.ProfileMod(photoId)) {
-//                        popUpTo(ProfileRoute.ProfileMod) { inclusive = false}
-//                    }
+                    navController.navigate(ProfileRoute.ProfileMod(photoId)) {
+                        popUpTo(ProfileRoute.ProfileMod.applySelectedPhotoId(photoId = photoId)) {
+                            inclusive = false
+                        }
+                    }
                 }
             )
         }
