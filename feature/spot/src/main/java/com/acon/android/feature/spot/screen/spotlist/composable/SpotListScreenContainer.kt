@@ -1,5 +1,7 @@
 package com.acon.android.feature.spot.screen.spotlist.composable
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -7,8 +9,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.acon.android.core.map.onLocationReady
+import com.acon.android.core.utils.feature.constants.AppURL
 import com.acon.android.core.utils.feature.permission.CheckAndRequestLocationPermission
-import com.acon.android.feature.spot.screen.spotlist.composable.SpotListScreen
+import com.acon.android.domain.repository.SocialRepository
 import com.acon.android.feature.spot.screen.spotlist.SpotListSideEffect
 import com.acon.android.feature.spot.screen.spotlist.SpotListUiState
 import com.acon.android.feature.spot.screen.spotlist.SpotListViewModel
@@ -17,13 +20,14 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
 fun SpotListScreenContainer(
+    socialRepository: SocialRepository,
     modifier: Modifier = Modifier,
+    onNavigateToAreaVerification: () -> Unit = {},
     onNavigateToSpotDetailScreen: (id: Long) -> Unit = {},
-    viewModel: SpotListViewModel = hiltViewModel()
+    viewModel: SpotListViewModel = hiltViewModel(),
 ) {
 
     val context = LocalContext.current
-
     val state by viewModel.collectAsState()
 
     CheckAndRequestLocationPermission(
@@ -43,7 +47,9 @@ fun SpotListScreenContainer(
             context.onLocationReady {
                 viewModel.onRefresh(it)
             }
-        }, onFilterBottomSheetShowStateChange = viewModel::onFilterBottomSheetStateChange,
+        },
+        onLoginBottomSheetShowStateChange = viewModel::onLoginBottomSheetShowStateChange,
+        onFilterBottomSheetShowStateChange = viewModel::onFilterBottomSheetStateChange,
         onResetFilter = {
             context.onLocationReady {
                 viewModel.onResetFilter(it)
@@ -54,12 +60,26 @@ fun SpotListScreenContainer(
                 viewModel.onCompleteFilter(it, condition, proceed)
             }
         },
-        onSpotItemClick = viewModel::onSpotItemClick
+        onSpotItemClick = viewModel::onSpotItemClick,
+        onTermOfUse = viewModel::onTermOfUse,
+        onPrivatePolicy = viewModel::onPrivatePolicy,
+        onGoogleSignIn = { viewModel.googleLogin(socialRepository) },
     )
 
     viewModel.collectSideEffect {
         when (it) {
-            is SpotListSideEffect.NavigateToSpotDetail -> onNavigateToSpotDetailScreen(it.id)
+            is SpotListSideEffect.NavigateToAreaVerification -> { onNavigateToAreaVerification() }
+            is SpotListSideEffect.NavigateToSpotDetail -> { onNavigateToSpotDetailScreen(it.id) }
+            is SpotListSideEffect.OnTermOfUse -> {
+                val url = AppURL.TERM_OF_USE
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                context.startActivity(intent)
+            }
+            is SpotListSideEffect.OnPrivatePolicy -> {
+                val url = AppURL.PRIVATE_POLICY
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                context.startActivity(intent)
+            }
         }
     }
 }

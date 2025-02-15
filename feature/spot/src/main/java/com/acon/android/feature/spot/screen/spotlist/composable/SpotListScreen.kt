@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
 import com.acon.android.core.designsystem.blur.LocalHazeState
 import com.acon.android.core.designsystem.blur.defaultHazeEffect
+import com.acon.android.core.designsystem.component.bottomsheet.LoginBottomSheet
 import com.acon.android.core.designsystem.component.loading.SkeletonItem
 import com.acon.android.core.designsystem.theme.AconTheme
 import com.acon.android.core.utils.feature.action.BackOnPressed
@@ -62,8 +63,12 @@ internal fun SpotListScreen(
     onRefresh: () -> Unit = {},
     onResetFilter: () -> Unit = {},
     onCompleteFilter: (ConditionState, () -> Unit) -> Unit = { _, _ -> },
+    onLoginBottomSheetShowStateChange: (Boolean) -> Unit = {},
     onFilterBottomSheetShowStateChange: (Boolean) -> Unit = {},
     onSpotItemClick: (id: Long) -> Unit = {},
+    onTermOfUse: () -> Unit = {},
+    onPrivatePolicy: () -> Unit = {},
+    onGoogleSignIn: () -> Unit = {}
 ) {
     val context = LocalContext.current
     val scrollState = rememberScrollState()
@@ -249,7 +254,7 @@ internal fun SpotListScreen(
                 }
             }
 
-            SpotListUiState.Loading -> {
+            is SpotListUiState.Loading -> {
                 Column(
                     modifier = Modifier
                         .verticalScroll(scrollState)
@@ -291,7 +296,135 @@ internal fun SpotListScreen(
                 }
             }
 
-            SpotListUiState.LoadFailed -> {
+            is SpotListUiState.Guest -> {
+                if (state.showLoginBottomSheet) {
+                    LoginBottomSheet(
+                        hazeState = LocalHazeState.current,
+                        onDismissRequest = { onLoginBottomSheetShowStateChange(false) },
+                        onGoogleSignIn = onGoogleSignIn,
+                        onTermOfUse = onTermOfUse,
+                        onPrivatePolicy = onPrivatePolicy
+                    )
+                }
+
+                val isResultEmpty by remember {
+                    derivedStateOf {
+                        state.spotList.isEmpty()
+                    }
+                }
+                Box(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    PullToRefresh(
+                        modifier = Modifier,
+                        state = rememberPullToRefreshState(state.isRefreshing),
+                        onRefresh = onRefresh,
+                        dragMultiplier = .35f,
+                        refreshTriggerDistance = 60.dp,
+                        refreshingOffset = 60.dp,
+                        indicator = { state, refreshTriggerDistance, _ ->
+                            SpotListPullToRefreshIndicator(refreshTriggerDistance, state)
+                        }
+                    ) {
+                        Column {
+                            Text(
+                                text = state.legalAddressName,
+                                style = AconTheme.typography.head5_22_sb,
+                                color = AconTheme.color.White,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .defaultHazeEffect(
+                                        hazeState = LocalHazeState.current,
+                                        tintColor = AconTheme.color.Dim_b_30,
+                                        backgroundColor = Color(0xFF25262A)
+                                    )
+                                    .padding(vertical = 14.dp, horizontal = 20.dp)
+                                    .padding(top = 44.dp),
+                            )
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .verticalScroll(scrollState)
+                                    .padding(horizontal = 20.dp)
+                                    .hazeSource(LocalHazeState.current)
+                                    .onSizeChanged { size ->
+                                        scrollableScreenHeightPx = size.height
+                                    }
+                            ) {
+                                if (isResultEmpty) {
+                                    EmptySpotListView(modifier = Modifier.fillMaxSize())
+                                } else {
+                                    Text(
+                                        text = stringResource(R.string.spot_recommendation_description),
+                                        style = AconTheme.typography.head6_20_sb,
+                                        color = AconTheme.color.White,
+                                        modifier = Modifier.padding(top = 16.dp)
+                                    )
+                                    Spacer(modifier = Modifier.height(12.dp))
+                                    state.spotList.fastForEach { spot ->
+                                        val isFirstRank = spot === state.spotList.first()
+                                        SpotItem(
+                                            spot = spot,
+                                            isFirstRank = isFirstRank,
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .aspectRatio(if (isFirstRank) 328f / 408f else 328f / 128f)
+                                                .clickable {
+                                                    onSpotItemClick(spot.id)
+                                                },
+                                        )
+                                        if (spot !== state.spotList.last())
+                                            Spacer(modifier = Modifier.height(12.dp))
+                                    }
+                                }
+                                Column(
+                                    modifier = Modifier
+                                        .padding(top = 12.dp)
+                                        .fillMaxWidth()
+                                        .onSizeChanged { size ->
+                                            scrollableInvisibleHeightPx = size.height
+                                        },
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    Text(
+                                        modifier = Modifier.padding(top = 38.dp, bottom = 50.dp),
+                                        text = stringResource(R.string.alert_max_spot_count),
+                                        style = AconTheme.typography.body2_14_reg,
+                                        color = AconTheme.color.Gray5
+                                    )
+                                }
+                            }
+                        }
+                        Column(
+                            modifier = Modifier
+                                .align(Alignment.BottomEnd)
+                                .padding(bottom = 16.dp)
+                                .padding(horizontal = 20.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Icon(
+                                imageVector = ImageVector.vectorResource(com.acon.android.core.designsystem.R.drawable.ic_filter_w_28),
+                                tint = AconTheme.color.White,
+                                contentDescription = stringResource(com.acon.android.core.designsystem.R.string.filter_content_description),
+                                modifier = Modifier
+                                    .clip(CircleShape)
+                                    .size(48.dp)
+                                    .defaultHazeEffect(
+                                        hazeState = LocalHazeState.current,
+                                        tintColor = AconTheme.color.Dim_b_30,
+                                        blurRadius = 8.dp
+                                    )
+                                    .clickable {
+                                        onLoginBottomSheetShowStateChange(true)
+                                    }
+                                    .padding(12.dp)
+                            )
+                        }
+                    }
+                }
+            }
+
+            is SpotListUiState.LoadFailed -> {
                 // TODO : 로드 실패 뷰
             }
         }
