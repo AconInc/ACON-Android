@@ -28,7 +28,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -209,6 +212,7 @@ fun ProfileModScreen(
     onProfileClicked: () -> Unit = {},
 ) {
     val focusManager = LocalFocusManager.current
+    val scrollState = rememberScrollState()
 
     //뒤로가기 눌렀을 때 다이얼로그 뜨게 처리
     BackHandler(enabled = true) {
@@ -241,198 +245,201 @@ fun ProfileModScreen(
                 )
             }
         )
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 10.dp),
-            horizontalArrangement = Arrangement.Center
+        
+        Box(
+            modifier = Modifier.weight(1f)
         ){
-            Spacer(modifier = Modifier.weight(1f))
-            Box(
-                modifier = Modifier.weight(1f).aspectRatio(1f),
-                contentAlignment = Alignment.Center
-            ){
-                ProfilePhotoBox(
-                    modifier = Modifier.fillMaxSize().align(Alignment.Center),
-                    photoUri = state.selectedPhotoUri
-                )
-                Icon(
-                    imageVector = ImageVector.vectorResource(R.drawable.and_ic_profile_img_edit),
-                    contentDescription = "Profile edit icon",
-                    tint = Color.Unspecified,
+            Column(
+                modifier = Modifier.fillMaxSize().verticalScroll(scrollState),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+
+                Row(
                     modifier = Modifier
-                        .align(alignment = Alignment.BottomEnd)
-                        .clickable{ onProfileClicked() }
-                )
+                        .fillMaxWidth()
+                        .padding(vertical = 10.dp),
+                    horizontalArrangement = Arrangement.Center
+                ){
+                    Spacer(modifier = Modifier.weight(1f))
+                    Box(
+                        modifier = Modifier.weight(1f).aspectRatio(1f),
+                        contentAlignment = Alignment.Center
+                    ){
+                        ProfilePhotoBox(
+                            modifier = Modifier.fillMaxSize().align(Alignment.Center),
+                            photoUri = state.selectedPhotoUri
+                        )
+                        Icon(
+                            imageVector = ImageVector.vectorResource(R.drawable.and_ic_profile_img_edit),
+                            contentDescription = "Profile edit icon",
+                            tint = Color.Unspecified,
+                            modifier = Modifier
+                                .align(alignment = Alignment.BottomEnd)
+                                .clickable{ onProfileClicked() }
+                        )
+                    }
+                    Spacer(modifier = Modifier.weight(1f))
+                }
+
+                //닉네임 입력 필드
+                Column(
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 15.dp),
+                ){
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Start
+                    ){
+                        Text(text = "닉네임", style = AconTheme.typography.head8_16_sb, color = AconTheme.color.White)
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(text = "*", style = AconTheme.typography.head8_16_sb, color = AconTheme.color.Main_org1)
+                    }
+                    Spacer(modifier = Modifier.height(12.dp))
+                    AconTextField(
+                        status = state.nickNameFieldStatus,
+                        text = state.nickNameState,
+                        onTextChanged = onNicknameChanged,
+                        onFocusChanged = onFocusChanged,
+                        placeholder = "16자 이내 영문, 한글, 숫자, ., _만 사용 가능",
+                        isTyping = state.isTyping
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth()
+                    ){
+                        // 에러 메시지 영역
+                        Column( // 에러 메시지를 세로로 나열
+                            modifier = Modifier.weight(1f),
+                            verticalArrangement = Arrangement.Top,
+                            horizontalAlignment = Alignment.Start
+                        ) {
+                            if (state.hasInvalidChar) {
+                                NicknameErrMessageRow(
+                                    modifier = modifier,
+                                    iconRes = ImageVector.vectorResource(R.drawable.and_ic_error_20),
+                                    errMessage = "._ 이외의 특수기호는 사용할 수 없어요",
+                                    textColor = AconTheme.color.Error_red1
+                                )
+                            }
+                            if (state.hasInvalidLang) {
+                                NicknameErrMessageRow(
+                                    modifier = modifier,
+                                    iconRes = ImageVector.vectorResource(R.drawable.and_ic_error_20),
+                                    errMessage = "한국어, 영어 이외의 언어는 사용할 수 없어요",
+                                    textColor = AconTheme.color.Error_red1
+                                )
+                            }
+                            if (state.alreadyUsedName) {
+                                NicknameErrMessageRow(
+                                    modifier = modifier,
+                                    iconRes = ImageVector.vectorResource(R.drawable.and_ic_error_20),
+                                    errMessage = "이미 사용 중인 닉네임이에요",
+                                    textColor = AconTheme.color.Error_red1
+                                )
+                            }
+                            if (state.isNicknameValid) {
+                                NicknameErrMessageRow(
+                                    modifier = modifier,
+                                    iconRes = ImageVector.vectorResource(R.drawable.and_ic_local_check_mark_20),
+                                    errMessage = "사용할 수 있는 닉네임이에요",
+                                    textColor = AconTheme.color.Success_blue1
+                                )
+                            }
+                        }
+
+                        //글자 수 카운드
+                        Row(
+                            horizontalArrangement = Arrangement.End
+                        ){
+                            Text(text = "${state.nickNameState.length}", style = AconTheme.typography.subtitle2_14_med, color = AconTheme.color.White)
+                            Text(text = "/16", style = AconTheme.typography.subtitle2_14_med, color = AconTheme.color.Gray5)
+                        }
+                    }
+                }
+
+                //생년월일 필드
+                Column(
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 15.dp),
+                ){
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Start
+                    ){
+                        Text(text = "생년월일", style = AconTheme.typography.head8_16_sb, color = AconTheme.color.White)
+                        Spacer(modifier = Modifier.width(4.dp))
+                    }
+                    Spacer(modifier = Modifier.height(12.dp))
+                    AconTextField(
+                        status = state.birthdayFieldStatus,
+                        text = state.birthdayState,
+                        onTextChanged = onBirthdayChanged,
+                        onFocusChanged = onFocusChanged,
+                        placeholder = "ex) 2025.01.01",
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    if (state.birthdayErrorMessages.isNotEmpty()){
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = if (state.isNicknameValid) ImageVector.vectorResource(R.drawable.and_ic_local_check_mark_20)
+                                else ImageVector.vectorResource(R.drawable.and_ic_error_20),
+                                contentDescription = "Error Icon",
+                                tint = AconTheme.color.Error_red1,
+                                modifier = Modifier
+                                    .padding(horizontal = 2.dp)
+                                    .size(16.dp)
+                            )
+                            Text(
+                                text = state.birthdayErrorMessages.first(),
+                                style = AconTheme.typography.subtitle2_14_med,
+                                color = AconTheme.color.Error_red1
+                            )
+                        }
+                    } else {
+                        Spacer(modifier = Modifier.height(4.dp))
+                    }
+                }
+
+                //동네인증 필드
+                Column(
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 15.dp),
+                ){
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Start
+                    ){
+                        Text(text = "인증 동네", style = AconTheme.typography.head8_16_sb, color = AconTheme.color.White)
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(text = "*", style = AconTheme.typography.head8_16_sb, color = AconTheme.color.Main_org1)
+                    }
+                    Spacer(modifier = Modifier.height(12.dp))
+                    VerifiedAreaChip(
+                        modifier = Modifier,
+                        areaList = state.verifiedAreaList,
+                        onAddArea = { onNavigateToAreaVerification() }, //동네인증 페이지로 이동
+                        onRemoveArea = onRemoveArea , //areaList에서 현재 동네를 삭제
+                        errorMessage = "로컬도토리를 위해 최소 1개의 동네를 인증해주세요"
+                    )
+                }
             }
-            Spacer(modifier = Modifier.weight(1f))
         }
 
         Column(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceBetween
+            modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 10.dp)
         ) {
-
-            //닉네임 입력 필드
-            Column(
-                modifier = Modifier.padding(horizontal = 16.dp).weight(1f),
-                verticalArrangement = Arrangement.SpaceEvenly
-            ){
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Start
-                ){
-                    Text(text = "닉네임", style = AconTheme.typography.head8_16_sb, color = AconTheme.color.White)
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(text = "*", style = AconTheme.typography.head8_16_sb, color = AconTheme.color.Main_org1)
-                }
-                Spacer(modifier = Modifier.height(12.dp))
-                AconTextField(
-                    status = state.nickNameFieldStatus,
-                    text = state.nickNameState,
-                    onTextChanged = onNicknameChanged,
-                    onFocusChanged = onFocusChanged,
-                    placeholder = "16자 이내 영문, 한글, 숫자, ., _만 사용 가능",
-                    isTyping = state.isTyping
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth()
-                ){
-                    // 에러 메시지 영역
-                    Column( // 에러 메시지를 세로로 나열
-                        modifier = Modifier.weight(1f),
-                        verticalArrangement = Arrangement.Top,
-                        horizontalAlignment = Alignment.Start
-                    ) {
-                        if (state.hasInvalidChar) {
-                            NicknameErrMessageRow(
-                                modifier = modifier,
-                                iconRes = ImageVector.vectorResource(R.drawable.and_ic_error_20),
-                                errMessage = "._ 이외의 특수기호는 사용할 수 없어요",
-                                textColor = AconTheme.color.Error_red1
-                            )
-                        }
-                        if (state.hasInvalidLang) {
-                            NicknameErrMessageRow(
-                                modifier = modifier,
-                                iconRes = ImageVector.vectorResource(R.drawable.and_ic_error_20),
-                                errMessage = "한국어, 영어 이외의 언어는 사용할 수 없어요",
-                                textColor = AconTheme.color.Error_red1
-                            )
-                        }
-                        if (state.alreadyUsedName) {
-                            NicknameErrMessageRow(
-                                modifier = modifier,
-                                iconRes = ImageVector.vectorResource(R.drawable.and_ic_error_20),
-                                errMessage = "이미 사용 중인 닉네임이에요",
-                                textColor = AconTheme.color.Error_red1
-                            )
-                        }
-                        if (state.isNicknameValid) {
-                            NicknameErrMessageRow(
-                                modifier = modifier,
-                                iconRes = ImageVector.vectorResource(R.drawable.and_ic_local_check_mark_20),
-                                errMessage = "사용할 수 있는 닉네임이에요",
-                                textColor = AconTheme.color.Success_blue1
-                            )
-                        }
-                    }
-
-                    //글자 수 카운드
-                    Row(
-                        horizontalArrangement = Arrangement.End
-                    ){
-                        Text(text = "${state.nickNameState.length}", style = AconTheme.typography.subtitle2_14_med, color = AconTheme.color.White)
-                        Text(text = "/16", style = AconTheme.typography.subtitle2_14_med, color = AconTheme.color.Gray5)
-                    }
-                }
-            }
-
-            //생년월일 필드
-            Column(
-                modifier = Modifier.padding(horizontal = 16.dp).weight(1f),
-                verticalArrangement = Arrangement.SpaceEvenly
-            ){
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Start
-                ){
-                    Text(text = "생년월일", style = AconTheme.typography.head8_16_sb, color = AconTheme.color.White)
-                    Spacer(modifier = Modifier.width(4.dp))
-                }
-                Spacer(modifier = Modifier.height(12.dp))
-                AconTextField(
-                    status = state.birthdayFieldStatus,
-                    text = state.birthdayState,
-                    onTextChanged = onBirthdayChanged,
-                    onFocusChanged = onFocusChanged,
-                    placeholder = "ex) 2025.01.01",
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                if (state.birthdayErrorMessages.isNotEmpty()){
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            imageVector = if (state.isNicknameValid) ImageVector.vectorResource(R.drawable.and_ic_local_check_mark_20)
-                            else ImageVector.vectorResource(R.drawable.and_ic_error_20),
-                            contentDescription = "Error Icon",
-                            tint = AconTheme.color.Error_red1,
-                            modifier = Modifier
-                                .padding(horizontal = 2.dp)
-                                .size(16.dp)
-                        )
-                        Text(
-                            text = state.birthdayErrorMessages.first(),
-                            style = AconTheme.typography.subtitle2_14_med,
-                            color = AconTheme.color.Error_red1
-                        )
-                    }
-                }
-            }
-
-            //동네인증 필드
-            Column(
-                modifier = Modifier.padding(horizontal = 16.dp).weight(1f)
-            ){
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Start
-                ){
-                    Text(text = "인증 동네", style = AconTheme.typography.head8_16_sb, color = AconTheme.color.White)
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(text = "*", style = AconTheme.typography.head8_16_sb, color = AconTheme.color.Main_org1)
-                }
-                Spacer(modifier = Modifier.height(12.dp))
-                VerifiedAreaChip(
-                    modifier = Modifier,
-                    areaList = state.verifiedAreaList,
-                    onAddArea = { onNavigateToAreaVerification() }, //동네인증 페이지로 이동
-                    onRemoveArea = onRemoveArea , //areaList에서 현재 동네를 삭제
-                    errorMessage = "로컬도토리를 위해 최소 1개의 동네를 인증해주세요"
-                )
-            }
-
-            Column(
-                modifier = Modifier.padding(horizontal = 16.dp)
-            ) {
-                AconFilledLargeButton(
-                    text = "저장",
-                    textStyle = AconTheme.typography.head8_16_sb,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 36.dp),
-                    disabledBackgroundColor = AconTheme.color.Gray7,
-                    enabledBackgroundColor = AconTheme.color.Gray5,
-                    disabledTextColor = AconTheme.color.Gray5,
-                    enabledTextColor = AconTheme.color.White,
-                    onClick = onNavigateToProfile,
-                    isEnabled = state.isNicknameValid && state.isBirthdayValid && state.verifiedAreaList.isNotEmpty()
-                )
-            }
+            AconFilledLargeButton(
+                text = "저장",
+                textStyle = AconTheme.typography.head8_16_sb,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 36.dp),
+                disabledBackgroundColor = AconTheme.color.Gray7,
+                enabledBackgroundColor = AconTheme.color.Gray5,
+                disabledTextColor = AconTheme.color.Gray5,
+                enabledTextColor = AconTheme.color.White,
+                onClick = onNavigateToProfile,
+                isEnabled = state.isNicknameValid && state.isBirthdayValid && state.verifiedAreaList.isNotEmpty()
+            )
         }
     }
 }
