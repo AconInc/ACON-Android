@@ -417,7 +417,7 @@ fun ProfileModScreen(
             }
 
             Column(
-                modifier = Modifier.padding(top = 20.dp)
+                modifier = Modifier.padding(horizontal = 16.dp)
             ) {
                 AconFilledLargeButton(
                     text = "저장",
