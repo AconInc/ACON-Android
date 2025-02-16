@@ -17,8 +17,7 @@ import kotlin.coroutines.cancellation.CancellationException
 @OptIn(OrbitExperimental::class)
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
-    private val userRepository: UserRepository
-    private val authRepository: AuthRepository,
+    private val userRepository: UserRepository,
     private val profileRepository: ProfileRepository
 ) : BaseContainerHost<ProfileUiState, ProfileUiSideEffect>() {
 
@@ -55,7 +54,7 @@ class ProfileViewModel @Inject constructor(
             }
     }
 
-    fun fetchUserProfileInfo() = intent {
+    private fun fetchUserProfileInfo() = intent {
         viewModelScope.launch {
             profileRepository.fetchProfile()
                 .onSuccess { profile ->
