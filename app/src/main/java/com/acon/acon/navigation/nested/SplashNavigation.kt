@@ -4,10 +4,10 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import com.acon.acon.feature.signin.screen.SignInRoute
+import com.acon.acon.feature.signin.splash.SplashScreenContainer
+import com.acon.acon.feature.spot.SpotRoute
 import com.acon.acon.navigation.route.SplashRoute
-import com.acon.feature.signin.screen.SignInRoute
-import com.acon.feature.signin.splash.SplashScreenContent
-import com.acon.feature.spot.com.acon.feature.spot.SpotRoute
 
 internal fun NavGraphBuilder.splashNavigationNavigation(
     navController: NavHostController
@@ -16,7 +16,7 @@ internal fun NavGraphBuilder.splashNavigationNavigation(
         startDestination = SplashRoute.Splash
     ) {
         composable<SplashRoute.Splash> {
-            SplashScreenContent(
+            SplashScreenContainer(
                 navigationToSignIn = {
                     navController.navigate(SignInRoute.Graph) {
                         popUpTo(SignInRoute.Graph) {

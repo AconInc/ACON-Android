@@ -1,5 +1,7 @@
 package com.acon.acon.navigation
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -9,48 +11,57 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.acon.acon.core.designsystem.animation.defaultEnterTransition
+import com.acon.acon.core.designsystem.animation.defaultExitTransition
+import com.acon.acon.core.designsystem.animation.defaultPopEnterTransition
+import com.acon.acon.core.designsystem.animation.defaultPopExitTransition
+import com.acon.acon.core.designsystem.blur.LocalHazeState
+import com.acon.acon.core.designsystem.blur.defaultHazeEffect
+import com.acon.acon.core.designsystem.blur.rememberHazeState
+import com.acon.acon.core.designsystem.component.bottomsheet.LoginBottomSheet
+import com.acon.acon.core.designsystem.theme.AconTheme
+import com.acon.acon.core.utils.feature.constants.AppURL
+import com.acon.acon.domain.repository.AuthRepository
+import com.acon.acon.domain.repository.SocialRepository
+import com.acon.acon.feature.areaverification.AreaVerificationRoute
+import com.acon.acon.feature.profile.composable.ProfileRoute
+import com.acon.acon.feature.signin.screen.SignInRoute
+import com.acon.acon.feature.spot.SpotRoute
+import com.acon.acon.feature.upload.UploadRoute
 import com.acon.acon.navigation.bottom.BottomBar
 import com.acon.acon.navigation.bottom.BottomNavType
 import com.acon.acon.navigation.nested.areaVerificationNavigation
 import com.acon.acon.navigation.nested.onboardingNavigationNavigation
 import com.acon.acon.navigation.nested.profileNavigation
+import com.acon.acon.navigation.nested.settingsNavigation
 import com.acon.acon.navigation.nested.signInNavigationNavigation
 import com.acon.acon.navigation.nested.splashNavigationNavigation
 import com.acon.acon.navigation.nested.spotNavigation
 import com.acon.acon.navigation.nested.uploadNavigation
-import com.acon.feature.spot.com.acon.feature.spot.SpotRoute
-import com.acon.feature.upload.UploadRoute
-import com.acon.core.designsystem.animation.defaultEnterTransition
-import com.acon.core.designsystem.animation.defaultExitTransition
-import com.acon.core.designsystem.animation.defaultPopEnterTransition
-import com.acon.core.designsystem.animation.defaultPopExitTransition
-import com.acon.core.designsystem.blur.LocalHazeState
-import com.acon.core.designsystem.blur.defaultHazeEffect
-import com.acon.core.designsystem.blur.rememberHazeState
-import com.acon.core.designsystem.theme.AconTheme
-import com.acon.domain.repository.GoogleTokenRepository
-import com.acon.feature.areaverification.AreaVerificationRoute
-import com.acon.feature.onboarding.OnboardingRoute
-import com.acon.feature.profile.ProfileRoute
-import com.acon.feature.signin.screen.SignInRoute
+import kotlinx.coroutines.launch
 
 @Composable
 fun AconNavigation(
     modifier: Modifier = Modifier,
     navController: NavHostController,
-    googleTokenRepository: GoogleTokenRepository,
+    socialRepository: SocialRepository,
+    authRepository: AuthRepository,
+    onGoogleSignIn: () -> Unit = {}
 ) {
 
     val backStackEntry by navController.currentBackStackEntryAsState()
@@ -59,7 +70,45 @@ fun AconNavigation(
 
     val hazeState = rememberHazeState()
 
+    val context = LocalContext.current
+    val isLogin = authRepository.getLoginState().collectAsState()
+    var showLoginBottomSheet by remember { mutableStateOf(false) }
+    val coroutineScope = rememberCoroutineScope()
+
     CompositionLocalProvider(LocalHazeState provides hazeState) {
+        if(showLoginBottomSheet) {
+            LoginBottomSheet(
+                hazeState = LocalHazeState.current,
+                onDismissRequest = { showLoginBottomSheet = false },
+                onGoogleSignIn = {
+                    coroutineScope.launch {
+                        socialRepository.signIn()
+                            .onSuccess {
+                                showLoginBottomSheet = false
+                                navController.navigate(AreaVerificationRoute.RequireAreaVerification) {
+                                   popUpTo<AreaVerificationRoute.Graph>{
+                                       inclusive = true
+                                   }
+                                }
+                            }
+                            .onFailure {
+                                showLoginBottomSheet = false
+                            }
+                    }
+                },
+                onTermOfUse = {
+                    val url = AppURL.TERM_OF_USE
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                    context.startActivity(intent)
+                },
+                onPrivatePolicy = {
+                    val url = AppURL.PRIVATE_POLICY
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                    context.startActivity(intent)
+                }
+            )
+        }
+
         Scaffold(
             containerColor = AconTheme.color.Gray9,
             modifier = modifier.navigationBarsPadding(),
@@ -72,15 +121,23 @@ fun AconNavigation(
                         modifier = Modifier
                             .background(color = AconTheme.color.Black)  // TODO Color?
                             .fillMaxWidth()
-                            .defaultHazeEffect(hazeState = LocalHazeState.current, tintColor = AconTheme.color.Dim_b_30),
+                            .defaultHazeEffect(
+                                hazeState = LocalHazeState.current,
+                                tintColor = AconTheme.color.Dim_b_30
+                            ),
                         selectedItem = selectedBottomNavItem,
-                        onItemClick = {
-                            if (it == BottomNavType.UPLOAD) {
-                                navController.navigate(UploadRoute.Upload)
+                        onItemClick = { item ->
+                            if (item == BottomNavType.UPLOAD) {
+                                if(isLogin.value) {
+                                    navController.navigate(UploadRoute.Upload)
+                                } else {
+                                    showLoginBottomSheet = true
+
+                                }
                             } else {
-                                selectedBottomNavItem = it
+                                selectedBottomNavItem = item
                                 navController.navigate(
-                                    when (it) {
+                                    when (item) {
                                         BottomNavType.SPOT -> SpotRoute.SpotList
                                         BottomNavType.PROFILE -> ProfileRoute.Profile
                                         else -> SpotRoute.SpotList
@@ -111,17 +168,19 @@ fun AconNavigation(
             ) {
                 splashNavigationNavigation(navController)
 
-                signInNavigationNavigation(navController, googleTokenRepository)
+                signInNavigationNavigation(navController, socialRepository)
 
                 areaVerificationNavigation(navController)
 
                 onboardingNavigationNavigation(navController)
 
-                spotNavigation(navController)
+                spotNavigation(navController, socialRepository)
 
                 uploadNavigation(navController)
 
-                profileNavigation(navController)
+                profileNavigation(navController, socialRepository)
+
+                settingsNavigation(navController)
             }
         }
     }

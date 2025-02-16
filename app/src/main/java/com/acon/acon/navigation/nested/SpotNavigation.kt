@@ -6,12 +6,15 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.acon.feature.spot.com.acon.feature.spot.SpotRoute
-import com.acon.feature.spot.screen.spotdetail.composable.SpotDetailScreenContainer
-import com.acon.feature.spot.screen.spotlist.composable.SpotListScreenContainer
+import com.acon.acon.domain.repository.SocialRepository
+import com.acon.acon.feature.areaverification.AreaVerificationRoute
+import com.acon.acon.feature.spot.SpotRoute
+import com.acon.acon.feature.spot.screen.spotdetail.composable.SpotDetailScreenContainer
+import com.acon.acon.feature.spot.screen.spotlist.composable.SpotListScreenContainer
 
 internal fun NavGraphBuilder.spotNavigation(
-    navController: NavHostController
+    navController: NavHostController,
+    socialRepository: SocialRepository
 ) {
 
     navigation<SpotRoute.Graph>(
@@ -19,7 +22,15 @@ internal fun NavGraphBuilder.spotNavigation(
     ) {
         composable<SpotRoute.SpotList>{
             SpotListScreenContainer(
+                socialRepository = socialRepository,
                 modifier = Modifier.fillMaxSize(),
+                onNavigateToAreaVerification = {
+                    navController.navigate(AreaVerificationRoute.RequireAreaVerification) {
+                        popUpTo(SpotRoute.Graph) {
+                            inclusive = true
+                        }
+                    }
+                },
                 onNavigateToSpotDetailScreen = {
                     navController.navigate(SpotRoute.SpotDetail(it))
                 }
@@ -29,14 +40,9 @@ internal fun NavGraphBuilder.spotNavigation(
         composable<SpotRoute.SpotDetail> {
             SpotDetailScreenContainer(
                 onNavigateToSpotListView = {
-                    navController.navigate(SpotRoute.Graph) {
-                        popUpTo(SpotRoute.Graph) {
-                            inclusive = true
-                        }
-                    }
+                    navController.popBackStack()
                 },
             )
-
         }
     }
 }
