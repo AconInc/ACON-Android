@@ -27,8 +27,12 @@ class SignInViewModel @Inject constructor(
     fun googleLogin(socialRepository: SocialRepository) = intent {
         socialRepository.signIn()
             .onSuccess {
-                reduce { SignInUiState.Success }
-                postSideEffect(SignInSideEffect.NavigateToAreaVerification)
+                Log.d("로그","hasVerifiedArea : ${it.hasVerifiedArea}")
+                if(it.hasVerifiedArea) {
+                    postSideEffect(SignInSideEffect.NavigateToSpotListView)
+                } else {
+                    postSideEffect(SignInSideEffect.NavigateToAreaVerification)
+                }
             }
             .onFailure { error ->
                 when (error) {
