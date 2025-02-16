@@ -84,6 +84,15 @@ class TokenLocalDataSource @Inject constructor(
         }
     }
 
+    suspend fun removeAllTokens() = withContext(dispatchersIO) {
+        with(sharedPreferences.edit()) {
+            remove(SHARED_PREF_GOOGLE_ID_KEY)
+            remove(SHARED_PREF_KEY)
+            remove(SHARED_PREF_REFRESH_KEY)
+            apply()
+        }
+    }
+
     companion object {
         private const val SHARED_PREF_FILENAME = "token"
         private const val SHARED_PREF_GOOGLE_ID_KEY = "googleIdToken"

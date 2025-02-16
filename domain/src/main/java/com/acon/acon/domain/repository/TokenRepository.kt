@@ -10,4 +10,5 @@ interface TokenRepository {
     suspend fun removeGoogleIdToken(): Result<Unit>
     suspend fun removeAccessToken(): Result<Unit>
     suspend fun removeRefreshToken(): Result<Unit>
+    suspend fun removeAllToken(): Result<Unit>
 }
