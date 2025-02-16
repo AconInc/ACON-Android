@@ -8,7 +8,7 @@ plugins {
 }
 
 android {
-    namespace = "com.acon.android.feature.areaverification"
+    namespace = "com.acon.acon.feature.areaverification"
     compileSdk = 35
 
     defaultConfig {

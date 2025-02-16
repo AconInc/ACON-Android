@@ -8,7 +8,7 @@ plugins {
 }
 
 android {
-    namespace = "com.acon.android.feature.profile"
+    namespace = "com.acon.acon.feature.profile"
     compileSdk = 35
 
     defaultConfig {

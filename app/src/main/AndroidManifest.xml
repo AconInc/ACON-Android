@@ -16,15 +16,14 @@
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:name="com.acon.android.AconApplication"
+        android:name="com.acon.acon.AconApplication"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Acon"
         tools:targetApi="31">
         <activity
-            android:name="com.acon.android.MainActivity"
+            android:name="com.acon.acon.MainActivity"
             android:exported="true"
-            android:label="@string/app_name"
             android:theme="@style/Theme.Acon">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

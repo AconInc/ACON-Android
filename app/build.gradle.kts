@@ -15,11 +15,11 @@ val localProperties = Properties().apply {
 }
 
 android {
-    namespace = "com.acon.android"
+    namespace = "com.acon.acon"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.acon.android"
+        applicationId = "com.acon.acon"
         minSdk = 28
         targetSdk = 35
         versionCode = 1
