@@ -10,6 +10,7 @@ import com.acon.acon.data.remote.UploadApi
 import com.acon.acon.core.common.Auth
 import com.acon.acon.core.common.Naver
 import com.acon.acon.core.common.NoAuth
+import com.acon.acon.data.remote.ProfileApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -65,6 +66,14 @@ internal object ApiModule {
         @Auth retrofit: Retrofit
     ): AreaVerificationApi {
         return retrofit.create(AreaVerificationApi::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun providesProfileApi(
+        @Auth retrofit: Retrofit
+    ): ProfileApi {
+        return retrofit.create(ProfileApi::class.java)
     }
 
     @Singleton
