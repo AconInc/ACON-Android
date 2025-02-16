@@ -1,6 +1,6 @@
-package com.acon.data.api.remote
+package com.acon.acon.data.remote
 
-import com.acon.data.dto.response.profile.ProfileResponse
+import com.acon.acon.data.dto.response.profile.ProfileResponse
 import retrofit2.http.GET
 
 interface ProfileApi {

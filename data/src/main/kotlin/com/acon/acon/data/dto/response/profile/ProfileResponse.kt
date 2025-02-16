@@ -1,7 +1,7 @@
-package com.acon.data.dto.response.profile
+package com.acon.acon.data.dto.response.profile
 
-import com.acon.domain.model.profile.Profile
-import com.acon.domain.model.profile.VerifiedArea
+import com.acon.acon.domain.model.profile.Profile
+import com.acon.acon.domain.model.profile.VerifiedArea
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 

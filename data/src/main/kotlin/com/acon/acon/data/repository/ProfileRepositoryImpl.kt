@@ -1,8 +1,8 @@
-package com.acon.data.repository
+package com.acon.acon.data.repository
 
-import com.acon.data.datasource.remote.ProfileRemoteDataSource
-import com.acon.data.error.runCatchingWith
-import com.acon.domain.model.profile.Profile
+import com.acon.acon.data.datasource.remote.ProfileRemoteDataSource
+import com.acon.acon.data.error.runCatchingWith
+import com.acon.acon.domain.model.profile.Profile
 import javax.inject.Inject
 
 class ProfileRepositoryImpl @Inject constructor(

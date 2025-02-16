@@ -1,4 +1,4 @@
-package com.acon.domain.model.profile
+package com.acon.acon.domain.model.profile
 
 import androidx.compose.runtime.Immutable
 

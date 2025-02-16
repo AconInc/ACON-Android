@@ -1,7 +1,7 @@
-package com.acon.data.datasource.remote
+package com.acon.acon.data.datasource.remote
 
-import com.acon.data.api.remote.ProfileApi
-import com.acon.data.dto.response.profile.ProfileResponse
+import com.acon.acon.data.remote.ProfileApi
+import com.acon.acon.data.dto.response.profile.ProfileResponse
 import javax.inject.Inject
 
 class ProfileRemoteDataSource @Inject constructor(
