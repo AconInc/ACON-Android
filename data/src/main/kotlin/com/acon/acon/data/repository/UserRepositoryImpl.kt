@@ -2,7 +2,7 @@ package com.acon.acon.data.repository
 
 import com.acon.acon.data.datasource.local.TokenLocalDataSource
 import com.acon.acon.data.datasource.remote.UserRemoteDataSource
-import com.acon.acon.data.dto.request.GoogleTokenRequest
+import com.acon.acon.data.dto.request.LoginRequest
 import com.acon.acon.data.error.runCatchingWith
 import com.acon.acon.domain.error.user.PostLoginError
 import com.acon.acon.domain.repository.UserRepository
@@ -26,7 +26,7 @@ class UserRepositoryImpl @Inject constructor(
     ): Result<Unit> {
         return runCatchingWith(*PostLoginError.createErrorInstances()) {
             val googleLoginResponse = userRemoteDataSource.postLogin(
-                GoogleTokenRequest(
+                LoginRequest(
                     socialType = socialType,
                     idToken = idToken
                 )
