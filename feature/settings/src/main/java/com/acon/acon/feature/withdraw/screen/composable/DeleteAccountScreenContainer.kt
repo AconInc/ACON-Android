@@ -3,7 +3,10 @@ package com.acon.acon.feature.withdraw.screen.composable
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.acon.acon.core.utils.feature.toast.showToast
+import com.acon.acon.feature.settings.R
 import com.acon.acon.feature.withdraw.screen.DeleteAccountSideEffect
 import com.acon.acon.feature.withdraw.screen.DeleteAccountViewModel
 import org.orbitmvi.orbit.compose.collectAsState
@@ -17,11 +20,13 @@ fun DeleteAccountScreenContainer(
     viewModel: DeleteAccountViewModel = hiltViewModel()
 
 ) {
+    val context = LocalContext.current
     val state by viewModel.collectAsState()
 
     DeleteAccountScreen(
         state = state,
         modifier = modifier,
+        onUpdateReason = viewModel::updateReason,
         navigateBack = viewModel::navigateBack,
         onDeleteAccount = viewModel::onDeleteAccount,
         onBottomSheetShowStateChange = viewModel::onDeleteAccountBottomSheetShowStateChange
@@ -29,6 +34,7 @@ fun DeleteAccountScreenContainer(
 
     viewModel.collectSideEffect {
         when(it) {
+            is DeleteAccountSideEffect.ShowToastMessage -> { context.showToast(R.string.settings_delete_account_failed)  }
             is DeleteAccountSideEffect.NavigateToSettings -> navigateToSettings()
             is DeleteAccountSideEffect.NavigateToSignIn -> navigateToSignIn()
         }

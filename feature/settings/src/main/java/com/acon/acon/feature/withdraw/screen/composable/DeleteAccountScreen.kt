@@ -55,6 +55,7 @@ import kotlinx.coroutines.launch
 fun DeleteAccountScreen(
     state: DeleteAccountUiState,
     modifier: Modifier = Modifier,
+    onUpdateReason: (String) -> Unit = {},
     navigateBack: () -> Unit = {},
     onDeleteAccount: () -> Unit = {},
     onBottomSheetShowStateChange: (Boolean) -> Unit = {}
@@ -138,15 +139,19 @@ fun DeleteAccountScreen(
                         verticalArrangement = Arrangement.spacedBy(20.dp)
                     ) {
                         DeleteReasonType.entries.forEach { reasonType ->
+                            val reason = stringResource(reasonType.reason)
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
                             ) {
                                 AconRadioButton(
                                     selected = selectedReason == reasonType,
-                                    onClick = { selectedReason = reasonType }
+                                    onClick = {
+                                        selectedReason = reasonType
+                                        onUpdateReason(reason)
+                                    }
                                 )
                                 Text(
-                                    text = stringResource(reasonType.reason),
+                                    text = reason,
                                     style = AconTheme.typography.subtitle1_16_med,
                                     color = AconTheme.color.White,
                                     modifier = Modifier.padding(
@@ -175,7 +180,7 @@ fun DeleteAccountScreen(
                                                     bringIntoViewRequester.bringIntoView()
                                                 }
                                             }
-                                        }
+                                        } else { onUpdateReason(otherReasonText) }
                                     }
                             )
                         }
