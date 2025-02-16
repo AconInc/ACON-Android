@@ -39,8 +39,11 @@ class ProfileModViewModel @Inject constructor(
                 this in 'A'..'Z' ||
                 this in '0'..'9' ||
                 this in '가'..'힣' ||
+                this in 'ㄱ'..'ㅎ' ||
+                this in 'ㅏ'..'ㅣ' ||
                 this == '.' || this == '_'
     }
+
 
     private var nicknameValidationJob: Job? = null
 
@@ -62,7 +65,10 @@ class ProfileModViewModel @Inject constructor(
             if (text.any { it in "!@#$%^&*()-=+[]{};:'\",<>/?\\|" }) {
                 errors.add(NicknameErrorType.InvalidChar)
             }
-            if (text.any { it !in 'a'..'z' && it !in 'A'..'Z' && it !in '0'..'9' && it !in '가'..'힣' && it !in listOf('.', '_') }) {
+
+            val allowedChars = (33..126).map { it.toChar() } +
+                    ('가'..'힣') + ('ㄱ'..'ㅎ') + ('ㅏ'..'ㅣ')
+            if (text.any { it !in allowedChars }) {
                 errors.add(NicknameErrorType.InvalidLang)
             }
 
@@ -88,7 +94,6 @@ class ProfileModViewModel @Inject constructor(
         reduce {
             state.copy(birthdayState = formattedText)
         }
-
 
         if (formattedText.length == 10) {
             if (validateBirthday(formattedText)) {

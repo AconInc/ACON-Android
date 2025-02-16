@@ -379,6 +379,7 @@ fun ProfileModScreen(
                             Spacer(modifier = Modifier.height(4.dp))
                         }
                         is BirthdayStatus.Invalid -> {
+
                             NicknameErrMessageRow(
                                 modifier = modifier,
                                 iconRes = ImageVector.vectorResource(R.drawable.and_ic_error_20),
