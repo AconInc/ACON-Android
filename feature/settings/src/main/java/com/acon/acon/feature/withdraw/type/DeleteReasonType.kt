@@ -8,6 +8,6 @@ enum class DeleteReasonType(
 ) {
     FEW_RESTAURANTS(reason = R.string.reason_few_restaurants),
     UNSATISFIED_RECOMMENDATIONS(reason = R.string.reason_unsatisfied_recommendations),
-    FAKE_REVIEWS(reason = R.string.reason_few_restaurants),
+    FAKE_REVIEWS(reason = R.string.reason_fake_reviews),
     OTHER(reason = R.string.reason_other)
 }
