@@ -4,10 +4,10 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.acon.feature.spot.com.acon.feature.spot.SpotRoute
-import com.acon.feature.upload.UploadRoute
-import com.acon.feature.upload.UploadContainer
-import com.acon.feature.upload.UploadSuccessContainer
+import com.acon.acon.feature.spot.SpotRoute
+import com.acon.acon.feature.upload.UploadContainer
+import com.acon.acon.feature.upload.UploadRoute
+import com.acon.acon.feature.upload.UploadSuccessContainer
 
 internal fun NavGraphBuilder.uploadNavigation(
     navController: NavHostController

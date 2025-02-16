@@ -13,7 +13,7 @@ val localProperties = Properties().apply {
 }
 
 android {
-    namespace = "com.acon.data"
+    namespace = "com.acon.acon.data"
     compileSdk = 35
 
     defaultConfig {

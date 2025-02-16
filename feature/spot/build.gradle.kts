@@ -8,7 +8,7 @@ plugins {
 }
 
 android {
-    namespace = "com.acon.feature.spot"
+    namespace = "com.acon.acon.feature.spot"
     compileSdk = 35
 
     defaultConfig {

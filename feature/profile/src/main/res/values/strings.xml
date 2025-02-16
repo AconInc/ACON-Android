@@ -1,5 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="you_need_login">로그인이 필요해요</string>
+    <string name="profile_topbar">프로필</string>
+    <string name="edit_profile">프로필 수정하기</string>
 
-    <string name="alert_profile_preparing">지금은 공사중이에요!</string>
+    <!-- profileInfo -->
+    <string name="profile_info_your_acon_count">보유한 도토리 수</string>
+    <string name="profile_info_max_acon_count">/25</string>
+    <string name="profile_info_my_verified_neighborhood">나의 인증 동네</string>
+    <string name="profile_info_not_verified">미인증</string>
+    <string name="profile_info_not_verified_acon_count">\??\</string>
+
+    <!-- content description -->
+    <string name="content_description_your_acon_count">보유한 도토리 수</string>
+    <string name="content_description_my_verified_neighborhood">나의 인증 동네</string>
+    <string name="content_description_profile_image">프로필 이미지</string>
+    <string name="content_description_default_profile_image">기본 프로필 이미지</string>
+    <string name="content_description_edit_profile">프로필 수정</string>
+    <string name="content_description_settings">설정 화면 이동</string>
+    <string name="content_description_go_login">로그인 창으로 이동</string>
 </resources>

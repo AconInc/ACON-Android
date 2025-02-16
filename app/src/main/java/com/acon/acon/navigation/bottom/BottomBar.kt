@@ -18,8 +18,8 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
-import com.acon.core.designsystem.noRippleClickable
-import com.acon.core.designsystem.theme.AconTheme
+import com.acon.acon.core.designsystem.noRippleClickable
+import com.acon.acon.core.designsystem.theme.AconTheme
 
 @Composable
 fun BottomBar(

@@ -85,6 +85,7 @@ dependencies {
     implementation(project(":feature:onboarding"))
     implementation(project(":feature:areaverification"))
     implementation(project(":feature:upload"))
+    implementation(project(":feature:settings"))
     implementation(project(":feature:profile"))
 
     implementation(libs.androidx.core.ktx)
