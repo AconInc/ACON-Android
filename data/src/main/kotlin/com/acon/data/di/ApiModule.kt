@@ -7,6 +7,7 @@ import com.acon.data.api.remote.AreaVerificationApi
 import com.acon.data.api.remote.AuthApi
 import com.acon.data.api.remote.MapApi
 import com.acon.data.api.remote.OnboardingApi
+import com.acon.data.api.remote.ProfileApi
 import com.acon.data.api.remote.ReissueTokenApi
 import com.acon.data.api.remote.SpotApi
 import com.acon.data.api.remote.UploadApi
@@ -65,6 +66,14 @@ internal object ApiModule {
         @Auth retrofit: Retrofit
     ): AreaVerificationApi {
         return retrofit.create(AreaVerificationApi::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun providesProfileApi(
+        @Auth retrofit: Retrofit
+    ): ProfileApi {
+        return retrofit.create(ProfileApi::class.java)
     }
 
     @Singleton
