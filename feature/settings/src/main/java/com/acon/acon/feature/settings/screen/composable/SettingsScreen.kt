@@ -34,31 +34,31 @@ fun SettingsScreen(
     state: SettingsUiState,
     versionName: String,
     modifier: Modifier = Modifier,
+    onSignInDialogShowStateChange: (Boolean) -> Unit = {},
     navigateBack: () -> Unit = {},
     onTermOfUse: () -> Unit = {},
     onPrivatePolicy: () -> Unit = {},
     onRetryOnBoarding: () -> Unit = {},
     onUpdateVersion: () -> Unit = {},
-    onSignOut: () -> Unit = {}, // TODO - 서버 통신 로직과 합쳐야 함
+    onSignOut: () -> Unit = {},
     onDeleteAccountScreen: () -> Unit = {},
 ) {
-    var showSinOutDialog by remember { mutableStateOf(false) }
-
-    if(showSinOutDialog) {
-        AconTwoButtonDialog(
-            title = stringResource(R.string.logout_dialog_title),
-            content = stringResource(R.string.logout_dialog_content),
-            leftButtonContent = stringResource(R.string.logout_dialog_cancel_btn),
-            rightButtonContent = stringResource(R.string.settings_section_logout),
-            onDismissRequest = { showSinOutDialog = false },
-            onClickLeft = { showSinOutDialog = false },
-            onClickRight =  onSignOut,
-            isImageEnabled = false
-        )
-    }
 
     when(state) {
         is SettingsUiState.Default -> {
+            if(state.onSignInDialogShowStateChange) {
+                AconTwoButtonDialog(
+                    title = stringResource(R.string.logout_dialog_title),
+                    content = stringResource(R.string.logout_dialog_content),
+                    leftButtonContent = stringResource(R.string.logout_dialog_cancel_btn),
+                    rightButtonContent = stringResource(R.string.settings_section_logout),
+                    onDismissRequest = { onSignInDialogShowStateChange(false) },
+                    onClickLeft = { onSignInDialogShowStateChange(false) },
+                    onClickRight =  onSignOut,
+                    isImageEnabled = false
+                )
+            }
+
             Column(
                 modifier = modifier
                     .background(AconTheme.color.Gray9)
@@ -144,7 +144,7 @@ fun SettingsScreen(
                     Spacer(Modifier.height(16.dp))
                     SettingSectionItem(
                         settingsType = SettingsType.LOGOUT,
-                        onClickContinue = { showSinOutDialog = true }
+                        onClickContinue = { onSignInDialogShowStateChange(true) }
                     )
 
                     Spacer(Modifier.height(16.dp))

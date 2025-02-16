@@ -6,6 +6,7 @@
     <string name="settings_title_terms_and_policies">약관 및 정책</string>
     <string name="settings_title_service_settings">서비스 설정</string>
     <string name="settings_title_login_and_delete_account">로그인/탈퇴</string>
+    <string name="settings_logout_failed">로그아웃에 실패했습니다.</string>
 
     <!-- settings section component -->
     <string name="latest_version">최신버전</string>

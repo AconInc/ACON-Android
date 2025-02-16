@@ -9,6 +9,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.acon.acon.core.utils.feature.constants.AppURL
+import com.acon.acon.core.utils.feature.toast.showToast
+import com.acon.acon.feature.settings.R
 import com.acon.acon.feature.settings.screen.SettingsSideEffect
 import com.acon.acon.feature.settings.screen.SettingsViewModel
 import org.orbitmvi.orbit.compose.collectAsState
@@ -16,11 +18,11 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
 fun SettingsScreenContainer(
-    modifier: Modifier = Modifier,
     versionName: String,
+    modifier: Modifier = Modifier,
+    onNavigateToSignInScreen: () -> Unit = {},
     onNavigateToProfileScreen: () -> Unit = {},
     onNavigateToOnboardingScreen: () -> Unit = {},
-    onNavigateToSignInScreen: () -> Unit = {},
     onNavigateToDeleteAccountScreen: () -> Unit = {},
     viewModel: SettingsViewModel = hiltViewModel()
 ) {
@@ -31,17 +33,20 @@ fun SettingsScreenContainer(
         state = state,
         versionName = versionName,
         modifier = modifier.fillMaxSize(),
+        onSignInDialogShowStateChange = viewModel::onSignInDialogShowStateChange,
         navigateBack = viewModel::navigateBack,
         onTermOfUse = viewModel::onTermOfUse,
         onPrivatePolicy = viewModel::onPrivatePolicy,
         onRetryOnBoarding = viewModel::onRetryOnBoarding,
         onUpdateVersion = viewModel::onUpdateVersion,
-        onSignOut = viewModel::onSignOut,
+        onSignOut = viewModel::onSingOut,
         onDeleteAccountScreen = viewModel::onDeleteAccount,
     )
 
     viewModel.collectSideEffect {
         when(it) {
+            is SettingsSideEffect.ShowToastMessage -> { context.showToast(R.string.settings_logout_failed) }
+            is SettingsSideEffect.NavigateToSignIn -> onNavigateToSignInScreen()
             is SettingsSideEffect.NavigateToProfile -> onNavigateToProfileScreen()
             is SettingsSideEffect.OpenPlayStore -> {
                 // TODO - 플레이스토어로 이동
@@ -57,7 +62,6 @@ fun SettingsScreenContainer(
                 context.startActivity(intent)
             }
             is SettingsSideEffect.NavigateToOnboarding -> onNavigateToOnboardingScreen()
-            is SettingsSideEffect.NavigateToSignIn -> onNavigateToSignInScreen()
             is SettingsSideEffect.NavigateToDeleteAccount -> onNavigateToDeleteAccountScreen()
         }
     }

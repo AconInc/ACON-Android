@@ -1,14 +1,19 @@
 package com.acon.acon.feature.settings.screen
 
+import androidx.lifecycle.viewModelScope
 import com.acon.acon.core.utils.feature.base.BaseContainerHost
+import com.acon.acon.domain.repository.TokenRepository
 import com.acon.acon.domain.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
+import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.viewmodel.container
 import javax.inject.Inject
 
+@OptIn(OrbitExperimental::class)
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
-    // TODO - 로그아웃 추가 해야 함
+    private val tokenRepository: TokenRepository,
     private val userRepository: UserRepository
 ) : BaseContainerHost<SettingsUiState, SettingsSideEffect>() {
 
@@ -19,7 +24,26 @@ class SettingsViewModel @Inject constructor(
             }
         }
 
-    // TODO - 로그아웃 추가 해야 함
+    fun onSingOut() = intent {
+        tokenRepository.getRefreshToken().onSuccess { refreshToken ->
+            viewModelScope.launch {
+                refreshToken?.let { userRepository.postLogout(it) }
+                    ?.onSuccess {
+                        postSideEffect(SettingsSideEffect.NavigateToSignIn)
+                    }
+                    ?.onFailure {
+                        onSignInDialogShowStateChange(false)
+                        postSideEffect(SettingsSideEffect.ShowToastMessage)
+                    }
+            }
+        }
+    }
+
+     fun onSignInDialogShowStateChange(show: Boolean) = intent {
+        runOn<SettingsUiState.Default> {
+            reduce { state.copy(onSignInDialogShowStateChange = show) }
+        }
+    }
 
     fun navigateBack() = intent {
         postSideEffect(SettingsSideEffect.NavigateToProfile)
@@ -41,10 +65,6 @@ class SettingsViewModel @Inject constructor(
         postSideEffect(SettingsSideEffect.NavigateToOnboarding)
     }
 
-    fun onSignOut() = intent {
-        postSideEffect(SettingsSideEffect.NavigateToSignIn)
-    }
-
     fun onDeleteAccount() = intent {
         postSideEffect(SettingsSideEffect.NavigateToDeleteAccount)
     }
@@ -52,16 +72,18 @@ class SettingsViewModel @Inject constructor(
 
 sealed interface SettingsUiState{
     data class Default(
-        val isLogin: Boolean = false
+        val isLogin: Boolean = false,
+        val onSignInDialogShowStateChange: Boolean = false
     ) : SettingsUiState
 }
 
 sealed interface SettingsSideEffect {
+    data object ShowToastMessage : SettingsSideEffect
+    data object NavigateToSignIn : SettingsSideEffect
     data object NavigateToProfile : SettingsSideEffect
     data object OpenPlayStore : SettingsSideEffect
     data object OpenTermOfUse : SettingsSideEffect
     data object OpenPrivatePolicy : SettingsSideEffect
     data object NavigateToOnboarding : SettingsSideEffect
-    data object NavigateToSignIn : SettingsSideEffect
     data object NavigateToDeleteAccount : SettingsSideEffect
 }
