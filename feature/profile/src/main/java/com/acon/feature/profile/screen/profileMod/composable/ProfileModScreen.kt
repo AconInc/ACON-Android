@@ -68,6 +68,7 @@ import com.acon.feature.profile.R
 import com.acon.feature.profile.component.NicknameErrMessageRow
 import com.acon.feature.profile.component.ProfilePhotoBox
 import com.acon.feature.profile.component.VerifiedAreaChip
+import com.acon.feature.profile.screen.profileMod.BirthdayStatus
 import com.acon.feature.profile.screen.profileMod.NicknameStatus
 import com.acon.feature.profile.screen.profileMod.ProfileModSideEffect
 import com.acon.feature.profile.screen.profileMod.ProfileModState
@@ -373,27 +374,19 @@ fun ProfileModScreen(
                         placeholder = "ex) 2025.01.01",
                     )
                     Spacer(modifier = Modifier.height(8.dp))
-                    if (state.birthdayErrorMessages.isNotEmpty()){
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                imageVector = if (state.isBirthdayValid) ImageVector.vectorResource(R.drawable.and_ic_local_check_mark_20)
-                                else ImageVector.vectorResource(R.drawable.and_ic_error_20),
-                                contentDescription = "Error Icon",
-                                tint = AconTheme.color.Error_red1,
-                                modifier = Modifier
-                                    .padding(horizontal = 2.dp)
-                                    .size(16.dp)
-                            )
-                            Text(
-                                text = state.birthdayErrorMessages.first(),
-                                style = AconTheme.typography.subtitle2_14_med,
-                                color = AconTheme.color.Error_red1
+                    when (val status = state.birthdayStatus) {
+                        is BirthdayStatus.Valid -> {
+                            Spacer(modifier = Modifier.height(4.dp))
+                        }
+                        is BirthdayStatus.Invalid -> {
+                            NicknameErrMessageRow(
+                                modifier = modifier,
+                                iconRes = ImageVector.vectorResource(R.drawable.and_ic_error_20),
+                                errMessage = status.errorMsg ?: "",
+                                textColor = AconTheme.color.Error_red1
                             )
                         }
-                    } else {
-                        Spacer(modifier = Modifier.height(4.dp))
+                        else -> Spacer(modifier = Modifier.height(4.dp))
                     }
                 }
 
@@ -435,7 +428,9 @@ fun ProfileModScreen(
                 disabledTextColor = AconTheme.color.Gray5,
                 enabledTextColor = AconTheme.color.White,
                 onClick = onNavigateToProfile,
-                isEnabled = (state.nicknameStatus == NicknameStatus.Valid) && state.isBirthdayValid && state.verifiedAreaList.isNotEmpty()
+                isEnabled = (state.nicknameStatus == NicknameStatus.Valid) &&
+                        (state.birthdayStatus == BirthdayStatus.Valid) &&
+                        state.verifiedAreaList.isNotEmpty()
             )
         }
     }

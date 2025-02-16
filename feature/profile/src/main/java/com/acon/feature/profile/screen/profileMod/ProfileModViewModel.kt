@@ -83,26 +83,29 @@ class ProfileModViewModel @Inject constructor(
         }
     }
 
-
     fun onBirthdayChanged(text: String) = intent {
         val formattedText = formatBirthdayInput(text)
-        val errors = mutableListOf<String>()
-        var isValidDate : Boolean = false
-
-        if (formattedText.length == 10) {
-            isValidDate = validateBirthday(formattedText)
-            if (!isValidDate) {
-                errors.add("정확한 생년월일을 적어주세요")
-            }
+        reduce {
+            state.copy(birthdayState = formattedText)
         }
 
-        reduce {
-            state.copy(
-                birthdayState = formattedText,
-                birthdayFieldStatus = if (formattedText.isNotEmpty() && errors.isEmpty()) TextFieldStatus.Active else TextFieldStatus.Error,
-                birthdayErrorMessages = errors,
-                isBirthdayValid = isValidDate
-            )
+
+        if (formattedText.length == 10) {
+            if (validateBirthday(formattedText)) {
+                reduce {
+                    state.copy(
+                        birthdayStatus = BirthdayStatus.Valid,
+                        birthdayFieldStatus = TextFieldStatus.Active
+                    )
+                }
+            } else {
+                reduce {
+                    state.copy(
+                        birthdayStatus = BirthdayStatus.Invalid(errorMsg = "정확한 생년월일을 입력해주세요"),
+                        birthdayFieldStatus = TextFieldStatus.Error
+                    )
+                }
+            }
         }
     }
 
@@ -126,7 +129,7 @@ class ProfileModViewModel @Inject constructor(
         val day = parts[2].toIntOrNull() ?: return false
 
         val currentYear = java.time.Year.now().value
-        if (year > currentYear) return false
+        if (year > currentYear || year <= 1900) return false
 
         if (month !in 1..12) return false
 
@@ -235,8 +238,7 @@ data class ProfileModState(
 
     val birthdayFieldStatus: TextFieldStatus = TextFieldStatus.Inactive,
     val birthdayState: String = "",
-    val birthdayErrorMessages: List<String> = emptyList(),
-    val isBirthdayValid: Boolean = false,
+    val birthdayStatus: BirthdayStatus = BirthdayStatus.Empty,
 
     val verifiedAreaList: List<String> = listOf("쌍문동"),
 
@@ -261,6 +263,12 @@ sealed class NicknameStatus {
     data object Typing : NicknameStatus()
     data object Valid : NicknameStatus()
     data class Error(val errorTypes: List<NicknameErrorType>) : NicknameStatus()
+}
+
+sealed class BirthdayStatus {
+    data object Empty : BirthdayStatus()
+    data class Invalid(val errorMsg: String?) : BirthdayStatus()
+    data object Valid :BirthdayStatus()
 }
 
 sealed interface ProfileModSideEffect {
