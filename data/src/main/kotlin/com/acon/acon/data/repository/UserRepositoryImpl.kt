@@ -2,9 +2,12 @@ package com.acon.acon.data.repository
 
 import com.acon.acon.data.datasource.local.TokenLocalDataSource
 import com.acon.acon.data.datasource.remote.UserRemoteDataSource
+import com.acon.acon.data.dto.request.DeleteAccountRequest
 import com.acon.acon.data.dto.request.LoginRequest
+import com.acon.acon.data.dto.request.LogoutRequest
 import com.acon.acon.data.error.runCatchingWith
 import com.acon.acon.domain.error.user.PostLoginError
+import com.acon.acon.domain.error.user.PostLogoutError
 import com.acon.acon.domain.repository.UserRepository
 import com.acon.acon.domain.type.SocialType
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,14 +28,15 @@ class UserRepositoryImpl @Inject constructor(
         idToken: String
     ): Result<Unit> {
         return runCatchingWith(*PostLoginError.createErrorInstances()) {
-            val googleLoginResponse = userRemoteDataSource.postLogin(
+            val loginResponse = userRemoteDataSource.postLogin(
                 LoginRequest(
                     socialType = socialType,
                     idToken = idToken
                 )
             )
-            googleLoginResponse.accessToken?.let { tokenLocalDataSource.saveAccessToken(it) }
-            googleLoginResponse.refreshToken?.let { tokenLocalDataSource.saveRefreshToken(it) }
+            loginResponse.accessToken?.let { tokenLocalDataSource.saveAccessToken(it) }
+            loginResponse.refreshToken?.let { tokenLocalDataSource.saveRefreshToken(it) }
+            loginResponse.toVerificationStatus()
 
             _isLogin.value = true
         }.onFailure {
@@ -44,4 +48,26 @@ class UserRepositoryImpl @Inject constructor(
         return isLogin
     }
 
+    override suspend fun postLogout(refreshToken: String): Result<Unit> {
+        return runCatchingWith(*PostLogoutError.createErrorInstances()) {
+            userRemoteDataSource.postLogout(
+                LogoutRequest(
+                    refreshToken = refreshToken
+                )
+            )
+            tokenLocalDataSource.removeAllTokens()
+        }
+    }
+
+    override suspend fun postDeleteAccount(reason: String, refreshToken: String): Result<Unit> {
+        return runCatchingWith() {
+            userRemoteDataSource.postDeleteAccount(
+                DeleteAccountRequest(
+                    reason = reason,
+                    refreshToken = refreshToken
+                )
+            )
+            tokenLocalDataSource.removeAllTokens()
+        }
+    }
 }
