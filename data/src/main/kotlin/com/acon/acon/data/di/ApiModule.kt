@@ -1,7 +1,7 @@
 package com.acon.acon.data.di
 
 import com.acon.acon.data.remote.AreaVerificationApi
-import com.acon.acon.data.remote.AuthApi
+import com.acon.acon.data.remote.UserApi
 import com.acon.acon.data.remote.MapApi
 import com.acon.acon.data.remote.OnboardingApi
 import com.acon.acon.data.remote.ReissueTokenApi
@@ -23,10 +23,10 @@ internal object ApiModule {
 
     @Singleton
     @Provides
-    fun providesAuthApi(
+    fun providesUserApi(
         @Auth retrofit: Retrofit
-    ): AuthApi {
-        return retrofit.create(AuthApi::class.java)
+    ): UserApi {
+        return retrofit.create(UserApi::class.java)
     }
 
     @Provides

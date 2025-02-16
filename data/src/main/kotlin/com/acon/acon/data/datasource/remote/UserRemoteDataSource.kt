@@ -2,14 +2,14 @@ package com.acon.acon.data.datasource.remote
 
 import com.acon.acon.data.dto.request.GoogleTokenRequest
 import com.acon.acon.data.dto.response.GoogleTokenResponse
-import com.acon.acon.data.remote.AuthApi
+import com.acon.acon.data.remote.UserApi
 import javax.inject.Inject
 
-class AuthRemoteDataSource @Inject constructor(
-    private val authApi: AuthApi
+class UserRemoteDataSource @Inject constructor(
+    private val userApi: UserApi
 ) {
 
     suspend fun postLogin(googleLoginRequest: GoogleTokenRequest): GoogleTokenResponse {
-        return authApi.postLogin(googleLoginRequest)
+        return userApi.postLogin(googleLoginRequest)
     }
 }

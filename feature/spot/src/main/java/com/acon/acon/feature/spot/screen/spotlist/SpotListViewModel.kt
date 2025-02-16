@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.acon.acon.core.utils.feature.base.BaseContainerHost
 import com.acon.acon.domain.model.spot.Condition
 import com.acon.acon.domain.model.spot.Spot
-import com.acon.acon.domain.repository.AuthRepository
+import com.acon.acon.domain.repository.UserRepository
 import com.acon.acon.domain.repository.MapRepository
 import com.acon.acon.domain.repository.SocialRepository
 import com.acon.acon.domain.repository.SpotRepository
@@ -22,7 +22,7 @@ import kotlin.coroutines.cancellation.CancellationException
 @OptIn(OrbitExperimental::class)
 @HiltViewModel
 class SpotListViewModel @Inject constructor(
-    private val authRepository: AuthRepository,
+    private val userRepository: UserRepository,
     private val spotRepository: SpotRepository,
     private val mapRepository: MapRepository,
     private val savedStateHandle: SavedStateHandle
@@ -71,7 +71,7 @@ class SpotListViewModel @Inject constructor(
 
         val legalAddressName = legalAddressNameDeferred.await()
         val spotListResult = spotListResultDeferred.await()
-        val isLogin = authRepository.getLoginState().value
+        val isLogin = userRepository.getLoginState().value
 
         if (legalAddressName == null || spotListResult.isFailure)
             reduce { SpotListUiState.LoadFailed }
@@ -124,7 +124,7 @@ class SpotListViewModel @Inject constructor(
 
         val legalAddressName = legalAddressNameDeferred.await()
         val spotListResult = spotListResultDeferred.await()
-        val isLogin = authRepository.getLoginState().value
+        val isLogin = userRepository.getLoginState().value
 
         if (legalAddressName == null || spotListResult.isFailure) {
             reduce { SpotListUiState.LoadFailed }

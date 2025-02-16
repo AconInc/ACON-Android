@@ -1,6 +1,6 @@
 package com.acon.acon.data.dto.response
 
-import com.acon.acon.domain.model.auth.RefreshToken
+import com.acon.acon.domain.model.user.RefreshToken
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 

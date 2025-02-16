@@ -1,21 +1,21 @@
 package com.acon.acon.data.repository
 
 import com.acon.acon.data.datasource.local.TokenLocalDataSource
-import com.acon.acon.data.datasource.remote.AuthRemoteDataSource
+import com.acon.acon.data.datasource.remote.UserRemoteDataSource
 import com.acon.acon.data.dto.request.GoogleTokenRequest
 import com.acon.acon.data.error.runCatchingWith
 import com.acon.acon.domain.error.user.PostLoginError
-import com.acon.acon.domain.repository.AuthRepository
+import com.acon.acon.domain.repository.UserRepository
 import com.acon.acon.domain.type.SocialType
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 
-class AuthRepositoryImpl @Inject constructor(
-    private val authRemoteDataSource: AuthRemoteDataSource,
+class UserRepositoryImpl @Inject constructor(
+    private val userRemoteDataSource: UserRemoteDataSource,
     private val tokenLocalDataSource: TokenLocalDataSource,
-): AuthRepository {
+): UserRepository {
 
     private val _isLogin = MutableStateFlow(false)
     private val isLogin: StateFlow<Boolean> = _isLogin.asStateFlow()
@@ -25,7 +25,7 @@ class AuthRepositoryImpl @Inject constructor(
         idToken: String
     ): Result<Unit> {
         return runCatchingWith(*PostLoginError.createErrorInstances()) {
-            val googleLoginResponse = authRemoteDataSource.postLogin(
+            val googleLoginResponse = userRemoteDataSource.postLogin(
                 GoogleTokenRequest(
                     socialType = socialType,
                     idToken = idToken

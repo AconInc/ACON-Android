@@ -2,7 +2,7 @@ package com.acon.acon.feature.signin.screen
 
 import com.acon.acon.core.utils.feature.base.BaseContainerHost
 import com.acon.acon.domain.error.user.CredentialException
-import com.acon.acon.domain.repository.AuthRepository
+import com.acon.acon.domain.repository.UserRepository
 import com.acon.acon.domain.repository.SocialRepository
 import com.acon.acon.domain.repository.TokenRepository
 import com.acon.acon.domain.type.SocialType
@@ -15,7 +15,7 @@ import kotlin.coroutines.cancellation.CancellationException
 @HiltViewModel
 class SignInViewModel @Inject constructor(
     private val tokenRepository: TokenRepository,
-    private val authRepository: AuthRepository
+    private val userRepository: UserRepository
 ) : BaseContainerHost<SignInUiState, SignInSideEffect>() {
 
     override val container: Container<SignInUiState, SignInSideEffect> =
@@ -61,7 +61,7 @@ class SignInViewModel @Inject constructor(
     private fun isTokenValid() = intent {
         tokenRepository.getGoogleIdToken().onSuccess { googleIdToken ->
             if (!googleIdToken.isNullOrEmpty()) {
-                authRepository.postLogin(SocialType.GOOGLE, googleIdToken)
+                userRepository.postLogin(SocialType.GOOGLE, googleIdToken)
                     .onSuccess { postSideEffect(SignInSideEffect.NavigateToSpotListView) }
                     .onFailure { tokenRepository.removeGoogleIdToken() }
             }

@@ -1,7 +1,7 @@
 package com.acon.acon.feature.settings.screen
 
 import com.acon.acon.core.utils.feature.base.BaseContainerHost
-import com.acon.acon.domain.repository.AuthRepository
+import com.acon.acon.domain.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.orbitmvi.orbit.viewmodel.container
 import javax.inject.Inject
@@ -9,12 +9,12 @@ import javax.inject.Inject
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
     // TODO - 로그아웃 추가 해야 함
-    private val authRepository: AuthRepository
+    private val userRepository: UserRepository
 ) : BaseContainerHost<SettingsUiState, SettingsSideEffect>() {
 
     override val container =
         container<SettingsUiState, SettingsSideEffect>(SettingsUiState.Default(false)) {
-            authRepository.getLoginState().collect { loginState ->
+            userRepository.getLoginState().collect { loginState ->
                 reduce { SettingsUiState.Default(loginState) }
             }
         }
