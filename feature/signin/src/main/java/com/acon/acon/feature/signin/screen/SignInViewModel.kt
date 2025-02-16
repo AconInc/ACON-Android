@@ -1,5 +1,6 @@
 package com.acon.acon.feature.signin.screen
 
+import android.util.Log
 import com.acon.acon.core.utils.feature.base.BaseContainerHost
 import com.acon.acon.domain.error.user.CredentialException
 import com.acon.acon.domain.repository.UserRepository
@@ -62,7 +63,13 @@ class SignInViewModel @Inject constructor(
         tokenRepository.getGoogleIdToken().onSuccess { googleIdToken ->
             if (!googleIdToken.isNullOrEmpty()) {
                 userRepository.postLogin(SocialType.GOOGLE, googleIdToken)
-                    .onSuccess { postSideEffect(SignInSideEffect.NavigateToSpotListView) }
+                    .onSuccess {
+                        if(it.hasVerifiedArea) {
+                            postSideEffect(SignInSideEffect.NavigateToSpotListView)
+                        } else {
+                            postSideEffect(SignInSideEffect.NavigateToAreaVerification)
+                        }
+                    }
                     .onFailure { tokenRepository.removeGoogleIdToken() }
             }
         }

@@ -8,6 +8,7 @@ import com.acon.acon.data.dto.request.LogoutRequest
 import com.acon.acon.data.error.runCatchingWith
 import com.acon.acon.domain.error.user.PostLoginError
 import com.acon.acon.domain.error.user.PostLogoutError
+import com.acon.acon.domain.model.user.VerificationStatus
 import com.acon.acon.domain.repository.UserRepository
 import com.acon.acon.domain.type.SocialType
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,7 +27,7 @@ class UserRepositoryImpl @Inject constructor(
     override suspend fun postLogin(
         socialType: SocialType,
         idToken: String
-    ): Result<Unit> {
+    ): Result<VerificationStatus> {
         return runCatchingWith(*PostLoginError.createErrorInstances()) {
             val loginResponse = userRemoteDataSource.postLogin(
                 LoginRequest(
@@ -36,9 +37,11 @@ class UserRepositoryImpl @Inject constructor(
             )
             loginResponse.accessToken?.let { tokenLocalDataSource.saveAccessToken(it) }
             loginResponse.refreshToken?.let { tokenLocalDataSource.saveRefreshToken(it) }
-            loginResponse.toVerificationStatus()
+
 
             _isLogin.value = true
+
+            loginResponse.toVerificationStatus()
         }.onFailure {
             _isLogin.value = false
         }
