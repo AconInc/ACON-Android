@@ -1,5 +1,8 @@
 package com.acon.acon.domain.model.area
 
+import androidx.compose.runtime.Immutable
+
+@Immutable
 data class Area(
-   val areaName: String
+   val name: String
 )

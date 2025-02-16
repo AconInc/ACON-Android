@@ -62,7 +62,7 @@ internal fun NavGraphBuilder.settingsNavigation(
                 },
                 navigateToSignIn = {
                     navController.navigate(SignInRoute.SignIn) {
-                        popUpTo(SpotRoute.Graph) {
+                        popUpTo(SettingsRoute.Graph) {
                             inclusive = true
                         }
                     }

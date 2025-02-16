@@ -1,6 +1,7 @@
 package com.acon.acon.feature.areaverification
 
 import androidx.lifecycle.ViewModel
+import com.acon.acon.core.utils.feature.base.BaseContainerHost
 import com.acon.acon.domain.repository.AreaVerificationRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.orbitmvi.orbit.ContainerHost
@@ -10,8 +11,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AreaVerificationViewModel @Inject constructor(
     private val areaVerificationRepository: AreaVerificationRepository
-) : ViewModel(),
-    ContainerHost<AreaVerificationState, AreaVerificationSideEffect> {
+) : BaseContainerHost<AreaVerificationState, AreaVerificationSideEffect>() {
 
     override val container = container<AreaVerificationState, AreaVerificationSideEffect>(
         AreaVerificationState(isNewLocationSelected = true)

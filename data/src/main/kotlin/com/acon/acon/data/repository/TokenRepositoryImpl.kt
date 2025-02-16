@@ -62,4 +62,10 @@ class TokenRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun removeAllToken(): Result<Unit> {
+        return runCatchingWith() {
+            tokenLocalDataSource.removeAllTokens()
+        }
+    }
+
 }

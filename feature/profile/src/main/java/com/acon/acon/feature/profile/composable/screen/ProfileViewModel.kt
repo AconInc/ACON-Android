@@ -3,8 +3,8 @@ package com.acon.acon.feature.profile.composable.screen
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.viewModelScope
 import com.acon.acon.core.utils.feature.base.BaseContainerHost
+import com.acon.acon.domain.repository.UserRepository
 import com.acon.acon.domain.model.profile.VerifiedArea
-import com.acon.acon.domain.repository.AuthRepository
 import com.acon.acon.domain.repository.ProfileRepository
 import com.acon.acon.domain.repository.SocialRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,13 +17,13 @@ import kotlin.coroutines.cancellation.CancellationException
 @OptIn(OrbitExperimental::class)
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
-    private val authRepository: AuthRepository,
+    private val userRepository: UserRepository,
     private val profileRepository: ProfileRepository
 ) : BaseContainerHost<ProfileUiState, ProfileUiSideEffect>() {
 
     override val container =
         container<ProfileUiState, ProfileUiSideEffect>(ProfileUiState.Loading) {
-            authRepository.getLoginState().collect { isLoggedIn ->
+            userRepository.getLoginState().collect { isLoggedIn ->
                 if (isLoggedIn) {
                     fetchUserProfileInfo()
                 } else {
@@ -54,7 +54,7 @@ class ProfileViewModel @Inject constructor(
             }
     }
 
-    fun fetchUserProfileInfo() = intent {
+    private fun fetchUserProfileInfo() = intent {
         viewModelScope.launch {
             profileRepository.fetchProfile()
                 .onSuccess { profile ->
