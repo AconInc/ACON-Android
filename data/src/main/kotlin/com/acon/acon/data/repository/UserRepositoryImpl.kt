@@ -51,6 +51,10 @@ class UserRepositoryImpl @Inject constructor(
         return isLogin
     }
 
+    override fun updateLoginState(loginState: Boolean) {
+        _isLogin.value = loginState
+    }
+
     override suspend fun postLogout(refreshToken: String): Result<Unit> {
         return runCatchingWith(*PostLogoutError.createErrorInstances()) {
             userRemoteDataSource.postLogout(
