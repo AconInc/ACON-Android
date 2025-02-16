@@ -1,7 +1,6 @@
 package com.acon.acon.data.repository
 
 import com.acon.acon.data.datasource.remote.AreaVerificationRemoteDataSource
-import com.acon.acon.data.dto.response.AreaVerificationResponse
 import com.acon.acon.data.error.runCatchingWith
 import com.acon.acon.domain.model.area.Area
 import com.acon.acon.domain.repository.AreaVerificationRepository
@@ -21,7 +20,3 @@ class AreaVerificationRepositoryImpl @Inject constructor(
        ).toArea()
    }
 }
-
-private fun AreaVerificationResponse.toArea() = Area(
-   areaName = area
-)
