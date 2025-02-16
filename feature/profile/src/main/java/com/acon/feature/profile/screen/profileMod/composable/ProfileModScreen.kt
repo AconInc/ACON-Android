@@ -65,6 +65,7 @@ import com.acon.core.designsystem.component.topbar.AconTopBar
 import com.acon.core.designsystem.theme.AconTheme
 import com.acon.core.utils.feature.permission.CheckAndRequestPhotoPermission
 import com.acon.feature.profile.R
+import com.acon.feature.profile.component.CustomModalBottomSheet
 import com.acon.feature.profile.component.NicknameErrMessageRow
 import com.acon.feature.profile.component.ProfilePhotoBox
 import com.acon.feature.profile.component.VerifiedAreaChip
@@ -186,6 +187,14 @@ fun ProfileModScreenContainer(
         )
     }
 
+    if (state.showPhotoEditDialog) { // 여기에서 "앨범에서 사진 선택" 누른 경우에 viewModel::onProfileClicked 넘기기
+        CustomModalBottomSheet(
+            onDismiss = viewModel::hideProfileEditDialog,
+            onGallerySelect = viewModel::onProfileClicked,
+            onDefaultImageSelect = {}, //서버에서 Presigned Url 받아온 걸로 돌려야하나?
+        )
+    }
+
     ProfileModScreen(
         modifier = modifier,
         state = state,
@@ -196,7 +205,7 @@ fun ProfileModScreenContainer(
         onNavigateToProfile = onNavigateToProfile,
         onNavigateToAreaVerification = onNavigateToAreaVerification,
         onRemoveArea = viewModel::showAreaDeleteDialog,
-        onProfileClicked = viewModel::onProfileClicked,
+        onProfileClicked = viewModel::showProfileEditDialog,
     )
 }
 

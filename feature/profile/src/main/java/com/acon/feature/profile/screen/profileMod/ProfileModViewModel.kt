@@ -229,6 +229,18 @@ class ProfileModViewModel @Inject constructor(
         }
     }
 
+    fun showProfileEditDialog() = intent {
+        reduce {
+            state.copy(showPhotoEditDialog = true)
+        }
+    }
+
+    fun hideProfileEditDialog() = intent {
+        reduce {
+            state.copy(showPhotoEditDialog = false)
+        }
+    }
+
     private fun navigateBack() = intent {
         postSideEffect(ProfileModSideEffect.NavigateBack)
     }
@@ -254,7 +266,8 @@ data class ProfileModState(
     val requestPhotoPermission: Boolean = false,
     val showPermissionDialog: Boolean = false,
 
-    val selectedPhotoUri: String = ""
+    val selectedPhotoUri: String = "",
+    val showPhotoEditDialog: Boolean = false,
     )
 
 sealed class NicknameErrorType(val message: String) {
