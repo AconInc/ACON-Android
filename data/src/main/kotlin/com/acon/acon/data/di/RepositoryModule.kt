@@ -4,6 +4,7 @@ import com.acon.acon.data.repository.AreaVerificationRepositoryImpl
 import com.acon.acon.data.repository.AuthRepositoryImpl
 import com.acon.acon.data.repository.MapRepositoryImpl
 import com.acon.acon.data.repository.OnboardingRepositoryImpl
+import com.acon.acon.data.repository.ProfileRepositoryImpl
 import com.acon.acon.data.repository.SpotRepositoryImpl
 import com.acon.acon.data.repository.TokenRepositoryImpl
 import com.acon.acon.data.repository.UploadRepositoryImpl
@@ -11,6 +12,7 @@ import com.acon.acon.domain.repository.AreaVerificationRepository
 import com.acon.acon.domain.repository.AuthRepository
 import com.acon.acon.domain.repository.MapRepository
 import com.acon.acon.domain.repository.OnboardingRepository
+import com.acon.acon.domain.repository.ProfileRepository
 import com.acon.acon.domain.repository.SpotRepository
 import com.acon.acon.domain.repository.TokenRepository
 import com.acon.acon.domain.repository.UploadRepository
@@ -59,6 +61,12 @@ internal abstract class RepositoryModule {
     abstract fun bindsAreaVerificationRepository(
         impl: AreaVerificationRepositoryImpl
     ): AreaVerificationRepository
+
+    @Singleton
+    @Binds
+    abstract fun bindsProfileRepository(
+        impl: ProfileRepositoryImpl
+    ): ProfileRepository
 
     @Singleton
     @Binds
