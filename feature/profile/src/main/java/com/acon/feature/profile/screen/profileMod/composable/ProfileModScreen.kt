@@ -90,7 +90,7 @@ fun ProfileModScreenContainer(
     val state = viewModel.collectAsState().value
     val context = LocalContext.current
 
-    LaunchedEffect(selectedPhotoId){ //갤러리 접근해서 사진 String 갖고 돌아오는 경우, ViewModel의 State 값에 uri로 parse해서 저장해줌
+    LaunchedEffect(selectedPhotoId){
         selectedPhotoId.let {
             viewModel.updateProfileImage(selectedPhotoId)
         }
@@ -187,11 +187,11 @@ fun ProfileModScreenContainer(
         )
     }
 
-    if (state.showPhotoEditDialog) { // 여기에서 "앨범에서 사진 선택" 누른 경우에 viewModel::onProfileClicked 넘기기
+    if (state.showPhotoEditDialog) {
         CustomModalBottomSheet(
             onDismiss = viewModel::hideProfileEditDialog,
             onGallerySelect = viewModel::onProfileClicked,
-            onDefaultImageSelect = {}, //서버에서 Presigned Url 받아온 걸로 돌려야하나?
+            onDefaultImageSelect = { viewModel.updateProfileImage("") },
         )
     }
 
