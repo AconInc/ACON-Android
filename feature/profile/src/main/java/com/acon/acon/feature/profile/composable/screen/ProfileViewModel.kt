@@ -1,10 +1,14 @@
 package com.acon.acon.feature.profile.composable.screen
 
 import androidx.compose.runtime.Immutable
+import androidx.lifecycle.viewModelScope
 import com.acon.acon.core.utils.feature.base.BaseContainerHost
+import com.acon.acon.domain.model.profile.VerifiedArea
 import com.acon.acon.domain.repository.AuthRepository
+import com.acon.acon.domain.repository.ProfileRepository
 import com.acon.acon.domain.repository.SocialRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.viewmodel.container
 import javax.inject.Inject
@@ -13,7 +17,8 @@ import kotlin.coroutines.cancellation.CancellationException
 @OptIn(OrbitExperimental::class)
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val profileRepository: ProfileRepository
 ) : BaseContainerHost<ProfileUiState, ProfileUiSideEffect>() {
 
     override val container =
@@ -50,8 +55,22 @@ class ProfileViewModel @Inject constructor(
     }
 
     fun fetchUserProfileInfo() = intent {
-        // TODO - 프로필 정보 조회 추가해야 함
-        reduce { ProfileUiState.Success() }
+        viewModelScope.launch {
+            profileRepository.fetchProfile()
+                .onSuccess { profile ->
+                    reduce {
+                        ProfileUiState.Success(
+                            profileImage = profile.image,
+                            nickname = profile.nickname,
+                            aconCount = profile.leftAcornCount,
+                            verifiedArea = profile.verifiedAreaList
+                        )
+                    }
+                }
+                .onFailure {
+                    reduce { ProfileUiState.LoadFailed }
+                }
+        }
     }
 
     fun onSettings() = intent {
@@ -82,9 +101,10 @@ class ProfileViewModel @Inject constructor(
 sealed interface ProfileUiState {
     @Immutable
     data class Success(
-        val profileImage: String ="",
-        val aconCount: Int = 0,
-        val verifiedArea: String = ""
+        val profileImage: String,
+        val nickname: String,
+        val aconCount: Int,
+        val verifiedArea: List<VerifiedArea>
     ) : ProfileUiState
 
     data object Loading : ProfileUiState

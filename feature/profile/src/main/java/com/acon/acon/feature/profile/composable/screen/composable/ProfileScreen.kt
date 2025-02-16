@@ -23,6 +23,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil3.compose.AsyncImage
 import com.acon.acon.core.designsystem.blur.LocalHazeState
 import com.acon.acon.core.designsystem.component.topbar.AconTopBar
 import com.acon.acon.core.designsystem.noRippleClickable
@@ -79,25 +80,33 @@ fun ProfileScreen(
                     modifier = Modifier
                         .padding(vertical = 32.dp)
                 ) {
-                    // TODO - 서버에서 받아온 AsyncImage
-                    Image(
-                        imageVector = ImageVector.vectorResource(com.acon.acon.core.designsystem.R.drawable.ic_default_profile_40),
-                        contentDescription = stringResource(R.string.content_description_default_profile_image),
-                        modifier = Modifier
-                            .size(60.dp)
-                            .clip(CircleShape)
-                            .background(AconTheme.color.Gray7)
-                            .padding(10.dp)
-                    )
+                    if(state.profileImage.isNotEmpty()) {
+                        AsyncImage(
+                            model = state.profileImage,
+                            contentDescription = stringResource(R.string.content_description_profile_image),
+                            modifier = Modifier
+                                .size(60.dp)
+                                .clip(CircleShape)
+                        )
+                    } else {
+                        Image(
+                            imageVector = ImageVector.vectorResource(com.acon.acon.core.designsystem.R.drawable.ic_default_profile_40),
+                            contentDescription = stringResource(R.string.content_description_default_profile_image),
+                            modifier = Modifier
+                                .size(60.dp)
+                                .clip(CircleShape)
+                                .background(AconTheme.color.Gray7)
+                                .padding(10.dp)
+                        )
+                    }
 
                     Column(
                         modifier = Modifier
                             .padding(vertical = 4.dp)
                             .padding(start = 16.dp)
                     ) {
-                        // TODO - 서버에서 받아온 유저 이름 (최초 난수)
                         Text(
-                            text = "유저",
+                            text = state.nickname,
                             style = AconTheme.typography.head5_22_sb,
                             color = AconTheme.color.White,
                         )
@@ -125,16 +134,14 @@ fun ProfileScreen(
                         .fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    // TODO - 서버에서 받아온 보유 도토리 개수
                     ProfileInfo(
                         profileInfoType = ProfileInfoType.ACON,
-                        aconCount = "11",
+                        aconCount = state.aconCount.toString(),
                         modifier = Modifier.weight(1f)
                     )
-                    // TODO - 서버에서 받아온 인증 동네명
                     ProfileInfo(
                         profileInfoType = ProfileInfoType.AREA,
-                        area = "망원동",
+                        area = state.verifiedArea[0].name,
                         modifier = Modifier.weight(1f)
                     )
                 }
