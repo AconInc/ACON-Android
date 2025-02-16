@@ -20,7 +20,7 @@ class SignInViewModel @Inject constructor(
 
     override val container: Container<SignInUiState, SignInSideEffect> =
         container(initialState = SignInUiState.Loading) {
-            isTokenValid() // 자동로그인 검증
+            isTokenValid()
         }
 
     fun googleLogin(socialRepository: SocialRepository) = intent {
