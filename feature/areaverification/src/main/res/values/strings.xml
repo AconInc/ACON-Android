@@ -8,7 +8,7 @@
     <string name="local_dottori_description">로컬 도토리는 본격 맛집을 보증하는 도토리에요.\n만족스러운 식사 후 리뷰에 사용해보세요!</string>
     <string name="local_dottori">로컬 도토리</string>
     <string name="normal_dottori">일반 도토리</string>
-    <string name="start">시작하기</string>
+    <string name="go_to_home">홈으로 가기</string>
 
     <string name="permission_dialog_title">위치 권한 필요</string>
     <string name="permission_dialog_content">정확한 위치 확인이 필요합니다.\n설정에서 \'정확한 위치\' 권한을 허용해주세요.</string>
@@ -17,6 +17,6 @@
     <string name="local_restaurant_certification_description">자주 거는 동네로 지역 인증을 해보세요</string>
     <string name="next">다음</string>
 
-    <string name="check_location_on_map">지도에서 위치 확인하기</string>
+    <string name="check_location_on_map">위치 인증</string>
     <string name="verify_complete">인증완료</string>
 </resources>

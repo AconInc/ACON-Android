@@ -98,11 +98,10 @@ fun PreferenceMapScreen(
             content = {
                 Text(
                     text = stringResource(R.string.check_location_on_map),
-                    style = AconTheme.typography.title2_20_b,
+                    style = AconTheme.typography.head5_22_sb,
                     color = AconTheme.color.White
                 )
             },
-            isStartAlignment = true
         )
 
         Box(

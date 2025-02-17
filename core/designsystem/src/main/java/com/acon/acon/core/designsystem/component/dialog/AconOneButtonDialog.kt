@@ -54,11 +54,11 @@ fun AconOneButtonDialog(
             }
             Text(
                 text = title,
-                style = AconTheme.typography.head8_16_sb,
+                style = AconTheme.typography.head6_20_sb,
                 textAlign = TextAlign.Center,
                 color = AconTheme.color.White
             )
-            Spacer(modifier = Modifier.height(4.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
             Text(
                 text = content,
@@ -66,11 +66,11 @@ fun AconOneButtonDialog(
                 textAlign = TextAlign.Center,
                 color = AconTheme.color.Gray3
             )
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
             AconFilledMediumButton(
                 text = buttonContent,
-                textStyle = AconTheme.typography.body2_14_reg,
+                textStyle = AconTheme.typography.subtitle1_16_med,
                 enabledBackgroundColor = AconTheme.color.Gray5,
                 disabledBackgroundColor = AconTheme.color.Gray5,
                 onClick = onClickConfirm,
