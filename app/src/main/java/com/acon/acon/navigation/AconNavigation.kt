@@ -61,7 +61,6 @@ fun AconNavigation(
     navController: NavHostController,
     socialRepository: SocialRepository,
     userRepository: UserRepository,
-    onGoogleSignIn: () -> Unit = {}
 ) {
 
     val backStackEntry by navController.currentBackStackEntryAsState()
@@ -84,11 +83,20 @@ fun AconNavigation(
                     coroutineScope.launch {
                         socialRepository.signIn()
                             .onSuccess {
-                                showLoginBottomSheet = false
-                                navController.navigate(AreaVerificationRoute.RequireAreaVerification) {
-                                   popUpTo<AreaVerificationRoute.Graph>{
-                                       inclusive = true
-                                   }
+                                if (it.hasVerifiedArea) {
+                                    showLoginBottomSheet = false
+                                    navController.navigate(SpotRoute.SpotList) {
+                                        popUpTo<AreaVerificationRoute.Graph> {
+                                            inclusive = true
+                                        }
+                                    }
+                                } else {
+                                    showLoginBottomSheet = false
+                                    navController.navigate(AreaVerificationRoute.RequireAreaVerification) {
+                                        popUpTo<AreaVerificationRoute.Graph> {
+                                            inclusive = true
+                                        }
+                                    }
                                 }
                             }
                             .onFailure {

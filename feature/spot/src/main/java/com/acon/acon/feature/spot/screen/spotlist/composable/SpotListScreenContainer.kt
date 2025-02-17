@@ -65,7 +65,11 @@ fun SpotListScreenContainer(
         onSpotItemClick = viewModel::onSpotItemClick,
         onTermOfUse = viewModel::onTermOfUse,
         onPrivatePolicy = viewModel::onPrivatePolicy,
-        onGoogleSignIn = { viewModel.googleLogin(socialRepository) },
+        onGoogleSignIn = {
+            context.onLocationReady {
+                viewModel.googleLogin(socialRepository, it)
+            }
+        },
     )
 
     viewModel.collectSideEffect {

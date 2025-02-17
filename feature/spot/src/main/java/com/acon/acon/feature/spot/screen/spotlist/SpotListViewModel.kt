@@ -32,11 +32,11 @@ class SpotListViewModel @Inject constructor(
     override val container =
         container<SpotListUiState, SpotListSideEffect>(SpotListUiState.Loading) { }
 
-    fun googleLogin(socialRepository: SocialRepository) = intent {
+    fun googleLogin(socialRepository: SocialRepository, location: Location) = intent {
         socialRepository.signIn()
             .onSuccess {
                 if(it.hasVerifiedArea) {
-                    postSideEffect(SpotListSideEffect.NavigateToAreaVerification)
+                    onLocationReady(location)
                 } else {
                     postSideEffect(SpotListSideEffect.NavigateToAreaVerification)
                 }
