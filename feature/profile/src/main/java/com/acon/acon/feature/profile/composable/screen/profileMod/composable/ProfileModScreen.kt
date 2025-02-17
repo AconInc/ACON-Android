@@ -62,7 +62,6 @@ import com.acon.acon.feature.profile.composable.screen.profileMod.ProfileModStat
 import com.acon.acon.feature.profile.composable.screen.profileMod.ProfileModViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 
-@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun ProfileModScreenContainer(
     modifier: Modifier = Modifier,

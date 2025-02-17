@@ -13,7 +13,6 @@ import com.acon.acon.domain.repository.SocialRepository
 import com.acon.acon.feature.SettingsRoute
 import com.acon.acon.feature.areaverification.AreaVerificationRoute
 import com.acon.acon.feature.profile.composable.ProfileRoute
-import com.acon.acon.feature.profile.composable.screen.composable.ProfileScreenContainer
 import com.acon.acon.feature.spot.SpotRoute
 import com.acon.acon.feature.profile.composable.screen.galleryGrid.composable.GalleryGridContainer
 import com.acon.acon.feature.profile.composable.screen.galleryList.composable.GalleryListContainer
@@ -47,7 +46,7 @@ internal fun NavGraphBuilder.profileNavigation(
                     }
                 },
                 onNavigateToSettingsScreen = { navController.navigate(SettingsRoute.Settings) },
-                onNavigateToProfileEditScreen = { navController.navigate(ProfileRoute.ProfileMod.applyDefault())  }, // 지원이꺼 추가 완료
+                onNavigateToProfileEditScreen = { navController.navigate(ProfileRoute.ProfileMod) },
                 onNavigateToAreaVerificationScreen = {
                     navController.navigate(AreaVerificationRoute.RequireAreaVerification) {
                         popUpTo(ProfileRoute.Graph) {
