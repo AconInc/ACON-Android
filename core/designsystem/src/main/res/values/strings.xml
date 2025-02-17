@@ -21,4 +21,9 @@
     <string name="login_bottom_sheet_policy_agreement">가입을 진행할 경우,\n아래의 정책에 대해 동의한 것으로 간주합니다.</string>
     <string name="login_bottom_sheet_term_of_use">이용약관</string>
     <string name="login_bottom_sheet_private_policy">개인정보처리방침</string>
+
+    <!-- dialog -->
+    <string name="no_permission_title">\'acon\'에 대한 위치접근\n 권한이 없습니다</string>
+    <string name="no_permission_content">설정에서 정확한 위치 권한을 허용해주세요</string>
+    <string name="go_to_setting">설정으로 이동</string>
 </resources>
