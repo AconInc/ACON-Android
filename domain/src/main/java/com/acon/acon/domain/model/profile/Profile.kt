@@ -16,3 +16,9 @@ data class VerifiedArea(
     val id: Long,
     val name: String
 )
+
+@Immutable
+data class PreSignedUrl(
+    val fileName: String,
+    val preSignedUrl: String
+)

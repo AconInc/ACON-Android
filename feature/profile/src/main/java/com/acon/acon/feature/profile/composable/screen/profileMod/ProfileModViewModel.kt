@@ -1,21 +1,36 @@
 package com.acon.acon.feature.profile.composable.screen.profileMod
 
+import android.app.Application
+import android.content.Context
+import android.net.Uri
+import android.util.Log
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.acon.acon.core.designsystem.component.textfield.TextFieldStatus
+import com.acon.acon.domain.repository.ProfileRepository
 import com.acon.acon.domain.repository.UploadRepository
+import com.acon.acon.feature.profile.composable.screen.profile.ProfileUiState
+import dagger.hilt.android.internal.Contexts.getApplication
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.viewmodel.container
+import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
 class ProfileModViewModel @Inject constructor(
-    private val profileRepository: UploadRepository, //바꿔야 함
-) : ViewModel(), ContainerHost<ProfileModState, ProfileModSideEffect> {
+    private val profileRepository: ProfileRepository,
+    application: Application
+) : AndroidViewModel(application), ContainerHost<ProfileModState, ProfileModSideEffect> {
 
     override val container = container<ProfileModState, ProfileModSideEffect>(ProfileModState())
 
@@ -233,6 +248,57 @@ class ProfileModViewModel @Inject constructor(
         }
     }
 
+
+    fun getPreSignedUrl() = intent {
+        viewModelScope.launch {
+            profileRepository.getPreSignedUrl()
+                .onSuccess { result ->   //성공시 얻은 PreSignedUrl값 저장하고, fileName 저장하고, PUT 함수 부르기
+                    reduce {
+                        state.copy(
+                            uploadFileName = result.fileName,
+                            preSignedUrl = result.preSignedUrl
+                        )
+                    }
+                    putPhotoToPreSignedUrl(Uri.parse(state.selectedPhotoUri), state.preSignedUrl)
+                }
+                .onFailure {
+                    // 실패시 에러처리 어케하지?
+                }
+        }
+    }
+
+    private fun putPhotoToPreSignedUrl(imageUri: Uri, preSignedUrl: String) = intent {
+        val context = getApplication<Application>().applicationContext
+        val client = OkHttpClient()
+
+        try {
+            val inputStream = context.contentResolver.openInputStream(imageUri)
+            val byteArray = inputStream?.readBytes() ?: throw IllegalArgumentException("Failed to read image")
+
+            val mimeType = context.contentResolver.getType(imageUri) ?: "image/jpeg"
+
+            val fileBody = RequestBody.create(mimeType.toMediaTypeOrNull(), byteArray)
+
+            val request = Request.Builder()
+                .url(preSignedUrl)
+                .put(fileBody)
+                .addHeader("Content-Type", mimeType)
+                .build()
+
+            val response = client.newCall(request).execute()
+
+            if (response.isSuccessful) {
+                // PUT 성공 시 정상적으로 프로필 수정 API 호출 (fileName 사용)
+            } else {
+                // PUT 실패 시 에러 처리
+            }
+        } catch (e: Exception) {
+            // ImageUri 갖고 바이너리 방식으로 변환 과정에서 에러 처리
+        }
+    }
+
+
+
 }
 
 
@@ -257,6 +323,9 @@ data class ProfileModState(
 
     val selectedPhotoUri: String = "",
     val showPhotoEditDialog: Boolean = false,
+
+    val preSignedUrl: String = "",
+    val uploadFileName: String = "",
     )
 
 sealed class NicknameErrorType(val message: String) {
