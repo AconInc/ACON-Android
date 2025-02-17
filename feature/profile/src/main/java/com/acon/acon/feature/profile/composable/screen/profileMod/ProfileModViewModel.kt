@@ -1,8 +1,10 @@
 package com.acon.acon.feature.profile.composable.screen.profileMod
 
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.acon.acon.core.designsystem.component.textfield.TextFieldStatus
 import com.acon.acon.domain.repository.ProfileRepository
 import com.acon.acon.domain.repository.UploadRepository
@@ -11,8 +13,13 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.viewmodel.container
+import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
@@ -247,7 +254,8 @@ class ProfileModViewModel @Inject constructor(
                             preSignedUrl = result.preSignedUrl
                         )
                     }
-                    putPhotoToPreSignedUrl(state.selectedPhotoUri, state.preSignedUrl)
+                    //putPhotoToPreSignedUrl(state.selectedPhotoUri, state.preSignedUrl)
+                    Log.d("PreSignedUrl 결과", "${state.preSignedUrl}")
                 }
                 .onFailure {
                     // 실패시 에러처리 어케하지?
@@ -256,7 +264,19 @@ class ProfileModViewModel @Inject constructor(
     }
 
     private fun putPhotoToPreSignedUrl(imageUri: String, preSignedUrl: String) = intent {
+        val file = File(imageUri)
+        val client = OkHttpClient()
 
+        val fileBody = RequestBody.create("image/jpeg".toMediaTypeOrNull(), file.readBytes())
+
+        val request = Request.Builder().url(preSignedUrl).put(fileBody).addHeader("Content-Type", "image/jpeg").build()
+        val response  = client.newCall(request).execute()
+
+        if (response.isSuccessful){
+            // PUT 성공 시 정상적으로 프로필 수정 API 호출 (fileName 사용)
+        } else {
+            // PUT 실패 시 에러 처리
+        }
     }
 
 }

@@ -7,4 +7,5 @@ interface ProfileRepository {
     suspend fun fetchProfile(): Result<Profile>
 
     suspend fun getPreSignedUrl(): Result<PreSignedUrl>
+
 }
