@@ -1,4 +1,4 @@
-package com.acon.acon.feature.profile.composable.screen
+package com.acon.acon.feature.profile.composable.screen.profile
 
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.viewModelScope

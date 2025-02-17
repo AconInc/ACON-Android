@@ -63,10 +63,6 @@ fun AreaVerificationScreenContainer(
         }
     }
 
-    CheckAndRequestLocationPermission {
-        viewModel.checkLocationAndNavigate()
-    }
-
     AreaVerificationScreen(
         state = state,
         onNewLocationSelected = { viewModel.onNewLocationSelected() },
