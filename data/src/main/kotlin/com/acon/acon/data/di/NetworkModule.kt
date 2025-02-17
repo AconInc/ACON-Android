@@ -177,7 +177,7 @@ internal object NetworkModule {
         @ApplicationContext context: Context,
         tokenLocalDataSource: TokenLocalDataSource,
         reissueTokenApi: ReissueTokenApi
-    ): Authenticator = AuthAuthenticator(context, tokenLocalDataSource, reissueTokenApi)
+    ): Authenticator = AuthAuthenticator(tokenLocalDataSource, reissueTokenApi)
 
     @ResponseInterceptor
     @Singleton
