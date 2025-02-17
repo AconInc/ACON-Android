@@ -28,7 +28,7 @@ internal fun NavGraphBuilder.profileNavigation(
 ) {
 
     navigation<ProfileRoute.Graph>(
-        startDestination = ProfileRoute.ProfileMod.applyDefault(),
+        startDestination = ProfileRoute.Profile,
         enterTransition = {
             EnterTransition.None
         }, exitTransition = {
@@ -41,7 +41,7 @@ internal fun NavGraphBuilder.profileNavigation(
                 socialRepository = socialRepository,
                 modifier = Modifier.fillMaxSize(),
                 onNavigateToSettingsScreen = { navController.navigate(SettingsRoute.Settings) },
-                onNavigateToProfileEditScreen = {}, // TODO - 지원이꺼 합치면 추가
+                onNavigateToProfileEditScreen = { navController.navigate(ProfileRoute.ProfileMod.applyDefault())  }, // 지원이꺼 추가 완료
                 onNavigateToAreaVerificationScreen = {
                     navController.navigate(AreaVerificationRoute.RequireAreaVerification) {
                         popUpTo(ProfileRoute.Graph) {
