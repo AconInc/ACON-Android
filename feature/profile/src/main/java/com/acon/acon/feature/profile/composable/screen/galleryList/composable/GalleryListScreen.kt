@@ -1,4 +1,4 @@
-package com.acon.feature.profile.screen.galleryList.composable
+package com.acon.acon.feature.profile.composable.screen.galleryList.composable
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -31,9 +31,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.rememberAsyncImagePainter
 import com.acon.acon.core.designsystem.component.topbar.AconTopBar
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.feature.profile.screen.galleryList.Album
-import com.acon.feature.profile.screen.galleryList.GalleryListState
-import com.acon.feature.profile.screen.galleryList.GalleryListViewModel
+import com.acon.acon.feature.profile.composable.screen.galleryList.Album
+import com.acon.acon.feature.profile.composable.screen.galleryList.GalleryListState
+import com.acon.acon.feature.profile.composable.screen.galleryList.GalleryListViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 
 @Composable

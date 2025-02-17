@@ -1,4 +1,4 @@
-package com.acon.core.utils.feature.permission
+package com.acon.acon.core.utils.feature.permission
 
 import android.os.Build
 import androidx.compose.runtime.Composable

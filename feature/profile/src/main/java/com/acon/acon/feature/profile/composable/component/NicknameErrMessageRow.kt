@@ -1,4 +1,4 @@
-package com.acon.feature.profile.component
+package com.acon.acon.feature.profile.composable.component
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding

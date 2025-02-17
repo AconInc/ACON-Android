@@ -1,11 +1,11 @@
-package com.acon.feature.profile.screen.galleryGrid
+package com.acon.acon.feature.profile.composable.screen.galleryGrid
 
 import android.app.Application
 import android.content.Context
 import android.net.Uri
 import android.provider.MediaStore
 import androidx.lifecycle.ViewModel
-import com.acon.feature.profile.screen.galleryList.Album
+import com.acon.acon.feature.profile.composable.screen.galleryList.Album
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.viewmodel.container

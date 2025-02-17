@@ -1,4 +1,4 @@
-package com.acon.feature.profile.screen.photoCrop.composable
+package com.acon.acon.feature.profile.composable.screen.photoCrop.composable
 
 import android.net.Uri
 import androidx.compose.foundation.Canvas
@@ -38,8 +38,8 @@ import coil3.compose.rememberAsyncImagePainter
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.topbar.AconTopBar
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.feature.profile.screen.photoCrop.PhotoCropState
-import com.acon.feature.profile.screen.photoCrop.PhotoCropViewModel
+import com.acon.acon.feature.profile.composable.screen.photoCrop.PhotoCropState
+import com.acon.acon.feature.profile.composable.screen.photoCrop.PhotoCropViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 
 @Composable

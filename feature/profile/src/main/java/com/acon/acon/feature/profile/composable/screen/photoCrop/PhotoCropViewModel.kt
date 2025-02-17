@@ -1,4 +1,4 @@
-package com.acon.feature.profile.screen.photoCrop
+package com.acon.acon.feature.profile.composable.screen.photoCrop
 
 import android.app.Application
 import androidx.lifecycle.ViewModel

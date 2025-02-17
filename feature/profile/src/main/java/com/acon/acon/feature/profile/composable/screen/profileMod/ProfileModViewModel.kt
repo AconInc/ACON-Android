@@ -1,4 +1,4 @@
-package com.acon.feature.profile.screen.profileMod
+package com.acon.acon.feature.profile.composable.screen.profileMod
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

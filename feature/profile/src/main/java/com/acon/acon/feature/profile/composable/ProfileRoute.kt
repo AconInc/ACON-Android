@@ -1,6 +1,5 @@
 package com.acon.acon.feature.profile.composable
 
-import android.net.Uri
 import kotlinx.serialization.Serializable
 
 interface ProfileRoute {

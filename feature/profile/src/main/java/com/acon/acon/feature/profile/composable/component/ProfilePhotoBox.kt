@@ -1,4 +1,4 @@
-package com.acon.feature.profile.component
+package com.acon.acon.feature.profile.composable.component
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints

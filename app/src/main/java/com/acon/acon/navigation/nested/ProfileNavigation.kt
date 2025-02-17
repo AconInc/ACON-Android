@@ -11,15 +11,15 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.toRoute
-import com.acon.feature.profile.screen.galleryGrid.composable.GalleryGridContainer
-import com.acon.feature.profile.screen.galleryList.composable.GalleryListContainer
-import com.acon.feature.profile.screen.photoCrop.composable.PhotoCropContainer
-import com.acon.feature.profile.screen.profileMod.composable.ProfileModScreenContainer
 import com.acon.acon.domain.repository.SocialRepository
 import com.acon.acon.feature.SettingsRoute
 import com.acon.acon.feature.areaverification.AreaVerificationRoute
 import com.acon.acon.feature.profile.composable.ProfileRoute
-import com.acon.acon.feature.profile.composable.screen.composable.ProfileScreenContainer
+import com.acon.acon.feature.profile.composable.screen.galleryGrid.composable.GalleryGridContainer
+import com.acon.acon.feature.profile.composable.screen.galleryList.composable.GalleryListContainer
+import com.acon.acon.feature.profile.composable.screen.photoCrop.composable.PhotoCropContainer
+import com.acon.acon.feature.profile.composable.screen.profile.composable.ProfileScreenContainer
+import com.acon.acon.feature.profile.composable.screen.profileMod.composable.ProfileModScreenContainer
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 internal fun NavGraphBuilder.profileNavigation(

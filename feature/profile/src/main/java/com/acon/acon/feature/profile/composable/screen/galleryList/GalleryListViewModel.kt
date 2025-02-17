@@ -1,4 +1,4 @@
-package com.acon.feature.profile.screen.galleryList
+package com.acon.acon.feature.profile.composable.screen.galleryList
 
 import android.app.Application
 import android.content.Context

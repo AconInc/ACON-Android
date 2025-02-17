@@ -1,4 +1,4 @@
-package com.acon.acon.feature.profile.composable.screen.composable
+package com.acon.acon.feature.profile.composable.screen.profile.composable
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -30,7 +30,7 @@ import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.core.designsystem.component.bottomsheet.LoginBottomSheet
 import com.acon.acon.feature.profile.composable.component.ProfileInfo
-import com.acon.acon.feature.profile.composable.screen.ProfileUiState
+import com.acon.acon.feature.profile.composable.screen.profile.ProfileUiState
 import com.acon.acon.feature.profile.composable.type.ProfileInfoType
 import com.acon.acon.feature.profile.R
 import dev.chrisbanes.haze.hazeSource

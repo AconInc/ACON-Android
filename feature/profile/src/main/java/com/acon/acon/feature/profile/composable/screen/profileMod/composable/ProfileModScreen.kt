@@ -1,4 +1,4 @@
-package com.acon.feature.profile.screen.profileMod.composable
+package com.acon.acon.feature.profile.composable.screen.profileMod.composable
 
 import android.content.Intent
 import android.net.Uri
@@ -49,17 +49,17 @@ import com.acon.acon.core.designsystem.component.textfield.TextFieldStatus
 import com.acon.acon.core.designsystem.component.textfield.addFocusCleaner
 import com.acon.acon.core.designsystem.component.topbar.AconTopBar
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.core.utils.feature.permission.CheckAndRequestPhotoPermission
+import com.acon.acon.core.utils.feature.permission.CheckAndRequestPhotoPermission
 import com.acon.acon.feature.profile.R
-import com.acon.feature.profile.component.CustomModalBottomSheet
-import com.acon.feature.profile.component.NicknameErrMessageRow
-import com.acon.feature.profile.component.ProfilePhotoBox
-import com.acon.feature.profile.component.VerifiedAreaChip
-import com.acon.feature.profile.screen.profileMod.BirthdayStatus
-import com.acon.feature.profile.screen.profileMod.NicknameStatus
-import com.acon.feature.profile.screen.profileMod.ProfileModSideEffect
-import com.acon.feature.profile.screen.profileMod.ProfileModState
-import com.acon.feature.profile.screen.profileMod.ProfileModViewModel
+import com.acon.acon.feature.profile.composable.component.CustomModalBottomSheet
+import com.acon.acon.feature.profile.composable.component.NicknameErrMessageRow
+import com.acon.acon.feature.profile.composable.component.ProfilePhotoBox
+import com.acon.acon.feature.profile.composable.component.VerifiedAreaChip
+import com.acon.acon.feature.profile.composable.screen.profileMod.BirthdayStatus
+import com.acon.acon.feature.profile.composable.screen.profileMod.NicknameStatus
+import com.acon.acon.feature.profile.composable.screen.profileMod.ProfileModSideEffect
+import com.acon.acon.feature.profile.composable.screen.profileMod.ProfileModState
+import com.acon.acon.feature.profile.composable.screen.profileMod.ProfileModViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
