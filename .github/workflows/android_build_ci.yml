@@ -19,6 +19,13 @@ jobs:
         distribution: 'temurin'
         cache: gradle
 
+    - name: add local.properties
+      run: |
+        echo BASE_URL=${{ secrets.BASE_URL }} >> ./local.properties
+        echo GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} >> ./local.properties
+        echo naver_client_id=${{ secrets.NAVER_CLIENT_ID }} >> ./local.properties
+        echo naver_client_secret=${{ secrets.NAVER_CLIENT_SECRET }} >> ./local.properties
+        
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
 

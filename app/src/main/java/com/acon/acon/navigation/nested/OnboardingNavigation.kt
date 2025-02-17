@@ -4,10 +4,10 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
-import com.acon.feature.onboarding.OnboardingRoute
-import com.acon.feature.onboarding.screen.OnboardingScreen.composable.OnboardingContainer
-import com.acon.feature.onboarding.screen.PrefResultLoadingScreen.composable.PrefResultLoadingScreenContainer
-import com.acon.feature.spot.com.acon.feature.spot.SpotRoute
+import com.acon.acon.feature.onboarding.OnboardingRoute
+import com.acon.acon.feature.onboarding.screen.OnboardingScreen.composable.OnboardingContainer
+import com.acon.acon.feature.onboarding.screen.PrefResultLoadingScreen.composable.PrefResultLoadingScreenContainer
+import com.acon.acon.feature.spot.SpotRoute
 
 
 internal fun NavGraphBuilder.onboardingNavigationNavigation(

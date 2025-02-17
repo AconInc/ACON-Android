@@ -1,7 +1,7 @@
 package com.acon.acon.di
 
-import com.acon.core.common.DefaultDispatcher
-import com.acon.core.common.IoDispatcher
+import com.acon.acon.core.common.DefaultDispatcher
+import com.acon.acon.core.common.IoDispatcher
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

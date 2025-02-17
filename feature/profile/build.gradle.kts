@@ -8,7 +8,7 @@ plugins {
 }
 
 android {
-    namespace = "com.acon.feature.profile"
+    namespace = "com.acon.acon.feature.profile"
     compileSdk = 35
 
     defaultConfig {
@@ -71,4 +71,10 @@ dependencies {
     implementation(libs.orbit.compose)
 
     implementation(libs.coil.compose)
+
+    implementation(libs.coil.compose)
+    implementation(libs.coil.network.okhttp)
+
+    implementation(libs.haze)
+    implementation(libs.haze.materials)
 }

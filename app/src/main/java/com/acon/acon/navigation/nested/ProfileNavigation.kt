@@ -20,10 +20,16 @@ import com.acon.feature.profile.screen.galleryList.composable.GalleryListContain
 import com.acon.feature.profile.screen.photoCrop.composable.PhotoCropContainer
 import com.acon.feature.profile.screen.profile.composable.ProfileScreenContainer
 import com.acon.feature.profile.screen.profileMod.composable.ProfileModScreenContainer
+import com.acon.acon.domain.repository.SocialRepository
+import com.acon.acon.feature.SettingsRoute
+import com.acon.acon.feature.areaverification.AreaVerificationRoute
+import com.acon.acon.feature.profile.composable.ProfileRoute
+import com.acon.acon.feature.profile.composable.screen.composable.ProfileScreenContainer
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 internal fun NavGraphBuilder.profileNavigation(
-    navController: NavHostController
+    navController: NavHostController,
+    socialRepository: SocialRepository
 ) {
 
     navigation<ProfileRoute.Graph>(
@@ -37,7 +43,17 @@ internal fun NavGraphBuilder.profileNavigation(
 
         composable<ProfileRoute.Profile> {
             ProfileScreenContainer(
-                modifier = Modifier.fillMaxSize()
+                socialRepository = socialRepository,
+                modifier = Modifier.fillMaxSize(),
+                onNavigateToSettingsScreen = { navController.navigate(SettingsRoute.Settings) },
+                onNavigateToProfileEditScreen = {}, // TODO - 지원이꺼 합치면 추가
+                onNavigateToAreaVerificationScreen = {
+                    navController.navigate(AreaVerificationRoute.RequireAreaVerification) {
+                        popUpTo(ProfileRoute.Graph) {
+                            inclusive = true
+                        }
+                    }
+                }
             )
         }
 

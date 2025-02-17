@@ -56,13 +56,13 @@ import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.rememberAsyncImagePainter
-import com.acon.core.designsystem.component.button.AconFilledLargeButton
-import com.acon.core.designsystem.component.dialog.AconTwoButtonDialog
+import com.acon.acon.core.designsystem.component.button.AconFilledLargeButton
+import com.acon.acon.core.designsystem.component.dialog.AconTwoButtonDialog
 import com.acon.core.designsystem.component.textfield.AconTextField
 import com.acon.core.designsystem.component.textfield.TextFieldStatus
 import com.acon.core.designsystem.component.textfield.addFocusCleaner
-import com.acon.core.designsystem.component.topbar.AconTopBar
-import com.acon.core.designsystem.theme.AconTheme
+import com.acon.acon.core.designsystem.component.topbar.AconTopBar
+import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.core.utils.feature.permission.CheckAndRequestPhotoPermission
 import com.acon.feature.profile.R
 import com.acon.feature.profile.component.CustomModalBottomSheet
