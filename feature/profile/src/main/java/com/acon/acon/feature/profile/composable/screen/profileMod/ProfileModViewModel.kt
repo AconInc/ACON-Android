@@ -1,9 +1,12 @@
 package com.acon.acon.feature.profile.composable.screen.profileMod
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.acon.acon.core.designsystem.component.textfield.TextFieldStatus
+import com.acon.acon.domain.repository.ProfileRepository
 import com.acon.acon.domain.repository.UploadRepository
+import com.acon.acon.feature.profile.composable.screen.profile.ProfileUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -14,7 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ProfileModViewModel @Inject constructor(
-    private val profileRepository: UploadRepository, //바꿔야 함
+    private val profileRepository: ProfileRepository
 ) : ViewModel(), ContainerHost<ProfileModState, ProfileModSideEffect> {
 
     override val container = container<ProfileModState, ProfileModSideEffect>(ProfileModState())
@@ -233,6 +236,29 @@ class ProfileModViewModel @Inject constructor(
         }
     }
 
+
+    fun getPreSignedUrl() = intent {
+        viewModelScope.launch {
+            profileRepository.getPreSignedUrl()
+                .onSuccess { result ->   //성공시 얻은 PreSignedUrl값 저장하고, fileName 저장하고, PUT 함수 부르기
+                    reduce {
+                        state.copy(
+                            uploadFileName = result.fileName,
+                            preSignedUrl = result.preSignedUrl
+                        )
+                    }
+                    putPhotoToPreSignedUrl(state.selectedPhotoUri, state.preSignedUrl)
+                }
+                .onFailure {
+                    // 실패시 에러처리 어케하지?
+                }
+        }
+    }
+
+    private fun putPhotoToPreSignedUrl(imageUri: String, preSignedUrl: String) = intent {
+
+    }
+
 }
 
 
@@ -257,6 +283,9 @@ data class ProfileModState(
 
     val selectedPhotoUri: String = "",
     val showPhotoEditDialog: Boolean = false,
+
+    val preSignedUrl: String = "",
+    val uploadFileName: String = "",
     )
 
 sealed class NicknameErrorType(val message: String) {

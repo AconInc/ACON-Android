@@ -187,7 +187,7 @@ fun ProfileModScreenContainer(
         onBirthdayChanged = viewModel::onBirthdayChanged,
         onFocusChanged = viewModel::onFocusChanged,
         onBackClicked = viewModel::showDialog,
-        onNavigateToProfile = onNavigateToProfile,
+        onSaveClicked = viewModel::getPreSignedUrl, // Presigned 얻고 -> Put으로 이미지 업로드하고 -> 서버에 저장 API 쏘고 -> 성공하면 onNavigateToProfile()
         onNavigateToAreaVerification = onNavigateToAreaVerification,
         onRemoveArea = viewModel::showAreaDeleteDialog,
         onProfileClicked = viewModel::showProfileEditDialog,
@@ -202,7 +202,7 @@ fun ProfileModScreen(
     onBirthdayChanged: (String) -> Unit = {},
     onFocusChanged: (Boolean) -> Unit = {},
     onBackClicked: () -> Unit,
-    onNavigateToProfile: () -> Unit,
+    onSaveClicked: () -> Unit,
     onNavigateToAreaVerification: () -> Unit,
     onRemoveArea: (String) -> Unit = {},
     onProfileClicked: () -> Unit = {},
@@ -417,9 +417,9 @@ fun ProfileModScreen(
                 enabledBackgroundColor = AconTheme.color.Gray5,
                 disabledTextColor = AconTheme.color.Gray5,
                 enabledTextColor = AconTheme.color.White,
-                onClick = onNavigateToProfile,
+                onClick = onSaveClicked,
                 isEnabled = (state.nicknameStatus == NicknameStatus.Valid) &&
-                        (state.birthdayStatus == BirthdayStatus.Valid) &&
+                        (state.birthdayStatus != BirthdayStatus.Invalid("정확한 생년월일을 입력해주세요")) &&
                         state.verifiedAreaList.isNotEmpty()
             )
         }
@@ -443,7 +443,7 @@ private fun ProfileModScreenPreview() {
         onBirthdayChanged = { newValue -> birthdayState.value = newValue },
         onFocusChanged = {},
         onBackClicked = {},
-        onNavigateToProfile = {},
+        onSaveClicked = {},
         onNavigateToAreaVerification = {},
         onRemoveArea = {}
     )
