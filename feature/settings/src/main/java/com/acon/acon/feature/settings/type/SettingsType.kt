@@ -24,6 +24,10 @@ enum class SettingsType(
         titleResId = com.acon.acon.core.designsystem.R.drawable.ic_retry_onboarding_17,
         title = R.string.settings_section_retry_onboarding
     ),
+    AREA_VERIFICATION(
+        titleResId = com.acon.acon.core.designsystem.R.drawable.ic_area_verificaiton_g_17,
+        title = R.string.settings_section_verify_area
+    ),
     LOGOUT(
         titleResId = com.acon.acon.core.designsystem.R.drawable.ic_logining_17,
         title = R.string.settings_section_logout

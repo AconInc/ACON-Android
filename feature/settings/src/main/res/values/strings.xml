@@ -16,6 +16,7 @@
     <string name="settings_section_term_of_use">이용약관</string>
     <string name="settings_section_private_policy">개인정보처리방침</string>
     <string name="settings_section_retry_onboarding">취향탐색 다시하기</string>
+    <string name="settings_section_verify_area">동네 인증하기</string>
     <string name="settings_section_logout">로그아웃하기</string>
     <string name="settings_section_delete_account">서비스 탈퇴</string>
 
