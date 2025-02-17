@@ -1,4 +1,4 @@
-package com.acon.acon.feature.profile.composable.screen.composable
+package com.acon.acon.feature.profile.composable.screen.profile.composable
 
 import android.content.Intent
 import android.net.Uri
@@ -10,8 +10,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.acon.acon.core.utils.feature.constants.AppURL
 import com.acon.acon.domain.repository.SocialRepository
-import com.acon.acon.feature.profile.composable.screen.ProfileUiSideEffect
-import com.acon.acon.feature.profile.composable.screen.ProfileViewModel
+import com.acon.acon.feature.profile.composable.screen.profile.ProfileUiSideEffect
+import com.acon.acon.feature.profile.composable.screen.profile.ProfileViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
