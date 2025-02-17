@@ -152,7 +152,7 @@ fun ChipItem(
 
 @Preview(showBackground = true)
 @Composable
-fun VerifiedAreaChipPreview() {
+private fun VerifiedAreaChipPreview() {
     var areaList by remember { mutableStateOf(listOf<String>()) }
 
     VerifiedAreaChip(

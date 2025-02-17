@@ -1,6 +1,5 @@
 package com.acon.feature.profile.component
 
-import android.media.Image
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size

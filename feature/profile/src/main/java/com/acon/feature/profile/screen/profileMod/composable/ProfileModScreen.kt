@@ -91,7 +91,7 @@ fun ProfileModScreenContainer(
                     context.startActivity(intent)
                 }
                 is ProfileModSideEffect.NavigateBack -> {
-                    onNavigateToProfile() // 변경사항 있으면 저장 안할거냐고 다이얼로그 띄운 다음에 보내야 하나?
+                    onNavigateToProfile()
                 }
                 is ProfileModSideEffect.NavigateToCustomGallery -> {
                     onNavigateToCustomGallery()
@@ -148,10 +148,10 @@ fun ProfileModScreenContainer(
             onDismissRequest = {
                 viewModel.hideAreaDeleteDialog()
             },
-            onClickLeft = { // 취소
+            onClickLeft = {
                 viewModel.hideAreaDeleteDialog()
             },
-            onClickRight = { // 선택한 동네 삭제하기
+            onClickRight = {
                 state.selectedArea?.let { viewModel.removeVerifiedArea(it) }
             },
             isImageEnabled = false
@@ -210,7 +210,6 @@ fun ProfileModScreen(
     val focusManager = LocalFocusManager.current
     val scrollState = rememberScrollState()
 
-    //뒤로가기 눌렀을 때 다이얼로그 뜨게 처리
     BackHandler(enabled = true) {
         onBackClicked()
     }
@@ -277,7 +276,6 @@ fun ProfileModScreen(
                     Spacer(modifier = Modifier.weight(1f))
                 }
 
-                //닉네임 입력 필드
                 Column(
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 15.dp),
                 ){
@@ -334,11 +332,10 @@ fun ProfileModScreen(
                                         textColor = AconTheme.color.Success_blue1
                                     )
                                 }
-                                else -> Unit //Typing 상태일 때는 표시 X
+                                else -> Unit
                             }
                         }
 
-                        //글자 수 카운드
                         Row(
                             horizontalArrangement = Arrangement.End
                         ){
@@ -348,7 +345,6 @@ fun ProfileModScreen(
                     }
                 }
 
-                //생년월일 필드
                 Column(
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 15.dp),
                 ){
@@ -385,7 +381,6 @@ fun ProfileModScreen(
                     }
                 }
 
-                //동네인증 필드
                 Column(
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 15.dp),
                 ){
@@ -401,8 +396,8 @@ fun ProfileModScreen(
                     VerifiedAreaChip(
                         modifier = Modifier,
                         areaList = state.verifiedAreaList,
-                        onAddArea = { onNavigateToAreaVerification() }, //동네인증 페이지로 이동
-                        onRemoveArea = onRemoveArea , //areaList에서 현재 동네를 삭제
+                        onAddArea = { onNavigateToAreaVerification() },
+                        onRemoveArea = onRemoveArea ,
                         errorMessage = "로컬도토리를 위해 최소 1개의 동네를 인증해주세요"
                     )
                 }

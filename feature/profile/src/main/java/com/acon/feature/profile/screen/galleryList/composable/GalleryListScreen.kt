@@ -135,8 +135,8 @@ fun AlbumItem(album: Album, onAlbumSelected: (String, String) -> Unit) {
     }
 }
 
-@Preview()
+@Preview
 @Composable
-fun PreviewCustomGalleryScreen(){
+private fun PreviewCustomGalleryScreen(){
     GalleryListContainer()
 }

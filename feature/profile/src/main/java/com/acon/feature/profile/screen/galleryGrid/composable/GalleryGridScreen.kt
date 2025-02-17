@@ -1,14 +1,11 @@
 package com.acon.feature.profile.screen.galleryGrid.composable
 
-import android.content.Intent
 import android.net.Uri
-import android.provider.Settings
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
@@ -31,10 +28,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.rememberAsyncImagePainter
 import com.acon.acon.core.designsystem.component.topbar.AconTopBar
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.feature.profile.screen.galleryGrid.GalleryGridSideEffect
 import com.acon.feature.profile.screen.galleryGrid.GalleryGridState
 import com.acon.feature.profile.screen.galleryGrid.GalleryGridViewModel
-import com.acon.feature.profile.screen.profileMod.ProfileModSideEffect
 import org.orbitmvi.orbit.compose.collectAsState
 
 @Composable
@@ -50,8 +45,6 @@ fun GalleryGridContainer(
 
     LaunchedEffect(albumId) {
         viewModel.loadPhotos(albumId)
-
-        //SideEffect를 안쓰고 넘기면 되네??...
     }
 
     GalleryGridScreen(

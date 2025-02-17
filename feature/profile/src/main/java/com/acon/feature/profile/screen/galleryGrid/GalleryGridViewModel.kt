@@ -9,7 +9,6 @@ import com.acon.feature.profile.screen.galleryList.Album
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.viewmodel.container
-import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel

@@ -42,17 +42,15 @@ class ProfileModViewModel @Inject constructor(
     private var nicknameValidationJob: Job? = null
 
     fun onNicknameChanged(text: String) = intent {
-        val filteredText = text.filter { it.isAllowedChar() } // 허용된 문자만 쓰도록 필터링
+        val filteredText = text.filter { it.isAllowedChar() }
         reduce {
             state.copy(nickNameState = filteredText, nicknameStatus = NicknameStatus.Typing)
         }
 
-        // 기존의 유효성 검사 Job이 있다면 취소
         nicknameValidationJob?.cancel()
 
-        // 새로운 유효성 검사 Job 실행
         nicknameValidationJob = viewModelScope.launch {
-            delay(500L) // ✅ 사용자가 0.5초 동안 입력을 멈춘 경우에만 실행됨
+            delay(500L)
 
             val errors = mutableListOf<NicknameErrorType>()
 
@@ -66,7 +64,7 @@ class ProfileModViewModel @Inject constructor(
                 errors.add(NicknameErrorType.InvalidLang)
             }
 
-            val alreadyUsed = false //서버 체크 로직 추가
+            val alreadyUsed = false //TODO: 서버 체크 로직 추가
             if(alreadyUsed) {
                 errors.add(NicknameErrorType.AlreadyUsed)
             }
@@ -156,7 +154,7 @@ class ProfileModViewModel @Inject constructor(
     }
 
     fun fetchVerifiedAreaList(){
-        //서버 통해서 사용자가 인증 받은 동네 리스트 가져오기
+        //TODO: 서버 통해서 사용자가 인증 받은 동네 리스트 가져오기
         //가져온 리스트로 verifiedAreaList 관리하기
     }
 
@@ -235,9 +233,6 @@ class ProfileModViewModel @Inject constructor(
         }
     }
 
-    private fun navigateBack() = intent {
-        postSideEffect(ProfileModSideEffect.NavigateBack)
-    }
 }
 
 
