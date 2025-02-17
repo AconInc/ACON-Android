@@ -19,6 +19,7 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 fun ProfileScreenContainer(
     socialRepository: SocialRepository,
     modifier: Modifier = Modifier,
+    onNavigateToSpotListScreen: () -> Unit = {},
     onNavigateToSettingsScreen: () -> Unit = {},
     onNavigateToProfileEditScreen: () -> Unit = {},
     onNavigateToAreaVerificationScreen: () -> Unit = {},
@@ -40,6 +41,7 @@ fun ProfileScreenContainer(
 
     viewModel.collectSideEffect {
         when(it) {
+            is ProfileUiSideEffect.OnNavigateToSpotListScreen -> { onNavigateToSpotListScreen() }
             is ProfileUiSideEffect.OnNavigateToSettingsScreen -> { onNavigateToSettingsScreen() }
             is ProfileUiSideEffect.OnNavigateToProfileEditScreen -> { onNavigateToProfileEditScreen() }
             is ProfileUiSideEffect.OnNavigateToAreaVerificationScreen -> { onNavigateToAreaVerificationScreen() }

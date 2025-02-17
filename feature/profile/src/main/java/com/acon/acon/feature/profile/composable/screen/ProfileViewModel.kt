@@ -35,7 +35,11 @@ class ProfileViewModel @Inject constructor(
     fun googleLogin(socialRepository: SocialRepository) = intent {
         socialRepository.signIn()
             .onSuccess {
-                postSideEffect(ProfileUiSideEffect.OnNavigateToAreaVerificationScreen)
+                if(it.hasVerifiedArea) {
+                    postSideEffect(ProfileUiSideEffect.OnNavigateToSpotListScreen)
+                } else {
+                    postSideEffect(ProfileUiSideEffect.OnNavigateToAreaVerificationScreen)
+                }
             }.onFailure { error ->
                 when (error) {
                     is CancellationException -> {
@@ -116,6 +120,7 @@ sealed interface ProfileUiState {
 }
 
 sealed interface ProfileUiSideEffect {
+    data object OnNavigateToSpotListScreen : ProfileUiSideEffect
     data object OnNavigateToSettingsScreen : ProfileUiSideEffect
     data object OnNavigateToProfileEditScreen : ProfileUiSideEffect
     data object OnNavigateToAreaVerificationScreen : ProfileUiSideEffect
