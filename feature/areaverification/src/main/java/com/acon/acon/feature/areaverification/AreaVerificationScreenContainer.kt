@@ -21,14 +21,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.acon.acon.core.designsystem.blur.LocalHazeState
 import com.acon.acon.core.designsystem.component.button.AconFilledLargeButton
-import com.acon.acon.core.designsystem.component.dialog.AconOneButtonDialog
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.core.utils.feature.action.BackOnPressed
+import com.acon.acon.core.designsystem.component.dialog.AconPermissionDialog
 import com.acon.acon.core.utils.feature.permission.CheckAndRequestLocationPermission
+import com.acon.acon.core.utils.feature.permission.checkLocationPermission
 import com.acon.acon.feature.areaverification.component.AreaVerificationButton
 import dev.chrisbanes.haze.hazeSource
 
@@ -39,8 +41,8 @@ fun AreaVerificationScreenContainer(
     modifier: Modifier = Modifier,
     viewModel: AreaVerificationViewModel = hiltViewModel(),
 ) {
-    val state by viewModel.container.stateFlow.collectAsState()
     val context = LocalContext.current
+    val state by viewModel.container.stateFlow.collectAsState()
 
     LaunchedEffect(Unit) {
         viewModel.container.sideEffectFlow.collect { effect ->
@@ -63,16 +65,21 @@ fun AreaVerificationScreenContainer(
         }
     }
 
-    CheckAndRequestLocationPermission {
-        viewModel.checkLocationAndNavigate()
-    }
+    CheckAndRequestLocationPermission(
+        enableDialog = false
+    )
 
     AreaVerificationScreen(
         state = state,
         onNewLocationSelected = { viewModel.onNewLocationSelected() },
-        onDismissPermissionDialog = { viewModel.updateShowPermissionDialog(false) },
         onPermissionSettingClick = { viewModel.onPermissionSettingClick(context.packageName) },
-        onNextButtonClick = { viewModel.onNextButtonClick() },
+        onNextButtonClick = {
+            val hasPermission = context.checkLocationPermission()
+            viewModel.updateLocationPermissionStatus(hasPermission)
+
+            if (hasPermission) { viewModel.onNextButtonClick() }
+            else { viewModel.updateShowPermissionDialog(true) }
+        },
         modifier = modifier
     )
 }
@@ -81,7 +88,6 @@ fun AreaVerificationScreenContainer(
 fun AreaVerificationScreen(
     state: AreaVerificationState,
     onNewLocationSelected: () -> Unit,
-    onDismissPermissionDialog: () -> Unit,
     onPermissionSettingClick: () -> Unit,
     onNextButtonClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -90,13 +96,8 @@ fun AreaVerificationScreen(
     BackOnPressed(context)
 
     if (state.showPermissionDialog) {
-        AconOneButtonDialog(
-            title = stringResource(R.string.permission_dialog_title),
-            content = stringResource(R.string.permission_dialog_content),
-            buttonContent = stringResource(R.string.go_to_settings),
-            onDismissRequest = onDismissPermissionDialog,
-            onClickConfirm = onPermissionSettingClick,
-            isImageEnabled = false
+        AconPermissionDialog(
+            onPermissionGranted = onPermissionSettingClick
         )
     }
 
@@ -155,4 +156,19 @@ fun AreaVerificationScreen(
                 .padding(bottom = 24.dp)
         )
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewAreaVerificationScreen() {
+    val sampleState = AreaVerificationState(
+        showPermissionDialog = true,
+        isNewLocationSelected = true
+    )
+    AreaVerificationScreen(
+        state = sampleState,
+        onNewLocationSelected = {},
+        onPermissionSettingClick = {},
+        onNextButtonClick = {}
+    )
 }

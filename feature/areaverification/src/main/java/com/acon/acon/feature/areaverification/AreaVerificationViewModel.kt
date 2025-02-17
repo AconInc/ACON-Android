@@ -1,10 +1,8 @@
 package com.acon.acon.feature.areaverification
 
-import androidx.lifecycle.ViewModel
 import com.acon.acon.core.utils.feature.base.BaseContainerHost
 import com.acon.acon.domain.repository.AreaVerificationRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.viewmodel.container
 import javax.inject.Inject
 
@@ -26,6 +24,12 @@ class AreaVerificationViewModel @Inject constructor(
     fun updateShowPermissionDialog(show: Boolean) = intent {
         reduce {
             state.copy(showPermissionDialog = show)
+        }
+    }
+
+    fun updateLocationPermissionStatus(isGranted: Boolean) = intent {
+        reduce {
+            state.copy(hasLocationPermission = isGranted)
         }
     }
 
