@@ -18,8 +18,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import com.acon.core.designsystem.theme.AconTheme
-import com.acon.feature.profile.R
+import com.acon.acon.core.designsystem.theme.AconTheme
+import com.acon.acon.feature.profile.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

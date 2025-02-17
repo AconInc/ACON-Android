@@ -1,24 +1,19 @@
 package com.acon.acon.navigation.nested
 
-import android.net.Uri
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.toRoute
-import com.acon.feature.areaverification.AreaVerificationRoute
-import com.acon.feature.profile.ProfileRoute
 import com.acon.feature.profile.screen.galleryGrid.composable.GalleryGridContainer
 import com.acon.feature.profile.screen.galleryList.composable.GalleryListContainer
 import com.acon.feature.profile.screen.photoCrop.composable.PhotoCropContainer
-import com.acon.feature.profile.screen.profile.composable.ProfileScreenContainer
 import com.acon.feature.profile.screen.profileMod.composable.ProfileModScreenContainer
 import com.acon.acon.domain.repository.SocialRepository
 import com.acon.acon.feature.SettingsRoute

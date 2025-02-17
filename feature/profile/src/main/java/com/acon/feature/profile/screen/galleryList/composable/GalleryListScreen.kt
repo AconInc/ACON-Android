@@ -29,8 +29,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.rememberAsyncImagePainter
-import com.acon.core.designsystem.component.topbar.AconTopBar
-import com.acon.core.designsystem.theme.AconTheme
+import com.acon.acon.core.designsystem.component.topbar.AconTopBar
+import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.feature.profile.screen.galleryList.Album
 import com.acon.feature.profile.screen.galleryList.GalleryListState
 import com.acon.feature.profile.screen.galleryList.GalleryListViewModel
@@ -77,7 +77,7 @@ fun GalleryListScreen(
             leadingIcon = {
                 IconButton(onClick = onBackClicked) {
                     Image(
-                        imageVector = ImageVector.vectorResource(id = com.acon.core.designsystem.R.drawable.ic_arrow_left_28),
+                        imageVector = ImageVector.vectorResource(id = com.acon.acon.core.designsystem.R.drawable.ic_arrow_left_28),
                         contentDescription = "Back",
                     )
                 }

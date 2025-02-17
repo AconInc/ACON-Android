@@ -1,15 +1,9 @@
 package com.acon.feature.profile.screen.profileMod
 
-import android.net.Uri
-import android.provider.ContactsContract.CommonDataKinds.Nickname
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.toRoute
-import com.acon.core.designsystem.component.textfield.TextFieldStatus
-import com.acon.domain.repository.UploadRepository
-import com.acon.feature.profile.ProfileRoute
+import com.acon.acon.core.designsystem.component.textfield.TextFieldStatus
+import com.acon.acon.domain.repository.UploadRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay

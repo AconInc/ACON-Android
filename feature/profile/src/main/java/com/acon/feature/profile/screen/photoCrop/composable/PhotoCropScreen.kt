@@ -40,10 +40,9 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.rememberAsyncImagePainter
-import com.acon.core.designsystem.R
-import com.acon.core.designsystem.component.topbar.AconTopBar
-import com.acon.core.designsystem.theme.AconColor
-import com.acon.core.designsystem.theme.AconTheme
+import com.acon.acon.core.designsystem.R
+import com.acon.acon.core.designsystem.component.topbar.AconTopBar
+import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.feature.profile.screen.photoCrop.PhotoCropState
 import com.acon.feature.profile.screen.photoCrop.PhotoCropViewModel
 import org.orbitmvi.orbit.compose.collectAsState
