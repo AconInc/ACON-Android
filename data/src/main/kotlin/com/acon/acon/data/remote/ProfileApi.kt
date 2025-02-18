@@ -11,7 +11,6 @@ import retrofit2.http.PATCH
 import retrofit2.http.Query
 
 interface ProfileApi {
-
     @GET("/api/v1/members/me")
     suspend fun fetchProfile(): ProfileResponse
 

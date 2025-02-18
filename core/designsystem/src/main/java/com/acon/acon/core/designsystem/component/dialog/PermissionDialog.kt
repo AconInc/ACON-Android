@@ -1,4 +1,4 @@
-package com.acon.acon.core.utils.feature.permission
+package com.acon.acon.core.designsystem.component.dialog
 
 import android.Manifest
 import android.content.Intent
@@ -13,13 +13,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.content.ContextCompat
-import com.acon.acon.core.designsystem.component.dialog.AconOneButtonDialog
-import com.acon.acon.core.utils.feature.R
+import com.acon.acon.core.designsystem.R
 
 @Composable
-internal fun AconPermissionDialog(
-    onPermissionGranted: () -> Unit,
-    modifier: Modifier = Modifier
+fun AconPermissionDialog(
+    modifier: Modifier = Modifier,
+    onPermissionGranted: () -> Unit = {}
 ) {
 
     val context = LocalContext.current
@@ -50,5 +49,5 @@ internal fun AconPermissionDialog(
 @Preview
 @Composable
 private fun AconPermissionDialogPreview() {
-    AconPermissionDialog({})
+    AconPermissionDialog()
 }
