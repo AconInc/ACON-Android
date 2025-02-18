@@ -56,6 +56,7 @@ import com.acon.acon.feature.profile.composable.component.NicknameErrMessageRow
 import com.acon.acon.feature.profile.composable.component.ProfilePhotoBox
 import com.acon.acon.feature.profile.composable.component.VerifiedAreaChip
 import com.acon.acon.feature.profile.composable.screen.profileMod.BirthdayStatus
+import com.acon.acon.feature.profile.composable.screen.profileMod.BirthdayVisualTransformation
 import com.acon.acon.feature.profile.composable.screen.profileMod.NicknameStatus
 import com.acon.acon.feature.profile.composable.screen.profileMod.ProfileModSideEffect
 import com.acon.acon.feature.profile.composable.screen.profileMod.ProfileModState
@@ -339,7 +340,7 @@ fun ProfileModScreen(
                         Row(
                             horizontalArrangement = Arrangement.End
                         ){
-                            Text(text = "${state.nickNameState.length}", style = AconTheme.typography.subtitle2_14_med, color = AconTheme.color.White)
+                            Text(text = "${state.nicknameCount}", style = AconTheme.typography.subtitle2_14_med, color = AconTheme.color.White)
                             Text(text = "/16", style = AconTheme.typography.subtitle2_14_med, color = AconTheme.color.Gray5)
                         }
                     }
@@ -362,6 +363,7 @@ fun ProfileModScreen(
                         onTextChanged = onBirthdayChanged,
                         onFocusChanged = onFocusChanged,
                         placeholder = "ex) 2025.01.01",
+                        visualTransformation = BirthdayVisualTransformation()
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     when (val status = state.birthdayStatus) {
@@ -369,7 +371,6 @@ fun ProfileModScreen(
                             Spacer(modifier = Modifier.height(4.dp))
                         }
                         is BirthdayStatus.Invalid -> {
-
                             NicknameErrMessageRow(
                                 modifier = modifier,
                                 iconRes = ImageVector.vectorResource(R.drawable.and_ic_error_20),

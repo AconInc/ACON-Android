@@ -32,6 +32,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.acon.acon.core.designsystem.R
@@ -49,6 +50,7 @@ fun AconTextField(
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     isTyping: Boolean = false,
+    visualTransformation: VisualTransformation = VisualTransformation.None
 ) {
 
     val focusRequester = remember { FocusRequester() }
@@ -108,6 +110,7 @@ fun AconTextField(
                     focusManager.clearFocus()
                 }
             ),
+            visualTransformation = visualTransformation,
             decorationBox = { innerTextField ->
                 Box(
                     modifier = Modifier.fillMaxWidth(),

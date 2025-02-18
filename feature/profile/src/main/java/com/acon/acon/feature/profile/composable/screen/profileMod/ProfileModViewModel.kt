@@ -1,18 +1,11 @@
 package com.acon.acon.feature.profile.composable.screen.profileMod
 
 import android.app.Application
-import android.content.Context
 import android.net.Uri
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.acon.acon.core.designsystem.component.textfield.TextFieldStatus
 import com.acon.acon.domain.repository.ProfileRepository
-import com.acon.acon.domain.repository.UploadRepository
-import com.acon.acon.feature.profile.composable.screen.profile.ProfileUiState
-import dagger.hilt.android.internal.Contexts.getApplication
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -23,7 +16,6 @@ import okhttp3.Request
 import okhttp3.RequestBody
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.viewmodel.container
-import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
@@ -32,7 +24,9 @@ class ProfileModViewModel @Inject constructor(
     application: Application
 ) : AndroidViewModel(application), ContainerHost<ProfileModState, ProfileModSideEffect> {
 
-    override val container = container<ProfileModState, ProfileModSideEffect>(ProfileModState())
+    override val container = container<ProfileModState, ProfileModSideEffect>(ProfileModState()){
+        profileRepository.fetchProfile()
+    }
 
     fun onFocusChanged(isFocused: Boolean) = intent {
         reduce {
@@ -40,6 +34,20 @@ class ProfileModViewModel @Inject constructor(
                 nickNameFieldStatus = if (isFocused) TextFieldStatus.Focused else TextFieldStatus.Inactive,
                 birthdayFieldStatus = if (isFocused) TextFieldStatus.Focused else TextFieldStatus.Inactive
             )
+        }
+    }
+
+    private fun fetchUserProfileInfo() = intent {
+        viewModelScope.launch {
+            profileRepository.fetchProfile()
+                .onSuccess { profile ->
+                    reduce {
+                        state.copy(originalNickname = profile.nickname)
+                    }
+                }
+                .onFailure {
+                    //유저 정보 fetch 시 에러 처리
+                }
         }
     }
 
@@ -59,7 +67,16 @@ class ProfileModViewModel @Inject constructor(
     fun onNicknameChanged(text: String) = intent {
         val filteredText = text.filter { it.isAllowedChar() }
         reduce {
-            state.copy(nickNameState = filteredText, nicknameStatus = NicknameStatus.Typing)
+            state.copy(nickNameState = filteredText, nicknameStatus = NicknameStatus.Typing) // 이렇게 하면 딜레이는 안 생김. 단, 16자 이상일 때 안 써지게 막는 방법은?..
+        }
+
+        val nicknameCount = filteredText.map { if (it in ('가'..'힣') + ('ㄱ'..'ㅎ') + ('ㅏ'..'ㅣ')) 2 else 1 }.sum()
+        if (nicknameCount <= 16) { //nicknameCount만 따로 업데이트 (딜레이 생기므로)
+            reduce {
+                state.copy(
+                    nicknameCount = nicknameCount
+                )
+            }
         }
 
         nicknameValidationJob?.cancel()
@@ -97,13 +114,30 @@ class ProfileModViewModel @Inject constructor(
     }
 
     fun onBirthdayChanged(text: String) = intent {
-        val formattedText = formatBirthdayInput(text)
-        reduce {
-            state.copy(birthdayState = formattedText)
+        val digitsOnly = text.filter { it.isDigit() }
+
+        if (digitsOnly.isEmpty()){
+            reduce {
+                state.copy(
+                    birthdayState = digitsOnly,
+                    birthdayStatus = BirthdayStatus.Empty,
+                    birthdayFieldStatus = TextFieldStatus.Focused
+                )
+            }
+            return@intent
+        }
+        if (digitsOnly.length <= 8) { // 일단 8자 이내면 쓰는 게 다 보여야함
+            reduce {
+                state.copy(
+                    birthdayState = digitsOnly,
+                    birthdayStatus = BirthdayStatus.Invalid(errorMsg = "정확한 생년월일을 입력해주세요"),
+                    birthdayFieldStatus = TextFieldStatus.Error
+                )
+            }
         }
 
-        if (formattedText.length == 10) {
-            if (validateBirthday(formattedText)) {
+        if (digitsOnly.length == 8) {
+            if (validateBirthday(digitsOnly)) {
                 reduce {
                     state.copy(
                         birthdayStatus = BirthdayStatus.Valid,
@@ -121,24 +155,11 @@ class ProfileModViewModel @Inject constructor(
         }
     }
 
-    private fun formatBirthdayInput(input: String): String {
-        val digitsOnly = input.filter { it.isDigit() }
-
-        return when {
-            digitsOnly.length <= 4 -> digitsOnly
-            digitsOnly.length <= 6 -> "${digitsOnly.substring(0, 4)}.${digitsOnly.substring(4)}"
-            digitsOnly.length <= 8 -> "${digitsOnly.substring(0, 4)}.${digitsOnly.substring(4, 6)}.${digitsOnly.substring(6)}"
-            else -> "${digitsOnly.substring(0, 4)}.${digitsOnly.substring(4, 6)}.${digitsOnly.substring(6, 8)}"
-        }
-    }
-
     private fun validateBirthday(birthday: String): Boolean {
-        val parts = birthday.split(".")
-        if (parts.size != 3) return false
 
-        val year = parts[0].toIntOrNull() ?: return false
-        val month = parts[1].toIntOrNull() ?: return false
-        val day = parts[2].toIntOrNull() ?: return false
+        val year = birthday.substring(0, 4).toIntOrNull() ?: return false
+        val month = birthday.substring(4, 6).toIntOrNull() ?: return false
+        val day = birthday.substring(6, 8).toIntOrNull() ?: return false
 
         val currentYear = java.time.Year.now().value
         if (year > currentYear || year <= 1900) return false
@@ -289,6 +310,7 @@ class ProfileModViewModel @Inject constructor(
 
             if (response.isSuccessful) {
                 // PUT 성공 시 정상적으로 프로필 수정 API 호출 (fileName 사용)
+                // TODO : 프로필 수정 API 연결
             } else {
                 // PUT 실패 시 에러 처리
             }
@@ -297,16 +319,32 @@ class ProfileModViewModel @Inject constructor(
         }
     }
 
-
-
+//    fun validateNickname(nickname: String) : Boolean {
+//
+//        var isValid : Boolean = false
+//
+//        viewModelScope.launch {
+//            profileRepository.validateNickname(nickname)
+//                .onSuccess {
+//                    isValid = true
+//                }
+//                .onFailure {
+//                    isValid = false
+//                    // 실패시 에러 처리
+//                }
+//        }
+//        return isValid
+//    }
 }
 
 
 data class ProfileModState(
 
+    val originalNickname: String = "",
     val nickNameFieldStatus: TextFieldStatus = TextFieldStatus.Inactive,
     val nickNameState: String = "",
     val nicknameStatus: NicknameStatus = NicknameStatus.Empty,
+    val nicknameCount: Int = 0,
 
     val birthdayFieldStatus: TextFieldStatus = TextFieldStatus.Inactive,
     val birthdayState: String = "",
