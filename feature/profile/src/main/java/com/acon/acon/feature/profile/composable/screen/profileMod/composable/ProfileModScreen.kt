@@ -188,7 +188,7 @@ fun ProfileModScreenContainer(
         onBirthdayChanged = viewModel::onBirthdayChanged,
         onFocusChanged = viewModel::onFocusChanged,
         onBackClicked = viewModel::showDialog,
-        onSaveClicked = viewModel::getPreSignedUrl, // Presigned 얻고 -> Put으로 이미지 업로드하고 -> 서버에 저장 API 쏘고 -> 성공하면 onNavigateToProfile()
+        onSaveClicked = viewModel::getPreSignedUrl,
         onNavigateToAreaVerification = onNavigateToAreaVerification,
         onRemoveArea = viewModel::showAreaDeleteDialog,
         onProfileClicked = viewModel::showProfileEditDialog,

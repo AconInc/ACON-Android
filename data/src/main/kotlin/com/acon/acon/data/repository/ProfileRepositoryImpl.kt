@@ -27,4 +27,10 @@ class ProfileRepositoryImpl @Inject constructor(
             profileRemoteDataSource.validateNickname(nickname)
         }
     }
+
+    override suspend fun updateProfile(fileName: String, nickname: String, birthday: String?): Result<Unit> {
+        return runCatchingWith() {
+            profileRemoteDataSource.updateProfile(fileName, nickname, birthday)
+        }
+    }
 }

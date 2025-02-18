@@ -5,6 +5,7 @@ import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.acon.acon.core.designsystem.component.textfield.TextFieldStatus
 import com.acon.acon.domain.repository.ProfileRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -261,6 +262,23 @@ class ProfileModViewModel @Inject constructor(
         }
     }
 
+    private fun validateNickname(nickname: String) : Boolean {
+        var isValid : Boolean = false
+
+        viewModelScope.launch {
+            profileRepository.validateNickname(nickname)
+                .onSuccess { response ->
+                    Log.d("닉네임 검사", "성공 - $response")
+                    isValid = true
+                }
+                .onFailure { response ->
+                    Log.d("닉네임 검사", "뭔가 이상해여 - $response")
+                    isValid = false
+                    // 실패시 에러 처리
+                }
+        }
+        return isValid
+    }
 
     fun getPreSignedUrl() = intent {
         viewModelScope.launch {
@@ -273,9 +291,11 @@ class ProfileModViewModel @Inject constructor(
                         )
                     }
                     putPhotoToPreSignedUrl(Uri.parse(state.selectedPhotoUri), state.preSignedUrl)
+                    Log.d("Url 얻기 검사", "성공 - $result")
                 }
                 .onFailure {
-                    // 실패시 에러처리 어케하지?
+                    Log.d("Url 얻기 검사", "실패 - $it")
+                    // 실패시 에러처리 ?
                 }
         }
     }
@@ -301,9 +321,15 @@ class ProfileModViewModel @Inject constructor(
             val response = client.newCall(request).execute()
 
             if (response.isSuccessful) {
-                // PUT 성공 시 정상적으로 프로필 수정 API 호출 (fileName 사용)
-                // TODO : 프로필 수정 API 연결
+                Log.d("PUT 성공 검사", "성공 - $response")
+
+                if (state.birthdayStatus == BirthdayStatus.Valid){
+                    updateProfile(fileName = state.uploadFileName, nickname = state.nickNameState, birthday = state.birthdayState)
+                } else {
+                    updateProfile(fileName = state.uploadFileName, nickname = state.nickNameState, birthday = null)
+                }
             } else {
+                Log.d("PUT 성공 검사", "실패 - $response")
                 // PUT 실패 시 에러 처리
             }
         } catch (e: Exception) {
@@ -311,23 +337,22 @@ class ProfileModViewModel @Inject constructor(
         }
     }
 
-    private fun validateNickname(nickname: String) : Boolean {
-        var isValid : Boolean = false
+    private fun updateProfile(fileName: String, nickname: String, birthday: String?) {
 
         viewModelScope.launch {
-            profileRepository.validateNickname(nickname)
+            profileRepository.updateProfile(fileName, nickname, birthday)
                 .onSuccess { response ->
-                    Log.d("닉네임 검사", "성공 - $response")
-                    isValid = true
+                    Log.d("프로필 수정 요청 검사", "성공 - $response")
                 }
                 .onFailure { response ->
-                    Log.d("닉네임 검사", "뭔가 이상해여 - $response")
-                    isValid = false
+                    Log.d("프로필 수정 요청 검사", "뭔가 이상해여 - $response")
                     // 실패시 에러 처리
                 }
+
         }
-        return isValid
     }
+
+
 }
 
 

@@ -10,4 +10,6 @@ interface ProfileRepository {
 
     suspend fun validateNickname(nickname: String): Result<Unit>
 
+    suspend fun updateProfile(fileName: String, nickname: String, birthday: String?): Result<Unit>
+
 }
