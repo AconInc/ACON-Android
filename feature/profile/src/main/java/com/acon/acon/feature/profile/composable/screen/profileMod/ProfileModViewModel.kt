@@ -268,11 +268,11 @@ class ProfileModViewModel @Inject constructor(
         viewModelScope.launch {
             profileRepository.validateNickname(nickname)
                 .onSuccess { response ->
-                    Log.d("닉네임 검사", "성공 - $response")
+//                    Log.d("닉네임 검사", "성공 - $response")
                     isValid = true
                 }
                 .onFailure { response ->
-                    Log.d("닉네임 검사", "실패 - $response")
+//                    Log.d("닉네임 검사", "실패 - $response")
                     isValid = false
                     // 실패시 에러 처리
                 }
@@ -290,12 +290,12 @@ class ProfileModViewModel @Inject constructor(
                             preSignedUrl = result.preSignedUrl
                         )
                     }
-                    Log.d("Url 받아오기 검사", "성공 - $result")
+//                    Log.d("Url 받아오기 검사", "성공 - $result")
                     putPhotoToPreSignedUrl(Uri.parse(state.selectedPhotoUri), state.preSignedUrl)
                 }
                 .onFailure {
                     // 실패시 에러처리 ?
-                    Log.d("Url 받아오기 검사", "성공 - $it")
+//                    Log.d("Url 받아오기 검사", "성공 - $it")
                 }
         }
     }
@@ -326,10 +326,10 @@ class ProfileModViewModel @Inject constructor(
                 } else {
                     updateProfile(fileName = state.uploadFileName, nickname = state.nickNameState, birthday = null)
                 }
-                Log.d("사진 PUT 검사", "성공 - $response")
+//                Log.d("사진 PUT 검사", "성공 - $response")
             } else {
                 // PUT 실패 시 에러 처리
-                Log.d("사진 PUT 검사", "실패 - $response")
+//                Log.d("사진 PUT 검사", "실패 - $response")
             }
         } catch (e: Exception) {
             // ImageUri 갖고 바이너리 방식으로 변환 과정에서 에러 처리
@@ -341,11 +341,11 @@ class ProfileModViewModel @Inject constructor(
         viewModelScope.launch {
             profileRepository.updateProfile(fileName, nickname, birthday)
                 .onSuccess { response ->
-                    Log.d("프로필 업뎃 검사", "성공 - $response")
+//                    Log.d("프로필 업뎃 검사", "성공 - $response")
                 }
                 .onFailure { response ->
                     // 실패시 에러 처리
-                    Log.d("프로필 업뎃 검사", "실패 - $response")
+//                    Log.d("프로필 업뎃 검사", "실패 - $response")
                 }
 
         }
