@@ -268,11 +268,9 @@ class ProfileModViewModel @Inject constructor(
         viewModelScope.launch {
             profileRepository.validateNickname(nickname)
                 .onSuccess { response ->
-                    Log.d("닉네임 검사", "성공 - $response")
                     isValid = true
                 }
                 .onFailure { response ->
-                    Log.d("닉네임 검사", "뭔가 이상해여 - $response")
                     isValid = false
                     // 실패시 에러 처리
                 }
@@ -291,10 +289,8 @@ class ProfileModViewModel @Inject constructor(
                         )
                     }
                     putPhotoToPreSignedUrl(Uri.parse(state.selectedPhotoUri), state.preSignedUrl)
-                    Log.d("Url 얻기 검사", "성공 - $result")
                 }
                 .onFailure {
-                    Log.d("Url 얻기 검사", "실패 - $it")
                     // 실패시 에러처리 ?
                 }
         }
@@ -321,7 +317,6 @@ class ProfileModViewModel @Inject constructor(
             val response = client.newCall(request).execute()
 
             if (response.isSuccessful) {
-                Log.d("PUT 성공 검사", "성공 - $response")
 
                 if (state.birthdayStatus == BirthdayStatus.Valid){
                     updateProfile(fileName = state.uploadFileName, nickname = state.nickNameState, birthday = state.birthdayState)
@@ -329,7 +324,6 @@ class ProfileModViewModel @Inject constructor(
                     updateProfile(fileName = state.uploadFileName, nickname = state.nickNameState, birthday = null)
                 }
             } else {
-                Log.d("PUT 성공 검사", "실패 - $response")
                 // PUT 실패 시 에러 처리
             }
         } catch (e: Exception) {
@@ -342,10 +336,8 @@ class ProfileModViewModel @Inject constructor(
         viewModelScope.launch {
             profileRepository.updateProfile(fileName, nickname, birthday)
                 .onSuccess { response ->
-                    Log.d("프로필 수정 요청 검사", "성공 - $response")
                 }
                 .onFailure { response ->
-                    Log.d("프로필 수정 요청 검사", "뭔가 이상해여 - $response")
                     // 실패시 에러 처리
                 }
 
