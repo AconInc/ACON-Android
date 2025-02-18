@@ -8,4 +8,6 @@ interface ProfileRepository {
 
     suspend fun getPreSignedUrl(): Result<PreSignedUrl>
 
+    suspend fun validateNickname(nickname: String): Result<Unit>
+
 }

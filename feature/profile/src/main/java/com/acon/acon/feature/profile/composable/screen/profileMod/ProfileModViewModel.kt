@@ -2,6 +2,7 @@ package com.acon.acon.feature.profile.composable.screen.profileMod
 
 import android.app.Application
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.acon.acon.core.designsystem.component.textfield.TextFieldStatus
@@ -37,20 +38,6 @@ class ProfileModViewModel @Inject constructor(
         }
     }
 
-    private fun fetchUserProfileInfo() = intent {
-        viewModelScope.launch {
-            profileRepository.fetchProfile()
-                .onSuccess { profile ->
-                    reduce {
-                        state.copy(originalNickname = profile.nickname)
-                    }
-                }
-                .onFailure {
-                    //유저 정보 fetch 시 에러 처리
-                }
-        }
-    }
-
     private fun Char.isAllowedChar(): Boolean {
         return this in 'a'..'z' ||
                 this in 'A'..'Z' ||
@@ -66,8 +53,13 @@ class ProfileModViewModel @Inject constructor(
 
     fun onNicknameChanged(text: String) = intent {
         val filteredText = text.filter { it.isAllowedChar() }
-        reduce {
-            state.copy(nickNameState = filteredText, nicknameStatus = NicknameStatus.Typing) // 이렇게 하면 딜레이는 안 생김. 단, 16자 이상일 때 안 써지게 막는 방법은?..
+
+
+        // 한글이 섞여있는 경우 버그 발생 (더 많이 써짐)
+        if (filteredText.length <= 16){
+            reduce {
+                state.copy(nickNameState = filteredText, nicknameStatus = NicknameStatus.Typing)
+            }
         }
 
         val nicknameCount = filteredText.map { if (it in ('가'..'힣') + ('ㄱ'..'ㅎ') + ('ㅏ'..'ㅣ')) 2 else 1 }.sum()
@@ -96,7 +88,7 @@ class ProfileModViewModel @Inject constructor(
                 errors.add(NicknameErrorType.InvalidLang)
             }
 
-            val alreadyUsed = false //TODO: 서버 체크 로직 추가
+            val alreadyUsed = validateNickname(nickname = filteredText) //TODO: 서버 체크 로직 추가
             if(alreadyUsed) {
                 errors.add(NicknameErrorType.AlreadyUsed)
             }
@@ -319,22 +311,23 @@ class ProfileModViewModel @Inject constructor(
         }
     }
 
-//    fun validateNickname(nickname: String) : Boolean {
-//
-//        var isValid : Boolean = false
-//
-//        viewModelScope.launch {
-//            profileRepository.validateNickname(nickname)
-//                .onSuccess {
-//                    isValid = true
-//                }
-//                .onFailure {
-//                    isValid = false
-//                    // 실패시 에러 처리
-//                }
-//        }
-//        return isValid
-//    }
+    private fun validateNickname(nickname: String) : Boolean {
+        var isValid : Boolean = false
+
+        viewModelScope.launch {
+            profileRepository.validateNickname(nickname)
+                .onSuccess { response ->
+                    Log.d("닉네임 검사", "성공 - $response")
+                    isValid = true
+                }
+                .onFailure { response ->
+                    Log.d("닉네임 검사", "뭔가 이상해여 - $response")
+                    isValid = false
+                    // 실패시 에러 처리
+                }
+        }
+        return isValid
+    }
 }
 
 

@@ -295,7 +295,7 @@ fun ProfileModScreen(
                         onTextChanged = onNicknameChanged,
                         onFocusChanged = onFocusChanged,
                         placeholder = "16자 이내 영문, 한글, 숫자, ., _만 사용 가능",
-                        isTyping = (state.nicknameStatus == NicknameStatus.Typing)
+                        isTyping = (state.nicknameStatus == NicknameStatus.Typing),
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Row(
