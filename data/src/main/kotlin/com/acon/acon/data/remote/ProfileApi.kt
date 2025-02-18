@@ -1,6 +1,5 @@
 package com.acon.acon.data.remote
 
-import com.acon.acon.data.dto.request.AreaVerificationRequest
 import com.acon.acon.data.dto.request.updateProfileRequest
 import com.acon.acon.data.dto.response.profile.PreSignedUrlResponse
 import com.acon.acon.data.dto.response.profile.ProfileResponse
