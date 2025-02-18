@@ -65,9 +65,10 @@ class AuthAuthenticator @Inject constructor(
                     if(BuildConfig.DEBUG) {
                         Log.d(TAG, "[authenticate] 새 액세스 토큰으로 요청 재시도")
                     }
+
                     return@withLock response.request.newBuilder()
                         .removeHeader("Authorization")
-                        .addHeader("Authorization", "Bearer ${tokenBody.accessToken}")
+                        .header("Authorization", "Bearer ${tokenBody.accessToken}")
                         .build()
                 }
 
