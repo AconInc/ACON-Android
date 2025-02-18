@@ -1,7 +1,5 @@
 package com.acon.acon.navigation.nested
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,13 +13,13 @@ import com.acon.acon.domain.repository.SocialRepository
 import com.acon.acon.feature.SettingsRoute
 import com.acon.acon.feature.areaverification.AreaVerificationRoute
 import com.acon.acon.feature.profile.composable.ProfileRoute
+import com.acon.acon.feature.spot.SpotRoute
 import com.acon.acon.feature.profile.composable.screen.galleryGrid.composable.GalleryGridContainer
 import com.acon.acon.feature.profile.composable.screen.galleryList.composable.GalleryListContainer
 import com.acon.acon.feature.profile.composable.screen.photoCrop.composable.PhotoCropContainer
 import com.acon.acon.feature.profile.composable.screen.profile.composable.ProfileScreenContainer
 import com.acon.acon.feature.profile.composable.screen.profileMod.composable.ProfileModScreenContainer
 
-@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 internal fun NavGraphBuilder.profileNavigation(
     navController: NavHostController,
     socialRepository: SocialRepository
@@ -40,8 +38,15 @@ internal fun NavGraphBuilder.profileNavigation(
             ProfileScreenContainer(
                 socialRepository = socialRepository,
                 modifier = Modifier.fillMaxSize(),
+                onNavigateToSpotListScreen = {
+                    navController.navigate(SpotRoute.SpotList) {
+                        popUpTo(ProfileRoute.Graph) {
+                            inclusive = true
+                        }
+                    }
+                },
                 onNavigateToSettingsScreen = { navController.navigate(SettingsRoute.Settings) },
-                onNavigateToProfileEditScreen = { navController.navigate(ProfileRoute.ProfileMod.applyDefault())  }, // 지원이꺼 추가 완료
+                onNavigateToProfileEditScreen = { navController.navigate(ProfileRoute.ProfileMod.applyDefault()) },
                 onNavigateToAreaVerificationScreen = {
                     navController.navigate(AreaVerificationRoute.RequireAreaVerification) {
                         popUpTo(ProfileRoute.Graph) {

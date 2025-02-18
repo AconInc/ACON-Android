@@ -10,7 +10,7 @@ data class ProfileResponse(
     @SerialName("image") val image: String,
     @SerialName("nickname") val nickname: String,
     @SerialName("leftAcornCount") val leftAcornCount: Int,
-    @SerialName("birthDate") val birthDate: String?,
+    @SerialName("birthDate") val birthDate: String? = null,
     @SerialName("verifiedAreaList") val verifiedAreaList: List<VerifiedAreaResponse>,
 ) {
     fun toProfile() = Profile(

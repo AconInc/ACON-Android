@@ -2,15 +2,16 @@ package com.acon.acon.feature.spot.screen.spotlist
 
 import android.location.Location
 import androidx.compose.runtime.Immutable
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.acon.acon.core.utils.feature.base.BaseContainerHost
+import com.acon.acon.domain.error.user.CredentialException
 import com.acon.acon.domain.model.spot.Condition
 import com.acon.acon.domain.model.spot.Spot
 import com.acon.acon.domain.repository.UserRepository
 import com.acon.acon.domain.repository.MapRepository
 import com.acon.acon.domain.repository.SocialRepository
 import com.acon.acon.domain.repository.SpotRepository
+import com.acon.acon.domain.repository.TokenRepository
 import com.acon.acon.feature.spot.state.ConditionState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
@@ -22,32 +23,47 @@ import kotlin.coroutines.cancellation.CancellationException
 @OptIn(OrbitExperimental::class)
 @HiltViewModel
 class SpotListViewModel @Inject constructor(
+    private val tokenRepository: TokenRepository,
     private val userRepository: UserRepository,
     private val spotRepository: SpotRepository,
     private val mapRepository: MapRepository,
-    private val savedStateHandle: SavedStateHandle
 ) : BaseContainerHost<SpotListUiState, SpotListSideEffect>() {
 
     override val container =
         container<SpotListUiState, SpotListSideEffect>(SpotListUiState.Loading) { }
 
-    fun googleLogin(socialRepository: SocialRepository) = intent {
+    fun googleLogin(socialRepository: SocialRepository, location: Location) = intent {
         socialRepository.signIn()
             .onSuccess {
-                postSideEffect(SpotListSideEffect.NavigateToAreaVerification)
+                if(it.hasVerifiedArea) {
+                    onLocationReady(location)
+                } else {
+                    postSideEffect(SpotListSideEffect.NavigateToAreaVerification)
+                }
             }.onFailure { error ->
                 when (error) {
+                    is CredentialException.UserCanceled -> {
+                        reduce { SpotListUiState.Guest() }
+                    }
+
                     is CancellationException -> {
                         reduce { SpotListUiState.Guest() }
                     }
-                    is NoSuchElementException -> {
+
+                    is CredentialException.NoStoredCredentials -> {
+                        tokenRepository.removeGoogleIdToken()
                         reduce { SpotListUiState.Guest() }
                     }
+
                     is SecurityException -> {
+                        tokenRepository.removeGoogleIdToken()
                         reduce { SpotListUiState.Guest() }
                     }
+
                     else -> {
+                        tokenRepository.removeGoogleIdToken()
                         reduce { SpotListUiState.Guest() }
+                        postSideEffect(SpotListSideEffect.ShowToastMessage)
                     }
                 }
             }
@@ -250,6 +266,7 @@ sealed interface SpotListUiState {
 }
 
 sealed interface SpotListSideEffect {
+    data object ShowToastMessage : SpotListSideEffect
     data object NavigateToAreaVerification : SpotListSideEffect
     data class NavigateToSpotDetail(val id: Long) : SpotListSideEffect
     data object OnTermOfUse : SpotListSideEffect

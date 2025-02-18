@@ -29,6 +29,7 @@ class SettingsViewModel @Inject constructor(
             viewModelScope.launch {
                 refreshToken?.let { userRepository.postLogout(it) }
                     ?.onSuccess {
+                        userRepository.updateLoginState(false)
                         postSideEffect(SettingsSideEffect.NavigateToSignIn)
                     }
                     ?.onFailure {

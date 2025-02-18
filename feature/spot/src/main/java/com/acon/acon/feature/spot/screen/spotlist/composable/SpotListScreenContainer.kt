@@ -11,7 +11,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.acon.acon.core.map.onLocationReady
 import com.acon.acon.core.utils.feature.constants.AppURL
 import com.acon.acon.core.utils.feature.permission.CheckAndRequestLocationPermission
+import com.acon.acon.core.utils.feature.toast.showToast
 import com.acon.acon.domain.repository.SocialRepository
+import com.acon.acon.feature.spot.R
 import com.acon.acon.feature.spot.screen.spotlist.SpotListSideEffect
 import com.acon.acon.feature.spot.screen.spotlist.SpotListUiState
 import com.acon.acon.feature.spot.screen.spotlist.SpotListViewModel
@@ -63,11 +65,16 @@ fun SpotListScreenContainer(
         onSpotItemClick = viewModel::onSpotItemClick,
         onTermOfUse = viewModel::onTermOfUse,
         onPrivatePolicy = viewModel::onPrivatePolicy,
-        onGoogleSignIn = { viewModel.googleLogin(socialRepository) },
+        onGoogleSignIn = {
+            context.onLocationReady {
+                viewModel.googleLogin(socialRepository, it)
+            }
+        },
     )
 
     viewModel.collectSideEffect {
         when (it) {
+            is SpotListSideEffect.ShowToastMessage -> { context.showToast(R.string.signin_login_failed_toast) }
             is SpotListSideEffect.NavigateToAreaVerification -> { onNavigateToAreaVerification() }
             is SpotListSideEffect.NavigateToSpotDetail -> { onNavigateToSpotDetailScreen(it.id) }
             is SpotListSideEffect.OnTermOfUse -> {
