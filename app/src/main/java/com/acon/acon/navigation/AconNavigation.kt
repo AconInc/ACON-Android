@@ -147,7 +147,7 @@ fun AconNavigation(
                                 navController.navigate(
                                     when (item) {
                                         BottomNavType.SPOT -> SpotRoute.SpotList
-                                        BottomNavType.PROFILE -> ProfileRoute.ProfileMod.applyDefault()
+                                        BottomNavType.PROFILE -> ProfileRoute.Profile
                                         else -> SpotRoute.SpotList
                                     }
                                 ) {
