@@ -18,7 +18,7 @@ interface ProfileApi {
     @GET("/api/v1/images/presigned-url?imageType=PROFILE")
     suspend fun getPreSignedUrl() : PreSignedUrlResponse
 
-    @GET("/api/v1/nickname/validate")
+    @GET("/api/v1/members/nickname/validate")
     suspend fun validateNickname(
         @Query("nickname") nickname: String
     ): Response<Unit>

@@ -7,5 +7,5 @@ import kotlinx.serialization.Serializable
 data class updateProfileRequest(
     @SerialName("profileImage") val profileImage: String,
     @SerialName("nickname") val nickname: String,
-    @SerialName("birthDate") val birthDate: String?
+    @SerialName("birthDate") val birthDate: String? = null
 )
