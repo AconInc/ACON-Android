@@ -1,6 +1,8 @@
 package com.acon.acon.core.utils.feature.permission
 
 import android.Manifest
+import android.content.Context
+import android.content.pm.PackageManager
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -8,6 +10,8 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.core.content.ContextCompat
+import com.acon.acon.core.designsystem.component.dialog.AconPermissionDialog
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import kotlinx.coroutines.Dispatchers
@@ -20,7 +24,8 @@ import kotlinx.coroutines.withContext
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun CheckAndRequestLocationPermission(
-    onPermissionGranted: () -> Unit
+    enableDialog: Boolean = true,
+    onPermissionGranted: () -> Unit = {}
 ) {
     var trigger by rememberSaveable { mutableIntStateOf(0) }
     var showPermissionDialog by rememberSaveable { mutableStateOf(false) }
@@ -32,7 +37,7 @@ fun CheckAndRequestLocationPermission(
                 trigger = (trigger + 1).coerceAtMost(2)
         }
     )
-    if (showPermissionDialog)
+    if (showPermissionDialog && enableDialog)
         AconPermissionDialog(
             onPermissionGranted = {
                 showPermissionDialog = false
@@ -55,4 +60,16 @@ fun CheckAndRequestLocationPermission(
             }
         }
     }
+}
+
+fun Context.checkLocationPermission(): Boolean {
+    val fineLocationPermission = ContextCompat.checkSelfPermission(
+        this, Manifest.permission.ACCESS_FINE_LOCATION
+    ) == PackageManager.PERMISSION_GRANTED
+
+    val coarseLocationPermission = ContextCompat.checkSelfPermission(
+        this, Manifest.permission.ACCESS_COARSE_LOCATION
+    ) == PackageManager.PERMISSION_GRANTED
+
+    return fineLocationPermission && coarseLocationPermission
 }
