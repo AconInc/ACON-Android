@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.acon.acon.core.designsystem.component.textfield.TextFieldStatus
 import com.acon.acon.domain.repository.ProfileRepository
+import com.acon.acon.feature.profile.composable.screen.profile.ProfileUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -27,7 +28,7 @@ class ProfileModViewModel @Inject constructor(
 ) : AndroidViewModel(application), ContainerHost<ProfileModState, ProfileModSideEffect> {
 
     override val container = container<ProfileModState, ProfileModSideEffect>(ProfileModState()){
-        profileRepository.fetchProfile()
+        fetchUserProfileInfo()
     }
 
     fun onFocusChanged(isFocused: Boolean) = intent {
@@ -36,6 +37,20 @@ class ProfileModViewModel @Inject constructor(
                 nickNameFieldStatus = if (isFocused) TextFieldStatus.Focused else TextFieldStatus.Inactive,
                 birthdayFieldStatus = if (isFocused) TextFieldStatus.Focused else TextFieldStatus.Inactive
             )
+        }
+    }
+
+    private fun fetchUserProfileInfo() = intent {
+        viewModelScope.launch {
+            profileRepository.fetchProfile()
+                .onSuccess { profile ->
+                    reduce {
+                        state.copy(
+                            nickNameState = profile.nickname,
+                            birthdayState = if (profile.birthDate.isNullOrEmpty()) "" else profile.birthDate!!.filter { it.isDigit() }
+                        )
+                    }
+                }
         }
     }
 
