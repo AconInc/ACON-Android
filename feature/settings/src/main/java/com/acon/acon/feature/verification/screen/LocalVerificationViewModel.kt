@@ -20,7 +20,7 @@ class LocalVerificationViewModel @Inject constructor(
             fetchVerifiedAreaList()
         }
 
-    fun fetchVerifiedAreaList() = intent {
+    private fun fetchVerifiedAreaList() = intent {
         areaVerificationRepository.fetchVerifiedAreaList()
             .onSuccess {
                 reduce {
