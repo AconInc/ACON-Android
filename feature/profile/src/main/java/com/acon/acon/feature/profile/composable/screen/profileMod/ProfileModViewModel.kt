@@ -263,11 +263,9 @@ class ProfileModViewModel @Inject constructor(
         viewModelScope.launch {
             profileRepository.validateNickname(nickname)
                 .onSuccess { response ->
-                    Log.d("닉네임 검사", "성공 - $response")
                     isValid = true
                 }
                 .onFailure { response ->
-                    Log.d("닉네임 검사", "실패 - $response")
                     isValid = false
                     // 실패시 에러 처리
                 }
@@ -286,19 +284,17 @@ class ProfileModViewModel @Inject constructor(
         } else {
             viewModelScope.launch {
                 profileRepository.getPreSignedUrl()
-                    .onSuccess { result ->   //성공시 얻은 PreSignedUrl값 저장하고, fileName 저장하고, PUT 함수 부르기
+                    .onSuccess { result ->
                         reduce {
                             state.copy(
                                 uploadFileName = result.fileName,
                                 preSignedUrl = result.preSignedUrl
                             )
                         }
-                        Log.d("1) Url 받아오기 검사", "성공 - $result")
                         putPhotoToPreSignedUrl(Uri.parse(state.selectedPhotoUri), state.preSignedUrl)
                     }
                     .onFailure {
-                        // 실패시 에러처리 ?
-                        Log.d("1) Url 받아오기 검사", "성공 - $it")
+                        // 실패시 에러 처리
                     }
             }
         }
@@ -326,7 +322,6 @@ class ProfileModViewModel @Inject constructor(
             val response = client.newCall(request).execute()
 
             if (response.isSuccessful) {
-                Log.d("2) 사진 PUT 검사", "성공 - $response")
                 if (state.birthdayStatus == BirthdayStatus.Valid){
                     updateProfile(fileName = state.uploadFileName, nickname = state.nickNameState, birthday = state.birthdayState)
                 } else {
@@ -334,7 +329,6 @@ class ProfileModViewModel @Inject constructor(
                 }
             } else {
                 // PUT 실패 시 에러 처리
-                Log.d("2) 사진 PUT 검사", "실패 - $response")
             }
         } catch (e: Exception) {
             // ImageUri 갖고 바이너리 방식으로 변환 과정에서 에러 처리
@@ -345,12 +339,10 @@ class ProfileModViewModel @Inject constructor(
 
         viewModelScope.launch {
             profileRepository.updateProfile(fileName, nickname, birthday)
-                .onSuccess { response ->
-                    Log.d("3) 프로필 업뎃 검사", "성공 - $response")
+                .onSuccess { response -> // 성공 값 포함해서 Profile 화면으로 Navigation 처리
                 }
                 .onFailure { response ->
                     // 실패시 에러 처리
-                    Log.d("3) 프로필 업뎃 검사", "실패 - $response")
                 }
 
         }
