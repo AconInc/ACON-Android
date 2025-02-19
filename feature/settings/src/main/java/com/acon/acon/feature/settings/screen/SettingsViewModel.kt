@@ -66,6 +66,10 @@ class SettingsViewModel @Inject constructor(
         postSideEffect(SettingsSideEffect.NavigateToOnboarding)
     }
 
+    fun onNavigateToLocalVerification() = intent {
+        postSideEffect(SettingsSideEffect.NavigateToLocalVerification)
+    }
+
     fun onDeleteAccount() = intent {
         postSideEffect(SettingsSideEffect.NavigateToDeleteAccount)
     }
@@ -86,5 +90,6 @@ sealed interface SettingsSideEffect {
     data object OpenTermOfUse : SettingsSideEffect
     data object OpenPrivatePolicy : SettingsSideEffect
     data object NavigateToOnboarding : SettingsSideEffect
+    data object NavigateToLocalVerification : SettingsSideEffect
     data object NavigateToDeleteAccount : SettingsSideEffect
 }

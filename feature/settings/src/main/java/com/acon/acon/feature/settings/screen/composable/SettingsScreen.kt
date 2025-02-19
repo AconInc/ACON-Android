@@ -134,7 +134,7 @@ fun SettingsScreen(
                     Spacer(Modifier.height(16.dp))
                     SettingSectionItem(
                         settingsType = SettingsType.AREA_VERIFICATION,
-                        onClickContinue = onAreaVerification // TODO - 동네인증
+                        onClickContinue = onAreaVerification
                     )
 
                     Spacer(Modifier.height(40.dp))
