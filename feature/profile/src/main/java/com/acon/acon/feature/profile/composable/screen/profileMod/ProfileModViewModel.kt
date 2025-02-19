@@ -339,10 +339,15 @@ class ProfileModViewModel @Inject constructor(
 
         viewModelScope.launch {
             profileRepository.updateProfile(fileName, nickname, birthday)
-                .onSuccess { response -> // 성공 값 포함해서 Profile 화면으로 Navigation 처리
+                .onSuccess {
+                    intent {
+                        postSideEffect(ProfileModSideEffect.NavigateToProfileSuccess)
+                    }
                 }
-                .onFailure { response ->
-                    // 실패시 에러 처리
+                .onFailure {
+                    intent {
+                        postSideEffect(ProfileModSideEffect.NavigateToProfileFailed)
+                    }
                 }
 
         }
@@ -399,9 +404,16 @@ sealed class BirthdayStatus {
     data object Valid :BirthdayStatus()
 }
 
+enum class ProfileUpdateResult {
+    SUCCESS,
+    FAILURE
+}
+
 sealed interface ProfileModSideEffect {
     data object NavigateBack : ProfileModSideEffect
     data class NavigateToSettings(val packageName: String) : ProfileModSideEffect
     data object NavigateToCustomGallery : ProfileModSideEffect
     data class UpdateProfileImage(val imageUri: String?) : ProfileModSideEffect
+    data object NavigateToProfileSuccess : ProfileModSideEffect
+    data object NavigateToProfileFailed : ProfileModSideEffect
 }

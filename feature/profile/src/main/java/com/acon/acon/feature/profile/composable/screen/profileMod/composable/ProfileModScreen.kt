@@ -61,6 +61,7 @@ import com.acon.acon.feature.profile.composable.screen.profileMod.NicknameStatus
 import com.acon.acon.feature.profile.composable.screen.profileMod.ProfileModSideEffect
 import com.acon.acon.feature.profile.composable.screen.profileMod.ProfileModState
 import com.acon.acon.feature.profile.composable.screen.profileMod.ProfileModViewModel
+import com.acon.acon.feature.profile.composable.screen.profileMod.ProfileUpdateResult
 import org.orbitmvi.orbit.compose.collectAsState
 
 @Composable
@@ -68,7 +69,8 @@ fun ProfileModScreenContainer(
     modifier: Modifier = Modifier,
     viewModel: ProfileModViewModel = hiltViewModel(),
     selectedPhotoId: String = "",
-    onNavigateToProfile: () -> Unit = {},
+    backToProfile: () -> Unit = {},
+    onNavigateToProfile: (ProfileUpdateResult) -> Unit = { }, // 이건 수정 성공/실패 값을 갖고 넘기는 함수.
     onNavigateToAreaVerification: () -> Unit = {},
     onNavigateToCustomGallery: () -> Unit = {},
 ) {
@@ -91,7 +93,7 @@ fun ProfileModScreenContainer(
                     context.startActivity(intent)
                 }
                 is ProfileModSideEffect.NavigateBack -> {
-                    onNavigateToProfile()
+                    backToProfile()
                 }
                 is ProfileModSideEffect.NavigateToCustomGallery -> {
                     onNavigateToCustomGallery()
@@ -100,6 +102,12 @@ fun ProfileModScreenContainer(
                     selectedPhotoId.let {
                         viewModel.updateProfileImage(selectedPhotoId)
                     }
+                }
+                is ProfileModSideEffect.NavigateToProfileSuccess -> {
+                    onNavigateToProfile(ProfileUpdateResult.SUCCESS)
+                }
+                is ProfileModSideEffect.NavigateToProfileFailed -> {
+                    onNavigateToProfile(ProfileUpdateResult.FAILURE)
                 }
             }
         }
@@ -129,7 +137,7 @@ fun ProfileModScreenContainer(
                 viewModel.hideDialog()
             },
             onClickLeft = { // 나가기 (프로필 뷰로 이동)
-                onNavigateToProfile()
+                backToProfile()
             },
             onClickRight = { // 계속 작성하기
                 viewModel.hideDialog()
