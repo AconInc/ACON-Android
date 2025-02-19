@@ -21,9 +21,21 @@
     <string name="settings_section_delete_account">서비스 탈퇴</string>
 
     <!-- dialog -->
+    <string name="logout_dialog_cancel_btn">취소</string>
     <string name="logout_dialog_title">로그아웃 하시겠어요?</string>
     <string name="logout_dialog_content">현재 계정으로 다시 로그인하면 데이터를 불러올 수 있어요</string>
-    <string name="logout_dialog_cancel_btn">취소</string>
+    <string name="area_edit_dialog_title">동네 변경</string>
+    <string name="area_edit_dialog_content">동네는 최소 1개 이상을 선택해야 해요.\n현재 설정된 동네를 변경할까요?</string>
+    <string name="area_edit_dialog_left_btn">취소</string>
+    <string name="area_edit_dialog_right_btn">변경하기</string>
+    <string name="area_delete_dialog_title">%1$s을 삭제할까요?</string>
+    <string name="area_delete_dialog_right_btn">삭제하기</string>
+
+    <!-- LocalVerification -->
+    <string name="area_delete_snackbar_title">%1$s이 삭제되었습니다.</string>
+    <string name="local_verification_topbar">동네 인증</string>
+    <string name="local_verification_title">인증 동네</string>
+    <string name="local_verification_title_star">*</string>
 
     <!-- delete account -->
     <string name="settings_delete_account_topbar">서비스 탈퇴</string>
@@ -42,6 +54,7 @@
     <string name="submit_btn_content">제출하기</string>
     <string name="cancel_btn_content">취소하기</string>
     <string name="delete_account_btn_content">아쉽지만 탈퇴하기</string>
+    <string name="local_verification_add_area">동네 추가하기</string>
 
     <!-- Content Description -->
     <string name="current_version_info_content_description">현재 버전 정보</string>

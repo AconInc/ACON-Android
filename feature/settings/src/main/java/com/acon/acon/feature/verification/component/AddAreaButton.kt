@@ -21,12 +21,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.acon.acon.core.designsystem.theme.AconTheme
+import com.acon.acon.feature.settings.R
 
 @Composable
 fun AddAreaButton(
@@ -92,7 +94,7 @@ fun AddAreaButton(
 fun AddAreaButtonEnabledPreview() {
     AconTheme{
         AddAreaButton(
-            text = "동네 추가하기",
+            text = stringResource(R.string.local_verification_add_area),
             contentImage = com.acon.acon.core.designsystem.R.drawable.ic_add_16,
             enabledBorderColor = AconTheme.color.Gray5,
             enabledBackgroundColor = AconTheme.color.Gray9,
@@ -113,7 +115,7 @@ fun AddAreaButtonEnabledPreview() {
 fun AddAreaButtonDisabledPreview() {
     AconTheme{
         AddAreaButton(
-            text = "동네 추가하기",
+            text = stringResource(R.string.local_verification_add_area),
             contentImage = com.acon.acon.core.designsystem.R.drawable.ic_add_16,
             enabledBorderColor = AconTheme.color.Gray5,
             enabledBackgroundColor = AconTheme.color.Gray9,
