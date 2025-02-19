@@ -84,6 +84,8 @@ fun ProfileModScreenContainer(
     }
 
     LaunchedEffect(Unit) {
+        viewModel.fetchUserProfileInfo()
+
         viewModel.container.sideEffectFlow.collect { effect ->
             when (effect) {
                 is ProfileModSideEffect.NavigateToSettings -> {

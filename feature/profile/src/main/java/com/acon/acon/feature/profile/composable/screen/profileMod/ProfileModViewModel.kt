@@ -28,7 +28,6 @@ class ProfileModViewModel @Inject constructor(
 ) : AndroidViewModel(application), ContainerHost<ProfileModState, ProfileModSideEffect> {
 
     override val container = container<ProfileModState, ProfileModSideEffect>(ProfileModState()){
-        fetchUserProfileInfo()
     }
 
     fun onFocusChanged(isFocused: Boolean) = intent {
@@ -40,16 +39,19 @@ class ProfileModViewModel @Inject constructor(
         }
     }
 
-    private fun fetchUserProfileInfo() = intent {
+    fun fetchUserProfileInfo() = intent {
         viewModelScope.launch {
             profileRepository.fetchProfile()
                 .onSuccess { profile ->
                     reduce {
                         state.copy(
+                            //selectedPhotoUri = profile.image,
                             nickNameState = profile.nickname,
-                            birthdayState = if (profile.birthDate.isNullOrEmpty()) "" else profile.birthDate!!.filter { it.isDigit() }
+                            birthdayState = profile.birthDate?.filter { it.isDigit() } ?: ""
                         )
                     }
+                    onNicknameChanged(state.nickNameState)
+                    onBirthdayChanged(state.birthdayState)
                 }
         }
     }
