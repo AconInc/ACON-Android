@@ -71,7 +71,6 @@ fun ProfileModScreenContainer(
     selectedPhotoId: String = "",
     backToProfile: () -> Unit = {},
     onNavigateToProfile: (ProfileUpdateResult) -> Unit = { }, // 이건 수정 성공/실패 값을 갖고 넘기는 함수.
-    onNavigateToAreaVerification: () -> Unit = {},
     onNavigateToCustomGallery: () -> Unit = {},
 ) {
     val state = viewModel.collectAsState().value
@@ -128,7 +127,7 @@ fun ProfileModScreenContainer(
         )
     }
 
-    if (state.showDialog) {
+    if (state.showExitDialog) {
         AconTwoButtonDialog(
             title = stringResource(R.string.profile_mod_alert_title),
             content = stringResource(R.string.profile_mod_alert_description),
@@ -136,33 +135,13 @@ fun ProfileModScreenContainer(
             rightButtonContent = stringResource(R.string.profile_mod_alert_right_btn),
             contentImage = 0,
             onDismissRequest = {
-                viewModel.hideDialog()
+                viewModel.hideExitDialog()
             },
             onClickLeft = { // 나가기 (프로필 뷰로 이동)
                 backToProfile()
             },
             onClickRight = { // 계속 작성하기
-                viewModel.hideDialog()
-            },
-            isImageEnabled = false
-        )
-    }
-
-    if (state.showAreaDeleteDialog) {
-        AconTwoButtonDialog(
-            title = stringResource(R.string.delete_area_alert_title, state.selectedArea ?: "이 동네"),
-            content = "",
-            leftButtonContent = stringResource(R.string.delete_area_alert_left_btn),
-            rightButtonContent = stringResource(R.string.delete_area_alert_right_btn),
-            contentImage = 0,
-            onDismissRequest = {
-                viewModel.hideAreaDeleteDialog()
-            },
-            onClickLeft = {
-                viewModel.hideAreaDeleteDialog()
-            },
-            onClickRight = {
-                state.selectedArea?.let { viewModel.removeVerifiedArea(it) }
+                viewModel.hideExitDialog()
             },
             isImageEnabled = false
         )
@@ -196,10 +175,8 @@ fun ProfileModScreenContainer(
         onNicknameChanged = viewModel::onNicknameChanged,
         onBirthdayChanged = viewModel::onBirthdayChanged,
         onFocusChanged = viewModel::onFocusChanged,
-        onBackClicked = viewModel::showDialog,
+        onBackClicked = viewModel::showExitDialog,
         onSaveClicked = viewModel::getPreSignedUrl,
-        onNavigateToAreaVerification = onNavigateToAreaVerification,
-        onRemoveArea = viewModel::showAreaDeleteDialog,
         onProfileClicked = viewModel::showProfileEditDialog,
     )
 }
@@ -213,8 +190,6 @@ fun ProfileModScreen(
     onFocusChanged: (Boolean) -> Unit = {},
     onBackClicked: () -> Unit,
     onSaveClicked: () -> Unit,
-    onNavigateToAreaVerification: () -> Unit,
-    onRemoveArea: (String) -> Unit = {},
     onProfileClicked: () -> Unit = {},
 ) {
     val focusManager = LocalFocusManager.current
@@ -391,26 +366,6 @@ fun ProfileModScreen(
                     }
                 }
 
-                Column(
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 15.dp),
-                ){
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Start
-                    ){
-                        Text(text = "인증 동네", style = AconTheme.typography.head8_16_sb, color = AconTheme.color.White)
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(text = "*", style = AconTheme.typography.head8_16_sb, color = AconTheme.color.Main_org1)
-                    }
-                    Spacer(modifier = Modifier.height(12.dp))
-                    VerifiedAreaChip(
-                        modifier = Modifier,
-                        areaList = state.verifiedAreaList,
-                        onAddArea = { onNavigateToAreaVerification() },
-                        onRemoveArea = onRemoveArea ,
-                        errorMessage = "로컬도토리를 위해 최소 1개의 동네를 인증해주세요"
-                    )
-                }
             }
         }
 
@@ -454,7 +409,5 @@ private fun ProfileModScreenPreview() {
         onFocusChanged = {},
         onBackClicked = {},
         onSaveClicked = {},
-        onNavigateToAreaVerification = {},
-        onRemoveArea = {}
     )
 }

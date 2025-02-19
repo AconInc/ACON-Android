@@ -187,41 +187,15 @@ class ProfileModViewModel @Inject constructor(
         return true
     }
 
-    fun showDialog() = intent {
+    fun showExitDialog() = intent {
         reduce {
-            state.copy(showDialog = true)
+            state.copy(showExitDialog = true)
         }
     }
 
-    fun hideDialog() = intent {
+    fun hideExitDialog() = intent {
         reduce {
-            state.copy(showDialog = false)
-        }
-    }
-
-    fun removeVerifiedArea(area: String) = intent {
-        val updatedList = state.verifiedAreaList.filterNot { it == area }
-
-        reduce {
-            state.copy(
-                verifiedAreaList = updatedList,
-                showAreaDeleteDialog = false
-            )
-        }
-    }
-
-    fun showAreaDeleteDialog(area: String) = intent {
-        reduce {
-            state.copy(
-                showAreaDeleteDialog = true,
-                selectedArea = area
-            )
-        }
-    }
-
-    fun hideAreaDeleteDialog() = intent {
-        reduce {
-            state.copy(showAreaDeleteDialog = false)
+            state.copy(showExitDialog = false)
         }
     }
 
@@ -388,9 +362,7 @@ data class ProfileModState(
 
     val verifiedAreaList: List<String> = listOf("쌍문동"),
 
-    val showDialog: Boolean = false,
-    val showAreaDeleteDialog: Boolean = false,
-    val selectedArea: String? = null,
+    val showExitDialog: Boolean = false,
 
     val requestPhotoPermission: Boolean = false,
     val showPermissionDialog: Boolean = false,

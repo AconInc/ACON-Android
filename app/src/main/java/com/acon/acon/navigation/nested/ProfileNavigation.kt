@@ -92,9 +92,6 @@ internal fun NavGraphBuilder.profileNavigation(
                         popUpTo(ProfileRoute.Profile) { inclusive = false }
                     }
                 },
-                onNavigateToAreaVerification = {
-                    navController.navigate(AreaVerificationRoute.RequireAreaVerification)
-                },
                 onNavigateToCustomGallery = {
                     navController.navigate(ProfileRoute.GalleryList)
                 }
