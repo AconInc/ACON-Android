@@ -2,10 +2,8 @@ package com.acon.acon.feature.profile.composable.screen.profileMod.composable
 
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
 import android.provider.Settings
 import androidx.activity.compose.BackHandler
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -54,7 +52,6 @@ import com.acon.acon.feature.profile.R
 import com.acon.acon.feature.profile.composable.component.CustomModalBottomSheet
 import com.acon.acon.feature.profile.composable.component.NicknameErrMessageRow
 import com.acon.acon.feature.profile.composable.component.ProfilePhotoBox
-import com.acon.acon.feature.profile.composable.component.VerifiedAreaChip
 import com.acon.acon.feature.profile.composable.screen.profileMod.BirthdayStatus
 import com.acon.acon.feature.profile.composable.screen.profileMod.NicknameStatus
 import com.acon.acon.feature.profile.composable.screen.profileMod.ProfileModSideEffect
@@ -391,14 +388,6 @@ fun ProfileModScreen(
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(text = "*", style = AconTheme.typography.head8_16_sb, color = AconTheme.color.Main_org1)
                     }
-                    Spacer(modifier = Modifier.height(12.dp))
-                    VerifiedAreaChip(
-                        modifier = Modifier,
-                        areaList = state.verifiedAreaList,
-                        onAddArea = { onNavigateToAreaVerification() },
-                        onRemoveArea = onRemoveArea ,
-                        errorMessage = "로컬도토리를 위해 최소 1개의 동네를 인증해주세요"
-                    )
                 }
             }
         }
