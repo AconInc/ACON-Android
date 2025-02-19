@@ -19,11 +19,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import coil3.request.ImageRequest
+import coil3.svg.SvgDecoder
 import com.acon.acon.core.designsystem.blur.LocalHazeState
 import com.acon.acon.core.designsystem.component.topbar.AconTopBar
 import com.acon.acon.core.designsystem.noRippleClickable
@@ -82,11 +86,15 @@ fun ProfileScreen(
                 ) {
                     if(state.profileImage.isNotEmpty()) {
                         AsyncImage(
-                            model = state.profileImage,
+                            model = ImageRequest.Builder(LocalContext.current)
+                                .data(state.profileImage)
+                                .decoderFactory(SvgDecoder.Factory())
+                                .build(),
                             contentDescription = stringResource(R.string.content_description_profile_image),
                             modifier = Modifier
                                 .size(60.dp)
-                                .clip(CircleShape)
+                                .clip(CircleShape),
+                            contentScale = ContentScale.Crop
                         )
                     } else {
                         Image(
