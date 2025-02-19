@@ -1,4 +1,4 @@
-package com.acon.acon.data.dto.response
+package com.acon.acon.data.dto.response.area
 
 import com.acon.acon.domain.model.area.Area
 import kotlinx.serialization.SerialName
