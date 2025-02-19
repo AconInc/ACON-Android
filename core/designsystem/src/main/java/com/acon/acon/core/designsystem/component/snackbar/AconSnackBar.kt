@@ -19,7 +19,7 @@ fun AconSnackBar(
 ) {
     Box(
         modifier = modifier
-            .clip(RoundedCornerShape(6.dp))
+            .clip(RoundedCornerShape(4.dp))
             .background(color = AconTheme.color.Gray8)
             .padding(vertical = 12.dp, horizontal = 16.dp)
     ) {
