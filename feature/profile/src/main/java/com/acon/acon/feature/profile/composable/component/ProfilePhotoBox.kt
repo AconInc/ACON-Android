@@ -18,29 +18,56 @@ import androidx.compose.material3.Icon
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
+import coil3.compose.AsyncImage
 import com.acon.acon.feature.profile.R
 
 @Composable
 fun ProfilePhotoBox(
     modifier: Modifier = Modifier,
     photoUri: String = "",
-){
+) {
     BoxWithConstraints(
         modifier = modifier.fillMaxSize()
     ) {
-        if (photoUri != ""){
+        if (photoUri.isNotBlank()) {
             val imageWidth = maxWidth
             Box(
-                modifier = Modifier.fillMaxSize().width(imageWidth).height(imageWidth).clip(CircleShape),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .width(imageWidth)
+                    .height(imageWidth)
+                    .clip(CircleShape),
                 contentAlignment = Alignment.Center
             ) {
-                Image(
-                    painter = rememberAsyncImagePainter(Uri.parse(photoUri)),
-                    contentDescription = "선택한 프로필 사진",
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop,
-                    alignment = Alignment.Center
-                )
+                when {
+                    photoUri.startsWith("content://") -> {
+                        Image(
+                            painter = rememberAsyncImagePainter(Uri.parse(photoUri)),
+                            contentDescription = "선택한 프로필 사진",
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop,
+                            alignment = Alignment.Center
+                        )
+                    }
+
+                    photoUri.startsWith("http://") || photoUri.startsWith("https://") -> {
+                        AsyncImage(
+                            model = photoUri,
+                            contentDescription = "프로필 사진",
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop
+                        )
+                    }
+
+                    else -> {
+                        Icon(
+                            modifier = Modifier.fillMaxSize(),
+                            imageVector = ImageVector.vectorResource(R.drawable.img_profile_basic_80),
+                            contentDescription = "Profile Image",
+                            tint = Color.Unspecified,
+                        )
+                    }
+                }
             }
         } else {
             Icon(

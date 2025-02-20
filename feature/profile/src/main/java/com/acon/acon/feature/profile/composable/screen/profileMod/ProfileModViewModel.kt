@@ -7,7 +7,9 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.acon.acon.core.designsystem.component.textfield.TextFieldStatus
+import com.acon.acon.domain.error.profile.ValidateNicknameError
 import com.acon.acon.domain.repository.ProfileRepository
+import com.acon.acon.feature.profile.composable.screen.profile.ProfileUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -27,7 +29,7 @@ class ProfileModViewModel @Inject constructor(
 ) : AndroidViewModel(application), ContainerHost<ProfileModState, ProfileModSideEffect> {
 
     override val container = container<ProfileModState, ProfileModSideEffect>(ProfileModState()){
-        profileRepository.fetchProfile()
+        fetchUserProfileInfo()
     }
 
     fun onFocusChanged(isFocused: Boolean) = intent {
@@ -36,6 +38,23 @@ class ProfileModViewModel @Inject constructor(
                 nickNameFieldStatus = if (isFocused) TextFieldStatus.Focused else TextFieldStatus.Inactive,
                 birthdayFieldStatus = if (isFocused) TextFieldStatus.Focused else TextFieldStatus.Inactive
             )
+        }
+    }
+
+    private fun fetchUserProfileInfo() = intent {
+        viewModelScope.launch {
+            profileRepository.fetchProfile()
+                .onSuccess { profile ->
+                    reduce {
+                        state.copy(
+                            selectedPhotoUri = profile.image,
+                            nickNameState = profile.nickname,
+                            birthdayState = profile.birthDate?.filter { it.isDigit() } ?: ""
+                        )
+                    }
+                    onNicknameChanged(state.nickNameState)
+                    onBirthdayChanged(state.birthdayState)
+                }
         }
     }
 
@@ -49,26 +68,33 @@ class ProfileModViewModel @Inject constructor(
                 this == '.' || this == '_'
     }
 
+    private val koreanCharRegex = Regex("[가-힣ㄱ-ㅎㅏ-ㅣ]")
 
     private var nicknameValidationJob: Job? = null
 
     fun onNicknameChanged(text: String) = intent {
         val filteredText = text.filter { it.isAllowedChar() }
 
-
-        // 한글이 섞여있는 경우 버그 발생 (더 많이 써짐)
-        if (filteredText.length <= 16){
-            reduce {
-                state.copy(nickNameState = filteredText, nicknameStatus = NicknameStatus.Typing)
-            }
+        var nicknameCount = 0
+        for (char in filteredText) {
+            nicknameCount += if (koreanCharRegex.matches(char.toString())) 2 else 1
+            if (nicknameCount > 16) break
         }
 
-        val nicknameCount = filteredText.map { if (it in ('가'..'힣') + ('ㄱ'..'ㅎ') + ('ㅏ'..'ㅣ')) 2 else 1 }.sum()
-        if (nicknameCount <= 16) { //nicknameCount만 따로 업데이트 (딜레이 생기므로)
+        if (filteredText.isEmpty()) {
             reduce {
                 state.copy(
-                    nicknameCount = nicknameCount
+                    nickNameState = "",
+                    nicknameStatus = NicknameStatus.Empty,
+                    nickNameFieldStatus = TextFieldStatus.Empty
                 )
+            }
+            return@intent
+        }
+
+        if (nicknameCount <= 16){
+            reduce {
+                state.copy(nickNameState = filteredText, nicknameStatus = NicknameStatus.Typing, nicknameCount = nicknameCount)
             }
         }
 
@@ -89,10 +115,7 @@ class ProfileModViewModel @Inject constructor(
                 errors.add(NicknameErrorType.InvalidLang)
             }
 
-            val alreadyUsed = validateNickname(nickname = filteredText) //TODO: 서버 체크 로직 추가
-            if(alreadyUsed) {
-                errors.add(NicknameErrorType.AlreadyUsed)
-            }
+            val isValid = validateNickname(nickname = filteredText, errors = errors)
 
             reduce {
                 state.copy(
@@ -112,13 +135,14 @@ class ProfileModViewModel @Inject constructor(
         if (digitsOnly.isEmpty()){
             reduce {
                 state.copy(
-                    birthdayState = digitsOnly,
+                    birthdayState = "",
                     birthdayStatus = BirthdayStatus.Empty,
-                    birthdayFieldStatus = TextFieldStatus.Focused
+                    birthdayFieldStatus = TextFieldStatus.Empty
                 )
             }
             return@intent
         }
+
         if (digitsOnly.length <= 8) { // 일단 8자 이내면 쓰는 게 다 보여야함
             reduce {
                 state.copy(
@@ -170,46 +194,15 @@ class ProfileModViewModel @Inject constructor(
         return true
     }
 
-    fun showDialog() = intent {
+    fun showExitDialog() = intent {
         reduce {
-            state.copy(showDialog = true)
+            state.copy(showExitDialog = true)
         }
     }
 
-    fun hideDialog() = intent {
+    fun hideExitDialog() = intent {
         reduce {
-            state.copy(showDialog = false)
-        }
-    }
-
-    fun fetchVerifiedAreaList(){
-        //TODO: 서버 통해서 사용자가 인증 받은 동네 리스트 가져오기
-        //가져온 리스트로 verifiedAreaList 관리하기
-    }
-
-    fun removeVerifiedArea(area: String) = intent {
-        val updatedList = state.verifiedAreaList.filterNot { it == area }
-
-        reduce {
-            state.copy(
-                verifiedAreaList = updatedList,
-                showAreaDeleteDialog = false
-            )
-        }
-    }
-
-    fun showAreaDeleteDialog(area: String) = intent {
-        reduce {
-            state.copy(
-                showAreaDeleteDialog = true,
-                selectedArea = area
-            )
-        }
-    }
-
-    fun hideAreaDeleteDialog() = intent {
-        reduce {
-            state.copy(showAreaDeleteDialog = false)
+            state.copy(showExitDialog = false)
         }
     }
 
@@ -262,41 +255,51 @@ class ProfileModViewModel @Inject constructor(
         }
     }
 
-    private fun validateNickname(nickname: String) : Boolean {
-        var isValid : Boolean = false
-
-        viewModelScope.launch {
-            profileRepository.validateNickname(nickname)
-                .onSuccess { response ->
-//                    Log.d("닉네임 검사", "성공 - $response")
-                    isValid = true
+    private suspend fun validateNickname(nickname: String, errors: MutableList<NicknameErrorType>): Boolean {
+        return profileRepository.validateNickname(nickname)
+            .map { true }
+            .recover { throwable ->
+                when (throwable) {
+                    is ValidateNicknameError.UnsatisfiedCondition -> {
+                        errors.add(NicknameErrorType.InvalidChar)
+                        false
+                    }
+                    is ValidateNicknameError.AlreadyUsedNickname -> {
+                        errors.add(NicknameErrorType.AlreadyUsed)
+                        false
+                    }
+                    else -> {
+                        false
+                    }
                 }
-                .onFailure { response ->
-//                    Log.d("닉네임 검사", "실패 - $response")
-                    isValid = false
-                    // 실패시 에러 처리
-                }
-        }
-        return isValid
+            }
+            .getOrDefault(false)
     }
 
     fun getPreSignedUrl() = intent {
-        viewModelScope.launch {
-            profileRepository.getPreSignedUrl()
-                .onSuccess { result ->   //성공시 얻은 PreSignedUrl값 저장하고, fileName 저장하고, PUT 함수 부르기
-                    reduce {
-                        state.copy(
-                            uploadFileName = result.fileName,
-                            preSignedUrl = result.preSignedUrl
-                        )
+
+        if (state.selectedPhotoUri == ""){
+            if (state.birthdayStatus == BirthdayStatus.Valid){
+                updateProfile(fileName = state.uploadFileName, nickname = state.nickNameState, birthday = state.birthdayState)
+            } else {
+                updateProfile(fileName = state.uploadFileName, nickname = state.nickNameState, birthday = null)
+            }
+        } else {
+            viewModelScope.launch {
+                profileRepository.getPreSignedUrl()
+                    .onSuccess { result ->
+                        reduce {
+                            state.copy(
+                                uploadFileName = result.fileName,
+                                preSignedUrl = result.preSignedUrl
+                            )
+                        }
+                        putPhotoToPreSignedUrl(Uri.parse(state.selectedPhotoUri), state.preSignedUrl)
                     }
-//                    Log.d("Url 받아오기 검사", "성공 - $result")
-                    putPhotoToPreSignedUrl(Uri.parse(state.selectedPhotoUri), state.preSignedUrl)
-                }
-                .onFailure {
-                    // 실패시 에러처리 ?
-//                    Log.d("Url 받아오기 검사", "성공 - $it")
-                }
+                    .onFailure {
+                        // 실패시 에러 처리
+                    }
+            }
         }
     }
 
@@ -305,10 +308,28 @@ class ProfileModViewModel @Inject constructor(
         val client = OkHttpClient()
 
         try {
-            val inputStream = context.contentResolver.openInputStream(imageUri)
-            val byteArray = inputStream?.readBytes() ?: throw IllegalArgumentException("Failed to read image")
+            val byteArray: ByteArray
+            val mimeType: String
 
-            val mimeType = context.contentResolver.getType(imageUri) ?: "image/jpeg"
+            if (state.selectedPhotoUri.startsWith("content://")) {
+                val inputStream = context.contentResolver.openInputStream(imageUri)
+                byteArray = inputStream?.readBytes() ?: throw IllegalArgumentException("Failed to read image")
+                mimeType = context.contentResolver.getType(imageUri) ?: "image/jpeg"
+
+            } else if (state.selectedPhotoUri.startsWith("http://") || state.selectedPhotoUri.startsWith("https://")) {
+                val getRequest = Request.Builder().url(imageUri.toString()).build()
+                val getResponse = client.newCall(getRequest).execute()
+
+                if (!getResponse.isSuccessful) {
+                    throw IllegalArgumentException("Failed to fetch remote image")
+                }
+
+                byteArray = getResponse.body?.bytes() ?: throw IllegalArgumentException("Failed to read remote image")
+                mimeType = getResponse.header("Content-Type") ?: "image/jpeg"
+
+            } else {
+                throw IllegalArgumentException("Unsupported URI scheme")
+            }
 
             val fileBody = RequestBody.create(mimeType.toMediaTypeOrNull(), byteArray)
 
@@ -321,31 +342,32 @@ class ProfileModViewModel @Inject constructor(
             val response = client.newCall(request).execute()
 
             if (response.isSuccessful) {
-                if (state.birthdayStatus == BirthdayStatus.Valid){
+                if (state.birthdayStatus == BirthdayStatus.Valid) {
                     updateProfile(fileName = state.uploadFileName, nickname = state.nickNameState, birthday = state.birthdayState)
                 } else {
                     updateProfile(fileName = state.uploadFileName, nickname = state.nickNameState, birthday = null)
                 }
-//                Log.d("사진 PUT 검사", "성공 - $response")
             } else {
                 // PUT 실패 시 에러 처리
-//                Log.d("사진 PUT 검사", "실패 - $response")
             }
         } catch (e: Exception) {
-            // ImageUri 갖고 바이너리 방식으로 변환 과정에서 에러 처리
         }
     }
+
 
     private fun updateProfile(fileName: String, nickname: String, birthday: String?) {
 
         viewModelScope.launch {
             profileRepository.updateProfile(fileName, nickname, birthday)
-                .onSuccess { response ->
-//                    Log.d("프로필 업뎃 검사", "성공 - $response")
+                .onSuccess {
+                    intent {
+                        postSideEffect(ProfileModSideEffect.NavigateToProfileSuccess)
+                    }
                 }
-                .onFailure { response ->
-                    // 실패시 에러 처리
-//                    Log.d("프로필 업뎃 검사", "실패 - $response")
+                .onFailure {
+                    intent {
+                        postSideEffect(ProfileModSideEffect.NavigateToProfileFailed)
+                    }
                 }
 
         }
@@ -369,9 +391,7 @@ data class ProfileModState(
 
     val verifiedAreaList: List<String> = listOf("쌍문동"),
 
-    val showDialog: Boolean = false,
-    val showAreaDeleteDialog: Boolean = false,
-    val selectedArea: String? = null,
+    val showExitDialog: Boolean = false,
 
     val requestPhotoPermission: Boolean = false,
     val showPermissionDialog: Boolean = false,
@@ -402,9 +422,16 @@ sealed class BirthdayStatus {
     data object Valid :BirthdayStatus()
 }
 
+enum class ProfileUpdateResult {
+    SUCCESS,
+    FAILURE
+}
+
 sealed interface ProfileModSideEffect {
     data object NavigateBack : ProfileModSideEffect
     data class NavigateToSettings(val packageName: String) : ProfileModSideEffect
     data object NavigateToCustomGallery : ProfileModSideEffect
     data class UpdateProfileImage(val imageUri: String?) : ProfileModSideEffect
+    data object NavigateToProfileSuccess : ProfileModSideEffect
+    data object NavigateToProfileFailed : ProfileModSideEffect
 }

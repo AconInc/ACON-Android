@@ -2,6 +2,7 @@ package com.acon.acon.data.repository
 
 import com.acon.acon.data.datasource.remote.ProfileRemoteDataSource
 import com.acon.acon.data.error.runCatchingWith
+import com.acon.acon.domain.error.profile.ValidateNicknameError
 import com.acon.acon.domain.model.profile.PreSignedUrl
 import com.acon.acon.domain.model.profile.Profile
 import com.acon.acon.domain.repository.ProfileRepository
@@ -23,7 +24,7 @@ class ProfileRepositoryImpl @Inject constructor(
     }
 
     override suspend fun validateNickname(nickname: String): Result<Unit> {
-        return runCatchingWith() {
+        return runCatchingWith(*ValidateNicknameError.createErrorInstances()) {
             profileRemoteDataSource.validateNickname(nickname)
         }
     }
