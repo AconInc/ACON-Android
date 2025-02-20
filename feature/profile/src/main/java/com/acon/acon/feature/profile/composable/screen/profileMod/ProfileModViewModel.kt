@@ -68,11 +68,18 @@ class ProfileModViewModel @Inject constructor(
                 this == '.' || this == '_'
     }
 
+    private val koreanCharRegex = Regex("[가-힣ㄱ-ㅎㅏ-ㅣ]")
 
     private var nicknameValidationJob: Job? = null
 
     fun onNicknameChanged(text: String) = intent {
         val filteredText = text.filter { it.isAllowedChar() }
+
+        var nicknameCount = 0
+        for (char in filteredText) {
+            nicknameCount += if (koreanCharRegex.matches(char.toString())) 2 else 1
+            if (nicknameCount > 16) break
+        }
 
         if (filteredText.isEmpty()) {
             reduce {
@@ -85,19 +92,9 @@ class ProfileModViewModel @Inject constructor(
             return@intent
         }
 
-        // 한글이 섞여있는 경우 버그 발생 (더 많이 써짐)
-        if (filteredText.length <= 16){
+        if (nicknameCount <= 16){
             reduce {
-                state.copy(nickNameState = filteredText, nicknameStatus = NicknameStatus.Typing)
-            }
-        }
-
-        val nicknameCount = filteredText.map { if (it in ('가'..'힣') + ('ㄱ'..'ㅎ') + ('ㅏ'..'ㅣ')) 2 else 1 }.sum()
-        if (nicknameCount <= 16) { //nicknameCount만 따로 업데이트 (딜레이 생기므로)
-            reduce {
-                state.copy(
-                    nicknameCount = nicknameCount
-                )
+                state.copy(nickNameState = filteredText, nicknameStatus = NicknameStatus.Typing, nicknameCount = nicknameCount)
             }
         }
 
