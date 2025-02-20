@@ -7,11 +7,11 @@ import androidx.compose.ui.text.input.VisualTransformation
 
 class BirthdayVisualTransformation : VisualTransformation {
     override fun filter(text: AnnotatedString): TransformedText {
-        val trimmed = text.text.filter { it.isDigit() } // 숫자만 허용
+        val trimmed = text.text.filter { it.isDigit() }
         val formatted = StringBuilder()
 
         for (i in trimmed.indices) {
-            if (i == 4 || i == 6) formatted.append(".") // 4번째, 6번째 위치에서 . 추가
+            if (i == 4 || i == 6) formatted.append(".")
             formatted.append(trimmed[i])
         }
 
@@ -22,16 +22,16 @@ class BirthdayVisualTransformation : VisualTransformation {
         override fun originalToTransformed(offset: Int): Int {
             return when {
                 offset <= 4 -> offset
-                offset <= 6 -> offset + 1 // YYYY. 추가 후 조정
-                else -> offset + 2 // YYYY.MM. 추가 후 조정
+                offset <= 6 -> offset + 1
+                else -> offset + 2
             }
         }
 
         override fun transformedToOriginal(offset: Int): Int {
             return when {
                 offset <= 4 -> offset
-                offset <= 7 -> offset - 1 // YYYY. 제거 후 조정
-                else -> offset - 2 // YYYY.MM. 제거 후 조정
+                offset <= 7 -> offset - 1
+                else -> offset - 2
             }
         }
     }

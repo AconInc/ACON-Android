@@ -3,10 +3,10 @@ package com.acon.acon.feature.profile.composable.screen.profileMod.composable
 import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,8 +27,11 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -46,6 +49,7 @@ import com.acon.acon.core.designsystem.component.textfield.AconTextField
 import com.acon.acon.core.designsystem.component.textfield.TextFieldStatus
 import com.acon.acon.core.designsystem.component.textfield.addFocusCleaner
 import com.acon.acon.core.designsystem.component.topbar.AconTopBar
+import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.core.utils.feature.permission.CheckAndRequestPhotoPermission
 import com.acon.acon.feature.profile.R
@@ -58,6 +62,7 @@ import com.acon.acon.feature.profile.composable.screen.profileMod.NicknameStatus
 import com.acon.acon.feature.profile.composable.screen.profileMod.ProfileModSideEffect
 import com.acon.acon.feature.profile.composable.screen.profileMod.ProfileModState
 import com.acon.acon.feature.profile.composable.screen.profileMod.ProfileModViewModel
+import com.acon.acon.feature.profile.composable.screen.profileMod.ProfileUpdateResult
 import org.orbitmvi.orbit.compose.collectAsState
 
 @Composable
@@ -65,8 +70,8 @@ fun ProfileModScreenContainer(
     modifier: Modifier = Modifier,
     viewModel: ProfileModViewModel = hiltViewModel(),
     selectedPhotoId: String = "",
-    onNavigateToProfile: () -> Unit = {},
-    onNavigateToAreaVerification: () -> Unit = {},
+    backToProfile: () -> Unit = {},
+    onNavigateToProfile: (ProfileUpdateResult) -> Unit = { }, // 이건 수정 성공/실패 값을 갖고 넘기는 함수.
     onNavigateToCustomGallery: () -> Unit = {},
 ) {
     val state = viewModel.collectAsState().value
@@ -79,6 +84,7 @@ fun ProfileModScreenContainer(
     }
 
     LaunchedEffect(Unit) {
+
         viewModel.container.sideEffectFlow.collect { effect ->
             when (effect) {
                 is ProfileModSideEffect.NavigateToSettings -> {
@@ -88,7 +94,7 @@ fun ProfileModScreenContainer(
                     context.startActivity(intent)
                 }
                 is ProfileModSideEffect.NavigateBack -> {
-                    onNavigateToProfile()
+                    backToProfile()
                 }
                 is ProfileModSideEffect.NavigateToCustomGallery -> {
                     onNavigateToCustomGallery()
@@ -97,6 +103,12 @@ fun ProfileModScreenContainer(
                     selectedPhotoId.let {
                         viewModel.updateProfileImage(selectedPhotoId)
                     }
+                }
+                is ProfileModSideEffect.NavigateToProfileSuccess -> {
+                    onNavigateToProfile(ProfileUpdateResult.SUCCESS)
+                }
+                is ProfileModSideEffect.NavigateToProfileFailed -> {
+                    onNavigateToProfile(ProfileUpdateResult.FAILURE)
                 }
             }
         }
@@ -115,7 +127,7 @@ fun ProfileModScreenContainer(
         )
     }
 
-    if (state.showDialog) {
+    if (state.showExitDialog) {
         AconTwoButtonDialog(
             title = stringResource(R.string.profile_mod_alert_title),
             content = stringResource(R.string.profile_mod_alert_description),
@@ -123,33 +135,13 @@ fun ProfileModScreenContainer(
             rightButtonContent = stringResource(R.string.profile_mod_alert_right_btn),
             contentImage = 0,
             onDismissRequest = {
-                viewModel.hideDialog()
+                viewModel.hideExitDialog()
             },
             onClickLeft = { // 나가기 (프로필 뷰로 이동)
-                onNavigateToProfile()
+                backToProfile()
             },
             onClickRight = { // 계속 작성하기
-                viewModel.hideDialog()
-            },
-            isImageEnabled = false
-        )
-    }
-
-    if (state.showAreaDeleteDialog) {
-        AconTwoButtonDialog(
-            title = stringResource(R.string.delete_area_alert_title, state.selectedArea ?: "이 동네"),
-            content = "",
-            leftButtonContent = stringResource(R.string.delete_area_alert_left_btn),
-            rightButtonContent = stringResource(R.string.delete_area_alert_right_btn),
-            contentImage = 0,
-            onDismissRequest = {
-                viewModel.hideAreaDeleteDialog()
-            },
-            onClickLeft = {
-                viewModel.hideAreaDeleteDialog()
-            },
-            onClickRight = {
-                state.selectedArea?.let { viewModel.removeVerifiedArea(it) }
+                viewModel.hideExitDialog()
             },
             isImageEnabled = false
         )
@@ -183,10 +175,8 @@ fun ProfileModScreenContainer(
         onNicknameChanged = viewModel::onNicknameChanged,
         onBirthdayChanged = viewModel::onBirthdayChanged,
         onFocusChanged = viewModel::onFocusChanged,
-        onBackClicked = viewModel::showDialog,
+        onBackClicked = viewModel::showExitDialog,
         onSaveClicked = viewModel::getPreSignedUrl,
-        onNavigateToAreaVerification = onNavigateToAreaVerification,
-        onRemoveArea = viewModel::showAreaDeleteDialog,
         onProfileClicked = viewModel::showProfileEditDialog,
     )
 }
@@ -200,8 +190,6 @@ fun ProfileModScreen(
     onFocusChanged: (Boolean) -> Unit = {},
     onBackClicked: () -> Unit,
     onSaveClicked: () -> Unit,
-    onNavigateToAreaVerification: () -> Unit,
-    onRemoveArea: (String) -> Unit = {},
     onProfileClicked: () -> Unit = {},
 ) {
     val focusManager = LocalFocusManager.current
@@ -267,7 +255,7 @@ fun ProfileModScreen(
                             tint = Color.Unspecified,
                             modifier = Modifier
                                 .align(alignment = Alignment.BottomEnd)
-                                .clickable{ onProfileClicked() }
+                                .noRippleClickable{ onProfileClicked() }
                         )
                     }
                     Spacer(modifier = Modifier.weight(1f))
@@ -378,18 +366,6 @@ fun ProfileModScreen(
                     }
                 }
 
-                Column(
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 15.dp),
-                ){
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Start
-                    ){
-                        Text(text = "인증 동네", style = AconTheme.typography.head8_16_sb, color = AconTheme.color.White)
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(text = "*", style = AconTheme.typography.head8_16_sb, color = AconTheme.color.Main_org1)
-                    }
-                }
             }
         }
 
@@ -433,7 +409,5 @@ private fun ProfileModScreenPreview() {
         onFocusChanged = {},
         onBackClicked = {},
         onSaveClicked = {},
-        onNavigateToAreaVerification = {},
-        onRemoveArea = {}
     )
 }

@@ -3,7 +3,6 @@ package com.acon.acon.feature.profile.composable.screen.galleryGrid.composable
 import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -27,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.rememberAsyncImagePainter
 import com.acon.acon.core.designsystem.component.topbar.AconTopBar
+import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.feature.profile.composable.screen.galleryGrid.GalleryGridState
 import com.acon.acon.feature.profile.composable.screen.galleryGrid.GalleryGridViewModel
@@ -125,7 +125,7 @@ fun PhotoItem(
     onClick: () -> Unit
 ) {
     Box(
-        modifier = Modifier.padding(2.dp).size(87.dp).clickable{ onClick() }
+        modifier = Modifier.padding(2.dp).size(87.dp).noRippleClickable{ onClick() }
     ) {
         Image(
             painter = rememberAsyncImagePainter(uri),

@@ -18,7 +18,7 @@ interface ProfileApi {
 
     @GET("/api/v1/members/nickname/validate")
     suspend fun validateNickname(
-        @Query("nickname") nickname: String
+        @Query("nickname", encoded = true) nickname: String
     ): Response<Unit>
 
     @PATCH("/api/v1/members/me")

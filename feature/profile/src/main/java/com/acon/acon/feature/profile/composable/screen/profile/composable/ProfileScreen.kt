@@ -192,7 +192,7 @@ fun ProfileScreen(
                             Icon(
                                 imageVector = ImageVector.vectorResource(com.acon.acon.core.designsystem.R.drawable.ic_setting_w_28),
                                 contentDescription = stringResource(R.string.content_description_settings),
-                                tint = AconTheme.color.White
+                                tint = AconTheme.color.White,
                             )
                         }
                     },
