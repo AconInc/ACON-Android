@@ -46,7 +46,7 @@ class ProfileModViewModel @Inject constructor(
                 .onSuccess { profile ->
                     reduce {
                         state.copy(
-                            selectedPhotoUri = profile.image,
+                            //selectedPhotoUri = profile.image,
                             nickNameState = profile.nickname,
                             birthdayState = profile.birthDate?.filter { it.isDigit() } ?: ""
                         )
@@ -294,15 +294,32 @@ class ProfileModViewModel @Inject constructor(
     }
 
     private fun putPhotoToPreSignedUrl(imageUri: Uri, preSignedUrl: String) = intent {
-
         val context = getApplication<Application>().applicationContext
         val client = OkHttpClient()
 
         try {
-            val inputStream = context.contentResolver.openInputStream(imageUri)
-            val byteArray = inputStream?.readBytes() ?: throw IllegalArgumentException("Failed to read image")
+            val byteArray: ByteArray
+            val mimeType: String
 
-            val mimeType = context.contentResolver.getType(imageUri) ?: "image/jpeg"
+            if (state.selectedPhotoUri.startsWith("content://")) {
+                val inputStream = context.contentResolver.openInputStream(imageUri)
+                byteArray = inputStream?.readBytes() ?: throw IllegalArgumentException("Failed to read image")
+                mimeType = context.contentResolver.getType(imageUri) ?: "image/jpeg"
+
+            } else if (state.selectedPhotoUri.startsWith("http://") || state.selectedPhotoUri.startsWith("https://")) {
+                val getRequest = Request.Builder().url(imageUri.toString()).build()
+                val getResponse = client.newCall(getRequest).execute()
+
+                if (!getResponse.isSuccessful) {
+                    throw IllegalArgumentException("Failed to fetch remote image")
+                }
+
+                byteArray = getResponse.body?.bytes() ?: throw IllegalArgumentException("Failed to read remote image")
+                mimeType = getResponse.header("Content-Type") ?: "image/jpeg"
+
+            } else {
+                throw IllegalArgumentException("Unsupported URI scheme")
+            }
 
             val fileBody = RequestBody.create(mimeType.toMediaTypeOrNull(), byteArray)
 
@@ -315,7 +332,7 @@ class ProfileModViewModel @Inject constructor(
             val response = client.newCall(request).execute()
 
             if (response.isSuccessful) {
-                if (state.birthdayStatus == BirthdayStatus.Valid){
+                if (state.birthdayStatus == BirthdayStatus.Valid) {
                     updateProfile(fileName = state.uploadFileName, nickname = state.nickNameState, birthday = state.birthdayState)
                 } else {
                     updateProfile(fileName = state.uploadFileName, nickname = state.nickNameState, birthday = null)
@@ -324,9 +341,9 @@ class ProfileModViewModel @Inject constructor(
                 // PUT 실패 시 에러 처리
             }
         } catch (e: Exception) {
-            // ImageUri 갖고 바이너리 방식으로 변환 과정에서 에러 처리
         }
     }
+
 
     private fun updateProfile(fileName: String, nickname: String, birthday: String?) {
 
