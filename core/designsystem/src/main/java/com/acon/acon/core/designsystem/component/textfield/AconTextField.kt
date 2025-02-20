@@ -57,6 +57,7 @@ fun AconTextField(
     val focusManager = LocalFocusManager.current
 
     val backgroundColor = when (status) {
+        TextFieldStatus.Empty -> AconColors.Gray9
         TextFieldStatus.Inactive -> AconColors.Gray9
         TextFieldStatus.Focused -> AconColors.Gray9
         TextFieldStatus.Active -> AconColors.Gray9
@@ -65,6 +66,7 @@ fun AconTextField(
     }
 
     val borderColor = when (status) {
+        TextFieldStatus.Empty -> AconColors.Gray6
         TextFieldStatus.Inactive -> AconColors.Gray6
         TextFieldStatus.Focused -> AconColors.Gray6
         TextFieldStatus.Active -> AconColors.Gray6
@@ -73,11 +75,12 @@ fun AconTextField(
     }
 
     val textColor = when (status) {
-        TextFieldStatus.Inactive -> AconColors.Gray5
-        TextFieldStatus.Focused -> AconColors.Gray5
+        TextFieldStatus.Empty -> AconColors.Gray6
+        TextFieldStatus.Inactive -> AconColors.White
+        TextFieldStatus.Focused -> AconColors.White
         TextFieldStatus.Active -> AconColors.White
-        TextFieldStatus.Error -> AconColors.Gray5
-        TextFieldStatus.Disabled -> AconColors.Gray5
+        TextFieldStatus.Error -> AconColors.White
+        TextFieldStatus.Disabled -> AconColors.White
     }
 
     val isEnabled = status != TextFieldStatus.Disabled
@@ -160,6 +163,7 @@ fun AconTextField(
 }
 
 sealed interface TextFieldStatus {
+    data object Empty: TextFieldStatus
     data object Inactive: TextFieldStatus
     data object Focused: TextFieldStatus
     data object Active: TextFieldStatus

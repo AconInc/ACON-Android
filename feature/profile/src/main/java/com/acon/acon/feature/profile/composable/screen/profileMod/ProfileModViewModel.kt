@@ -74,6 +74,17 @@ class ProfileModViewModel @Inject constructor(
     fun onNicknameChanged(text: String) = intent {
         val filteredText = text.filter { it.isAllowedChar() }
 
+        if (filteredText.isEmpty()) {
+            reduce {
+                state.copy(
+                    nickNameState = "",
+                    nicknameStatus = NicknameStatus.Empty,
+                    nickNameFieldStatus = TextFieldStatus.Empty
+                )
+            }
+            return@intent
+        }
+
         // 한글이 섞여있는 경우 버그 발생 (더 많이 써짐)
         if (filteredText.length <= 16){
             reduce {
@@ -127,13 +138,14 @@ class ProfileModViewModel @Inject constructor(
         if (digitsOnly.isEmpty()){
             reduce {
                 state.copy(
-                    birthdayState = digitsOnly,
+                    birthdayState = "",
                     birthdayStatus = BirthdayStatus.Empty,
-                    birthdayFieldStatus = TextFieldStatus.Focused
+                    birthdayFieldStatus = TextFieldStatus.Empty
                 )
             }
             return@intent
         }
+
         if (digitsOnly.length <= 8) { // 일단 8자 이내면 쓰는 게 다 보여야함
             reduce {
                 state.copy(
