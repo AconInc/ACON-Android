@@ -2,13 +2,10 @@ package com.acon.acon.feature.profile.composable.screen.profileMod.composable
 
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
 import android.provider.Settings
 import androidx.activity.compose.BackHandler
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -48,13 +45,13 @@ import com.acon.acon.core.designsystem.component.textfield.AconTextField
 import com.acon.acon.core.designsystem.component.textfield.TextFieldStatus
 import com.acon.acon.core.designsystem.component.textfield.addFocusCleaner
 import com.acon.acon.core.designsystem.component.topbar.AconTopBar
+import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.core.utils.feature.permission.CheckAndRequestPhotoPermission
 import com.acon.acon.feature.profile.R
 import com.acon.acon.feature.profile.composable.component.CustomModalBottomSheet
 import com.acon.acon.feature.profile.composable.component.NicknameErrMessageRow
 import com.acon.acon.feature.profile.composable.component.ProfilePhotoBox
-import com.acon.acon.feature.profile.composable.component.VerifiedAreaChip
 import com.acon.acon.feature.profile.composable.screen.profileMod.BirthdayStatus
 import com.acon.acon.feature.profile.composable.screen.profileMod.BirthdayVisualTransformation
 import com.acon.acon.feature.profile.composable.screen.profileMod.NicknameStatus
@@ -255,7 +252,7 @@ fun ProfileModScreen(
                             tint = Color.Unspecified,
                             modifier = Modifier
                                 .align(alignment = Alignment.BottomEnd)
-                                .clickable{ onProfileClicked() }
+                                .noRippleClickable{ onProfileClicked() }
                         )
                     }
                     Spacer(modifier = Modifier.weight(1f))

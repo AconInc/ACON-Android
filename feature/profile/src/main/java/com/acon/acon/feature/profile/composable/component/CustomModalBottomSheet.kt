@@ -1,6 +1,5 @@
 package com.acon.acon.feature.profile.composable.component
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,6 +17,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
+import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.feature.profile.R
 
@@ -41,7 +41,10 @@ fun CustomModalBottomSheet(
                 .padding(bottom = 30.dp)
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp, horizontal = 16.dp).clickable { onGallerySelect() },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 12.dp, horizontal = 16.dp)
+                    .noRippleClickable { onGallerySelect() },
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Start
             ){
@@ -59,7 +62,13 @@ fun CustomModalBottomSheet(
                 )
             }
             Row(
-                modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp, horizontal = 16.dp).clickable { onDefaultImageSelect() },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 12.dp, horizontal = 16.dp)
+                    .noRippleClickable {
+                        onDefaultImageSelect()
+                        onDismiss()
+                        },
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Start
             ){
