@@ -29,6 +29,7 @@ class ProfileModViewModel @Inject constructor(
 ) : AndroidViewModel(application), ContainerHost<ProfileModState, ProfileModSideEffect> {
 
     override val container = container<ProfileModState, ProfileModSideEffect>(ProfileModState()){
+        fetchUserProfileInfo()
     }
 
     fun onFocusChanged(isFocused: Boolean) = intent {

@@ -5,11 +5,8 @@ import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -75,11 +72,18 @@ internal fun NavGraphBuilder.profileNavigation(
         }
 
         composable<ProfileRoute.ProfileMod> { backStackEntry ->
-            val route = backStackEntry.toRoute<ProfileRoute.ProfileMod>()
+            val savedStateHandle = backStackEntry.savedStateHandle
+            val selectedPhotoId = remember { mutableStateOf<String?>(null) }
+
+            LaunchedEffect(Unit) {
+                savedStateHandle.getLiveData<String>("selectedPhotoId").observeForever { result ->
+                    selectedPhotoId.value = result
+                }
+            }
 
             ProfileModScreenContainer(
                 modifier = Modifier.fillMaxSize(),
-                selectedPhotoId = route.photoId,
+                selectedPhotoId = selectedPhotoId.value.toString(),
                 backToProfile = {
                     navController.navigate(ProfileRoute.Profile)
                 },
@@ -102,6 +106,7 @@ internal fun NavGraphBuilder.profileNavigation(
             GalleryListContainer(
                 modifier = Modifier.fillMaxSize(),
                 onAlbumSelected = { albumId, albumName ->
+                    navController.popBackStack()
                     navController.navigate(ProfileRoute.GalleryGrid(albumId, albumName))
                 },
                 onBackClicked = {
@@ -121,6 +126,7 @@ internal fun NavGraphBuilder.profileNavigation(
                     navController.popBackStack()
                 },
                 onConfirmSelected = { photoId ->
+                    navController.popBackStack()
                     navController.navigate(ProfileRoute.PhotoCrop(photoId))
                 }
             )
@@ -136,11 +142,12 @@ internal fun NavGraphBuilder.profileNavigation(
                     navController.popBackStack()
                 },
                 onCompleteSelected = { photoId : String ->
-                    navController.navigate(ProfileRoute.ProfileMod(photoId)) {
-                        popUpTo(ProfileRoute.ProfileMod.applySelectedPhotoId(photoId = photoId)) {
-                            inclusive = false
-                        }
-                    }
+
+                    navController.previousBackStackEntry
+                        ?.savedStateHandle
+                        ?.set("selectedPhotoId", photoId)
+
+                    navController.popBackStack()
                 }
             )
         }
