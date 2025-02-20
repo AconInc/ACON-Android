@@ -39,12 +39,12 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PreferenceMapScreen(
-    onConfirmClick: () -> Unit,
-    onNavigateToNext: () -> Unit,
-    onBackClick: () -> Unit,
     latitude: Double,
     longitude: Double,
     modifier: Modifier = Modifier,
+    onBackClick: () -> Unit = {},
+    onConfirmClick: () -> Unit = {},
+    onNavigateToNext: () -> Unit = {},
     viewModel: AreaVerificationViewModel = hiltViewModel()
 ) {
     var currentLatitude by remember { mutableDoubleStateOf(latitude) }
