@@ -44,7 +44,10 @@ fun CustomModalBottomSheet(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 12.dp, horizontal = 16.dp)
-                    .noRippleClickable { onGallerySelect() },
+                    .noRippleClickable {
+                        onGallerySelect()
+                        onDismiss()
+                    },
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Start
             ){
