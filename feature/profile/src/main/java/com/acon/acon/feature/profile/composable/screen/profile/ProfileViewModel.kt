@@ -58,7 +58,7 @@ class ProfileViewModel @Inject constructor(
             }
     }
 
-    private fun fetchUserProfileInfo() = intent {
+     fun fetchUserProfileInfo() = intent {
         viewModelScope.launch {
             profileRepository.fetchProfile()
                 .onSuccess { profile ->

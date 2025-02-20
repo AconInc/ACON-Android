@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="alert_profile_preparing">지금은 공사중이에요!</string>
+    <string name="snackbar_profile_save_success">프로필이 저장되었습니다!</string>
+    <string name="success">SUCCESS</string>
 
     <string name="profile_mod_alert_title">변경사항이 저장되지 않았어요</string>
     <string name="profile_mod_alert_description">지금 나가면 변경한 내용이 삭제돼요</string>
