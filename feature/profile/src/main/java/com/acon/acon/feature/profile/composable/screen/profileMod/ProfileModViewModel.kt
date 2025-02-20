@@ -7,6 +7,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.acon.acon.core.designsystem.component.textfield.TextFieldStatus
+import com.acon.acon.domain.error.profile.ValidateNicknameError
 import com.acon.acon.domain.repository.ProfileRepository
 import com.acon.acon.feature.profile.composable.screen.profile.ProfileUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -72,7 +73,6 @@ class ProfileModViewModel @Inject constructor(
     fun onNicknameChanged(text: String) = intent {
         val filteredText = text.filter { it.isAllowedChar() }
 
-
         // 한글이 섞여있는 경우 버그 발생 (더 많이 써짐)
         if (filteredText.length <= 16){
             reduce {
@@ -106,10 +106,7 @@ class ProfileModViewModel @Inject constructor(
                 errors.add(NicknameErrorType.InvalidLang)
             }
 
-            val alreadyUsed = validateNickname(nickname = filteredText) //TODO: 서버 체크 로직 추가
-            if(alreadyUsed) {
-                errors.add(NicknameErrorType.AlreadyUsed)
-            }
+            val isValid = validateNickname(nickname = filteredText, errors = errors)
 
             reduce {
                 state.copy(
@@ -248,20 +245,25 @@ class ProfileModViewModel @Inject constructor(
         }
     }
 
-    private fun validateNickname(nickname: String) : Boolean {
-        var isValid : Boolean = false
-
-        viewModelScope.launch {
-            profileRepository.validateNickname(nickname)
-                .onSuccess { response ->
-                    isValid = true
+    private suspend fun validateNickname(nickname: String, errors: MutableList<NicknameErrorType>): Boolean {
+        return profileRepository.validateNickname(nickname)
+            .map { true }
+            .recover { throwable ->
+                when (throwable) {
+                    is ValidateNicknameError.UnsatisfiedCondition -> {
+                        errors.add(NicknameErrorType.InvalidChar)
+                        false
+                    }
+                    is ValidateNicknameError.AlreadyUsedNickname -> {
+                        errors.add(NicknameErrorType.AlreadyUsed)
+                        false
+                    }
+                    else -> {
+                        false
+                    }
                 }
-                .onFailure { response ->
-                    isValid = false
-                    // 실패시 에러 처리
-                }
-        }
-        return isValid
+            }
+            .getOrDefault(false)
     }
 
     fun getPreSignedUrl() = intent {
