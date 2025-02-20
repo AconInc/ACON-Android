@@ -53,6 +53,7 @@ import com.acon.acon.feature.profile.composable.component.CustomModalBottomSheet
 import com.acon.acon.feature.profile.composable.component.NicknameErrMessageRow
 import com.acon.acon.feature.profile.composable.component.ProfilePhotoBox
 import com.acon.acon.feature.profile.composable.screen.profileMod.BirthdayStatus
+import com.acon.acon.feature.profile.composable.screen.profileMod.BirthdayVisualTransformation
 import com.acon.acon.feature.profile.composable.screen.profileMod.NicknameStatus
 import com.acon.acon.feature.profile.composable.screen.profileMod.ProfileModSideEffect
 import com.acon.acon.feature.profile.composable.screen.profileMod.ProfileModState
@@ -183,7 +184,7 @@ fun ProfileModScreenContainer(
         onBirthdayChanged = viewModel::onBirthdayChanged,
         onFocusChanged = viewModel::onFocusChanged,
         onBackClicked = viewModel::showDialog,
-        onSaveClicked = viewModel::getPreSignedUrl, // Presigned 얻고 -> Put으로 이미지 업로드하고 -> 서버에 저장 API 쏘고 -> 성공하면 onNavigateToProfile()
+        onSaveClicked = viewModel::getPreSignedUrl,
         onNavigateToAreaVerification = onNavigateToAreaVerification,
         onRemoveArea = viewModel::showAreaDeleteDialog,
         onProfileClicked = viewModel::showProfileEditDialog,
@@ -290,7 +291,7 @@ fun ProfileModScreen(
                         onTextChanged = onNicknameChanged,
                         onFocusChanged = onFocusChanged,
                         placeholder = "16자 이내 영문, 한글, 숫자, ., _만 사용 가능",
-                        isTyping = (state.nicknameStatus == NicknameStatus.Typing)
+                        isTyping = (state.nicknameStatus == NicknameStatus.Typing),
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Row(
@@ -335,7 +336,7 @@ fun ProfileModScreen(
                         Row(
                             horizontalArrangement = Arrangement.End
                         ){
-                            Text(text = "${state.nickNameState.length}", style = AconTheme.typography.subtitle2_14_med, color = AconTheme.color.White)
+                            Text(text = "${state.nicknameCount}", style = AconTheme.typography.subtitle2_14_med, color = AconTheme.color.White)
                             Text(text = "/16", style = AconTheme.typography.subtitle2_14_med, color = AconTheme.color.Gray5)
                         }
                     }
@@ -358,6 +359,7 @@ fun ProfileModScreen(
                         onTextChanged = onBirthdayChanged,
                         onFocusChanged = onFocusChanged,
                         placeholder = "ex) 2025.01.01",
+                        visualTransformation = BirthdayVisualTransformation()
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     when (val status = state.birthdayStatus) {
@@ -365,7 +367,6 @@ fun ProfileModScreen(
                             Spacer(modifier = Modifier.height(4.dp))
                         }
                         is BirthdayStatus.Invalid -> {
-
                             NicknameErrMessageRow(
                                 modifier = modifier,
                                 iconRes = ImageVector.vectorResource(R.drawable.and_ic_error_20),

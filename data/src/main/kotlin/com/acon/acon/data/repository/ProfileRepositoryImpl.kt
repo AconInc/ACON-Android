@@ -21,4 +21,16 @@ class ProfileRepositoryImpl @Inject constructor(
             profileRemoteDataSource.getPreSignedUrl().toPreSignedUrl()
         }
     }
+
+    override suspend fun validateNickname(nickname: String): Result<Unit> {
+        return runCatchingWith() {
+            profileRemoteDataSource.validateNickname(nickname)
+        }
+    }
+
+    override suspend fun updateProfile(fileName: String, nickname: String, birthday: String?): Result<Unit> {
+        return runCatchingWith() {
+            profileRemoteDataSource.updateProfile(fileName, nickname, birthday)
+        }
+    }
 }

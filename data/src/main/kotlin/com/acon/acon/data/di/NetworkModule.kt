@@ -119,7 +119,9 @@ internal object NetworkModule {
     fun provideRetrofit(
         @Auth client: OkHttpClient
     ): Retrofit {
-        val json = Json { ignoreUnknownKeys = true }
+        val json = Json {
+            ignoreUnknownKeys = true
+        }
         return Retrofit.Builder()
             .baseUrl(BuildConfig.BASE_URL)
             .client(client)

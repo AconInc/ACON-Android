@@ -78,4 +78,6 @@ dependencies {
 
     implementation(libs.haze)
     implementation(libs.haze.materials)
+
+    implementation(libs.gson)
 }

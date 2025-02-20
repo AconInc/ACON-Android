@@ -43,6 +43,7 @@ runtimeAndroidVersion = "1.7.1"
 storage = "1.5.0"
 uiToolingPreviewAndroidVersion = "1.8.0-alpha04"
 playServicesLocationVersion = "21.3.0"
+gson = "2.10.1"
 
 ## Naver Map
 naverMapCompose = "1.8.0"
@@ -142,6 +143,8 @@ kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-c
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version = "1.7.3" }
 androidx-activity-ktx = { group = "androidx.activity", name = "activity-ktx", version.ref = "activityKtx" }
 androidx-foundation-layout-android = { group = "androidx.compose.foundation", name = "foundation-layout-android", version.ref = "foundationLayoutAndroid" }
+
+gson = {module = "com.google.code.gson:gson", version.ref = "gson"}
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

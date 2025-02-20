@@ -1,18 +1,13 @@
 package com.acon.acon.feature.profile.composable.screen.profileMod
 
 import android.app.Application
-import android.content.Context
 import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.acon.acon.core.designsystem.component.textfield.TextFieldStatus
 import com.acon.acon.domain.repository.ProfileRepository
-import com.acon.acon.domain.repository.UploadRepository
-import com.acon.acon.feature.profile.composable.screen.profile.ProfileUiState
-import dagger.hilt.android.internal.Contexts.getApplication
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -23,7 +18,6 @@ import okhttp3.Request
 import okhttp3.RequestBody
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.viewmodel.container
-import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
@@ -32,7 +26,9 @@ class ProfileModViewModel @Inject constructor(
     application: Application
 ) : AndroidViewModel(application), ContainerHost<ProfileModState, ProfileModSideEffect> {
 
-    override val container = container<ProfileModState, ProfileModSideEffect>(ProfileModState())
+    override val container = container<ProfileModState, ProfileModSideEffect>(ProfileModState()){
+        profileRepository.fetchProfile()
+    }
 
     fun onFocusChanged(isFocused: Boolean) = intent {
         reduce {
@@ -58,8 +54,22 @@ class ProfileModViewModel @Inject constructor(
 
     fun onNicknameChanged(text: String) = intent {
         val filteredText = text.filter { it.isAllowedChar() }
-        reduce {
-            state.copy(nickNameState = filteredText, nicknameStatus = NicknameStatus.Typing)
+
+
+        // 한글이 섞여있는 경우 버그 발생 (더 많이 써짐)
+        if (filteredText.length <= 16){
+            reduce {
+                state.copy(nickNameState = filteredText, nicknameStatus = NicknameStatus.Typing)
+            }
+        }
+
+        val nicknameCount = filteredText.map { if (it in ('가'..'힣') + ('ㄱ'..'ㅎ') + ('ㅏ'..'ㅣ')) 2 else 1 }.sum()
+        if (nicknameCount <= 16) { //nicknameCount만 따로 업데이트 (딜레이 생기므로)
+            reduce {
+                state.copy(
+                    nicknameCount = nicknameCount
+                )
+            }
         }
 
         nicknameValidationJob?.cancel()
@@ -79,7 +89,7 @@ class ProfileModViewModel @Inject constructor(
                 errors.add(NicknameErrorType.InvalidLang)
             }
 
-            val alreadyUsed = false //TODO: 서버 체크 로직 추가
+            val alreadyUsed = validateNickname(nickname = filteredText) //TODO: 서버 체크 로직 추가
             if(alreadyUsed) {
                 errors.add(NicknameErrorType.AlreadyUsed)
             }
@@ -97,13 +107,30 @@ class ProfileModViewModel @Inject constructor(
     }
 
     fun onBirthdayChanged(text: String) = intent {
-        val formattedText = formatBirthdayInput(text)
-        reduce {
-            state.copy(birthdayState = formattedText)
+        val digitsOnly = text.filter { it.isDigit() }
+
+        if (digitsOnly.isEmpty()){
+            reduce {
+                state.copy(
+                    birthdayState = digitsOnly,
+                    birthdayStatus = BirthdayStatus.Empty,
+                    birthdayFieldStatus = TextFieldStatus.Focused
+                )
+            }
+            return@intent
+        }
+        if (digitsOnly.length <= 8) { // 일단 8자 이내면 쓰는 게 다 보여야함
+            reduce {
+                state.copy(
+                    birthdayState = digitsOnly,
+                    birthdayStatus = BirthdayStatus.Invalid(errorMsg = "정확한 생년월일을 입력해주세요"),
+                    birthdayFieldStatus = TextFieldStatus.Error
+                )
+            }
         }
 
-        if (formattedText.length == 10) {
-            if (validateBirthday(formattedText)) {
+        if (digitsOnly.length == 8) {
+            if (validateBirthday(digitsOnly)) {
                 reduce {
                     state.copy(
                         birthdayStatus = BirthdayStatus.Valid,
@@ -121,24 +148,11 @@ class ProfileModViewModel @Inject constructor(
         }
     }
 
-    private fun formatBirthdayInput(input: String): String {
-        val digitsOnly = input.filter { it.isDigit() }
-
-        return when {
-            digitsOnly.length <= 4 -> digitsOnly
-            digitsOnly.length <= 6 -> "${digitsOnly.substring(0, 4)}.${digitsOnly.substring(4)}"
-            digitsOnly.length <= 8 -> "${digitsOnly.substring(0, 4)}.${digitsOnly.substring(4, 6)}.${digitsOnly.substring(6)}"
-            else -> "${digitsOnly.substring(0, 4)}.${digitsOnly.substring(4, 6)}.${digitsOnly.substring(6, 8)}"
-        }
-    }
-
     private fun validateBirthday(birthday: String): Boolean {
-        val parts = birthday.split(".")
-        if (parts.size != 3) return false
 
-        val year = parts[0].toIntOrNull() ?: return false
-        val month = parts[1].toIntOrNull() ?: return false
-        val day = parts[2].toIntOrNull() ?: return false
+        val year = birthday.substring(0, 4).toIntOrNull() ?: return false
+        val month = birthday.substring(4, 6).toIntOrNull() ?: return false
+        val day = birthday.substring(6, 8).toIntOrNull() ?: return false
 
         val currentYear = java.time.Year.now().value
         if (year > currentYear || year <= 1900) return false
@@ -248,6 +262,23 @@ class ProfileModViewModel @Inject constructor(
         }
     }
 
+    private fun validateNickname(nickname: String) : Boolean {
+        var isValid : Boolean = false
+
+        viewModelScope.launch {
+            profileRepository.validateNickname(nickname)
+                .onSuccess { response ->
+//                    Log.d("닉네임 검사", "성공 - $response")
+                    isValid = true
+                }
+                .onFailure { response ->
+//                    Log.d("닉네임 검사", "실패 - $response")
+                    isValid = false
+                    // 실패시 에러 처리
+                }
+        }
+        return isValid
+    }
 
     fun getPreSignedUrl() = intent {
         viewModelScope.launch {
@@ -259,10 +290,12 @@ class ProfileModViewModel @Inject constructor(
                             preSignedUrl = result.preSignedUrl
                         )
                     }
+//                    Log.d("Url 받아오기 검사", "성공 - $result")
                     putPhotoToPreSignedUrl(Uri.parse(state.selectedPhotoUri), state.preSignedUrl)
                 }
                 .onFailure {
-                    // 실패시 에러처리 어케하지?
+                    // 실패시 에러처리 ?
+//                    Log.d("Url 받아오기 검사", "성공 - $it")
                 }
         }
     }
@@ -288,15 +321,35 @@ class ProfileModViewModel @Inject constructor(
             val response = client.newCall(request).execute()
 
             if (response.isSuccessful) {
-                // PUT 성공 시 정상적으로 프로필 수정 API 호출 (fileName 사용)
+                if (state.birthdayStatus == BirthdayStatus.Valid){
+                    updateProfile(fileName = state.uploadFileName, nickname = state.nickNameState, birthday = state.birthdayState)
+                } else {
+                    updateProfile(fileName = state.uploadFileName, nickname = state.nickNameState, birthday = null)
+                }
+//                Log.d("사진 PUT 검사", "성공 - $response")
             } else {
                 // PUT 실패 시 에러 처리
+//                Log.d("사진 PUT 검사", "실패 - $response")
             }
         } catch (e: Exception) {
             // ImageUri 갖고 바이너리 방식으로 변환 과정에서 에러 처리
         }
     }
 
+    private fun updateProfile(fileName: String, nickname: String, birthday: String?) {
+
+        viewModelScope.launch {
+            profileRepository.updateProfile(fileName, nickname, birthday)
+                .onSuccess { response ->
+//                    Log.d("프로필 업뎃 검사", "성공 - $response")
+                }
+                .onFailure { response ->
+                    // 실패시 에러 처리
+//                    Log.d("프로필 업뎃 검사", "실패 - $response")
+                }
+
+        }
+    }
 
 
 }
@@ -304,9 +357,11 @@ class ProfileModViewModel @Inject constructor(
 
 data class ProfileModState(
 
+    val originalNickname: String = "",
     val nickNameFieldStatus: TextFieldStatus = TextFieldStatus.Inactive,
     val nickNameState: String = "",
     val nicknameStatus: NicknameStatus = NicknameStatus.Empty,
+    val nicknameCount: Int = 0,
 
     val birthdayFieldStatus: TextFieldStatus = TextFieldStatus.Inactive,
     val birthdayState: String = "",
