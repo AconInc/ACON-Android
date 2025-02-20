@@ -41,13 +41,13 @@ class ProfileModViewModel @Inject constructor(
         }
     }
 
-    fun fetchUserProfileInfo() = intent {
+    private fun fetchUserProfileInfo() = intent {
         viewModelScope.launch {
             profileRepository.fetchProfile()
                 .onSuccess { profile ->
                     reduce {
                         state.copy(
-                            //selectedPhotoUri = profile.image,
+                            selectedPhotoUri = profile.image,
                             nickNameState = profile.nickname,
                             birthdayState = profile.birthDate?.filter { it.isDigit() } ?: ""
                         )
