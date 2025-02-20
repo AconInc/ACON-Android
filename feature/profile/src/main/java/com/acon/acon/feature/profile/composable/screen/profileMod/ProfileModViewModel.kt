@@ -46,7 +46,7 @@ class ProfileModViewModel @Inject constructor(
                 .onSuccess { profile ->
                     reduce {
                         state.copy(
-                            //selectedPhotoUri = profile.image,
+                            selectedPhotoUri = profile.image,
                             nickNameState = profile.nickname,
                             birthdayState = profile.birthDate?.filter { it.isDigit() } ?: ""
                         )
