@@ -1,6 +1,5 @@
 package com.acon.acon.navigation.nested
 
-import android.util.Log
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.fillMaxSize
@@ -38,7 +37,6 @@ internal fun NavGraphBuilder.profileNavigation(
             ExitTransition.None
         }
     ) {
-
         composable<ProfileRoute.Profile> { backStackEntry ->
             val savedStateHandle = backStackEntry.savedStateHandle
             val profileUpdateResult = remember { mutableStateOf<ProfileUpdateResult?>(null) }
@@ -62,7 +60,7 @@ internal fun NavGraphBuilder.profileNavigation(
                 onNavigateToSettingsScreen = { navController.navigate(SettingsRoute.Settings) },
                 onNavigateToProfileEditScreen = { navController.navigate(ProfileRoute.ProfileMod.applyDefault()) },
                 onNavigateToAreaVerificationScreen = {
-                    navController.navigate(AreaVerificationRoute.RequireAreaVerification) {
+                    navController.navigate(AreaVerificationRoute.RequireAreaVerification("onboarding")) {
                         popUpTo(ProfileRoute.Graph) {
                             inclusive = true
                         }

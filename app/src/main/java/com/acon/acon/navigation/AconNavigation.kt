@@ -92,7 +92,7 @@ fun AconNavigation(
                                     }
                                 } else {
                                     showLoginBottomSheet = false
-                                    navController.navigate(AreaVerificationRoute.RequireAreaVerification) {
+                                    navController.navigate(AreaVerificationRoute.RequireAreaVerification("onboarding")) {
                                         popUpTo<AreaVerificationRoute.Graph> {
                                             inclusive = true
                                         }

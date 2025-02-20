@@ -25,7 +25,7 @@ internal fun NavGraphBuilder.spotNavigation(
                 socialRepository = socialRepository,
                 modifier = Modifier.fillMaxSize(),
                 onNavigateToAreaVerification = {
-                    navController.navigate(AreaVerificationRoute.RequireAreaVerification) {
+                    navController.navigate(AreaVerificationRoute.RequireAreaVerification("onboarding")) {
                         popUpTo(SpotRoute.Graph) {
                             inclusive = true
                         }

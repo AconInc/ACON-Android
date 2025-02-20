@@ -60,8 +60,12 @@ internal fun NavGraphBuilder.settingsNavigation(
                 navigateToSettingsScreen = { navController.popBackStack() },
                 navigateToAreaVerification = {
                     navController.navigate(
-                        AreaVerificationRoute.RequireAreaVerification
-                    )
+                        AreaVerificationRoute.RequireAreaVerification("settings")
+                    ) {
+                        popUpTo(ProfileRoute.Graph) {
+                            inclusive = true
+                        }
+                    }
                 }
             )
         }
