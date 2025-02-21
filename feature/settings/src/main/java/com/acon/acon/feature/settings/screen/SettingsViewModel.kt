@@ -19,9 +19,8 @@ class SettingsViewModel @Inject constructor(
 
     override val container =
         container<SettingsUiState, SettingsSideEffect>(SettingsUiState.Default(false)) {
-            userRepository.getLoginState().collect { loginState ->
-                reduce { SettingsUiState.Default(loginState) }
-            }
+            val isLogin = tokenRepository.getIsLogin().getOrElse { false }
+            reduce { SettingsUiState.Default(isLogin) }
         }
 
     fun onSingOut() = intent {
@@ -29,17 +28,15 @@ class SettingsViewModel @Inject constructor(
             viewModelScope.launch {
                 refreshToken?.let {
                     userRepository.postLogout(it)
-                    tokenRepository.removeAllToken()
-                    tokenRepository.removeAreaVerification()
                 }
-                    ?.onSuccess {
-                        userRepository.updateLoginState(false)
-                        postSideEffect(SettingsSideEffect.NavigateToSignIn)
-                    }
-                    ?.onFailure {
-                        onSignInDialogShowStateChange(false)
-                        postSideEffect(SettingsSideEffect.ShowToastMessage)
-                    }
+                ?.onSuccess {
+                    tokenRepository.removeAllToken()
+                    postSideEffect(SettingsSideEffect.NavigateToSignIn)
+                }
+                ?.onFailure {
+                    onSignInDialogShowStateChange(false)
+                    postSideEffect(SettingsSideEffect.ShowToastMessage)
+                }
             }
         }
     }

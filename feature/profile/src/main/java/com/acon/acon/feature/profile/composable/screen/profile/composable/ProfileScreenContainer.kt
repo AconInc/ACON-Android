@@ -45,8 +45,10 @@ fun ProfileScreenContainer(
     )
 
     val success = stringResource(R.string.success)
-    LaunchedEffect(profileUpdateResult == success) {
-        viewModel.fetchUserProfileInfo()
+    LaunchedEffect(profileUpdateResult) {
+        if(profileUpdateResult == success) {
+            viewModel.fetchUserProfileInfo()
+        }
     }
 
     viewModel.collectSideEffect {
