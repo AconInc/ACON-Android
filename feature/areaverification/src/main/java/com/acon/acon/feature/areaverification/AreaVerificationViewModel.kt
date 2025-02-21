@@ -1,9 +1,9 @@
 package com.acon.acon.feature.areaverification
 
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.acon.acon.core.utils.feature.base.BaseContainerHost
 import com.acon.acon.domain.repository.AreaVerificationRepository
+import com.acon.acon.domain.repository.TokenRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.viewmodel.container
@@ -11,6 +11,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AreaVerificationViewModel @Inject constructor(
+    private val tokenRepository: TokenRepository,
     private val areaVerificationRepository: AreaVerificationRepository
 ) : BaseContainerHost<AreaVerificationState, AreaVerificationSideEffect>() {
 
@@ -130,6 +131,7 @@ class AreaVerificationViewModel @Inject constructor(
 
         areaVerificationRepository.verifyArea(latitude, longitude)
             .onSuccess { area ->
+                tokenRepository.saveAreaVerification(true)
                 reduce {
                     state.copy(
                         isLoading = false,
@@ -138,6 +140,7 @@ class AreaVerificationViewModel @Inject constructor(
                 }
             }
             .onFailure { throwable ->
+                tokenRepository.saveAreaVerification(false)
                 reduce {
                     state.copy(
                         isLoading = false,
