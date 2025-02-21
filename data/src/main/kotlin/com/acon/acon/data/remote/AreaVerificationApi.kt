@@ -6,7 +6,7 @@ import retrofit2.http.Body
 import retrofit2.http.POST
 
 interface AreaVerificationApi {
-    @POST("/api/v1/member/area")
+    @POST("/api/v1/members/verified-areas")
     suspend fun verifyArea(
         @Body request: AreaVerificationRequest
     ): AreaVerificationResponse
