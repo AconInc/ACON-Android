@@ -22,7 +22,7 @@ interface SpotApi {
         @Body request: RecentNavigationLocationRequest
     )
 
-    @GET("/api/v1/spot/{spotId}")
+    @GET("/api/v1/spots/{spotId}")
     suspend fun getSpotDetailInfo(
         @Path ("spotId") spotId: Long
     ): SpotDetailInfoResponse
