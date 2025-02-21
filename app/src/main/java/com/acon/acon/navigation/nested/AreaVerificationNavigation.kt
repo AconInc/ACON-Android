@@ -23,7 +23,8 @@ fun NavGraphBuilder.areaVerificationNavigation(
 
             val routeData = backStackEntry.arguments?.let {
                 AreaVerificationRoute.RequireAreaVerification(
-                    route = it.getString("route")
+                    route = it.getString("route"),
+                    isEdit = it.getBoolean("isEdit", false)
                 )
             }
 
@@ -31,12 +32,22 @@ fun NavGraphBuilder.areaVerificationNavigation(
                 modifier = Modifier.fillMaxSize(),
                 onNewAreaClick = { latitude, longitude ->
                     navController.navigate(
-                        AreaVerificationRoute.CheckInMap(latitude, longitude, routeData?.route)
+                        AreaVerificationRoute.CheckInMap(
+                            latitude = latitude,
+                            longitude = longitude,
+                            route = routeData?.route,
+                            isEdit = routeData?.isEdit ?: false
+                        )
                     )
                 },
                 onNextScreen = { latitude, longitude ->
                     navController.navigate(
-                        AreaVerificationRoute.CheckInMap(latitude, longitude, routeData?.route)
+                        AreaVerificationRoute.CheckInMap(
+                            latitude = latitude,
+                            longitude = longitude,
+                            route = routeData?.route,
+                            isEdit = routeData?.isEdit ?: false
+                        )
                     )
                 }
             )
@@ -48,11 +59,12 @@ fun NavGraphBuilder.areaVerificationNavigation(
             PreferenceMapScreen(
                 latitude = route.latitude,
                 longitude = route.longitude,
+                isEdit = route.isEdit,
                 onConfirmClick = {
                     navController.navigate(AreaVerificationRoute.Complete)
                 },
                 onNavigateToNext = {
-                    if(route.route == "settings") {
+                    if (route.route == "settings") {
                         navController.navigate(SettingsRoute.LocalVerification) {
                             popUpTo(AreaVerificationRoute.Graph) {
                                 inclusive = true
