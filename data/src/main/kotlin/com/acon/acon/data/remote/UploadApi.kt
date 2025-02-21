@@ -24,7 +24,7 @@ interface UploadApi {
         @Query("longitude") longitude: Double
     ): UploadGetSuggestionsResponse
 
-    @GET("/api/v1/spot/verify")
+    @GET("/api/v1/spots/verify")
     suspend fun getVerifySpotLocation(
         @Query("spotId") spotId: Long,
         @Query("latitude") latitude: Double,
