@@ -32,6 +32,12 @@ class TokenRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun saveIsLogin(isLogin: Boolean): Result<Unit> {
+        return runCatchingWith() {
+            tokenLocalDataSource.saveIsLogin(isLogin)
+        }
+    }
+
     override suspend fun getGoogleIdToken(): Result<String?> {
         return runCatchingWith() {
             tokenLocalDataSource.getGoogleIdToken()
@@ -56,6 +62,12 @@ class TokenRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun getIsLogin(): Result<Boolean> {
+        return runCatchingWith() {
+            tokenLocalDataSource.getIsLogin()
+        }
+    }
+
     override suspend fun removeGoogleIdToken(): Result<Unit> {
         return runCatching {
             tokenLocalDataSource.removeGoogleIdToken()
@@ -77,6 +89,12 @@ class TokenRepositoryImpl @Inject constructor(
     override suspend fun removeAreaVerification(): Result<Unit> {
         return runCatchingWith() {
             tokenLocalDataSource.removeAreaVerification()
+        }
+    }
+
+    override suspend fun removeIsLogin(): Result<Unit> {
+        return runCatchingWith() {
+            tokenLocalDataSource.removeIsLogin()
         }
     }
 
