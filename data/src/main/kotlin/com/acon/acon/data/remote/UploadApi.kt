@@ -31,7 +31,7 @@ interface UploadApi {
         @Query("longitude") longitude: Double
     ): UploadGetSpotVerifyResponse
 
-    @POST("/api/v1/review")
+    @POST("/api/v1/reviews")
     @Headers("Content-Type: application/json")
     suspend fun uploadPostReview(
         @Body request: ReviewRequest
