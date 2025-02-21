@@ -27,7 +27,7 @@ interface SpotApi {
         @Path ("spotId") spotId: Long
     ): SpotDetailInfoResponse
 
-    @GET("/api/v1/spot/{spotId}/menus")
+    @GET("/api/v1/spots/{spotId}/menus")
     suspend fun getSpotMenuList(
         @Path ("spotId") spotId: Long
     ): SpotDetailMenuListResponse
