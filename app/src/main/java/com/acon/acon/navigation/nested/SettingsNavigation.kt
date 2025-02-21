@@ -64,11 +64,7 @@ internal fun NavGraphBuilder.settingsNavigation(
                             route = "settings",
                             isEdit = true
                         )
-                    ) {
-                        popUpTo(ProfileRoute.Graph) {
-                            inclusive = true
-                        }
-                    }
+                    )
                 }
             )
         }

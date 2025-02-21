@@ -93,7 +93,8 @@ fun AreaVerificationScreenContainer(
             if (hasPermission) { viewModel.onNextButtonClick() }
             else { viewModel.updateShowPermissionDialog(true) }
         },
-        modifier = modifier
+        modifier = modifier,
+        onBackClick = onNavigateBack
     )
 }
 
