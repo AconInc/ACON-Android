@@ -12,7 +12,7 @@ import retrofit2.http.POST
 import retrofit2.http.Query
 
 interface UploadApi {
-    @GET("/api/v1/member/acorn")
+    @GET("/api/v1/members/acorn")
     suspend fun getDotoriCount(): UploadGetDotoriResponse
 
     @GET("/api/v1/spots/search")
@@ -24,14 +24,14 @@ interface UploadApi {
         @Query("longitude") longitude: Double
     ): UploadGetSuggestionsResponse
 
-    @GET("/api/v1/spot/verify")
+    @GET("/api/v1/spots/verify")
     suspend fun getVerifySpotLocation(
         @Query("spotId") spotId: Long,
         @Query("latitude") latitude: Double,
         @Query("longitude") longitude: Double
     ): UploadGetSpotVerifyResponse
 
-    @POST("/api/v1/review")
+    @POST("/api/v1/reviews")
     @Headers("Content-Type: application/json")
     suspend fun uploadPostReview(
         @Body request: ReviewRequest

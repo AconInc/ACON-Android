@@ -17,17 +17,17 @@ interface SpotApi {
         @Body request: SpotListRequest
     ): SpotListResponse
 
-    @POST("/api/v1/member/guided-spot")
+    @POST("/api/v1/members/guided-spots")
     suspend fun fetchRecentNavigationLocation(
         @Body request: RecentNavigationLocationRequest
     )
 
-    @GET("/api/v1/spot/{spotId}")
+    @GET("/api/v1/spots/{spotId}")
     suspend fun getSpotDetailInfo(
         @Path ("spotId") spotId: Long
     ): SpotDetailInfoResponse
 
-    @GET("/api/v1/spot/{spotId}/menus")
+    @GET("/api/v1/spots/{spotId}/menus")
     suspend fun getSpotMenuList(
         @Path ("spotId") spotId: Long
     ): SpotDetailMenuListResponse
