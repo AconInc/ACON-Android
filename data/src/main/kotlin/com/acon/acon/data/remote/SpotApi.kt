@@ -17,7 +17,7 @@ interface SpotApi {
         @Body request: SpotListRequest
     ): SpotListResponse
 
-    @POST("/api/v1/member/guided-spot")
+    @POST("/api/v1/members/guided-spots")
     suspend fun fetchRecentNavigationLocation(
         @Body request: RecentNavigationLocationRequest
     )
