@@ -25,6 +25,7 @@ class SignInViewModel @Inject constructor(
     fun googleLogin(socialRepository: SocialRepository) = intent {
         socialRepository.signIn()
             .onSuccess {
+                tokenRepository.saveIsLogin(true)
                 if(it.hasVerifiedArea) {
                     postSideEffect(SignInSideEffect.NavigateToSpotListView)
                 } else {
