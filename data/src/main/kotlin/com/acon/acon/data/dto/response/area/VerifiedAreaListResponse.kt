@@ -1,6 +1,6 @@
 package com.acon.acon.data.dto.response.area
 
-import com.acon.acon.domain.model.area.SettingsVerifiedArea
+import com.acon.acon.domain.model.area.Area
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -14,7 +14,7 @@ data class VerifiedAreaResponse(
     @SerialName("id") val id: Long,
     @SerialName("name") val name: String,
 ) {
-    fun toVerifiedArea() = SettingsVerifiedArea(
+    fun toVerifiedArea() = Area(
         verifiedAreaId = id,
         name = name
     )

@@ -21,11 +21,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.domain.model.area.SettingsVerifiedArea
+import com.acon.acon.domain.model.area.Area
 
 @Composable
 fun VerifiedAreaChip(
-    areaList: List<SettingsVerifiedArea>,
+    areaList: List<Area>,
     modifier: Modifier = Modifier,
     onEditArea: (Boolean) -> Unit = {},
     onRemoveChip: (Boolean, Long) -> Unit = { _, _ -> },
@@ -101,10 +101,10 @@ fun ChipItem(
 @Preview(showBackground = true)
 @Composable
 private fun VerifiedAreaChipPreview() {
-    val list: List<SettingsVerifiedArea> = listOf(
-        SettingsVerifiedArea(1,"망원동"),
-        SettingsVerifiedArea(1,"동교동"),
-        SettingsVerifiedArea(1,"화곡동")
+    val list: List<Area> = listOf(
+        Area(1,"망원동"),
+        Area(1,"동교동"),
+        Area(1,"화곡동")
     )
     AconTheme {
         VerifiedAreaChip(

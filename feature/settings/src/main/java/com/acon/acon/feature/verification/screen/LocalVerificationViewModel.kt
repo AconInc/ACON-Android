@@ -1,7 +1,7 @@
 package com.acon.acon.feature.verification.screen
 
 import com.acon.acon.core.utils.feature.base.BaseContainerHost
-import com.acon.acon.domain.model.area.SettingsVerifiedArea
+import com.acon.acon.domain.model.area.Area
 import com.acon.acon.domain.repository.AreaVerificationRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.orbitmvi.orbit.Container
@@ -75,7 +75,7 @@ sealed interface LocalVerificationUiState {
         val selectedAreaId: Long? = null,
         val showEditVerifiedAreaChipDialog: Boolean = false,
         val showDeleteVerifiedAreaChipDialog: Boolean = false,
-        val verificationAreaList: List<SettingsVerifiedArea>,
+        val verificationAreaList: List<Area>,
     ) : LocalVerificationUiState
     data object Loading : LocalVerificationUiState
     data object LoadFailed: LocalVerificationUiState

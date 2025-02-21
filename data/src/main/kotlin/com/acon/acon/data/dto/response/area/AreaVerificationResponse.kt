@@ -10,6 +10,7 @@ data class AreaVerificationResponse(
     @SerialName("name") val name: String
 ) {
     fun toArea() = Area(
+        verifiedAreaId = id,
         name = name
     )
 }
