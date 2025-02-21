@@ -30,6 +30,7 @@ fun NavGraphBuilder.areaVerificationNavigation(
 
             AreaVerificationScreenContainer(
                 modifier = Modifier.fillMaxSize(),
+                route = routeData?.route ?: "onboarding",
                 onNewAreaClick = { latitude, longitude ->
                     navController.navigate(
                         AreaVerificationRoute.CheckInMap(
@@ -49,6 +50,9 @@ fun NavGraphBuilder.areaVerificationNavigation(
                             isEdit = routeData?.isEdit ?: false
                         )
                     )
+                },
+                onNavigateBack = {
+                    navController.popBackStack()
                 }
             )
         }

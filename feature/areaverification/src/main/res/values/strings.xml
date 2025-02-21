@@ -2,8 +2,10 @@
 <resources>
     <string name="area_verification_new">새로운</string>
     <string name="area_verification_certify_my_area">나의 동네 인증하기</string>
+    <string name="area_verification_settings">settings</string>
 
     <string name="close">닫기</string>
+    <string name="back_btn">뒤로가기 버튼</string>
     <string name="local_dottori_available">이제 \'동네 이름\'에\n로컬 도토리를 떨어트릴 수 있어요!</string>
     <string name="local_dottori_description">로컬 도토리는 본격 맛집을 보증하는 도토리에요.\n만족스러운 식사 후 리뷰에 사용해보세요!</string>
     <string name="local_dottori">로컬 도토리</string>
