@@ -27,7 +27,11 @@ class SettingsViewModel @Inject constructor(
     fun onSingOut() = intent {
         tokenRepository.getRefreshToken().onSuccess { refreshToken ->
             viewModelScope.launch {
-                refreshToken?.let { userRepository.postLogout(it) }
+                refreshToken?.let {
+                    userRepository.postLogout(it)
+                    tokenRepository.removeAllToken()
+                    tokenRepository.removeAreaVerification()
+                }
                     ?.onSuccess {
                         userRepository.updateLoginState(false)
                         postSideEffect(SettingsSideEffect.NavigateToSignIn)

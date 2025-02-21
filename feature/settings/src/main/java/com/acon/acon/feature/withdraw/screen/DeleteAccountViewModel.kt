@@ -32,6 +32,8 @@ class DeleteAccountViewModel @Inject constructor(
                             userRepository.postDeleteAccount(reason, token)
                                 .onSuccess {
                                     userRepository.updateLoginState(false)
+                                    tokenRepository.removeAllToken()
+                                    tokenRepository.removeAreaVerification()
                                     postSideEffect(DeleteAccountSideEffect.NavigateToSignIn)
                                 }
                                 .onFailure {
