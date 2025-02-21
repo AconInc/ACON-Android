@@ -50,6 +50,7 @@ fun PreferenceMapScreen(
 ) {
     var currentLatitude by remember { mutableDoubleStateOf(latitude) }
     var currentLongitude by remember { mutableDoubleStateOf(longitude) }
+
     val state by viewModel.container.stateFlow.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
 
@@ -129,18 +130,14 @@ fun PreferenceMapScreen(
             disabledBackgroundColor = AconTheme.color.Gray8,
             enabledTextColor = AconTheme.color.White,
             onClick = {
-                if (state.verifiedAreaList.size == 1) {
-                    if (isEdit) {
-                        viewModel.editVerifiedArea(
-                            verifiedAreaId = state.verifiedAreaList[0].verifiedAreaId,
-                            latitude = currentLatitude,
-                            longitude = currentLongitude
-                        )
-                    } else {
-                        viewModel.verifyArea(currentLatitude, currentLongitude)
-                    }
+                if (isEdit) {
+                    viewModel.editVerifiedArea(
+                        verifiedAreaId = state.verifiedAreaList[0].verifiedAreaId,
+                        latitude = currentLatitude,
+                        longitude = currentLongitude
+                    )
                 } else {
-                    viewModel.verifyArea(latitude, longitude)
+                    viewModel.verifyArea(currentLatitude, currentLongitude)
                 }
             },
             modifier = Modifier
