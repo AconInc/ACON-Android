@@ -12,7 +12,7 @@ import retrofit2.http.POST
 import retrofit2.http.Query
 
 interface UploadApi {
-    @GET("/api/v1/member/acorn")
+    @GET("/api/v1/members/acorn")
     suspend fun getDotoriCount(): UploadGetDotoriResponse
 
     @GET("/api/v1/spots/search")
