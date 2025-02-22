@@ -7,7 +7,6 @@ import com.acon.acon.core.utils.feature.base.BaseContainerHost
 import com.acon.acon.domain.error.user.CredentialException
 import com.acon.acon.domain.model.spot.Condition
 import com.acon.acon.domain.model.spot.Spot
-import com.acon.acon.domain.repository.MapRepository
 import com.acon.acon.domain.repository.SocialRepository
 import com.acon.acon.domain.repository.SpotRepository
 import com.acon.acon.domain.repository.TokenRepository
@@ -23,8 +22,7 @@ import kotlin.coroutines.cancellation.CancellationException
 @HiltViewModel
 class SpotListViewModel @Inject constructor(
     private val tokenRepository: TokenRepository,
-    private val spotRepository: SpotRepository,
-    private val mapRepository: MapRepository,
+    private val spotRepository: SpotRepository
 ) : BaseContainerHost<SpotListUiState, SpotListSideEffect>() {
 
     override val container =
@@ -70,7 +68,7 @@ class SpotListViewModel @Inject constructor(
 
     fun fetchInitialSpots(location: Location) = intent {
         val legalAddressNameDeferred = viewModelScope.async {
-            mapRepository.fetchLegalAddressName(
+            spotRepository.getLegalDong(
                 latitude = location.latitude,
                 longitude = location.longitude
             ).getOrNull()
@@ -97,21 +95,21 @@ class SpotListViewModel @Inject constructor(
                         (state as? SpotListUiState.Success)?.copy(
                             spotList = it,
                             isRefreshing = false,
-                            legalAddressName = legalAddressName
+                            legalAddressName = legalAddressName.area
                         ) ?: SpotListUiState.Success(
                             spotList = it,
-                            legalAddressName = legalAddressName,
+                            legalAddressName = legalAddressName.area,
                             isRefreshing = false
                         )
                     } else {
                         (state as? SpotListUiState.Guest)?.copy(
                             spotList = it,
                             isRefreshing = false,
-                            legalAddressName = legalAddressName,
+                            legalAddressName = legalAddressName.area,
                             showLoginBottomSheet = (state as? SpotListUiState.Guest)?.showLoginBottomSheet ?: false
                         ) ?: SpotListUiState.Guest(
                             spotList = it,
-                            legalAddressName = legalAddressName,
+                            legalAddressName = legalAddressName.area,
                             isRefreshing = false,
                             showLoginBottomSheet = false
                         )
@@ -123,7 +121,7 @@ class SpotListViewModel @Inject constructor(
 
     private fun onLocationReady(newLocation: Location) = blockingIntent {
         val legalAddressNameDeferred = viewModelScope.async {
-            mapRepository.fetchLegalAddressName(
+            spotRepository.getLegalDong(
                 latitude = newLocation.latitude,
                 longitude = newLocation.longitude
             ).getOrNull()
@@ -150,21 +148,21 @@ class SpotListViewModel @Inject constructor(
                         (state as? SpotListUiState.Success)?.copy(
                             spotList = it,
                             isRefreshing = false,
-                            legalAddressName = legalAddressName
+                            legalAddressName = legalAddressName.area
                         ) ?: SpotListUiState.Success(
                             spotList = it,
-                            legalAddressName = legalAddressName,
+                            legalAddressName = legalAddressName.area,
                             isRefreshing = false
                         )
                     } else {
                         (state as? SpotListUiState.Guest)?.copy(
                             spotList = it,
                             isRefreshing = false,
-                            legalAddressName = legalAddressName,
+                            legalAddressName = legalAddressName.area,
                             showLoginBottomSheet = (state as? SpotListUiState.Guest)?.showLoginBottomSheet ?: false
                         ) ?: SpotListUiState.Guest(
                             spotList = it,
-                            legalAddressName = legalAddressName,
+                            legalAddressName = legalAddressName.area,
                             isRefreshing = false,
                             showLoginBottomSheet = false
                         )
