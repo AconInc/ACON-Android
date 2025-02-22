@@ -4,5 +4,6 @@ import androidx.compose.runtime.Immutable
 
 @Immutable
 data class Area(
-   val name: String
+    val verifiedAreaId: Long,
+    val name: String
 )

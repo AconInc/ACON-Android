@@ -10,10 +10,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
@@ -39,6 +35,7 @@ fun SettingsScreen(
     onTermOfUse: () -> Unit = {},
     onPrivatePolicy: () -> Unit = {},
     onRetryOnBoarding: () -> Unit = {},
+    onAreaVerification: () -> Unit = {},
     onUpdateVersion: () -> Unit = {},
     onSignOut: () -> Unit = {},
     onDeleteAccountScreen: () -> Unit = {},
@@ -134,6 +131,12 @@ fun SettingsScreen(
                         onClickContinue = onRetryOnBoarding
                     )
 
+                    Spacer(Modifier.height(16.dp))
+                    SettingSectionItem(
+                        settingsType = SettingsType.AREA_VERIFICATION,
+                        onClickContinue = onAreaVerification
+                    )
+
                     Spacer(Modifier.height(40.dp))
                     Text(
                         text = stringResource(R.string.settings_title_login_and_delete_account),
@@ -222,7 +225,9 @@ fun SettingsScreen(
 fun SettingsScreenPreview() {
     AconTheme {
         SettingsScreen(
-            state = SettingsUiState.Default(),
+            state = SettingsUiState.Default(
+                isLogin = true
+            ),
             versionName = ""
         )
     }

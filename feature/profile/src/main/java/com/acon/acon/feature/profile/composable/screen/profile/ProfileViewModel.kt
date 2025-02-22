@@ -1,14 +1,13 @@
 package com.acon.acon.feature.profile.composable.screen.profile
 
+import android.util.Log
 import androidx.compose.runtime.Immutable
-import androidx.lifecycle.viewModelScope
 import com.acon.acon.core.utils.feature.base.BaseContainerHost
-import com.acon.acon.domain.repository.UserRepository
 import com.acon.acon.domain.model.profile.VerifiedArea
 import com.acon.acon.domain.repository.ProfileRepository
 import com.acon.acon.domain.repository.SocialRepository
+import com.acon.acon.domain.repository.TokenRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.viewmodel.container
 import javax.inject.Inject
@@ -17,24 +16,27 @@ import kotlin.coroutines.cancellation.CancellationException
 @OptIn(OrbitExperimental::class)
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
-    private val userRepository: UserRepository,
+    private val tokenRepository: TokenRepository,
     private val profileRepository: ProfileRepository
 ) : BaseContainerHost<ProfileUiState, ProfileUiSideEffect>() {
 
     override val container =
         container<ProfileUiState, ProfileUiSideEffect>(ProfileUiState.Loading) {
-            userRepository.getLoginState().collect { isLoggedIn ->
-                if (isLoggedIn) {
-                    fetchUserProfileInfo()
-                } else {
-                    reduce { ProfileUiState.GUEST() }
-                }
+            val isLogin = tokenRepository.getIsLogin().getOrElse { false }
+            Log.d("로그","isLogin $isLogin")
+            if (isLogin) {
+                Log.d("로그","fetchUserProfileInfo")
+                fetchUserProfileInfo()
+            } else {
+                Log.d("로그","GUEST")
+                reduce { ProfileUiState.GUEST() }
             }
         }
 
     fun googleLogin(socialRepository: SocialRepository) = intent {
         socialRepository.signIn()
             .onSuccess {
+                tokenRepository.saveIsLogin(true)
                 if(it.hasVerifiedArea) {
                     postSideEffect(ProfileUiSideEffect.OnNavigateToSpotListScreen)
                 } else {
@@ -58,23 +60,23 @@ class ProfileViewModel @Inject constructor(
             }
     }
 
-    private fun fetchUserProfileInfo() = intent {
-        viewModelScope.launch {
-            profileRepository.fetchProfile()
-                .onSuccess { profile ->
-                    reduce {
-                        ProfileUiState.Success(
-                            profileImage = profile.image,
-                            nickname = profile.nickname,
-                            aconCount = profile.leftAcornCount,
-                            verifiedArea = profile.verifiedAreaList
-                        )
-                    }
+     fun fetchUserProfileInfo() = intent {
+         Log.d("로그","profileRepository.fetchProfile()")
+
+        profileRepository.fetchProfile()
+            .onSuccess { profile ->
+                reduce {
+                    ProfileUiState.Success(
+                        profileImage = profile.image,
+                        nickname = profile.nickname,
+                        aconCount = profile.leftAcornCount,
+                        verifiedArea = profile.verifiedAreaList
+                    )
                 }
-                .onFailure {
-                    reduce { ProfileUiState.LoadFailed }
-                }
-        }
+            }
+            .onFailure {
+                reduce { ProfileUiState.LoadFailed }
+            }
     }
 
     fun onSettings() = intent {

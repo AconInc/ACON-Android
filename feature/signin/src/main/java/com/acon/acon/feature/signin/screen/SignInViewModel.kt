@@ -1,12 +1,10 @@
 package com.acon.acon.feature.signin.screen
 
-import android.util.Log
 import com.acon.acon.core.utils.feature.base.BaseContainerHost
 import com.acon.acon.domain.error.user.CredentialException
 import com.acon.acon.domain.repository.UserRepository
 import com.acon.acon.domain.repository.SocialRepository
 import com.acon.acon.domain.repository.TokenRepository
-import com.acon.acon.domain.type.SocialType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.viewmodel.container
@@ -27,6 +25,7 @@ class SignInViewModel @Inject constructor(
     fun googleLogin(socialRepository: SocialRepository) = intent {
         socialRepository.signIn()
             .onSuccess {
+                tokenRepository.saveIsLogin(true)
                 if(it.hasVerifiedArea) {
                     postSideEffect(SignInSideEffect.NavigateToSpotListView)
                 } else {
@@ -63,20 +62,17 @@ class SignInViewModel @Inject constructor(
     }
 
     private fun isTokenValid() = intent {
-        tokenRepository.getGoogleIdToken().onSuccess { googleIdToken ->
-            if (!googleIdToken.isNullOrEmpty()) {
-                userRepository.postLogin(SocialType.GOOGLE, googleIdToken)
-                    .onSuccess {
-                        if(it.hasVerifiedArea) {
-                            postSideEffect(SignInSideEffect.NavigateToSpotListView)
-                        } else {
-                            postSideEffect(SignInSideEffect.NavigateToAreaVerification)
-                        }
-                    }
-                    .onFailure { tokenRepository.removeGoogleIdToken() }
+        tokenRepository.getAccessToken().onSuccess { accessToken ->
+            if (!accessToken.isNullOrEmpty()) {
+                tokenRepository.getAreaVerification().onSuccess {
+                    postSideEffect(SignInSideEffect.NavigateToSpotListView)
+                }.onFailure {
+                    postSideEffect(SignInSideEffect.NavigateToAreaVerification)
+                }
             }
         }
     }
+
 
     fun navigateToSpotListView() = intent {
         postSideEffect(

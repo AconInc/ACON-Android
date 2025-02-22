@@ -22,14 +22,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.acon.acon.core.designsystem.component.button.AconFilledMediumButton
-import com.acon.acon.core.designsystem.component.button.AconOutlinedLargeButton
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.core.designsystem.R
+import com.acon.acon.core.designsystem.component.button.AconOutlinedMediumButton
 
 @Composable
 fun AconTwoButtonDialog(
     title: String,
-    content: String,
+    content: String? = null,
     leftButtonContent: String,
     rightButtonContent: String,
     onDismissRequest: () -> Unit,
@@ -47,7 +47,7 @@ fun AconTwoButtonDialog(
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(8.dp))
                 .background(AconTheme.color.Gray8)
-                .padding(24.dp),
+                .padding(20.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             if(isImageEnabled) {
@@ -59,27 +59,30 @@ fun AconTwoButtonDialog(
                 }
                 Spacer(modifier = Modifier.height(16.dp))
             }
+
             Text(
                 text = title,
                 style = AconTheme.typography.head6_20_sb,
                 textAlign = TextAlign.Center,
                 color = AconTheme.color.White
             )
-            Spacer(modifier = Modifier.height(10.dp))
 
-            Text(
-                text = content,
-                style = AconTheme.typography.body2_14_reg,
-                textAlign = TextAlign.Center,
-                color = AconTheme.color.Gray3
-            )
-            Spacer(modifier = Modifier.height(16.dp))
+            if (content != null) {
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = content,
+                    style = AconTheme.typography.body2_14_reg,
+                    textAlign = TextAlign.Center,
+                    color = AconTheme.color.Gray3
+                )
+            }
 
+            Spacer(modifier = Modifier.height(24.dp))
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
             ) {
-                AconOutlinedLargeButton(
+                AconOutlinedMediumButton(
                     text = leftButtonContent,
                     enabledBorderColor = AconTheme.color.Gray5,
                     enabledBackgroundColor = AconTheme.color.Gray8,

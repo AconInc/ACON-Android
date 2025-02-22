@@ -39,20 +39,22 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PreferenceMapScreen(
-    onConfirmClick: () -> Unit,
-    onNavigateToNext: () -> Unit,
-    onBackClick: () -> Unit,
     latitude: Double,
     longitude: Double,
+    isEdit: Boolean,
     modifier: Modifier = Modifier,
+    onBackClick: () -> Unit = {},
+    onConfirmClick: () -> Unit = {},
+    onNavigateToNext: () -> Unit = {},
     viewModel: AreaVerificationViewModel = hiltViewModel()
 ) {
     var currentLatitude by remember { mutableDoubleStateOf(latitude) }
     var currentLongitude by remember { mutableDoubleStateOf(longitude) }
+
     val state by viewModel.container.stateFlow.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
 
-    if (state.verifiedArea != null)  {
+    if (state.verifiedArea != null) {
         val sheetState = rememberModalBottomSheetState(
             skipPartiallyExpanded = true,
         )
@@ -86,7 +88,7 @@ fun PreferenceMapScreen(
     ) {
         AconTopBar(
             leadingIcon = {
-                IconButton(onClick = onBackClick){
+                IconButton(onClick = onBackClick) {
                     Image(
                         imageVector = ImageVector.vectorResource(
                             id = com.acon.acon.core.designsystem.R.drawable.ic_arrow_left_28
@@ -128,7 +130,15 @@ fun PreferenceMapScreen(
             disabledBackgroundColor = AconTheme.color.Gray8,
             enabledTextColor = AconTheme.color.White,
             onClick = {
-                viewModel.verifyArea(currentLatitude, currentLongitude)
+                if (isEdit) {
+                    viewModel.editVerifiedArea(
+                        verifiedAreaId = state.verifiedAreaList[0].verifiedAreaId,
+                        latitude = currentLatitude,
+                        longitude = currentLongitude
+                    )
+                } else {
+                    viewModel.verifyArea(currentLatitude, currentLongitude)
+                }
             },
             modifier = Modifier
                 .fillMaxWidth()

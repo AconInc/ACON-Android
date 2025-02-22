@@ -7,6 +7,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.toRoute
+import com.acon.acon.feature.SettingsRoute
 import com.acon.acon.feature.areaverification.AreaVerificationRoute
 import com.acon.acon.feature.areaverification.AreaVerificationScreenContainer
 import com.acon.acon.feature.areaverification.PreferenceMapScreen
@@ -16,34 +17,66 @@ fun NavGraphBuilder.areaVerificationNavigation(
     navController: NavHostController
 ) {
     navigation<AreaVerificationRoute.Graph>(
-        startDestination = AreaVerificationRoute.RequireAreaVerification
+        startDestination = AreaVerificationRoute.RequireAreaVerification()
     ) {
-        composable<AreaVerificationRoute.RequireAreaVerification> {
+        composable<AreaVerificationRoute.RequireAreaVerification> { backStackEntry ->
+
+            val routeData = backStackEntry.arguments?.let {
+                AreaVerificationRoute.RequireAreaVerification(
+                    route = it.getString("route"),
+                    isEdit = it.getBoolean("isEdit", false)
+                )
+            }
+
             AreaVerificationScreenContainer(
                 modifier = Modifier.fillMaxSize(),
+                route = routeData?.route ?: "onboarding",
                 onNewAreaClick = { latitude, longitude ->
                     navController.navigate(
-                        AreaVerificationRoute.CheckInMap(latitude, longitude)
+                        AreaVerificationRoute.CheckInMap(
+                            latitude = latitude,
+                            longitude = longitude,
+                            route = routeData?.route,
+                            isEdit = routeData?.isEdit ?: false
+                        )
                     )
                 },
                 onNextScreen = { latitude, longitude ->
                     navController.navigate(
-                        AreaVerificationRoute.CheckInMap(latitude, longitude)
+                        AreaVerificationRoute.CheckInMap(
+                            latitude = latitude,
+                            longitude = longitude,
+                            route = routeData?.route,
+                            isEdit = routeData?.isEdit ?: false
+                        )
                     )
+                },
+                onNavigateBack = {
+                    navController.popBackStack()
                 }
             )
         }
+
         composable<AreaVerificationRoute.CheckInMap> { backStackEntry ->
             val route = backStackEntry.toRoute<AreaVerificationRoute.CheckInMap>()
 
             PreferenceMapScreen(
                 latitude = route.latitude,
                 longitude = route.longitude,
+                isEdit = route.isEdit,
                 onConfirmClick = {
                     navController.navigate(AreaVerificationRoute.Complete)
                 },
                 onNavigateToNext = {
-                    navController.navigate(OnboardingRoute.Graph)
+                    if (route.route == "settings") {
+                        navController.navigate(SettingsRoute.LocalVerification) {
+                            popUpTo(AreaVerificationRoute.Graph) {
+                                inclusive = true
+                            }
+                        }
+                    } else {
+                        navController.navigate(OnboardingRoute.Graph)
+                    }
                 },
                 onBackClick = {
                     navController.popBackStack()

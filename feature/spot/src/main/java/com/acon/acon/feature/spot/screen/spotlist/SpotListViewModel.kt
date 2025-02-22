@@ -7,7 +7,6 @@ import com.acon.acon.core.utils.feature.base.BaseContainerHost
 import com.acon.acon.domain.error.user.CredentialException
 import com.acon.acon.domain.model.spot.Condition
 import com.acon.acon.domain.model.spot.Spot
-import com.acon.acon.domain.repository.UserRepository
 import com.acon.acon.domain.repository.MapRepository
 import com.acon.acon.domain.repository.SocialRepository
 import com.acon.acon.domain.repository.SpotRepository
@@ -24,7 +23,6 @@ import kotlin.coroutines.cancellation.CancellationException
 @HiltViewModel
 class SpotListViewModel @Inject constructor(
     private val tokenRepository: TokenRepository,
-    private val userRepository: UserRepository,
     private val spotRepository: SpotRepository,
     private val mapRepository: MapRepository,
 ) : BaseContainerHost<SpotListUiState, SpotListSideEffect>() {
@@ -35,6 +33,7 @@ class SpotListViewModel @Inject constructor(
     fun googleLogin(socialRepository: SocialRepository, location: Location) = intent {
         socialRepository.signIn()
             .onSuccess {
+                tokenRepository.saveIsLogin(true)
                 if(it.hasVerifiedArea) {
                     onLocationReady(location)
                 } else {
@@ -87,7 +86,7 @@ class SpotListViewModel @Inject constructor(
 
         val legalAddressName = legalAddressNameDeferred.await()
         val spotListResult = spotListResultDeferred.await()
-        val isLogin = userRepository.getLoginState().value
+        val isLogin = tokenRepository.getIsLogin().getOrElse { false }
 
         if (legalAddressName == null || spotListResult.isFailure)
             reduce { SpotListUiState.LoadFailed }
@@ -140,7 +139,7 @@ class SpotListViewModel @Inject constructor(
 
         val legalAddressName = legalAddressNameDeferred.await()
         val spotListResult = spotListResultDeferred.await()
-        val isLogin = userRepository.getLoginState().value
+        val isLogin = tokenRepository.getIsLogin().getOrElse { false }
 
         if (legalAddressName == null || spotListResult.isFailure) {
             reduce { SpotListUiState.LoadFailed }

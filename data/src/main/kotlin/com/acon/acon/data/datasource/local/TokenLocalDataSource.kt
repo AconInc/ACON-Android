@@ -51,6 +51,22 @@ class TokenLocalDataSource @Inject constructor(
         }
     }
 
+    suspend fun saveAreaVerification(state: Boolean,
+    ) = withContext(dispatchersIO) {
+        with(sharedPreferences.edit()) {
+            putBoolean(SHARED_PREF_AREA_VERIFICATION, state)
+            apply()
+        }
+    }
+
+    suspend fun saveIsLogin(isLogin: Boolean,
+    ) = withContext(dispatchersIO) {
+        with(sharedPreferences.edit()) {
+            putBoolean(SHARED_PREF_IS_LOGIN, isLogin)
+            apply()
+        }
+    }
+
     suspend fun getGoogleIdToken(): String? = withContext(dispatchersIO) {
         sharedPreferences.getString(SHARED_PREF_GOOGLE_ID_KEY, null)
     }
@@ -61,6 +77,14 @@ class TokenLocalDataSource @Inject constructor(
 
      suspend fun getRefreshToken(): String? = withContext(dispatchersIO) {
         sharedPreferences.getString(SHARED_PREF_REFRESH_KEY, null)
+    }
+
+    suspend fun getAreaVerification(): Boolean = withContext(dispatchersIO) {
+        sharedPreferences.getBoolean(SHARED_PREF_AREA_VERIFICATION, false)
+    }
+
+    suspend fun getIsLogin(): Boolean = withContext(dispatchersIO) {
+        sharedPreferences.getBoolean(SHARED_PREF_IS_LOGIN, false)
     }
 
     suspend fun removeGoogleIdToken() = withContext(dispatchersIO) {
@@ -84,11 +108,27 @@ class TokenLocalDataSource @Inject constructor(
         }
     }
 
+    suspend fun removeAreaVerification() = withContext(dispatchersIO) {
+        with(sharedPreferences.edit()) {
+            remove(SHARED_PREF_AREA_VERIFICATION)
+            apply()
+        }
+    }
+
+    suspend fun removeIsLogin() = withContext(dispatchersIO) {
+        with(sharedPreferences.edit()) {
+            remove(SHARED_PREF_IS_LOGIN)
+            apply()
+        }
+    }
+
     suspend fun removeAllTokens() = withContext(dispatchersIO) {
         with(sharedPreferences.edit()) {
             remove(SHARED_PREF_GOOGLE_ID_KEY)
             remove(SHARED_PREF_KEY)
             remove(SHARED_PREF_REFRESH_KEY)
+            remove(SHARED_PREF_AREA_VERIFICATION)
+            remove(SHARED_PREF_IS_LOGIN)
             apply()
         }
     }
@@ -98,5 +138,7 @@ class TokenLocalDataSource @Inject constructor(
         private const val SHARED_PREF_GOOGLE_ID_KEY = "googleIdToken"
         private const val SHARED_PREF_KEY = "accessToken"
         private const val SHARED_PREF_REFRESH_KEY = "refreshToken"
+        private const val SHARED_PREF_AREA_VERIFICATION = "areaVerification"
+        private const val SHARED_PREF_IS_LOGIN = "isLogin"
     }
 }

@@ -20,8 +20,6 @@ fun AconTextSnackBar(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .wrapContentHeight()
-            .padding(16.dp),
     ) {
         AconSnackBar(
             modifier = Modifier.fillMaxWidth(),
@@ -34,7 +32,7 @@ fun AconTextSnackBar(
                 ) {
                     Text(
                         text = message,
-                        style = AconTheme.typography.body3_13_reg,
+                        style = AconTheme.typography.body1_15_reg,
                         color = AconTheme.color.White
                     )
                 }

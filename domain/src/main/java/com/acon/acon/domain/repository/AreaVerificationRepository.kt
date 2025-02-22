@@ -7,4 +7,7 @@ interface AreaVerificationRepository {
        latitude: Double,
        longitude: Double
    ): Result<Area>
+
+   suspend fun fetchVerifiedAreaList(): Result<List<Area>>
+   suspend fun deleteVerifiedArea(verifiedAreaId: Long): Result<Unit>
 }

@@ -8,11 +8,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import com.acon.acon.BuildConfig
 import com.acon.acon.feature.SettingsRoute
+import com.acon.acon.feature.areaverification.AreaVerificationRoute
 import com.acon.acon.feature.onboarding.OnboardingRoute
 import com.acon.acon.feature.profile.composable.ProfileRoute
 import com.acon.acon.feature.settings.screen.composable.SettingsScreenContainer
 import com.acon.acon.feature.signin.screen.SignInRoute
-import com.acon.acon.feature.spot.SpotRoute
+import com.acon.acon.feature.verification.screen.composable.LocalVerificationScreenContainer
 import com.acon.acon.feature.withdraw.screen.composable.DeleteAccountScreenContainer
 
 internal fun NavGraphBuilder.settingsNavigation(
@@ -37,6 +38,9 @@ internal fun NavGraphBuilder.settingsNavigation(
                 onNavigateToOnboardingScreen = {
                     navController.navigate(OnboardingRoute.OnboardingScreen)
                 },
+                onNavigateLocalVerificationScreen = {
+                    navController.navigate(SettingsRoute.LocalVerification)
+                },
                 onNavigateToSignInScreen = {
                     navController.navigate(SignInRoute.SignIn) {
                         popUpTo(SettingsRoute.Graph) {
@@ -46,6 +50,21 @@ internal fun NavGraphBuilder.settingsNavigation(
                 },
                 onNavigateToDeleteAccountScreen = {
                     navController.navigate(SettingsRoute.DeleteAccount)
+                }
+            )
+        }
+
+        composable<SettingsRoute.LocalVerification> {
+            LocalVerificationScreenContainer(
+                modifier = Modifier.fillMaxSize(),
+                navigateToSettingsScreen = { navController.popBackStack() },
+                navigateToAreaVerification = {
+                    navController.navigate(
+                        AreaVerificationRoute.RequireAreaVerification(
+                            route = "settings",
+                            isEdit = true
+                        )
+                    )
                 }
             )
         }

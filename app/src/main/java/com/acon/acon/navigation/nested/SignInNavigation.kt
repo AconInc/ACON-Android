@@ -24,7 +24,9 @@ internal fun NavGraphBuilder.signInNavigationNavigation(
                     navController.navigate(SpotRoute.SpotList)
                 },
                 navigateToAreaVerification = {
-                    navController.navigate(AreaVerificationRoute.RequireAreaVerification)
+                    navController.navigate(
+                        AreaVerificationRoute.RequireAreaVerification("onboarding")
+                    )
                 },
                 socialRepository = socialRepository,
             )

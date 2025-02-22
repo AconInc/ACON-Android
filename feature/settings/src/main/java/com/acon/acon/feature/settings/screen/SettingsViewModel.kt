@@ -19,23 +19,24 @@ class SettingsViewModel @Inject constructor(
 
     override val container =
         container<SettingsUiState, SettingsSideEffect>(SettingsUiState.Default(false)) {
-            userRepository.getLoginState().collect { loginState ->
-                reduce { SettingsUiState.Default(loginState) }
-            }
+            val isLogin = tokenRepository.getIsLogin().getOrElse { false }
+            reduce { SettingsUiState.Default(isLogin) }
         }
 
     fun onSingOut() = intent {
         tokenRepository.getRefreshToken().onSuccess { refreshToken ->
             viewModelScope.launch {
-                refreshToken?.let { userRepository.postLogout(it) }
-                    ?.onSuccess {
-                        userRepository.updateLoginState(false)
-                        postSideEffect(SettingsSideEffect.NavigateToSignIn)
-                    }
-                    ?.onFailure {
-                        onSignInDialogShowStateChange(false)
-                        postSideEffect(SettingsSideEffect.ShowToastMessage)
-                    }
+                refreshToken?.let {
+                    userRepository.postLogout(it)
+                }
+                ?.onSuccess {
+                    tokenRepository.removeAllToken()
+                    postSideEffect(SettingsSideEffect.NavigateToSignIn)
+                }
+                ?.onFailure {
+                    onSignInDialogShowStateChange(false)
+                    postSideEffect(SettingsSideEffect.ShowToastMessage)
+                }
             }
         }
     }
@@ -66,6 +67,10 @@ class SettingsViewModel @Inject constructor(
         postSideEffect(SettingsSideEffect.NavigateToOnboarding)
     }
 
+    fun onNavigateToLocalVerification() = intent {
+        postSideEffect(SettingsSideEffect.NavigateToLocalVerification)
+    }
+
     fun onDeleteAccount() = intent {
         postSideEffect(SettingsSideEffect.NavigateToDeleteAccount)
     }
@@ -86,5 +91,6 @@ sealed interface SettingsSideEffect {
     data object OpenTermOfUse : SettingsSideEffect
     data object OpenPrivatePolicy : SettingsSideEffect
     data object NavigateToOnboarding : SettingsSideEffect
+    data object NavigateToLocalVerification : SettingsSideEffect
     data object NavigateToDeleteAccount : SettingsSideEffect
 }

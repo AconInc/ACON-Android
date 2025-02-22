@@ -14,5 +14,6 @@ data class AreaVerificationState(
     val isLoading: Boolean = false,
     val error: String? = null,
     val areaName: String = "",
-    val verifiedArea: Area? = null
+    val verifiedArea: Area? = null,
+    val verifiedAreaList: List<Area> = emptyList()
 )
