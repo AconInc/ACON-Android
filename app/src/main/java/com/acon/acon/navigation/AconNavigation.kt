@@ -11,7 +11,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -36,8 +35,8 @@ import com.acon.acon.core.designsystem.blur.rememberHazeState
 import com.acon.acon.core.designsystem.component.bottomsheet.LoginBottomSheet
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.core.utils.feature.constants.AppURL
-import com.acon.acon.domain.repository.UserRepository
 import com.acon.acon.domain.repository.SocialRepository
+import com.acon.acon.domain.repository.TokenRepository
 import com.acon.acon.feature.areaverification.AreaVerificationRoute
 import com.acon.acon.feature.profile.composable.ProfileRoute
 import com.acon.acon.feature.signin.screen.SignInRoute
@@ -60,7 +59,7 @@ fun AconNavigation(
     modifier: Modifier = Modifier,
     navController: NavHostController,
     socialRepository: SocialRepository,
-    userRepository: UserRepository,
+    tokenRepository: TokenRepository
 ) {
 
     val backStackEntry by navController.currentBackStackEntryAsState()
@@ -70,7 +69,6 @@ fun AconNavigation(
     val hazeState = rememberHazeState()
 
     val context = LocalContext.current
-    val isLogin = userRepository.getLoginState().collectAsState()
     var showLoginBottomSheet by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
 
@@ -136,11 +134,13 @@ fun AconNavigation(
                         selectedItem = selectedBottomNavItem,
                         onItemClick = { item ->
                             if (item == BottomNavType.UPLOAD) {
-                                if(isLogin.value) {
-                                    navController.navigate(UploadRoute.Upload)
-                                } else {
-                                    showLoginBottomSheet = true
+                                coroutineScope.launch {
+                                    if (tokenRepository.getIsLogin().getOrElse { false }) {
+                                        navController.navigate(UploadRoute.Upload)
+                                    } else {
+                                        showLoginBottomSheet = true
 
+                                    }
                                 }
                             } else {
                                 selectedBottomNavItem = item
