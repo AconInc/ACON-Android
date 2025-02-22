@@ -2,6 +2,7 @@ package com.acon.acon.data.repository
 
 import com.acon.acon.data.datasource.remote.UploadRemoteDataSource
 import com.acon.acon.data.error.runCatchingWith
+import com.acon.acon.domain.error.user.GetSuggestionsError
 import com.acon.acon.domain.model.upload.DotoriCount
 import com.acon.acon.domain.model.upload.KeyWord
 import com.acon.acon.domain.model.upload.SpotVerification
@@ -23,7 +24,7 @@ class UploadRepositoryImpl @Inject constructor(
     override suspend fun getSuggestions(
         latitude: Double,
         longitude: Double
-    ): Result<Suggestions> = runCatchingWith {
+    ): Result<Suggestions> = runCatchingWith(*GetSuggestionsError.createErrorInstances()) {
         uploadRemoteDataSource.getSuggestions(latitude, longitude).toSuggestions()
     }
 
