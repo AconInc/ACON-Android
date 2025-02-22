@@ -5,10 +5,12 @@ import com.acon.acon.data.dto.request.SpotListRequest
 import com.acon.acon.data.dto.response.SpotDetailInfoResponse
 import com.acon.acon.data.dto.response.SpotDetailMenuListResponse
 import com.acon.acon.data.dto.response.SpotListResponse
+import com.acon.acon.data.dto.response.area.LegalAreaResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface SpotApi {
 
@@ -31,4 +33,10 @@ interface SpotApi {
     suspend fun getSpotMenuList(
         @Path ("spotId") spotId: Long
     ): SpotDetailMenuListResponse
+
+    @GET("api/v1/area")
+    suspend fun getLegalDong(
+        @Query("latitude") latitude: Double,
+        @Query("longitude") longitude: Double
+    ) : LegalAreaResponse
 }

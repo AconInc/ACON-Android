@@ -1,5 +1,6 @@
 package com.acon.acon.domain.repository
 
+import com.acon.acon.domain.model.area.LegalArea
 import com.acon.acon.domain.model.spot.Condition
 import com.acon.acon.domain.model.spot.Spot
 import com.acon.acon.domain.model.spot.SpotDetailInfo
@@ -25,4 +26,8 @@ interface SpotRepository {
         spotId: Long,
     ): Result<List<SpotDetailMenu>>
 
+    suspend fun getLegalDong(
+        latitude: Double,
+        longitude: Double,
+    ): Result<LegalArea>
 }

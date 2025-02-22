@@ -5,6 +5,7 @@ import com.acon.acon.data.dto.request.SpotListRequest
 import com.acon.acon.data.dto.response.SpotDetailInfoResponse
 import com.acon.acon.data.dto.response.SpotDetailMenuListResponse
 import com.acon.acon.data.dto.response.SpotListResponse
+import com.acon.acon.data.dto.response.area.LegalAreaResponse
 import com.acon.acon.data.remote.SpotApi
 import javax.inject.Inject
 
@@ -26,5 +27,9 @@ class SpotRemoteDataSource @Inject constructor(
 
     suspend fun getSpotMenuList(spotId: Long): SpotDetailMenuListResponse {
         return spotApi.getSpotMenuList(spotId)
+    }
+
+    suspend fun getLegalDong(latitude: Double, longitude: Double): LegalAreaResponse {
+        return spotApi.getLegalDong(latitude, longitude)
     }
 }
