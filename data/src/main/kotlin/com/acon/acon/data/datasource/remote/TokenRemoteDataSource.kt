@@ -12,7 +12,7 @@ import androidx.credentials.exceptions.NoCredentialException
 import com.acon.acon.data.BuildConfig
 import com.acon.acon.data.error.ErrorMessages
 import com.acon.acon.domain.error.user.CredentialException
-import com.google.android.libraries.identity.googleid.GetGoogleIdOption
+import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
 import dagger.hilt.android.qualifiers.ActivityContext
@@ -30,13 +30,9 @@ class TokenRemoteDataSource @Inject constructor(
     private val digest = md.digest(bytes)
     private val hashedNonce = digest.fold("") { str, it -> str + "%02x".format(it) }
 
-    private val googleIdOption: GetGoogleIdOption by lazy {
-        GetGoogleIdOption.Builder()
-            .setFilterByAuthorizedAccounts(false)
-            .setAutoSelectEnabled(false)
-            .setServerClientId(BuildConfig.GOOGLE_CLIENT_ID)
+    private val googleIdOption: GetSignInWithGoogleOption =
+        GetSignInWithGoogleOption.Builder(BuildConfig.GOOGLE_CLIENT_ID)
             .build()
-    }
 
     private val credentialManager: CredentialManager by lazy {
         CredentialManager.create(context)

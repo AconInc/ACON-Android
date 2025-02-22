@@ -2,7 +2,6 @@ package com.acon.acon.domain.error.area
 
 import com.acon.acon.domain.error.ErrorFactory
 import com.acon.acon.domain.error.RootError
-import com.acon.acon.domain.error.spot.FetchRecentNavigationLocationError.SpaceNotFoundError
 
 sealed class DeleteVerifiedAreaError : RootError() {
 
@@ -21,7 +20,9 @@ sealed class DeleteVerifiedAreaError : RootError() {
     companion object : ErrorFactory {
         override fun createErrorInstances(): Array<RootError> {
             return arrayOf(
-                SpaceNotFoundError(),
+                InvalidVerifiedArea(),
+                VerifiedAreaLimitViolation(),
+                VerifiedAreaNotFound()
             )
         }
     }

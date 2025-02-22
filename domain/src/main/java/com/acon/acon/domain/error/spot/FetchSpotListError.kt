@@ -21,6 +21,10 @@ sealed class FetchSpotListError : RootError() {
         override val code: Int = 40022
     }
 
+    class OutOfServiceAreaError : FetchSpotListError() {
+        override val code: Int = 40405
+    }
+
     companion object : ErrorFactory {
         override fun createErrorInstances(): Array<RootError> {
             return arrayOf(
@@ -28,7 +32,8 @@ sealed class FetchSpotListError : RootError() {
                 InvalidCategory(),
                 InvalidOption(),
                 NonMatchingSpotTypeAndCategory(),
-                NonMatchingCategoryAndOption()
+                NonMatchingCategoryAndOption(),
+                OutOfServiceAreaError()
             )
         }
     }

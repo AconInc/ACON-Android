@@ -14,7 +14,7 @@ class AreaVerificationRepositoryImpl @Inject constructor(
    override suspend fun verifyArea(
        latitude: Double,
        longitude: Double
-   ): Result<Area> = runCatchingWith {
+   ): Result<Area> = runCatchingWith() {
        remoteDataSource.verifyArea(
            latitude = latitude,
            longitude = longitude

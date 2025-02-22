@@ -6,10 +6,12 @@ import com.acon.acon.data.dto.request.FilterListRequest
 import com.acon.acon.data.dto.request.RecentNavigationLocationRequest
 import com.acon.acon.data.dto.request.SpotListRequest
 import com.acon.acon.data.error.runCatchingWith
+import com.acon.acon.domain.error.area.GetLegalDongError
 import com.acon.acon.domain.error.spot.FetchRecentNavigationLocationError
 import com.acon.acon.domain.error.spot.FetchSpotListError
 import com.acon.acon.domain.error.spot.GetSpotDetailInfoError
 import com.acon.acon.domain.error.spot.GetSpotMenuListError
+import com.acon.acon.domain.model.area.LegalArea
 import com.acon.acon.domain.model.spot.Condition
 import com.acon.acon.domain.model.spot.Spot
 import com.acon.acon.domain.model.spot.SpotDetailInfo
@@ -68,6 +70,12 @@ class SpotRepositoryImpl @Inject constructor(
     ): Result<List<SpotDetailMenu>> {
         return runCatchingWith(*GetSpotMenuListError.createErrorInstances()) {
             spotRemoteDataSource.getSpotMenuList(spotId).menuList.map { it.toSpotDetailMenu() }
+        }
+    }
+
+    override suspend fun getLegalDong(latitude: Double, longitude: Double): Result<LegalArea> {
+        return runCatchingWith(*GetLegalDongError.createErrorInstances()) {
+            spotRemoteDataSource.getLegalDong(latitude, longitude).toLegalArea()
         }
     }
 
