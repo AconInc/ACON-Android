@@ -2,6 +2,7 @@ package com.acon.acon.data.repository
 
 import com.acon.acon.data.datasource.remote.UploadRemoteDataSource
 import com.acon.acon.data.error.runCatchingWith
+import com.acon.acon.domain.error.upload.GetVerifySpotLocationError
 import com.acon.acon.domain.error.user.GetSuggestionsError
 import com.acon.acon.domain.model.upload.DotoriCount
 import com.acon.acon.domain.model.upload.KeyWord
@@ -32,7 +33,7 @@ class UploadRepositoryImpl @Inject constructor(
         spotId: Long,
         latitude: Double,
         longitude: Double
-    ): Result<SpotVerification> = runCatchingWith {
+    ): Result<SpotVerification> = runCatchingWith(*GetVerifySpotLocationError.createErrorInstances()) {
         uploadRemoteDataSource.getVerifySpotLocation(
             spotId = spotId,
             latitude = latitude,
