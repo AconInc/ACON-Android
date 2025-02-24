@@ -19,5 +19,7 @@ data class UploadState(
     val isLocationVerified: Boolean = false,
     val locationVerificationResult: Boolean? = null,
     val showInsufficientDotoriSnackbar: Boolean = false,
-    val isLoading: Boolean = false
+    val isLoading: Boolean = false,
+    val showOutOfServiceDialog: Boolean = false,
+    val showLocationSearchBottomSheet: Boolean = false
 )
