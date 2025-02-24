@@ -1,6 +1,5 @@
 package com.acon.acon.feature.profile.composable.screen.profile
 
-import android.util.Log
 import androidx.compose.runtime.Immutable
 import com.acon.acon.core.utils.feature.base.BaseContainerHost
 import com.acon.acon.domain.model.profile.VerifiedArea
@@ -23,12 +22,9 @@ class ProfileViewModel @Inject constructor(
     override val container =
         container<ProfileUiState, ProfileUiSideEffect>(ProfileUiState.Loading) {
             val isLogin = tokenRepository.getIsLogin().getOrElse { false }
-            Log.d("로그","isLogin $isLogin")
             if (isLogin) {
-                Log.d("로그","fetchUserProfileInfo")
                 fetchUserProfileInfo()
             } else {
-                Log.d("로그","GUEST")
                 reduce { ProfileUiState.GUEST() }
             }
         }
@@ -61,8 +57,6 @@ class ProfileViewModel @Inject constructor(
     }
 
      fun fetchUserProfileInfo() = intent {
-         Log.d("로그","profileRepository.fetchProfile()")
-
         profileRepository.fetchProfile()
             .onSuccess { profile ->
                 reduce {
