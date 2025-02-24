@@ -4,6 +4,7 @@ import android.location.Location
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.viewModelScope
 import com.acon.acon.core.utils.feature.base.BaseContainerHost
+import com.acon.acon.domain.error.area.GetLegalDongError
 import com.acon.acon.domain.error.spot.FetchSpotListError
 import com.acon.acon.domain.error.user.CredentialException
 import com.acon.acon.domain.model.spot.Condition
@@ -72,7 +73,7 @@ class SpotListViewModel @Inject constructor(
             spotRepository.getLegalDong(
                 latitude = location.latitude,
                 longitude = location.longitude
-            ).getOrNull()
+            )
         }
 
         val spotListResultDeferred = viewModelScope.async {
@@ -87,33 +88,46 @@ class SpotListViewModel @Inject constructor(
         val spotListResult = spotListResultDeferred.await()
         val isLogin = tokenRepository.getIsLogin().getOrElse { false }
 
-        if (legalAddressName == null || spotListResult.isFailure)
-            reduce { SpotListUiState.LoadFailed }
-        else {
-            spotListResult.onSuccess {
-                reduce {
-                    if (isLogin) {
-                        (state as? SpotListUiState.Success)?.copy(
-                            spotList = it,
-                            isRefreshing = false,
-                            legalAddressName = legalAddressName.area
-                        ) ?: SpotListUiState.Success(
-                            spotList = it,
-                            legalAddressName = legalAddressName.area,
-                            isRefreshing = false
-                        )
-                    } else {
-                        (state as? SpotListUiState.Guest)?.copy(
-                            spotList = it,
-                            isRefreshing = false,
-                            legalAddressName = legalAddressName.area,
-                            showLoginBottomSheet = (state as? SpotListUiState.Guest)?.showLoginBottomSheet ?: false
-                        ) ?: SpotListUiState.Guest(
-                            spotList = it,
-                            legalAddressName = legalAddressName.area,
-                            isRefreshing = false,
-                            showLoginBottomSheet = false
-                        )
+        if (legalAddressName.isFailure || spotListResult.isFailure) {
+            val isOutOfServiceArea = legalAddressName.exceptionOrNull()?.let { error ->
+                error is GetLegalDongError.OutOfServiceAreaError
+            } ?: spotListResult.exceptionOrNull()?.let { error ->
+                error is FetchSpotListError.OutOfServiceAreaError
+            } ?: false
+
+            if (isOutOfServiceArea) {
+                reduce { SpotListUiState.OutOfServiceArea }
+            } else {
+                reduce { SpotListUiState.LoadFailed }
+            }
+        } else {
+            spotListResult.onSuccess { spots ->
+                legalAddressName.onSuccess { legalAddressName ->
+                    reduce {
+                        if (isLogin) {
+                            (state as? SpotListUiState.Success)?.copy(
+                                spotList = spots,
+                                isRefreshing = false,
+                                legalAddressName = legalAddressName.area
+                            ) ?: SpotListUiState.Success(
+                                spotList = spots,
+                                legalAddressName = legalAddressName.area,
+                                isRefreshing = false
+                            )
+                        } else {
+                            (state as? SpotListUiState.Guest)?.copy(
+                                spotList = spots,
+                                isRefreshing = false,
+                                legalAddressName = legalAddressName.area,
+                                showLoginBottomSheet = (state as? SpotListUiState.Guest)?.showLoginBottomSheet
+                                    ?: false
+                            ) ?: SpotListUiState.Guest(
+                                spotList = spots,
+                                legalAddressName = legalAddressName.area,
+                                isRefreshing = false,
+                                showLoginBottomSheet = false
+                            )
+                        }
                     }
                 }
             }
