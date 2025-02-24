@@ -3,7 +3,6 @@ package com.acon.acon.feature.profile.composable.screen.profileMod.composable
 import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

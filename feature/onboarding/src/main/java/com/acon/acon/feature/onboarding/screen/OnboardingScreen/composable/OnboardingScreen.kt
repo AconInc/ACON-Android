@@ -38,14 +38,11 @@ fun OnboardingScreen(
     onSkipClicked: () -> Unit = {},
     navigateToNextPage: () -> Unit,
 ){
-    val context = LocalContext.current
-    val activity = context as? Activity
+//    val context = LocalContext.current
+//    val activity = context as? Activity
 
     BackHandler(enabled = true) {
-        when(screenState.currentPage) {
-            1 -> {activity?.finish()}
-            else -> { onBackClicked() }
-        }
+        onBackClicked()
     }
 
     Column(
