@@ -4,6 +4,7 @@ import android.location.Location
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.viewModelScope
 import com.acon.acon.core.utils.feature.base.BaseContainerHost
+import com.acon.acon.domain.error.spot.FetchSpotListError
 import com.acon.acon.domain.error.user.CredentialException
 import com.acon.acon.domain.model.spot.Condition
 import com.acon.acon.domain.model.spot.Spot
@@ -124,14 +125,15 @@ class SpotListViewModel @Inject constructor(
             spotRepository.getLegalDong(
                 latitude = newLocation.latitude,
                 longitude = newLocation.longitude
-            ).getOrNull()
+            )
         }
 
         val spotListResultDeferred = viewModelScope.async {
             spotRepository.fetchSpotList(
                 latitude = newLocation.latitude,
                 longitude = newLocation.longitude,
-                condition = (state as? SpotListUiState.Success)?.currentCondition?.toCondition() ?: Condition.Default,
+                condition = (state as? SpotListUiState.Success)?.currentCondition?.toCondition()
+                    ?: Condition.Default,
             )
         }
 
@@ -139,33 +141,49 @@ class SpotListViewModel @Inject constructor(
         val spotListResult = spotListResultDeferred.await()
         val isLogin = tokenRepository.getIsLogin().getOrElse { false }
 
-        if (legalAddressName == null || spotListResult.isFailure) {
+        if (legalAddressName.isFailure || spotListResult.isFailure) {
+            legalAddressName.exceptionOrNull()?.let { error ->
+                if (error is FetchSpotListError.OutOfServiceAreaError) {
+                    reduce { SpotListUiState.OutOfServiceArea }
+                }
+            }
+
+            spotListResult.exceptionOrNull()?.let { error ->
+                if (error is FetchSpotListError.OutOfServiceAreaError) {
+                    reduce { SpotListUiState.OutOfServiceArea }
+                }
+
+            }
+
             reduce { SpotListUiState.LoadFailed }
         } else {
-            spotListResult.onSuccess {
-                reduce {
-                    if (isLogin) {
-                        (state as? SpotListUiState.Success)?.copy(
-                            spotList = it,
-                            isRefreshing = false,
-                            legalAddressName = legalAddressName.area
-                        ) ?: SpotListUiState.Success(
-                            spotList = it,
-                            legalAddressName = legalAddressName.area,
-                            isRefreshing = false
-                        )
-                    } else {
-                        (state as? SpotListUiState.Guest)?.copy(
-                            spotList = it,
-                            isRefreshing = false,
-                            legalAddressName = legalAddressName.area,
-                            showLoginBottomSheet = (state as? SpotListUiState.Guest)?.showLoginBottomSheet ?: false
-                        ) ?: SpotListUiState.Guest(
-                            spotList = it,
-                            legalAddressName = legalAddressName.area,
-                            isRefreshing = false,
-                            showLoginBottomSheet = false
-                        )
+            spotListResult.onSuccess { spots ->
+                legalAddressName.onSuccess { legalAddressName ->
+                    reduce {
+                        if (isLogin) {
+                            (state as? SpotListUiState.Success)?.copy(
+                                spotList = spots,
+                                isRefreshing = false,
+                                legalAddressName = legalAddressName.area
+                            ) ?: SpotListUiState.Success(
+                                spotList = spots,
+                                legalAddressName = legalAddressName.area,
+                                isRefreshing = false
+                            )
+                        } else {
+                            (state as? SpotListUiState.Guest)?.copy(
+                                spotList = spots,
+                                isRefreshing = false,
+                                legalAddressName = legalAddressName.area,
+                                showLoginBottomSheet = (state as? SpotListUiState.Guest)?.showLoginBottomSheet
+                                    ?: false
+                            ) ?: SpotListUiState.Guest(
+                                spotList = spots,
+                                legalAddressName = legalAddressName.area,
+                                isRefreshing = false,
+                                showLoginBottomSheet = false
+                            )
+                        }
                     }
                 }
             }
@@ -250,6 +268,7 @@ sealed interface SpotListUiState {
 
     data object Loading : SpotListUiState
     data object LoadFailed : SpotListUiState
+    data object OutOfServiceArea : SpotListUiState
 
     @Immutable
     data class Guest(
