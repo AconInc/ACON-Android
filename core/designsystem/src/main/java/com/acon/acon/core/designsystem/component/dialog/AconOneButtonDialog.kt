@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -18,6 +19,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.acon.acon.core.designsystem.component.button.AconFilledMediumButton
 import com.acon.acon.core.designsystem.R
@@ -29,16 +31,18 @@ fun AconOneButtonDialog(
     title: String,
     content: String,
     buttonContent: String,
-    @DrawableRes contentImage: Int? = null,
     onDismissRequest: () -> Unit,
     onClickConfirm: () -> Unit,
+    modifier: Modifier = Modifier,
+    imageSize: Dp? = null,
+    @DrawableRes contentImage: Int? = null,
     isImageEnabled: Boolean = false,
 ) {
     AconDialog(
         onDismissRequest = onDismissRequest
     ) {
         Column(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(8.dp))
                 .background(AconTheme.color.Gray8)
@@ -48,7 +52,12 @@ fun AconOneButtonDialog(
             if(isImageEnabled && contentImage != null) {
                 Image(
                     imageVector = ImageVector.vectorResource(contentImage),
-                    contentDescription = ""
+                    contentDescription = "",
+                    modifier = if (imageSize != null) {
+                        Modifier.size(imageSize)
+                    } else {
+                        Modifier
+                    }
                 )
                 Spacer(modifier = Modifier.height(16.dp))
             }
