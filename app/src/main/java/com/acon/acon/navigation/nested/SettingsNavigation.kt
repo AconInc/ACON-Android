@@ -58,7 +58,15 @@ internal fun NavGraphBuilder.settingsNavigation(
             LocalVerificationScreenContainer(
                 modifier = Modifier.fillMaxSize(),
                 navigateToSettingsScreen = { navController.popBackStack() },
-                navigateToAreaVerification = {
+                navigateToAreaVerificationToAdd = {
+                    navController.navigate(
+                        AreaVerificationRoute.RequireAreaVerification(
+                            route = "settings",
+                            isEdit = false
+                        )
+                    )
+                },
+                navigateToAreaVerificationToEdit = {
                     navController.navigate(
                         AreaVerificationRoute.RequireAreaVerification(
                             route = "settings",
