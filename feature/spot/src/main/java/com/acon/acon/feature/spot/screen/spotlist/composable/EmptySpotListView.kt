@@ -29,7 +29,7 @@ fun EmptySpotListView(
         verticalArrangement = Arrangement.Center
     ) {
         Image(
-            imageVector = ImageVector.vectorResource(com.acon.acon.core.designsystem.R.drawable.ic_error_1_120),
+            imageVector = ImageVector.vectorResource(com.acon.acon.core.designsystem.R.drawable.ic_warning_acon_140),
             contentDescription = null
         )
         Text(
