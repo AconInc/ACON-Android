@@ -3,6 +3,7 @@ package com.acon.acon.feature.areaverification
 import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -65,7 +66,7 @@ fun PreferenceMapScreen(
     LaunchedEffect(Unit) {
         viewModel.fetchVerifiedArea()
         viewModel.checkGPSStatus()
-        viewModel.checkSupportLocation(state.latitude, state.longitude)
+        viewModel.checkSupportLocation(context)
 
         viewModel.container.sideEffectFlow.collect { effect ->
             when (effect) {
@@ -81,14 +82,9 @@ fun PreferenceMapScreen(
     }
 
     LaunchedEffect(state.isGPSEnabled){
-        viewModel.fetchVerifiedArea()
+        //viewModel.fetchVerifiedArea()
         viewModel.checkGPSStatus()
-    }
-
-    LaunchedEffect(state.isSupportLocation){
-        if(!state.isSupportLocation){
-            viewModel.showLocationDialog()
-        }
+        viewModel.checkSupportLocation(context)
     }
 
     if (state.verifiedArea != null) {
@@ -135,7 +131,16 @@ fun PreferenceMapScreen(
     }
 
     if (state.showLocationDialog){
-
+        AconOneButtonDialog(
+            title = "위치 인증 실패",
+            content = "현재 인증이 불가능한 지역에 있어요.",
+            buttonContent = "확인",
+            contentImage = com.acon.acon.core.designsystem.R.drawable.ic_error_2_120,
+            onDismissRequest = {},
+            onClickConfirm = { viewModel.hideLocationDialog() },
+            imageSize = 104.dp,
+            isImageEnabled = true
+        )
     }
 
     Column(
