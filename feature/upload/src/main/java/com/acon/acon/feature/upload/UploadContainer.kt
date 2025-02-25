@@ -40,6 +40,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.acon.acon.core.designsystem.blur.LocalHazeState
 import com.acon.acon.core.designsystem.component.button.AconFilledLargeButton
+import com.acon.acon.core.designsystem.component.dialog.AconOneButtonDialog
 import com.acon.acon.core.designsystem.component.dialog.AconTwoButtonDialog
 import com.acon.acon.core.designsystem.component.topbar.AconTopBar
 import com.acon.acon.core.designsystem.theme.AconTheme
@@ -49,7 +50,6 @@ import com.acon.acon.feature.upload.component.LocationSelectionButton
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.rememberLottieComposition
-import com.acon.acon.feature.upload.R
 import dev.chrisbanes.haze.hazeSource
 
 @Composable
@@ -106,7 +106,9 @@ fun UploadContainer(
                     UploadSearchScreen(
                         modifier = Modifier.fillMaxSize(),
                         state = state,
-                        onIntent = viewModel::onIntent
+                        onIntent = viewModel::onIntent,
+                        onShowOutOfServiceDialog = viewModel::onOutOfServiceDialogStateChange,
+                        onShowLocationSearchBottomSheet = viewModel::onLocationSearchBottomSheetStateChange
                     )
                 }
 
@@ -126,14 +128,28 @@ fun UploadContainer(
 @Composable
 fun UploadSearchScreen(
     state: UploadState,
-    onIntent: (UploadIntent) -> Unit,
     modifier: Modifier = Modifier,
+    onIntent: (UploadIntent) -> Unit = {},
+    onShowOutOfServiceDialog: (Boolean) -> Unit = {},
+    onShowLocationSearchBottomSheet: (Boolean) -> Unit = {},
 ) {
-    var showLocationSearch by remember { mutableStateOf(false) }
     var showExitDialog by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
     )
+
+    if (state.showOutOfServiceDialog) {
+        AconOneButtonDialog(
+            title = "위치 인증 실패",
+            content = "현재 인증이 불가능한 지역에 있어요.",
+            buttonContent = "확인",
+            contentImage = com.acon.acon.core.designsystem.R.drawable.ic_error_2_120,
+            onDismissRequest = {},
+            onClickConfirm = { onShowOutOfServiceDialog(false) },
+            imageSize = 104.dp,
+            isImageEnabled = true
+        )
+    }
 
     if (showExitDialog) {
         AconTwoButtonDialog(
@@ -215,23 +231,23 @@ fun UploadSearchScreen(
                 Spacer(modifier = Modifier.padding(top = 12.dp))
                 LocationSelectionButton(
                     selectedLocation = state.selectedLocation,
-                    onClick = { showLocationSearch = true }
+                    onClick = { onShowLocationSearchBottomSheet(true) }
                 )
             }
 
             Spacer(modifier = Modifier.padding(vertical = 20.dp))
 
-            if (showLocationSearch) {
+            if (state.showLocationSearchBottomSheet) {
                 ModalBottomSheet(
-                    onDismissRequest = { showLocationSearch = false },
+                    onDismissRequest = { onShowLocationSearchBottomSheet(false) },
                     sheetState = sheetState,
                     containerColor = AconTheme.color.Gla_w_10,
                     dragHandle = null,
                 ) {
                     LocationSearchBottomSheet(
-                        onDismiss = { showLocationSearch = false },
+                        onDismiss = { onShowLocationSearchBottomSheet(false) },
                         onLocationSelected = { locationItem ->
-                            showLocationSearch = false
+                            onShowLocationSearchBottomSheet(false)
                             onIntent(UploadIntent.SelectLocation(locationItem))
                         }
                     )

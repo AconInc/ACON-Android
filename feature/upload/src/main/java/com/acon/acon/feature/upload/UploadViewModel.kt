@@ -1,8 +1,10 @@
 package com.acon.acon.feature.upload
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.acon.acon.domain.repository.UploadRepository
+import com.acon.acon.core.utils.feature.base.BaseContainerHost
+import com.acon.acon.domain.error.upload.GetVerifySpotLocationError
+import com.acon.acon.domain.error.user.GetSuggestionsError
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
@@ -13,15 +15,14 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.viewmodel.container
 import javax.inject.Inject
 
 @HiltViewModel
 class UploadViewModel @Inject constructor(
     private val uploadRepository: UploadRepository
-) : ViewModel(),
-    ContainerHost<UploadState, UploadSideEffect> {
+) : BaseContainerHost<UploadState, UploadSideEffect>() {
+
     override val container = container<UploadState, UploadSideEffect>(UploadState())
 
     val searchFlow = MutableStateFlow("")
@@ -174,11 +175,8 @@ class UploadViewModel @Inject constructor(
                     state.copy(ownedDotoriCount = dotoriCount.count)
                 }
             }
-            .onFailure {
-                //timber
-            }
+            .onFailure { }
     }
-
 
     private fun loadSuggestions(latitude: Double, longitude: Double) = intent {
         uploadRepository.getSuggestions(latitude, longitude)
@@ -187,12 +185,22 @@ class UploadViewModel @Inject constructor(
                     state.copy(suggestions = suggestions.suggestionList.toPersistentList())
                 }
             }
-            .onFailure {
-                //timber
-                reduce {
-                    state.copy(suggestions = persistentListOf())
+            .onFailure { error ->
+                if (error is GetSuggestionsError.OutOfServiceAreaError) {
+                    delay(300)
+                    reduce {
+                        state.copy(
+                            showOutOfServiceDialog = true,
+                            suggestions = persistentListOf()
+                        )
+                    }
+                } else {
+                    reduce {
+                        state.copy(suggestions = persistentListOf())
+                    }
                 }
             }
+
     }
 
     private fun uploadDotori() = intent {
@@ -202,9 +210,7 @@ class UploadViewModel @Inject constructor(
                 acornCount = state.selectedCount
             ).onSuccess {
                 postSideEffect(UploadSideEffect.NavigateToSuccess)
-            }.onFailure {
-                //timber
-            }
+            }.onFailure { }
         }
     }
 
@@ -218,16 +224,36 @@ class UploadViewModel @Inject constructor(
                     )
                 }
             }
-            .onFailure {
-                //timber
-                reduce {
-                    state.copy(
-                        isLocationVerified = false,
-                        locationVerificationResult = false,
-                        selectedLocation = null
-                    )
+            .onFailure { error ->
+                if(error is GetVerifySpotLocationError.OutOfServiceAreaError) {
+                    delay(300)
+                    reduce {
+                        state.copy(
+                            showOutOfServiceDialog = true,
+                        )
+                    }
+                } else {
+                    reduce {
+                        state.copy(
+                            isLocationVerified = false,
+                            locationVerificationResult = false,
+                            selectedLocation = null
+                        )
+                    }
                 }
             }
+    }
+
+    fun onOutOfServiceDialogStateChange(show: Boolean) = intent {
+        reduce {
+            state.copy(showOutOfServiceDialog = show)
+        }
+    }
+
+    fun onLocationSearchBottomSheetStateChange(show: Boolean) = intent {
+        reduce {
+            state.copy(showLocationSearchBottomSheet = show)
+        }
     }
 
     private fun navigateBack() = intent {
