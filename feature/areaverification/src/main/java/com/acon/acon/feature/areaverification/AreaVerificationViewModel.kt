@@ -27,6 +27,7 @@ class AreaVerificationViewModel @Inject constructor(
     ) {
         fetchVerifiedArea()
         checkGPSStatus()
+        checkSupportLocation(state.latitude, state.longitude)
     }
 
     fun checkGPSStatus() = intent {
@@ -150,6 +151,25 @@ class AreaVerificationViewModel @Inject constructor(
                     )
                 }
             }
+    }
+
+    fun checkSupportLocation(latitude: Double, longitude: Double) = intent {
+        val isSupportLocation = latitude in 33.1..38.6 && longitude in 124.6..131.9
+        reduce {
+            state.copy(isSupportLocation = isSupportLocation)
+        }
+    }
+
+    fun showLocationDialog() = intent {
+        reduce {
+            state.copy(showLocationDialog = true)
+        }
+    }
+
+    fun hideLocationDialog() = intent {
+        reduce {
+            state.copy(showLocationDialog = false)
+        }
     }
 
     fun verifyArea(latitude: Double, longitude: Double) = intent {

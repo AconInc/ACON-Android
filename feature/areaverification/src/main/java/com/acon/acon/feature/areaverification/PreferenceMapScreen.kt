@@ -65,6 +65,8 @@ fun PreferenceMapScreen(
     LaunchedEffect(Unit) {
         viewModel.fetchVerifiedArea()
         viewModel.checkGPSStatus()
+        viewModel.checkSupportLocation(state.latitude, state.longitude)
+
         viewModel.container.sideEffectFlow.collect { effect ->
             when (effect) {
                 is AreaVerificationSideEffect.NavigateToGPSSettings -> {
@@ -78,9 +80,15 @@ fun PreferenceMapScreen(
         }
     }
 
-    LaunchedEffect(state.showGPSDialog){
+    LaunchedEffect(state.isGPSEnabled){
         viewModel.fetchVerifiedArea()
         viewModel.checkGPSStatus()
+    }
+
+    LaunchedEffect(state.isSupportLocation){
+        if(!state.isSupportLocation){
+            viewModel.showLocationDialog()
+        }
     }
 
     if (state.verifiedArea != null) {
@@ -124,6 +132,9 @@ fun PreferenceMapScreen(
             },
             isImageEnabled = false
         )
+    }
+
+    if (state.showLocationDialog){
 
     }
 

@@ -19,4 +19,7 @@ data class AreaVerificationState(
 
     val isGPSEnabled: Boolean = false,
     val showGPSDialog: Boolean = false,
+
+    val isSupportLocation: Boolean = false,
+    val showLocationDialog: Boolean = false,
 )
