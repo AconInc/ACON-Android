@@ -34,13 +34,13 @@ internal fun NavGraphBuilder.onboardingNavigationNavigation(
                     navController.navigate(SpotRoute.SpotList)
                 },
                 cancelOnboarding = {
-                    if (fromSettings) { // 스택에 설정이 있는 경우, 즉 설정에서 온보딩으로 들어온 경우
+                    if (fromSettings) {
                         navController.navigate(SettingsRoute.Settings) {
                             popUpTo(SettingsRoute.Settings) {
                                 inclusive = false
                             }
                         }
-                    } else { // 그 이외, 최초 로그인 후 온보딩으로 들어온 경우에 뒤로가기를 누른 경우
+                    } else {
                         navController.popBackStack()
                     }
                 }
