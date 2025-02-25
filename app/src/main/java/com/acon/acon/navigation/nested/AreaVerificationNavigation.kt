@@ -75,7 +75,9 @@ fun NavGraphBuilder.areaVerificationNavigation(
                             }
                         }
                     } else {
-                        navController.navigate(OnboardingRoute.Graph)
+                        navController.navigate(OnboardingRoute.Graph) {
+                            popUpTo(0) { inclusive = true }
+                        }
                     }
                 },
                 onBackClick = {
