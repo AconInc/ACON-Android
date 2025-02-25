@@ -1,5 +1,9 @@
 package com.acon.acon.feature.areaverification
 
+import android.app.Application
+import android.content.Context
+import android.location.LocationManager
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.acon.acon.core.utils.feature.base.BaseContainerHost
 import com.acon.acon.domain.repository.AreaVerificationRepository
@@ -11,6 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AreaVerificationViewModel @Inject constructor(
+    private val application: Application,
     private val tokenRepository: TokenRepository,
     private val areaVerificationRepository: AreaVerificationRepository
 ) : BaseContainerHost<AreaVerificationState, AreaVerificationSideEffect>() {
@@ -21,6 +26,25 @@ class AreaVerificationViewModel @Inject constructor(
         )
     ) {
         fetchVerifiedArea()
+        checkGPSStatus()
+    }
+
+    fun checkGPSStatus() = intent {
+        val locationManager = application.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        val isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+        Log.d("로그", "isGPSEnabled : $isGPSEnabled")
+
+        if (isGPSEnabled) {
+            reduce { state.copy(isGPSEnabled = true, showGPSDialog = false)}
+        } else {
+            reduce { state.copy(isGPSEnabled = false, showGPSDialog = true) }
+        }
+    }
+
+    fun hideGPSDialog() = intent {
+        reduce {
+            state.copy(showGPSDialog = false)
+        }
     }
 
     fun onNewLocationSelected() = intent {
@@ -59,6 +83,13 @@ class AreaVerificationViewModel @Inject constructor(
         }
     }
 
+    fun onGPSSettingClick(packageName: String) = intent {
+        postSideEffect(AreaVerificationSideEffect.NavigateToGPSSettings(packageName))
+        reduce {
+            state.copy(showGPSDialog = false)
+        }
+    }
+
     fun checkLocationAndNavigate() = intent {
         if (state.isLocationObtained) {
             postSideEffect(
@@ -70,7 +101,7 @@ class AreaVerificationViewModel @Inject constructor(
         }
     }
 
-     private fun fetchVerifiedArea() = intent {
+     fun fetchVerifiedArea() = intent {
         viewModelScope.launch {
             areaVerificationRepository.fetchVerifiedAreaList()
                 .onSuccess { verifiedAreaList ->

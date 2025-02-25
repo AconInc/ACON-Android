@@ -21,4 +21,13 @@
 
     <string name="check_location_on_map">위치 인증</string>
     <string name="verify_complete">인증완료</string>
+
+    <string name="check_gps_title">위치 인식 실패</string>
+    <string name="check_gps_content">문제가 발생했습니다.\n나중에 다시 시도해주세요.</string>
+    <string name="check_gps_ok_btn">확인</string>
+
+    <string name="check_gps_title_2">위치 인식 실패</string>
+    <string name="check_gps_content_2">기기에서 위치 서비스가 비활성화되어 있습니다.\n설정에서 활성화 상태로 변경해주세요.</string>
+    <string name="check_gps_cancel_btn">취소</string>
+    <string name="check_gps_setting_btn">설정으로 가기</string>
 </resources>

@@ -62,6 +62,13 @@ fun AreaVerificationScreenContainer(
                     context.startActivity(intent)
                 }
 
+                is AreaVerificationSideEffect.NavigateToGPSSettings -> {
+                    val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS).apply {
+                        data = Uri.fromParts("package", effect.packageName, null)
+                    }
+                    context.startActivity(intent)
+                }
+
                 is AreaVerificationSideEffect.NavigateToNextScreen -> {
                     onNextScreen(effect.latitude, effect.longitude)
                 }

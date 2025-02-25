@@ -1,5 +1,8 @@
 package com.acon.acon.feature.areaverification
 
+import android.content.Intent
+import android.net.Uri
+import android.provider.Settings
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -15,6 +18,7 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.remember
@@ -23,6 +27,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
@@ -30,6 +35,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.acon.acon.core.designsystem.blur.LocalHazeState
 import com.acon.acon.core.designsystem.component.button.AconFilledLargeButton
+import com.acon.acon.core.designsystem.component.dialog.AconOneButtonDialog
+import com.acon.acon.core.designsystem.component.dialog.AconTwoButtonDialog
 import com.acon.acon.core.designsystem.component.topbar.AconTopBar
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.feature.areaverification.component.DottoriSelectionBottomSheet
@@ -51,8 +58,30 @@ fun PreferenceMapScreen(
     var currentLatitude by remember { mutableDoubleStateOf(latitude) }
     var currentLongitude by remember { mutableDoubleStateOf(longitude) }
 
+    val context = LocalContext.current
     val state by viewModel.container.stateFlow.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
+
+    LaunchedEffect(Unit) {
+        viewModel.fetchVerifiedArea()
+        viewModel.checkGPSStatus()
+        viewModel.container.sideEffectFlow.collect { effect ->
+            when (effect) {
+                is AreaVerificationSideEffect.NavigateToGPSSettings -> {
+                    val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+                    context.startActivity(intent)
+                }
+                else -> {
+
+                }
+            }
+        }
+    }
+
+    LaunchedEffect(state.showGPSDialog){
+        viewModel.fetchVerifiedArea()
+        viewModel.checkGPSStatus()
+    }
 
     if (state.verifiedArea != null) {
         val sheetState = rememberModalBottomSheetState(
@@ -77,6 +106,25 @@ fun PreferenceMapScreen(
                 sheetState = sheetState
             )
         }
+    }
+
+    if (state.showGPSDialog){
+        AconTwoButtonDialog(
+            title = stringResource(R.string.check_gps_title_2),
+            content = stringResource(R.string.check_gps_content_2),
+            leftButtonContent = stringResource(R.string.check_gps_cancel_btn),
+            rightButtonContent = stringResource(R.string.check_gps_setting_btn),
+            contentImage = 0,
+            onDismissRequest = {},
+            onClickLeft = { // 다이얼로그 숨기기
+                viewModel.hideGPSDialog()
+            },
+            onClickRight = { //설정으로 바로 이동시키기
+                viewModel.onGPSSettingClick(context.packageName)
+            },
+            isImageEnabled = false
+        )
+
     }
 
     Column(
