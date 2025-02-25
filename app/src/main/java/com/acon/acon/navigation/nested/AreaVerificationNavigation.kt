@@ -70,7 +70,7 @@ fun NavGraphBuilder.areaVerificationNavigation(
                 onNavigateToNext = {
                     if (route.route == "settings") {
                         navController.navigate(SettingsRoute.LocalVerification) {
-                            popUpTo(AreaVerificationRoute.Graph) {
+                            popUpTo(SettingsRoute.LocalVerification) {
                                 inclusive = true
                             }
                         }

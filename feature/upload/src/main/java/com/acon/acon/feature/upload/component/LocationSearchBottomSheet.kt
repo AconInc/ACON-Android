@@ -94,7 +94,8 @@ fun LocationSearchBottomSheet(
                 showVerificationFailDialog = false
                 viewModel.onIntent(UploadIntent.ResetVerification)
             },
-            isImageEnabled = true
+            isImageEnabled = true,
+            modifier = Modifier.padding(horizontal = 32.dp)
         )
     }
 

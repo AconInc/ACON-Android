@@ -38,6 +38,12 @@ android {
 
 dependencies {
 
+    implementation(project(":domain"))
+    implementation(project(":core:common"))
+    implementation(project(":core:designsystem"))
+    implementation(project(":core:utils:feature"))
+    implementation(project(":core:map"))
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -67,9 +73,4 @@ dependencies {
     implementation(libs.haze.materials)
 
     implementation(libs.kotlinx.immutable)
-
-    implementation(project(":domain"))
-
-    implementation(project(":core:designsystem"))
-    implementation(project(":core:map"))
 }

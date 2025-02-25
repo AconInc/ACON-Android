@@ -1,5 +1,6 @@
 package com.acon.acon.feature.settings.screen.composable
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -42,6 +43,9 @@ fun SettingsScreen(
     onSignOut: () -> Unit = {},
     onDeleteAccountScreen: () -> Unit = {},
 ) {
+    BackHandler {
+        navigateBack()
+    }
     val scrollState = rememberScrollState()
 
     when(state) {

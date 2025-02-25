@@ -2,6 +2,7 @@ package com.acon.acon.feature.spot.screen.spotlist.composable
 
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.SpringSpec
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.collectIsDraggedAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -178,6 +179,7 @@ internal fun SpotListScreen(
                                     }
                             ) {
                                 if (isResultEmpty) {
+                                    Spacer(Modifier.height(100.dp))
                                     EmptySpotListView(modifier = Modifier.fillMaxSize())
                                 } else {
                                     Text(
@@ -202,23 +204,25 @@ internal fun SpotListScreen(
                                         if (spot !== state.spotList.last())
                                             Spacer(modifier = Modifier.height(12.dp))
                                     }
+
+                                    Column(
+                                        modifier = Modifier
+                                            .padding(top = 12.dp)
+                                            .fillMaxWidth()
+                                            .onSizeChanged { size ->
+                                                scrollableInvisibleHeightPx = size.height
+                                            },
+                                        horizontalAlignment = Alignment.CenterHorizontally
+                                    ) {
+                                        Text(
+                                            modifier = Modifier.padding(top = 38.dp, bottom = 50.dp),
+                                            text = stringResource(R.string.alert_max_spot_count),
+                                            style = AconTheme.typography.body2_14_reg,
+                                            color = AconTheme.color.Gray5
+                                        )
+                                    }
                                 }
-                                Column(
-                                    modifier = Modifier
-                                        .padding(top = 12.dp)
-                                        .fillMaxWidth()
-                                        .onSizeChanged { size ->
-                                            scrollableInvisibleHeightPx = size.height
-                                        },
-                                    horizontalAlignment = Alignment.CenterHorizontally
-                                ) {
-                                    Text(
-                                        modifier = Modifier.padding(top = 38.dp, bottom = 50.dp),
-                                        text = stringResource(R.string.alert_max_spot_count),
-                                        style = AconTheme.typography.body2_14_reg,
-                                        color = AconTheme.color.Gray5
-                                    )
-                                }
+
                             }
                         }
                         Column(
@@ -352,6 +356,7 @@ internal fun SpotListScreen(
                                     }
                             ) {
                                 if (isResultEmpty) {
+                                    Spacer(Modifier.height(100.dp))
                                     EmptySpotListView(modifier = Modifier.fillMaxSize())
                                 } else {
                                     Text(
@@ -425,7 +430,40 @@ internal fun SpotListScreen(
             }
 
             is SpotListUiState.LoadFailed -> {
-                // TODO : 로드 실패 뷰
+
+            }
+
+            is SpotListUiState.OutOfServiceArea -> {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                ) {
+                    Text(
+                        text = stringResource(R.string.out_of_service_area_name),
+                        style = AconTheme.typography.head5_22_sb,
+                        color = AconTheme.color.White,
+                        modifier = Modifier
+                            .padding(start = 16.dp, top = 57.dp)
+                    )
+
+                    Spacer(Modifier.height(110.dp))
+                    Image(
+                        imageVector = ImageVector.vectorResource(com.acon.acon.core.designsystem.R.drawable.ic_warning_acon_140),
+                        contentDescription = stringResource(R.string.out_of_service_area_content_description),
+                        modifier = Modifier
+                            .align(Alignment.CenterHorizontally)
+                    )
+
+                    Spacer(Modifier.height(24.dp))
+                    Text(
+                        text = stringResource(R.string.out_of_service_area_content),
+                        style = AconTheme.typography.subtitle1_16_med,
+                        color = AconTheme.color.Gray4,
+                        modifier = Modifier
+                            .align(Alignment.CenterHorizontally)
+
+                    )
+                }
             }
         }
     }
@@ -443,6 +481,6 @@ private fun SpotListScreenPreview() {
 @Composable
 private fun SpotListLoadingScreenPreview() {
     SpotListScreen(
-        state = SpotListUiState.Loading
+        state = SpotListUiState.LoadFailed
     )
 }

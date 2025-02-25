@@ -162,7 +162,12 @@ fun ProfileScreen(
                     )
                     ProfileInfo(
                         profileInfoType = ProfileInfoType.AREA,
-                        area = state.verifiedArea[0].name,
+                        area = if(state.verifiedArea.size > 1) {
+                            "${state.verifiedArea[0].name} 외${state.verifiedArea.size - 1}"
+                        }
+                        else {
+                            state.verifiedArea[0].name
+                        },
                         modifier = Modifier.weight(1f)
                     )
                 }
