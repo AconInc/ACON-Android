@@ -22,11 +22,13 @@ import androidx.compose.ui.unit.dp
 import com.acon.acon.core.designsystem.component.dialog.AconTwoButtonDialog
 import com.acon.acon.core.designsystem.component.topbar.AconTopBar
 import com.acon.acon.core.designsystem.theme.AconTheme
+import com.acon.acon.feature.settings.R
+import com.acon.acon.feature.settings.amplitude.settingsAmplitudeSignOut
 import com.acon.acon.feature.settings.component.SettingSectionItem
 import com.acon.acon.feature.settings.component.SettingSectionVersionItem
 import com.acon.acon.feature.settings.screen.SettingsUiState
 import com.acon.acon.feature.settings.type.SettingsType
-import com.acon.acon.feature.settings.R
+import com.acon.acon.feature.withdraw.amplitude.deleteAccountAmplitudeSettingsToWithDraw
 
 @Composable
 fun SettingsScreen(
@@ -58,7 +60,10 @@ fun SettingsScreen(
                     rightButtonContent = stringResource(R.string.settings_section_logout),
                     onDismissRequest = { onSignInDialogShowStateChange(false) },
                     onClickLeft = { onSignInDialogShowStateChange(false) },
-                    onClickRight =  onSignOut,
+                    onClickRight = {
+                        onSignOut()
+                        settingsAmplitudeSignOut()
+                    },
                     isImageEnabled = false
                 )
             }
@@ -161,7 +166,10 @@ fun SettingsScreen(
                     Spacer(Modifier.height(16.dp))
                     SettingSectionItem(
                         settingsType = SettingsType.DELETE_ACCOUNT,
-                        onClickContinue = onDeleteAccountScreen
+                        onClickContinue = {
+                            onDeleteAccountScreen()
+                            deleteAccountAmplitudeSettingsToWithDraw()
+                        }
                     )
                 }
 

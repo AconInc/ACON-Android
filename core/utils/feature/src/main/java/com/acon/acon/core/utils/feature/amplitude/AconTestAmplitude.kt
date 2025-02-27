@@ -1,9 +1,9 @@
 package com.acon.acon.core.utils.feature.amplitude
 
 import android.content.Context
+import com.acon.acon.core.utils.feature.BuildConfig
 import com.amplitude.android.Amplitude
 import com.amplitude.android.AutocaptureOption
-import com.acon.acon.core.utils.feature.BuildConfig
 import com.amplitude.android.Configuration
 import com.amplitude.android.events.Identify
 
@@ -14,18 +14,29 @@ object AconTestAmplitude {
         context: Context,
         apiKey: String = BuildConfig.AMPLITUDE_API_TEST_KEY
     ) {
-        if (!AconTestAmplitude::testAmplitude.isInitialized) {
+        if (!::testAmplitude.isInitialized) {
             testAmplitude = Amplitude(
                 Configuration(
                     apiKey = apiKey,
-                    context = context.applicationContext,
+                    context = context,
                     autocapture = setOf(
-                        AutocaptureOption.SESSIONS,
-                        AutocaptureOption.APP_LIFECYCLES
-                    )
+                        AutocaptureOption.SESSIONS
+                    ),
+                    flushIntervalMillis = 15000,
+                    flushQueueSize = 20,
+                    flushMaxRetries = 3,
+                    useBatch = true,
+                    flushEventsOnClose = true,
+                    useAppSetIdForDeviceId = false,
+                    useAdvertisingIdForDeviceId = false,
+                    newDeviceIdPerInstall = false,
                 )
             )
         }
+    }
+
+    fun setUserId(userId: String) {
+        testAmplitude.setUserId(userId)
     }
 
     fun trackEvent(eventName: String, properties: Map<String, Any> = emptyMap()) {

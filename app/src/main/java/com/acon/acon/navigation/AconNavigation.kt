@@ -25,6 +25,8 @@ import androidx.navigation.NavDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.acon.acon.amplitude.bottomAmplitudeSignIn
+import com.acon.acon.amplitude.bottomAmplitudeUpload
 import com.acon.acon.core.designsystem.animation.defaultEnterTransition
 import com.acon.acon.core.designsystem.animation.defaultExitTransition
 import com.acon.acon.core.designsystem.animation.defaultPopEnterTransition
@@ -79,6 +81,7 @@ fun AconNavigation(
                 onDismissRequest = { showLoginBottomSheet = false },
                 onGoogleSignIn = {
                     coroutineScope.launch {
+                        bottomAmplitudeSignIn()
                         socialRepository.signIn()
                             .onSuccess {
                                 if (it.hasVerifiedArea) {
@@ -136,6 +139,7 @@ fun AconNavigation(
                             if (item == BottomNavType.UPLOAD) {
                                 coroutineScope.launch {
                                     if (tokenRepository.getIsLogin().getOrElse { false }) {
+                                        bottomAmplitudeUpload()
                                         navController.navigate(UploadRoute.Upload)
                                     } else {
                                         showLoginBottomSheet = true

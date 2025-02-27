@@ -47,6 +47,9 @@ import com.acon.acon.feature.withdraw.component.DeleteAccountTextField
 import com.acon.acon.feature.withdraw.screen.DeleteAccountUiState
 import com.acon.acon.feature.withdraw.type.DeleteReasonType
 import com.acon.acon.feature.settings.R
+import com.acon.acon.feature.withdraw.amplitude.deleteAccountAmplitudeExitReason
+import com.acon.acon.feature.withdraw.amplitude.deleteAccountAmplitudeSubmit
+import com.acon.acon.feature.withdraw.amplitude.deleteAccountAmplitudeWithDraw
 import dev.chrisbanes.haze.hazeSource
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -81,7 +84,10 @@ fun DeleteAccountScreen(
                 DeleteAccountBottomSheet(
                     hazeState = LocalHazeState.current,
                     onDismissRequest = { onBottomSheetShowStateChange(false) },
-                    onDeleteAccount = onDeleteAccount
+                    onDeleteAccount = {
+                        onDeleteAccount()
+                        deleteAccountAmplitudeWithDraw()
+                    }
                 )
             }
 
@@ -203,6 +209,8 @@ fun DeleteAccountScreen(
                     onClick = {
                         if (submitButtonEnabled) {
                             onBottomSheetShowStateChange(true)
+                            deleteAccountAmplitudeSubmit()
+                            deleteAccountAmplitudeExitReason(state.reason)
                         }
                     },
                     modifier = Modifier

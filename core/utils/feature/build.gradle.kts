@@ -75,5 +75,4 @@ dependencies {
     implementation(libs.orbit.compose)
 
     implementation (libs.amplitude)
-    implementation ("com.google.android.gms:play-services-appset:16.0.2")
 }

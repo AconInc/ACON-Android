@@ -1,4 +1,4 @@
-package com.acon.acon.feature.signin.screen
+package com.acon.acon.feature.signin.amplitude
 
 import com.acon.acon.core.utils.feature.amplitude.AconAmplitude
 import com.acon.acon.core.utils.feature.amplitude.AconTestAmplitude

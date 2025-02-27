@@ -32,6 +32,7 @@ import com.acon.acon.core.designsystem.component.button.AconGoogleLoginButton
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.feature.signin.R
+import com.acon.acon.feature.signin.amplitude.amplitudeSignIn
 import com.acon.acon.feature.signin.screen.component.SignInTopBar
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
