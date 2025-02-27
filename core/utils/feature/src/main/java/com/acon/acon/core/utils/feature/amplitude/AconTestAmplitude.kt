@@ -1,9 +1,9 @@
 package com.acon.acon.core.utils.feature.amplitude
 
 import android.content.Context
+import com.acon.acon.core.utils.feature.BuildConfig
 import com.amplitude.android.Amplitude
 import com.amplitude.android.AutocaptureOption
-import com.acon.acon.core.utils.feature.BuildConfig
 import com.amplitude.android.Configuration
 import com.amplitude.android.events.Identify
 
@@ -33,6 +33,10 @@ object AconTestAmplitude {
                 )
             )
         }
+    }
+
+    fun setUserId(userId: String) {
+        testAmplitude.setUserId(userId)
     }
 
     fun trackEvent(eventName: String, properties: Map<String, Any> = emptyMap()) {
