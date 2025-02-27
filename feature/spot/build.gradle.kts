@@ -81,4 +81,6 @@ dependencies {
 
     implementation(libs.kotlinx.collections.immutable)
     implementation(libs.lottie.compose)
+
+    implementation (libs.amplitude)
 }
