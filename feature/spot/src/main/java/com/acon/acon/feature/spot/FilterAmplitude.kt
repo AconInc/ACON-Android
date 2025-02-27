@@ -38,7 +38,7 @@ fun amplitudeFilterVisitRestaurant(selectedCategories: Set<String>) {
     )
 }
 
-fun amplitudeFilterPassenger(selectedCompanions: Set<String>) {
+fun amplitudeFilterPassengerRestaurant(selectedCompanions: Set<String>) {
     val companions = selectedCompanions.joinToString(", ")
 
     AconAmplitude.trackEvent(
@@ -51,7 +51,7 @@ fun amplitudeFilterPassenger(selectedCompanions: Set<String>) {
     )
 }
 
-fun amplitudeFilterWalkSlide(walkingTime: String, isDefault: Boolean) {
+fun amplitudeFilterWalkSlideRestaurant(walkingTime: String, isDefault: Boolean) {
     AconAmplitude.trackEvent(
         eventName = "filter",
         properties = mapOf(
@@ -68,7 +68,7 @@ fun amplitudeFilterWalkSlide(walkingTime: String, isDefault: Boolean) {
     )
 }
 
-fun amplitudeFilterPriceSlide(priceRange: String, isDefault: Boolean) {
+fun amplitudeFilterPriceSlideRestaurant(priceRange: String, isDefault: Boolean) {
     AconAmplitude.trackEvent(
         eventName = "filter",
         properties = mapOf(
@@ -85,7 +85,7 @@ fun amplitudeFilterPriceSlide(priceRange: String, isDefault: Boolean) {
     )
 }
 
-fun amplitudeFilterRestaurantComplete(isCompleteFilter: Boolean) {
+fun amplitudeFilterCompleteRestaurant(isCompleteFilter: Boolean) {
     AconAmplitude.trackEvent(
         eventName = "filter",
         properties = mapOf("complete_filter_restaurant?" to isCompleteFilter)
@@ -93,5 +93,88 @@ fun amplitudeFilterRestaurantComplete(isCompleteFilter: Boolean) {
     AconTestAmplitude.trackEvent(
         eventName = "filter",
         properties = mapOf("complete_filter_restaurant?" to isCompleteFilter)
+    )
+}
+
+// 여기부터 카페
+fun amplitudeFilterCafe() {
+    AconAmplitude.trackEvent(
+        eventName = "filter",
+        properties = mapOf("choose_filter_cafe?" to true)
+    )
+    AconTestAmplitude.trackEvent(
+        eventName = "filter",
+        properties = mapOf("choose_filter_cafe?" to true)
+    )
+}
+
+fun amplitudeFilterVisitCafe(selectedCategories: Set<String>) {
+    val categories = selectedCategories.joinToString(", ")
+
+    AconAmplitude.trackEvent(
+        eventName = "filter",
+        properties = mapOf("filter_visit_click_cafe?" to categories)
+    )
+    AconTestAmplitude.trackEvent(
+        eventName = "filter",
+        properties = mapOf("filter_visit_click_cafe?" to categories)
+    )
+}
+
+fun amplitudeFilterPurposeCafe(selectedCompanions: Set<String>) {
+    val companions = selectedCompanions.joinToString(", ")
+
+    AconAmplitude.trackEvent(
+        eventName = "filter",
+        properties = mapOf("filter_purpose_click_cafe?" to companions)
+    )
+    AconTestAmplitude.trackEvent(
+        eventName = "filter",
+        properties = mapOf("filter_purpose_click_cafe?" to companions)
+    )
+}
+
+fun amplitudeFilterWalkSlideCafe(walkingTime: String, isDefault: Boolean) {
+    AconAmplitude.trackEvent(
+        eventName = "filter",
+        properties = mapOf(
+            "filter_walk_slide_cafe?" to walkingTime,
+            "slide_walk_cafe?" to !isDefault
+        )
+    )
+    AconTestAmplitude.trackEvent(
+        eventName = "filter",
+        properties = mapOf(
+            "filter_walk_slide_cafe?" to walkingTime,
+            "slide_walk_cafe?" to !isDefault
+        )
+    )
+}
+
+fun amplitudeFilterPriceSlideCafe(priceRange: String, isDefault: Boolean) {
+    AconAmplitude.trackEvent(
+        eventName = "filter",
+        properties = mapOf(
+            "filter_price_slide_cafe?" to priceRange,
+            "slide_price_cafe?" to !isDefault
+        )
+    )
+    AconTestAmplitude.trackEvent(
+        eventName = "filter",
+        properties = mapOf(
+            "filter_price_slide_cafe?" to priceRange,
+            "slide_price_cafe?" to !isDefault
+        )
+    )
+}
+
+fun amplitudeFilterCompleteCafe(isCompleteFilter: Boolean) {
+    AconAmplitude.trackEvent(
+        eventName = "filter",
+        properties = mapOf("complete_filter_cafe?" to isCompleteFilter)
+    )
+    AconTestAmplitude.trackEvent(
+        eventName = "filter",
+        properties = mapOf("complete_filter_cafe?" to isCompleteFilter)
     )
 }
