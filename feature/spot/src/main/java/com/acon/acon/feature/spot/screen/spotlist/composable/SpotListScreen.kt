@@ -48,12 +48,29 @@ import com.acon.acon.core.designsystem.component.bottomsheet.LoginBottomSheet
 import com.acon.acon.core.designsystem.component.loading.SkeletonItem
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.core.utils.feature.action.BackOnPressed
+import com.acon.acon.core.utils.feature.amplitude.AconAmplitude
+import com.acon.acon.domain.type.SpotType
 import com.acon.acon.feature.spot.R
+import com.acon.acon.feature.spot.amplitudeFilterCafe
+import com.acon.acon.feature.spot.amplitudeFilterCompleteCafe
+import com.acon.acon.feature.spot.amplitudeFilterCompleteRestaurant
+import com.acon.acon.feature.spot.amplitudeFilterPassengerRestaurant
+import com.acon.acon.feature.spot.amplitudeFilterPriceSlideCafe
+import com.acon.acon.feature.spot.amplitudeFilterPriceSlideRestaurant
+import com.acon.acon.feature.spot.amplitudeFilterPurposeCafe
+import com.acon.acon.feature.spot.amplitudeFilterRestaurant
+import com.acon.acon.feature.spot.amplitudeFilterVisitCafe
+import com.acon.acon.feature.spot.amplitudeFilterVisitRestaurant
+import com.acon.acon.feature.spot.amplitudeFilterWalkSlideCafe
+import com.acon.acon.feature.spot.amplitudeFilterWalkSlideRestaurant
 import com.acon.acon.feature.spot.screen.spotlist.SpotListUiState
 import com.acon.acon.feature.spot.screen.spotlist.amplitude.amplitudeSpotListSignIn
 import com.acon.acon.feature.spot.screen.spotlist.composable.bottomsheet.SpotFilterBottomSheet
 import com.acon.acon.feature.spot.screen.spotlist.amplitude.spotListSpotNumberAmplitude
 import com.acon.acon.feature.spot.state.ConditionState
+import com.acon.acon.feature.spot.type.AvailableWalkingTimeType
+import com.acon.acon.feature.spot.type.CafePriceRangeType
+import com.acon.acon.feature.spot.type.RestaurantPriceRangeType
 import com.github.fengdai.compose.pulltorefresh.PullToRefresh
 import com.github.fengdai.compose.pulltorefresh.rememberPullToRefreshState
 import dev.chrisbanes.haze.hazeSource
@@ -113,11 +130,83 @@ internal fun SpotListScreen(
                 if (state.showFilterBottomSheet) {
                     SpotFilterBottomSheet(
                         hazeState = LocalHazeState.current,
-                        condition = state.currentCondition, onComplete = {
+                        condition = state.currentCondition,
+                        onComplete = {
                             onCompleteFilter(it) {
                                 coroutineScope.launch {
                                     scrollState.animateScrollTo(0)
                                 }
+                            }
+
+                            if (it.spotType == SpotType.RESTAURANT) {
+                                amplitudeFilterRestaurant()
+
+                                if (it.restaurantFeatureOptionType.isNotEmpty()) {
+                                    val restaurantCategories = it.restaurantFeatureOptionType.map { option -> option.name }.toSet()
+                                    amplitudeFilterVisitRestaurant(restaurantCategories)
+                                }
+
+                                if (it.companionTypeOptionType.isNotEmpty()) {
+                                    val companions = it.companionTypeOptionType.map { option -> option.name }.toSet()
+                                    amplitudeFilterPassengerRestaurant(companions)
+                                }
+
+                                val walkingTime = when (it.restaurantWalkingTime) {
+                                    AvailableWalkingTimeType.UNDER_5_MINUTES -> "5분 이내"
+                                    AvailableWalkingTimeType.UNDER_10_MINUTES -> "10분"
+                                    AvailableWalkingTimeType.UNDER_15_MINUTES -> "15분"
+                                    AvailableWalkingTimeType.UNDER_20_MINUTES -> "20분"
+                                    AvailableWalkingTimeType.OVER_20_MINUTES -> "20분 이상"
+                                }
+                                val isWalkingTimeDefault = it.restaurantWalkingTime == AvailableWalkingTimeType.UNDER_15_MINUTES
+                                amplitudeFilterWalkSlideRestaurant(walkingTime, isWalkingTimeDefault)
+
+
+                                val priceRange = when (it.restaurantPriceRange) {
+                                    RestaurantPriceRangeType.UNDER_5000 -> "5천원 이하"
+                                    RestaurantPriceRangeType.UNDER_10000 -> "1만원"
+                                    RestaurantPriceRangeType.UNDER_30000 -> "3만원"
+                                    RestaurantPriceRangeType.UNDER_50000 -> "5만원"
+                                    RestaurantPriceRangeType.OVER_50000 -> "5만원 이상"
+                                }
+                                val isPriceDefault = it.restaurantPriceRange == RestaurantPriceRangeType.UNDER_10000
+                                amplitudeFilterPriceSlideRestaurant(priceRange, isPriceDefault)
+
+                                val isCompleteFilter = !(isWalkingTimeDefault && isPriceDefault && it.restaurantFeatureOptionType.isEmpty() && it.companionTypeOptionType.isEmpty())
+                                amplitudeFilterCompleteRestaurant(isCompleteFilter)
+                            } else {
+                                amplitudeFilterCafe()
+
+                                if (it.cafeFeatureOptionType.isNotEmpty()) {
+                                    val cafeCategories = it.cafeFeatureOptionType.map { option -> option.name }.toSet()
+                                    amplitudeFilterVisitCafe(cafeCategories)
+                                }
+
+                                if (it.visitPurposeOptionType.isNotEmpty()) {
+                                    val purposes = it.visitPurposeOptionType.map { option -> option.name }.toSet()
+                                    amplitudeFilterPurposeCafe(purposes)
+                                }
+
+                                val walkingTime = when (it.cafeWalkingTime) {
+                                    AvailableWalkingTimeType.UNDER_5_MINUTES -> "5분 이내"
+                                    AvailableWalkingTimeType.UNDER_10_MINUTES -> "10분"
+                                    AvailableWalkingTimeType.UNDER_15_MINUTES -> "15분"
+                                    AvailableWalkingTimeType.UNDER_20_MINUTES -> "20분"
+                                    AvailableWalkingTimeType.OVER_20_MINUTES -> "20분 이상"
+                                }
+                                val isWalkingTimeDefault = it.cafeWalkingTime == AvailableWalkingTimeType.UNDER_15_MINUTES
+                                amplitudeFilterWalkSlideCafe(walkingTime, isWalkingTimeDefault)
+
+                                val priceRange = when (it.cafePriceRange) {
+                                    CafePriceRangeType.UNDER_3000 -> "3천원 이하"
+                                    CafePriceRangeType.UNDER_5000 -> "5천원 이하"
+                                    CafePriceRangeType.OVER_10000 -> "1만원 이상"
+                                }
+                                val isPriceDefault = it.cafePriceRange == CafePriceRangeType.UNDER_5000
+                                amplitudeFilterPriceSlideCafe(priceRange, isPriceDefault)
+
+                                val isCompleteFilter = !(isWalkingTimeDefault && isPriceDefault && it.visitPurposeOptionType.isEmpty() && it.cafeFeatureOptionType.isEmpty())
+                                amplitudeFilterCompleteCafe(isCompleteFilter)
                             }
                         },
                         onReset = {

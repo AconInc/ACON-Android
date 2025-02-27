@@ -65,6 +65,7 @@ class SettingsViewModel @Inject constructor(
 
     fun onRetryOnBoarding() = intent {
         postSideEffect(SettingsSideEffect.NavigateToOnboarding)
+        amplitudeRetryOnboarding()
     }
 
     fun onNavigateToLocalVerification() = intent {

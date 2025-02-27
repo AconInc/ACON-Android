@@ -101,6 +101,7 @@ fun PreferenceMapScreen(
             DottoriSelectionBottomSheet(
                 onDismiss = { viewModel.resetVerifiedArea() },
                 onNavigateToNext = {
+                    amplitudeClickGoHome()
                     scope.launch {
                         sheetState.hide()
                         viewModel.resetVerifiedArea()

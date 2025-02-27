@@ -79,6 +79,7 @@ class AreaVerificationViewModel @Inject constructor(
                 )
             )
         }
+        amplitudeClickNext()
     }
 
     fun onPermissionSettingClick(packageName: String) = intent {
@@ -146,6 +147,7 @@ class AreaVerificationViewModel @Inject constructor(
                         )
                     }
                 }
+                amplitudeCompleteArea()
             }
             .onFailure { throwable ->
                 reduce {
@@ -219,6 +221,7 @@ class AreaVerificationViewModel @Inject constructor(
                         verifiedArea = area
                     )
                 }
+                amplitudeCompleteArea()
             }
             .onFailure { throwable ->
                 tokenRepository.saveAreaVerification(false)

@@ -5,6 +5,7 @@ import com.acon.acon.core.utils.feature.BuildConfig
 import com.amplitude.android.Amplitude
 import com.amplitude.android.AutocaptureOption
 import com.amplitude.android.Configuration
+import com.amplitude.android.events.Identify
 
 object AconAmplitude {
     private lateinit var amplitude: Amplitude
@@ -47,6 +48,16 @@ object AconAmplitude {
     fun setUserProperty(userId: String) {
         if (AconAmplitude::amplitude.isInitialized) {
             amplitude.setUserId(userId)
+        }
+    }
+
+    fun setUserProperties(properties: Map<String, String>) {
+        if (::amplitude.isInitialized) {
+            val identify = Identify()
+            properties.forEach { (key, value) ->
+                identify.set(key, value)
+            }
+            amplitude.identify(identify)
         }
     }
 }
