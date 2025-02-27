@@ -1,7 +1,6 @@
 package com.acon.acon.feature.onboarding.screen.OnboardingScreen
 
 import android.os.Parcelable
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.acon.acon.core.utils.feature.base.BaseContainerHost
 import com.acon.acon.domain.repository.OnboardingRepository
@@ -11,7 +10,7 @@ import com.acon.acon.feature.onboarding.type.MoodItems
 import com.acon.acon.feature.onboarding.type.PlaceItems
 import com.acon.acon.feature.onboarding.type.PreferPlaceItems
 import com.acon.acon.feature.onboarding.R
-import com.acon.acon.feature.onboarding.screen.logOnboardingEvent
+import com.acon.acon.feature.onboarding.screen.amplitudeOnboarding
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
@@ -146,7 +145,7 @@ class OnboardingViewModel @Inject constructor(
     fun navigateToNextPage() = intent {
         val nextPageState = when (val currentPageState = state.currentState) {
             is OnboardingPageState.Page1State -> {
-                logOnboardingEvent("complete_dislike_food?", currentPageState.selectedCard, "dislike_food")
+                amplitudeOnboarding("complete_dislike_food?", currentPageState.selectedCard, "dislike_food")
 
                 state.copy(
                     currentPage = 2,
@@ -157,7 +156,7 @@ class OnboardingViewModel @Inject constructor(
                 )
             }
             is OnboardingPageState.Page2State -> {
-                logOnboardingEvent("complete_favorite_food_rank?", currentPageState.selectedCard, "favorite_food_rank")
+                amplitudeOnboarding("complete_favorite_food_rank?", currentPageState.selectedCard, "favorite_food_rank")
 
                 state.copy(
                     currentPage = 3,
@@ -168,7 +167,7 @@ class OnboardingViewModel @Inject constructor(
                 )
             }
             is OnboardingPageState.Page3State -> {
-                logOnboardingEvent("complete_favorite_spot?", currentPageState.selectedCard, "favorite_spot")
+                amplitudeOnboarding("complete_favorite_spot?", currentPageState.selectedCard, "favorite_spot")
 
                 state.copy(
                     currentPage = 4,
@@ -179,7 +178,7 @@ class OnboardingViewModel @Inject constructor(
                 )
             }
             is OnboardingPageState.Page4State -> {
-                logOnboardingEvent("complete_favorite_spot_mood?", currentPageState.selectedCard, "favorite_spot_mood")
+                amplitudeOnboarding("complete_favorite_spot_mood?", currentPageState.selectedCard, "favorite_spot_mood")
 
                 state.copy(
                     currentPage = 5,
@@ -190,7 +189,7 @@ class OnboardingViewModel @Inject constructor(
                 )
             }
             is OnboardingPageState.Page5State -> {
-                logOnboardingEvent("complete_favorite_spot_style_rank?", currentPageState.selectedCard, "favortie_spot_style_rank")
+                amplitudeOnboarding("complete_favorite_spot_style_rank?", currentPageState.selectedCard, "favortie_spot_style_rank")
 
                 var updatedState = state.copy(
                     onboardingResult = state.onboardingResult.copy(
