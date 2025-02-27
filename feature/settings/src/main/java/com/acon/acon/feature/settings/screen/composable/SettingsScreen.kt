@@ -28,6 +28,7 @@ import com.acon.acon.feature.settings.component.SettingSectionItem
 import com.acon.acon.feature.settings.component.SettingSectionVersionItem
 import com.acon.acon.feature.settings.screen.SettingsUiState
 import com.acon.acon.feature.settings.type.SettingsType
+import com.acon.acon.feature.withdraw.amplitude.deleteAccountAmplitudeSettingsToWithDraw
 
 @Composable
 fun SettingsScreen(
@@ -165,7 +166,10 @@ fun SettingsScreen(
                     Spacer(Modifier.height(16.dp))
                     SettingSectionItem(
                         settingsType = SettingsType.DELETE_ACCOUNT,
-                        onClickContinue = onDeleteAccountScreen
+                        onClickContinue = {
+                            onDeleteAccountScreen()
+                            deleteAccountAmplitudeSettingsToWithDraw()
+                        }
                     )
                 }
 
