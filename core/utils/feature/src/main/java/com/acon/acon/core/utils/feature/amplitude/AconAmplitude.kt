@@ -1,12 +1,10 @@
 package com.acon.acon.core.utils.feature.amplitude
 
 import android.content.Context
-import android.util.Log
 import com.acon.acon.core.utils.feature.BuildConfig
 import com.amplitude.android.Amplitude
 import com.amplitude.android.AutocaptureOption
 import com.amplitude.android.Configuration
-import com.amplitude.common.Logger
 
 object AconAmplitude {
     private lateinit var amplitude: Amplitude
@@ -20,7 +18,6 @@ object AconAmplitude {
                 Configuration(
                     apiKey = apiKey,
                     context = context,
-                    useAppSetIdForDeviceId = false,
                     autocapture = setOf(
                         AutocaptureOption.SESSIONS,
                         AutocaptureOption.APP_LIFECYCLES

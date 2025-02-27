@@ -17,7 +17,7 @@ object AconTestAmplitude {
             testAmplitude = Amplitude(
                 Configuration(
                     apiKey = apiKey,
-                    context = context.applicationContext,
+                    context = context,
                     autocapture = setOf(
                         AutocaptureOption.SESSIONS,
                         AutocaptureOption.APP_LIFECYCLES
