@@ -6,6 +6,10 @@ sealed interface AreaVerificationSideEffect {
         val packageName: String
     ) : AreaVerificationSideEffect
 
+    data class NavigateToGPSSettings(
+        val packageName: String
+    ) : AreaVerificationSideEffect
+
     data class NavigateToNextScreen(
         val latitude: Double,
         val longitude: Double

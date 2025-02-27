@@ -3,6 +3,7 @@ package com.acon.acon.feature.areaverification
 import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -57,6 +58,13 @@ fun AreaVerificationScreenContainer(
             when (effect) {
                 is AreaVerificationSideEffect.NavigateToSettings -> {
                     val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                        data = Uri.fromParts("package", effect.packageName, null)
+                    }
+                    context.startActivity(intent)
+                }
+
+                is AreaVerificationSideEffect.NavigateToGPSSettings -> {
+                    val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS).apply {
                         data = Uri.fromParts("package", effect.packageName, null)
                     }
                     context.startActivity(intent)

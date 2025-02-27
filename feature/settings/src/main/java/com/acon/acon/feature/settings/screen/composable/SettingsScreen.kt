@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -44,6 +46,7 @@ fun SettingsScreen(
     BackHandler {
         navigateBack()
     }
+    val scrollState = rememberScrollState()
 
     when(state) {
         is SettingsUiState.Default -> {
@@ -64,6 +67,7 @@ fun SettingsScreen(
                 modifier = modifier
                     .background(AconTheme.color.Gray9)
                     .padding(horizontal = 16.dp)
+                    .verticalScroll(scrollState),
             ) {
                 if(state.isLogin) {
                     Spacer(Modifier.height(42.dp))

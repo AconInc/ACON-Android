@@ -21,6 +21,7 @@ import javax.inject.Inject
 
 private const val ONBOARDING_TOTAL_PAGES = 5;
 
+@Suppress("IMPLICIT_CAST_TO_ANY")
 @HiltViewModel
 class OnboardingViewModel @Inject constructor(
     private val onboardingRepository: OnboardingRepository
@@ -216,9 +217,11 @@ class OnboardingViewModel @Inject constructor(
     }
 
     fun onBackClicked() = intent {
-        val nextPageState = when (state.currentState) {
+        val nextPageState : OnboardingScreenState = when (state.currentState) {
             is OnboardingPageState.Page1State -> {
                 state.copy(
+                    currentPage = 1,
+                    currentState = OnboardingPageState.Page1State()
                 )
             }
             is OnboardingPageState.Page2State -> {
@@ -246,8 +249,11 @@ class OnboardingViewModel @Inject constructor(
                 )
             }
         }
+         reduce { nextPageState ?: state }
 
-        reduce { nextPageState ?: state }
+        if (state.currentState == OnboardingPageState.Page1State()) {
+            postSideEffect(OnboardingScreenSideEffect.CancelOnboarding)
+        }
     }
 
     fun navigateToSpotListView() = intent {
@@ -310,6 +316,7 @@ sealed class OnboardingPageState {
 sealed interface OnboardingScreenSideEffect {
     data object NavigateToLoadingPage: OnboardingScreenSideEffect
     data object NavigateToSpotListView: OnboardingScreenSideEffect
+    data object CancelOnboarding: OnboardingScreenSideEffect
 }
 
 @Parcelize

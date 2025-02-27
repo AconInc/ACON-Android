@@ -36,7 +36,7 @@ internal fun NavGraphBuilder.settingsNavigation(
                     }
                 },
                 onNavigateToOnboardingScreen = {
-                    navController.navigate(OnboardingRoute.OnboardingScreen)
+                    navController.navigate(OnboardingRoute.OnboardingScreen.fromSettings())
                 },
                 onNavigateLocalVerificationScreen = {
                     navController.navigate(SettingsRoute.LocalVerification)
