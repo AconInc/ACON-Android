@@ -41,17 +41,18 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.util.fastForEach
+import androidx.compose.ui.util.fastForEachIndexed
 import com.acon.acon.core.designsystem.blur.LocalHazeState
 import com.acon.acon.core.designsystem.blur.defaultHazeEffect
 import com.acon.acon.core.designsystem.component.bottomsheet.LoginBottomSheet
 import com.acon.acon.core.designsystem.component.loading.SkeletonItem
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.core.utils.feature.action.BackOnPressed
-import com.acon.acon.core.utils.feature.amplitude.AconAmplitude
 import com.acon.acon.feature.spot.R
 import com.acon.acon.feature.spot.screen.spotlist.SpotListUiState
+import com.acon.acon.feature.spot.screen.spotlist.amplitude.amplitudeSpotListSignIn
 import com.acon.acon.feature.spot.screen.spotlist.composable.bottomsheet.SpotFilterBottomSheet
+import com.acon.acon.feature.spot.screen.spotlist.amplitude.spotListSpotNumberAmplitude
 import com.acon.acon.feature.spot.state.ConditionState
 import com.github.fengdai.compose.pulltorefresh.PullToRefresh
 import com.github.fengdai.compose.pulltorefresh.rememberPullToRefreshState
@@ -107,10 +108,6 @@ internal fun SpotListScreen(
         },
         color = AconTheme.color.Gray9
     ) {
-        AconAmplitude.trackEvent(
-            eventName = "home",
-            properties = mapOf("did_login?" to true)
-        )
         when (state) {
             is SpotListUiState.Success -> {
                 if (state.showFilterBottomSheet) {
@@ -193,8 +190,9 @@ internal fun SpotListScreen(
                                         color = AconTheme.color.White,
                                         modifier = Modifier.padding(top = 16.dp)
                                     )
+
                                     Spacer(modifier = Modifier.height(12.dp))
-                                    state.spotList.fastForEach { spot ->
+                                    state.spotList.fastForEachIndexed { index, spot ->
                                         val isFirstRank = spot === state.spotList.first()
                                         SpotItem(
                                             spot = spot,
@@ -204,6 +202,7 @@ internal fun SpotListScreen(
                                                 .aspectRatio(if (isFirstRank) 328f / 408f else 328f / 128f)
                                                 .clickable {
                                                     onSpotItemClick(spot.id)
+                                                    spotListSpotNumberAmplitude(index + 1)
                                                 },
                                         )
                                         if (spot !== state.spotList.last())
@@ -310,7 +309,10 @@ internal fun SpotListScreen(
                     LoginBottomSheet(
                         hazeState = LocalHazeState.current,
                         onDismissRequest = { onLoginBottomSheetShowStateChange(false) },
-                        onGoogleSignIn = onGoogleSignIn,
+                        onGoogleSignIn = {
+                            onGoogleSignIn()
+                            amplitudeSpotListSignIn()
+                        },
                         onTermOfUse = onTermOfUse,
                         onPrivatePolicy = onPrivatePolicy
                     )
@@ -370,9 +372,10 @@ internal fun SpotListScreen(
                                         color = AconTheme.color.White,
                                         modifier = Modifier.padding(top = 16.dp)
                                     )
+
                                     Spacer(modifier = Modifier.height(12.dp))
-                                    state.spotList.fastForEach { spot ->
-                                        val isFirstRank = spot === state.spotList.first()
+                                    state.spotList.fastForEachIndexed { index, spot ->
+                                    val isFirstRank = spot === state.spotList.first()
                                         SpotItem(
                                             spot = spot,
                                             isFirstRank = isFirstRank,
@@ -381,6 +384,7 @@ internal fun SpotListScreen(
                                                 .aspectRatio(if (isFirstRank) 328f / 408f else 328f / 128f)
                                                 .clickable {
                                                     onSpotItemClick(spot.id)
+                                                    spotListSpotNumberAmplitude(index + 1)
                                                 },
                                         )
                                         if (spot !== state.spotList.last())
