@@ -24,10 +24,12 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -46,12 +48,14 @@ import com.acon.acon.core.designsystem.dropShadow
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.domain.model.spot.SpotDetailInfo
 import com.acon.acon.domain.type.SpotType
+import com.acon.acon.feature.spot.screen.spotdetail.SpotDetailUiState
+import com.acon.acon.feature.spot.screen.spotdetail.amplitude.spotDetailAmplitudeDuration
+import com.acon.acon.feature.spot.screen.spotdetail.amplitude.spotDetailAmplitudeFindWay
 import com.acon.acon.feature.spot.screen.spotdetail.composable.component.MenuItem
 import com.acon.acon.feature.spot.screen.spotdetail.composable.component.MoveToTopFAB
 import com.acon.acon.feature.spot.screen.spotdetail.composable.component.RestaurantBottomActionBar
 import com.acon.acon.feature.spot.screen.spotdetail.composable.component.SpotChip
 import com.acon.acon.feature.spot.screen.spotdetail.composable.component.SpotDetailTopBar
-import com.acon.acon.feature.spot.screen.spotdetail.SpotDetailUiState
 import dev.chrisbanes.haze.hazeSource
 import kotlinx.coroutines.launch
 
@@ -67,6 +71,13 @@ internal fun SpotDetailScreen(
     val scrollIsAtTop by remember {
         derivedStateOf {
             scrollState.value == 0
+        }
+    }
+
+    val startTime = rememberSaveable { System.currentTimeMillis() }
+    DisposableEffect(Unit) {
+        onDispose {
+            spotDetailAmplitudeDuration(startTime)
         }
     }
 
@@ -231,6 +242,7 @@ internal fun SpotDetailScreen(
                         basicAcornCount = state.spotDetailInfo.basicAcornCount,
                         onClickFindDirections = {
                             onFindWayButtonClick()
+                            spotDetailAmplitudeFindWay()
                         },
                         modifier = Modifier
                             .background(AconTheme.color.Gray9)
@@ -241,6 +253,7 @@ internal fun SpotDetailScreen(
                     )
                 }
             }
+
             is SpotDetailUiState.Loading -> {
                 Column(
                     modifier = Modifier
@@ -309,12 +322,9 @@ internal fun SpotDetailScreen(
                             )
                         }
                     }
-
-
                 }
-
-
             }
+
             is SpotDetailUiState.LoadFailed -> {
                 // TODO : 로드 실패 뷰
             }
