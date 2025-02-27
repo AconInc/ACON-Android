@@ -11,6 +11,7 @@ import com.acon.acon.feature.onboarding.type.MoodItems
 import com.acon.acon.feature.onboarding.type.PlaceItems
 import com.acon.acon.feature.onboarding.type.PreferPlaceItems
 import com.acon.acon.feature.onboarding.R
+import com.acon.acon.feature.onboarding.screen.logOnboardingEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
@@ -145,7 +146,8 @@ class OnboardingViewModel @Inject constructor(
     fun navigateToNextPage() = intent {
         val nextPageState = when (val currentPageState = state.currentState) {
             is OnboardingPageState.Page1State -> {
-                Log.e("지금 넣으려고 시도: " , "${currentPageState.selectedCard}")
+                logOnboardingEvent("complete_dislike_food?", currentPageState.selectedCard, "dislike_food")
+
                 state.copy(
                     currentPage = 2,
                     onboardingResult = state.onboardingResult.copy(
@@ -155,6 +157,8 @@ class OnboardingViewModel @Inject constructor(
                 )
             }
             is OnboardingPageState.Page2State -> {
+                logOnboardingEvent("complete_favorite_food_rank?", currentPageState.selectedCard, "favorite_food_rank")
+
                 state.copy(
                     currentPage = 3,
                     onboardingResult = state.onboardingResult.copy(
@@ -164,6 +168,8 @@ class OnboardingViewModel @Inject constructor(
                 )
             }
             is OnboardingPageState.Page3State -> {
+                logOnboardingEvent("complete_favorite_spot?", currentPageState.selectedCard, "favorite_spot")
+
                 state.copy(
                     currentPage = 4,
                     onboardingResult = state.onboardingResult.copy(
@@ -173,6 +179,8 @@ class OnboardingViewModel @Inject constructor(
                 )
             }
             is OnboardingPageState.Page4State -> {
+                logOnboardingEvent("complete_favorite_spot_mood?", currentPageState.selectedCard, "favorite_spot_mood")
+
                 state.copy(
                     currentPage = 5,
                     onboardingResult = state.onboardingResult.copy(
@@ -182,6 +190,8 @@ class OnboardingViewModel @Inject constructor(
                 )
             }
             is OnboardingPageState.Page5State -> {
+                logOnboardingEvent("complete_favorite_spot_style_rank?", currentPageState.selectedCard, "favortie_spot_style_rank")
+
                 var updatedState = state.copy(
                     onboardingResult = state.onboardingResult.copy(
                         favoriteSpotRank = currentPageState.selectedCard.toList()
