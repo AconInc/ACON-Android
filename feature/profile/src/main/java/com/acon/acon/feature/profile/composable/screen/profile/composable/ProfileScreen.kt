@@ -38,6 +38,7 @@ import com.acon.acon.core.designsystem.component.topbar.AconTopBar
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.feature.profile.R
+import com.acon.acon.feature.profile.composable.amplitude.profileAmplitude
 import com.acon.acon.feature.profile.composable.component.ProfileInfo
 import com.acon.acon.feature.profile.composable.screen.profile.ProfileUiState
 import com.acon.acon.feature.profile.composable.type.ProfileInfoType
@@ -193,7 +194,10 @@ fun ProfileScreen(
                 LoginBottomSheet(
                     hazeState = LocalHazeState.current,
                     onDismissRequest = { onBottomSheetShowStateChange(false) },
-                    onGoogleSignIn = onGoogleSignIn,
+                    onGoogleSignIn = {
+                        onGoogleSignIn()
+                        profileAmplitude()
+                    },
                     onTermOfUse = onTermOfUse,
                     onPrivatePolicy = onPrivatePolicy
                 )
