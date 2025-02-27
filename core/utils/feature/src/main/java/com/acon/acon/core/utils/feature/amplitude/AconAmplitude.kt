@@ -34,6 +34,10 @@ object AconAmplitude {
         }
     }
 
+    fun setUserId(userId: String) {
+        amplitude.setUserId(userId)
+    }
+
     fun trackEvent(eventName: String, properties: Map<String, Any> = emptyMap()) {
         if (AconAmplitude::amplitude.isInitialized) {
             amplitude.track(eventName, properties)

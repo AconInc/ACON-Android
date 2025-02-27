@@ -14,7 +14,7 @@ object AconTestAmplitude {
         context: Context,
         apiKey: String = BuildConfig.AMPLITUDE_API_TEST_KEY
     ) {
-        if (!AconTestAmplitude::testAmplitude.isInitialized) {
+        if (!::testAmplitude.isInitialized) {
             testAmplitude = Amplitude(
                 Configuration(
                     apiKey = apiKey,
@@ -33,6 +33,10 @@ object AconTestAmplitude {
                 )
             )
         }
+    }
+
+    fun setUserId(userId: String) {
+        testAmplitude.setUserId(userId)
     }
 
     fun trackEvent(eventName: String, properties: Map<String, Any> = emptyMap()) {
