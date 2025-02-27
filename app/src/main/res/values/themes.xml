@@ -6,7 +6,6 @@
 
     <style name="Theme.Acon.Splash" parent="Theme.SplashScreen">
         <item name="android:windowSplashScreenBackground" tools:targetApi="S">#111111</item>
-        <item name="android:windowSplashScreenIconBackgroundColor" tools:targetApi="S">#111111</item>
         <item name="windowSplashScreenAnimationDuration" tools:targetApi="S">200</item>
         <item name="postSplashScreenTheme">@style/Theme.Acon</item>
     </style>
