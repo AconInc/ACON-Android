@@ -5,6 +5,7 @@ import com.amplitude.android.Amplitude
 import com.amplitude.android.AutocaptureOption
 import com.acon.acon.core.utils.feature.BuildConfig
 import com.amplitude.android.Configuration
+import com.amplitude.common.Logger
 
 object AconTestAmplitude {
     private lateinit var testAmplitude: Amplitude
@@ -19,9 +20,16 @@ object AconTestAmplitude {
                     apiKey = apiKey,
                     context = context,
                     autocapture = setOf(
-                        AutocaptureOption.SESSIONS,
-                        AutocaptureOption.APP_LIFECYCLES
-                    )
+                        AutocaptureOption.SESSIONS
+                    ),
+                    flushIntervalMillis = 15000,
+                    flushQueueSize = 20,
+                    flushMaxRetries = 3,
+                    useBatch = true,
+                    flushEventsOnClose = true,
+                    useAppSetIdForDeviceId = false,
+                    useAdvertisingIdForDeviceId = false,
+                    newDeviceIdPerInstall = false,
                 )
             )
         }
@@ -30,6 +38,7 @@ object AconTestAmplitude {
     fun trackEvent(eventName: String, properties: Map<String, Any> = emptyMap()) {
         if (AconTestAmplitude::testAmplitude.isInitialized) {
             testAmplitude.track(eventName, properties)
+            testAmplitude.logger.logMode = Logger.LogMode.WARN
         }
     }
 

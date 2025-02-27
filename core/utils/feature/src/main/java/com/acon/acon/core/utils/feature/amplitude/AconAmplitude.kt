@@ -19,9 +19,16 @@ object AconAmplitude {
                     apiKey = apiKey,
                     context = context,
                     autocapture = setOf(
-                        AutocaptureOption.SESSIONS,
-                        AutocaptureOption.APP_LIFECYCLES
+                        AutocaptureOption.SESSIONS
                     ),
+                    flushIntervalMillis = 15000,
+                    flushQueueSize = 20,
+                    flushMaxRetries = 3,
+                    useBatch = true,
+                    flushEventsOnClose = true,
+                    useAppSetIdForDeviceId = false,
+                    useAdvertisingIdForDeviceId = false,
+                    newDeviceIdPerInstall = false,
                 )
             )
         }
