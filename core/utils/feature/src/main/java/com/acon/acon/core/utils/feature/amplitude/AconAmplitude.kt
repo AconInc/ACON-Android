@@ -10,7 +10,6 @@ import com.amplitude.common.Logger
 
 object AconAmplitude {
     private lateinit var amplitude: Amplitude
-    private const val TAG = "AconAmplitude"
 
     fun initialize(
         context: Context,
@@ -34,15 +33,12 @@ object AconAmplitude {
     fun trackEvent(eventName: String, properties: Map<String, Any> = emptyMap()) {
         if (AconAmplitude::amplitude.isInitialized) {
             amplitude.track(eventName, properties)
-            amplitude.logger.logMode = Logger.LogMode.WARN
-            Log.d(TAG, "eventName: $eventName, properties : $properties")
         }
     }
 
     fun setUserProperty(userId: String) {
         if (AconAmplitude::amplitude.isInitialized) {
             amplitude.setUserId(userId)
-            Log.d(TAG, "userId: $userId")
         }
     }
 }
