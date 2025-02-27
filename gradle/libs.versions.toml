@@ -45,6 +45,8 @@ uiToolingPreviewAndroidVersion = "1.8.0-alpha04"
 playServicesLocationVersion = "21.3.0"
 gson = "2.10.1"
 
+amplitudeVersion="1.20.1"
+
 ## Naver Map
 naverMapCompose = "1.8.0"
 naverMapLocation = "21.0.2"
@@ -64,6 +66,7 @@ uiTestAndroidVersion = "1.7.6"
 kotlinxImmutable = "0.3.7"
 activityKtx = "1.8.2"
 foundationLayoutAndroid = "1.7.2"
+compiler = "3.2.0-alpha11"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -117,6 +120,8 @@ pulltorefresh = { module = "com.github.fengdai.compose:pulltorefresh", version.r
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 retrofit-kotlin-serialization-converter = { group = "com.jakewharton.retrofit", name = "retrofit2-kotlinx-serialization-converter", version.ref = "retrofitKotlinSerializationConverter" }
 
+amplitude = { module = "com.amplitude:analytics-android", version.ref = "amplitudeVersion" }
+
 orbit-compose = { module = "org.orbit-mvi:orbit-compose", version.ref = "orbit" }
 orbit-viewmodel = { module = "org.orbit-mvi:orbit-viewmodel", version.ref = "orbit" }
 
@@ -144,6 +149,7 @@ androidx-activity-ktx = { group = "androidx.activity", name = "activity-ktx", ve
 androidx-foundation-layout-android = { group = "androidx.compose.foundation", name = "foundation-layout-android", version.ref = "foundationLayoutAndroid" }
 
 gson = {module = "com.google.code.gson:gson", version.ref = "gson"}
+androidx-compiler = { group = "androidx.databinding", name = "compiler", version.ref = "compiler" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

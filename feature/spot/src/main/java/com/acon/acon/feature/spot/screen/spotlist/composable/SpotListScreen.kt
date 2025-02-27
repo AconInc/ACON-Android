@@ -48,6 +48,7 @@ import com.acon.acon.core.designsystem.component.bottomsheet.LoginBottomSheet
 import com.acon.acon.core.designsystem.component.loading.SkeletonItem
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.core.utils.feature.action.BackOnPressed
+import com.acon.acon.core.utils.feature.amplitude.AconAmplitude
 import com.acon.acon.feature.spot.R
 import com.acon.acon.feature.spot.screen.spotlist.SpotListUiState
 import com.acon.acon.feature.spot.screen.spotlist.composable.bottomsheet.SpotFilterBottomSheet
@@ -106,6 +107,10 @@ internal fun SpotListScreen(
         },
         color = AconTheme.color.Gray9
     ) {
+        AconAmplitude.trackEvent(
+            eventName = "home",
+            properties = mapOf("did_login?" to true)
+        )
         when (state) {
             is SpotListUiState.Success -> {
                 if (state.showFilterBottomSheet) {

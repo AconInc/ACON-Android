@@ -1,7 +1,13 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.compose.compiler)
+}
+
+val localProperties = Properties().apply {
+    load(project.rootProject.file("local.properties").inputStream())
 }
 
 android {
@@ -13,6 +19,9 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
+
+        buildConfigField("String", "AMPLITUDE_API_TEST_KEY", "\"${localProperties["AMPLITUDE_API_TEST_KEY"]}\"")
+        buildConfigField("String", "AMPLITUDE_API_PRODUCTION_KEY", "\"${localProperties["AMPLITUDE_API_PRODUCTION_KEY"]}\"")
     }
 
     buildTypes {
@@ -30,6 +39,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
@@ -63,4 +73,7 @@ dependencies {
 
     implementation(libs.orbit.viewmodel)
     implementation(libs.orbit.compose)
+
+    implementation (libs.amplitude)
+    implementation ("com.google.android.gms:play-services-appset:16.0.2")
 }
