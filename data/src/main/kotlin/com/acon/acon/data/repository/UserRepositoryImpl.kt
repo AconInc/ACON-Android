@@ -1,5 +1,7 @@
 package com.acon.acon.data.repository
 
+import com.acon.acon.core.utils.feature.amplitude.AconAmplitude
+import com.acon.acon.core.utils.feature.amplitude.AconTestAmplitude
 import com.acon.acon.data.datasource.local.TokenLocalDataSource
 import com.acon.acon.data.datasource.remote.UserRemoteDataSource
 import com.acon.acon.data.dto.request.DeleteAccountRequest
@@ -40,7 +42,8 @@ class UserRepositoryImpl @Inject constructor(
 
 
             _isLogin.value = true
-
+            AconAmplitude.setUserProperty(loginResponse.externalUUID)
+            AconTestAmplitude.setUserProperty(loginResponse.externalUUID)
             loginResponse.toVerificationStatus()
         }.onFailure {
             _isLogin.value = false

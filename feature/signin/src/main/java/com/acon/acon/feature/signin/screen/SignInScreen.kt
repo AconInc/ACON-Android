@@ -31,12 +31,12 @@ import androidx.compose.ui.unit.dp
 import com.acon.acon.core.designsystem.component.button.AconGoogleLoginButton
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
+import com.acon.acon.feature.signin.R
 import com.acon.acon.feature.signin.screen.component.SignInTopBar
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
-import com.acon.acon.feature.signin.R
 import kotlinx.coroutines.delay
 
 @Composable
@@ -106,7 +106,12 @@ fun SignInScreen(
                         .padding(horizontal = 20.dp)
                         .padding(top = 16.dp)
                         .alpha(alpha),
-                    onClick = { if (alpha >= 0.75f) onClickLoginGoogle() },
+                    onClick = {
+                        if (alpha >= 0.75f) {
+                            onClickLoginGoogle()
+                            amplitudeSignIn()
+                        }
+                    },
                     textStyle = AconTheme.typography.subtitle1_16_med
                 )
                 Text(
