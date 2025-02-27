@@ -44,6 +44,8 @@ import com.acon.acon.core.designsystem.component.dialog.AconOneButtonDialog
 import com.acon.acon.core.designsystem.component.dialog.AconTwoButtonDialog
 import com.acon.acon.core.designsystem.component.topbar.AconTopBar
 import com.acon.acon.core.designsystem.theme.AconTheme
+import com.acon.acon.feature.upload.amplitude.uploadAmplitudeReview
+import com.acon.acon.feature.upload.amplitude.uploadAmplitudeSearch
 import com.acon.acon.feature.upload.component.DotoriIndicator
 import com.acon.acon.feature.upload.component.LocationSearchBottomSheet
 import com.acon.acon.feature.upload.component.LocationSelectionButton
@@ -103,6 +105,7 @@ fun UploadContainer(
         ) {
             when (state.currentStep) {
                 UploadStep.UPLOAD_SEARCH -> {
+                    LaunchedEffect(state.currentStep) { uploadAmplitudeSearch() }
                     UploadSearchScreen(
                         modifier = Modifier.fillMaxSize(),
                         state = state,
@@ -414,7 +417,15 @@ fun UploadReviewScreen(
             enabledBackgroundColor = AconTheme.color.Main_org1,
             disabledBackgroundColor = AconTheme.color.Gray7,
             isEnabled = state.isButtonEnabled,
-            onClick = { onIntent(UploadIntent.UploadDotori) }
+            onClick = {
+                onIntent(UploadIntent.UploadDotori)
+                state.selectedLocation?.let {
+                    uploadAmplitudeReview(
+                        aconNumber = state.selectedCount,
+                        spotId = it.spotId
+                    )
+                }
+            }
         )
     }
 }
