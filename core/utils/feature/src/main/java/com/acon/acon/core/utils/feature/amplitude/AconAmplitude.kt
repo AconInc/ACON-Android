@@ -6,6 +6,7 @@ import com.acon.acon.core.utils.feature.BuildConfig
 import com.amplitude.android.Amplitude
 import com.amplitude.android.AutocaptureOption
 import com.amplitude.android.Configuration
+import com.amplitude.android.events.Identify
 import com.amplitude.common.Logger
 
 object AconAmplitude {
@@ -43,6 +44,19 @@ object AconAmplitude {
         if (AconAmplitude::amplitude.isInitialized) {
             amplitude.setUserId(userId)
             Log.d(TAG, "userId: $userId")
+        }
+    }
+
+    fun setUserProperties(properties: Map<String, String>) {
+        if (::amplitude.isInitialized) {
+            val identify = Identify()
+            properties.forEach { (key, value) ->
+                identify.set(key, value)
+            }
+            amplitude.identify(identify)
+            Log.d(TAG, "User Properties Set: $properties")
+        } else {
+            Log.e(TAG, "Amplitude가 초기화되지 않음")
         }
     }
 }

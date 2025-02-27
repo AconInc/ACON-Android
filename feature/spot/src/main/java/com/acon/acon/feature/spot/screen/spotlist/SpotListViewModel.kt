@@ -12,6 +12,7 @@ import com.acon.acon.domain.model.spot.Spot
 import com.acon.acon.domain.repository.SocialRepository
 import com.acon.acon.domain.repository.SpotRepository
 import com.acon.acon.domain.repository.TokenRepository
+import com.acon.acon.feature.spot.amplitudeClickFilter
 import com.acon.acon.feature.spot.state.ConditionState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
@@ -229,6 +230,7 @@ class SpotListViewModel @Inject constructor(
                 state.copy(showFilterBottomSheet = show)
             }
         }
+        amplitudeClickFilter()
     }
 
     fun onResetFilter(location: Location) = intent {
