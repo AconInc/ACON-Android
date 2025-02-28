@@ -75,7 +75,7 @@ fun AconTextField(
     }
 
     val textColor = when (status) {
-        TextFieldStatus.Empty -> AconColors.Gray6
+        TextFieldStatus.Empty -> AconColors.White
         TextFieldStatus.Inactive -> AconColors.White
         TextFieldStatus.Focused -> AconColors.White
         TextFieldStatus.Active -> AconColors.White
