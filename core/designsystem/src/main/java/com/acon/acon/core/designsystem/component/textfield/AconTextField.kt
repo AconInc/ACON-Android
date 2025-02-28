@@ -83,6 +83,8 @@ fun AconTextField(
         TextFieldStatus.Disabled -> AconColors.White
     }
 
+    val placeholderColor = AconColors.Gray6
+
     val isEnabled = status != TextFieldStatus.Disabled
 
     Box(
@@ -128,7 +130,7 @@ fun AconTextField(
                             Text(
                                 text = placeholder,
                                 style = AconTheme.typography.body2_14_reg,
-                                color = textColor,
+                                color = placeholderColor,
                             )
                         }
                         innerTextField()

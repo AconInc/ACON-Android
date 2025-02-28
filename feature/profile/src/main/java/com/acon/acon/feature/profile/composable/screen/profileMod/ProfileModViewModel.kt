@@ -143,7 +143,7 @@ class ProfileModViewModel @Inject constructor(
             return@intent
         }
 
-        if (digitsOnly.length <= 8) { // 일단 8자 이내면 쓰는 게 다 보여야함
+        if (digitsOnly.length <= 8) {
             reduce {
                 state.copy(
                     birthdayState = digitsOnly,
