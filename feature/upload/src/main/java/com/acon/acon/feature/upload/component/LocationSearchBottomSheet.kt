@@ -197,9 +197,19 @@ fun LocationSearchBottomSheet(
                                             address = "",
                                             spotType = ""
                                         )
-                                    viewModel.onIntent(UploadIntent.SelectLocation(spotItem))
-                                    onLocationSelected(spotItem)
-                                    onDismiss()
+
+                                    currentLocation?.let { location ->
+                                        processingLocation = spotItem
+                                        viewModel.onIntent(
+                                            UploadIntent.VerifyLocation(
+                                                spotId = suggestion.spotId,
+                                                latitude = location.latitude,
+                                                longitude = location.longitude
+                                            )
+                                        )
+                                    } ?: run {
+                                        showVerificationFailDialog = true
+                                    }
                                 }
                             )
                         }

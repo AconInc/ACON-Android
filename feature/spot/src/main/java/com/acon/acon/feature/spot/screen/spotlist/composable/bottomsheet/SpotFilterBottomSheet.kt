@@ -22,6 +22,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -135,6 +136,27 @@ fun SpotFilterBottomSheet(
         onDismissRequest = onDismissRequest,
         dragHandle = null
     ) {
+        // 필터 선택 여부 확인
+        val isAnyFilterSelected = remember(
+            selectedRestaurantFeatures,
+            selectedCafeFeatures,
+            selectedCompanionTypes,
+            selectedVisitPurposes,
+            selectedRestaurantWalkingTime,
+            selectedCafeWalkingTime,
+            selectedRestaurantPriceRange,
+            selectedCafePriceRange
+        ) {
+            selectedRestaurantFeatures.isNotEmpty() ||
+            selectedCafeFeatures.isNotEmpty() ||
+            selectedCompanionTypes.isNotEmpty() ||
+            selectedVisitPurposes.isNotEmpty() ||
+            selectedRestaurantWalkingTime != AvailableWalkingTimeType.UNDER_15_MINUTES ||
+            selectedCafeWalkingTime != AvailableWalkingTimeType.UNDER_15_MINUTES ||
+            selectedRestaurantPriceRange != RestaurantPriceRangeType.UNDER_10000 ||
+            selectedCafePriceRange != CafePriceRangeType.UNDER_5000
+        }
+
         Box {
             Column(
                 modifier = Modifier
@@ -292,6 +314,7 @@ fun SpotFilterBottomSheet(
                     )
                 },
                 isFilteredResultFetching = isFilteredResultFetching,
+                isAnyFilterSelected = isAnyFilterSelected,
                 composition = lottieComposition,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -355,9 +378,12 @@ private fun BottomCompleteRow(
     onReset: () -> Unit,
     onComplete: () -> Unit,
     isFilteredResultFetching: Boolean,
+    isAnyFilterSelected: Boolean,
     composition: LottieComposition?,
     modifier: Modifier = Modifier
 ) {
+    val isEnabled = isAnyFilterSelected && !isFilteredResultFetching
+
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
@@ -386,10 +412,10 @@ private fun BottomCompleteRow(
                 .weight(1f)
                 .clip(RoundedCornerShape(6.dp))
                 .background(
-                    color = if (isFilteredResultFetching) AconTheme.color.Gray7 else AconTheme.color.Gray5
+                    color = if (isEnabled) AconTheme.color.Gray5 else AconTheme.color.Gray7
                 ).padding(vertical = 12.dp)
-                .noRippleClickable { if (isFilteredResultFetching.not()) onComplete() },
-            contentAlignment = Alignment.Center
+                .noRippleClickable(enabled = isEnabled) { onComplete() },
+                contentAlignment = Alignment.Center
         ) {
             if (isFilteredResultFetching) {
                 LottieAnimation(
@@ -401,7 +427,7 @@ private fun BottomCompleteRow(
                 Text(
                     text = stringResource(R.string.filter_see_result),
                     style = AconTheme.typography.subtitle1_16_med,
-                    color = AconTheme.color.White
+                    color = if (isEnabled) AconTheme.color.White else AconTheme.color.Gray5
                 )
             }
         }
