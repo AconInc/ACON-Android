@@ -34,7 +34,7 @@ fun EmptySpotListView(
         )
         Text(
             text = stringResource(R.string.alert_no_spot),
-            style = AconTheme.typography.body2_14_reg,
+            style = AconTheme.typography.subtitle1_16_med,
             color = AconTheme.color.Gray4,
             modifier = Modifier.padding(top = 24.dp)
         )

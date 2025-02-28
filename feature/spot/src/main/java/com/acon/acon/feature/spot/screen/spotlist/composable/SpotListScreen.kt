@@ -464,7 +464,7 @@ internal fun SpotListScreen(
 
                                     Spacer(modifier = Modifier.height(12.dp))
                                     state.spotList.fastForEachIndexed { index, spot ->
-                                    val isFirstRank = spot === state.spotList.first()
+                                        val isFirstRank = spot === state.spotList.first()
                                         SpotItem(
                                             spot = spot,
                                             isFirstRank = isFirstRank,
@@ -479,22 +479,6 @@ internal fun SpotListScreen(
                                         if (spot !== state.spotList.last())
                                             Spacer(modifier = Modifier.height(12.dp))
                                     }
-                                }
-                                Column(
-                                    modifier = Modifier
-                                        .padding(top = 12.dp)
-                                        .fillMaxWidth()
-                                        .onSizeChanged { size ->
-                                            scrollableInvisibleHeightPx = size.height
-                                        },
-                                    horizontalAlignment = Alignment.CenterHorizontally
-                                ) {
-                                    Text(
-                                        modifier = Modifier.padding(top = 38.dp, bottom = 50.dp),
-                                        text = stringResource(R.string.alert_max_spot_count),
-                                        style = AconTheme.typography.body2_14_reg,
-                                        color = AconTheme.color.Gray5
-                                    )
                                 }
                             }
                         }
