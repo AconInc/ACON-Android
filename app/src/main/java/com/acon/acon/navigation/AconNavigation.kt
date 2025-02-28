@@ -147,16 +147,18 @@ fun AconNavigation(
                                     }
                                 }
                             } else {
-                                selectedBottomNavItem = item
-                                navController.navigate(
-                                    when (item) {
-                                        BottomNavType.SPOT -> SpotRoute.SpotList
-                                        BottomNavType.PROFILE -> ProfileRoute.Profile
-                                        else -> SpotRoute.SpotList
+                                if (selectedBottomNavItem != item) {
+                                    selectedBottomNavItem = item
+                                    navController.navigate(
+                                        when (item) {
+                                            BottomNavType.SPOT -> SpotRoute.SpotList
+                                            BottomNavType.PROFILE -> ProfileRoute.Profile
+                                            else -> SpotRoute.SpotList
+                                        }
+                                    ) {
+                                        popUpTo(SpotRoute.SpotList) { inclusive = false }
+                                        launchSingleTop = true
                                     }
-                                ) {
-                                    popUpTo(SpotRoute.SpotList) { inclusive = false }
-                                    launchSingleTop = true
                                 }
                             }
                         }
