@@ -118,7 +118,7 @@ fun DottoriSelectionBottomSheet(
         }
 
         AconFilledLargeButton(
-            text = stringResource(R.string.go_to_home),
+            text = stringResource(R.string.verify_success),
             textStyle = AconTheme.typography.head8_16_sb,
             enabledBackgroundColor = AconTheme.color.Gray5,
             disabledBackgroundColor = AconTheme.color.Gray8,

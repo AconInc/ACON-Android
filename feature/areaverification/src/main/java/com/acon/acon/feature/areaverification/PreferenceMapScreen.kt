@@ -189,7 +189,7 @@ fun PreferenceMapScreen(
         }
 
         AconFilledLargeButton(
-            text = stringResource(R.string.verify_complete),
+            text = stringResource(R.string.do_verify),
             textStyle = AconTheme.typography.head8_16_sb,
             enabledBackgroundColor = AconTheme.color.Gray5,
             disabledBackgroundColor = AconTheme.color.Gray8,
