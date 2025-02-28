@@ -116,4 +116,6 @@ dependencies {
 
     implementation(libs.haze)
     implementation(libs.haze.materials)
+
+    implementation ("androidx.core:core-splashscreen:1.0.0")
 }
