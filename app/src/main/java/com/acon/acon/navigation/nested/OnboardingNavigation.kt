@@ -43,6 +43,17 @@ internal fun NavGraphBuilder.onboardingNavigationNavigation(
                     } else {
                         navController.popBackStack()
                     }
+                },
+                skipOnboarding = {
+                    if (fromSettings) {
+                        navController.navigate(SettingsRoute.Settings) {
+                            popUpTo(SettingsRoute.Settings) {
+                                inclusive = false
+                            }
+                        }
+                    } else {
+                        navController.navigate(SpotRoute.SpotList)
+                    }
                 }
             )
         }

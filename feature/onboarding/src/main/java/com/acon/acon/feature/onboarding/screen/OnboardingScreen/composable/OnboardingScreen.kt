@@ -59,7 +59,11 @@ fun OnboardingScreen(
             totalPages = screenState.totalPages,
             currentPage = screenState.currentPage,
             onLeadingIconClicked = {
-                onBackClicked()
+                if (screenState.currentPage == 1){
+                    onSkipClicked()
+                } else {
+                    onBackClicked()
+                }
             },
             onTrailingIconClicked = {
                 onSkipClicked()

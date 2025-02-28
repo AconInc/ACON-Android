@@ -48,7 +48,7 @@ class OnboardingViewModel @Inject constructor(
         reduce {
             state.copy(showDialog = false)
         }
-        postSideEffect(OnboardingScreenSideEffect.NavigateToSpotListView)
+        postSideEffect(OnboardingScreenSideEffect.SkipOnboarding)
     }
 
     fun onCardClicked(id: String) = intent {
@@ -330,6 +330,7 @@ sealed interface OnboardingScreenSideEffect {
     data object NavigateToLoadingPage: OnboardingScreenSideEffect
     data object NavigateToSpotListView: OnboardingScreenSideEffect
     data object CancelOnboarding: OnboardingScreenSideEffect
+    data object SkipOnboarding: OnboardingScreenSideEffect
 }
 
 @Parcelize
