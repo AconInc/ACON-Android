@@ -55,7 +55,6 @@ import com.acon.acon.feature.profile.composable.component.ProfilePhotoBox
 import com.acon.acon.feature.profile.composable.screen.profileMod.BirthdayStatus
 import com.acon.acon.feature.profile.composable.screen.profileMod.BirthdayVisualTransformation
 import com.acon.acon.feature.profile.composable.screen.profileMod.NicknameStatus
-import com.acon.acon.feature.profile.composable.screen.profileMod.PlaceholderTransformation
 import com.acon.acon.feature.profile.composable.screen.profileMod.ProfileModSideEffect
 import com.acon.acon.feature.profile.composable.screen.profileMod.ProfileModState
 import com.acon.acon.feature.profile.composable.screen.profileMod.ProfileModViewModel
@@ -382,7 +381,7 @@ fun ProfileModScreen(
                 onClick = onSaveClicked,
                 isEnabled = (state.nicknameStatus == NicknameStatus.Valid) &&
                         (state.birthdayStatus != BirthdayStatus.Invalid("정확한 생년월일을 입력해주세요")) &&
-                        state.verifiedAreaList.isNotEmpty()
+                        (state.nickNameState != state.originalNickname || state.birthdayState != state.originalBirthday)
             )
         }
     }
