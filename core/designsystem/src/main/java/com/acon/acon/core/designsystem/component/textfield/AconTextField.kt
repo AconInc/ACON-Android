@@ -17,6 +17,7 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -137,13 +138,10 @@ fun AconTextField(
                     }
                     if (text.isNotEmpty()) {
                         if (isTyping){
-                            Icon(
-                                modifier = Modifier
-                                    .align(Alignment.CenterEnd)
-                                    .size(20.dp),
-                                imageVector = ImageVector.vectorResource(R.drawable.and_ic_progress_w_28),
-                                contentDescription = "Progress Icon",
-                                tint = Color.Unspecified
+                            CircularProgressIndicator(
+                                modifier = Modifier.align(Alignment.CenterEnd).size(16.dp),
+                                strokeWidth = 2.dp,
+                                color = AconColors.Gray6
                             )
                         } else {
                             Icon(
