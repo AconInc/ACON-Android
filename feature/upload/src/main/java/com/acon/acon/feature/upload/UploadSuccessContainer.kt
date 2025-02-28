@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,6 +28,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -48,7 +51,6 @@ fun UploadSuccessContainer(
 
     UploadSuccessScreen(
         modifier = modifier,
-        state = state,
         onIntent = viewModel::onIntent,
         onNavigateToSpotList = onNavigateToSpotList
     )
@@ -58,10 +60,10 @@ fun UploadSuccessContainer(
 fun UploadSuccessScreen(
     modifier: Modifier = Modifier,
     onIntent: (UploadIntent) -> Unit,
-    state: UploadState,
     onNavigateToSpotList: () -> Unit
 ) {
     var countdown by remember { mutableIntStateOf(5) }
+    val scrollState = rememberScrollState()
 
     LaunchedEffect(Unit) {
         while (countdown > 0) {
@@ -77,6 +79,7 @@ fun UploadSuccessScreen(
             .background(color = AconTheme.color.Gray9)
             .statusBarsPadding()
             .navigationBarsPadding()
+            .verticalScroll(scrollState)
     ) {
         AconTopBar(
             leadingIcon = {
@@ -156,18 +159,30 @@ fun UploadSuccessScreen(
                     modifier = Modifier.align(Alignment.CenterHorizontally)
                 )
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(12.dp))
                 AconFilledLargeButton(
                     text = "확인",
                     textStyle = AconTheme.typography.head8_16_sb,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(bottom = 36.dp),
+                        .padding(bottom = 40.dp),
                     disabledBackgroundColor = AconTheme.color.Gray7,
                     enabledBackgroundColor = AconTheme.color.Gray7,
                     onClick = onNavigateToSpotList
                 )
             }
         }
+    }
+}
+
+@Preview
+@Composable
+private fun UploadSuccessScreenPreview() {
+    AconTheme {
+        UploadSuccessScreen(
+            modifier = Modifier,
+            onIntent = {},
+            onNavigateToSpotList = {}
+        )
     }
 }
