@@ -20,6 +20,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.feature.settings.type.SettingsType
 import com.acon.acon.feature.settings.R
@@ -33,7 +34,8 @@ fun SettingSectionItem(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .background(color = AconTheme.color.Gray9),
+            .background(color = AconTheme.color.Gray9)
+            .noRippleClickable { onClickContinue() },
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
@@ -66,8 +68,7 @@ fun SettingSectionItem(
             imageVector = ImageVector.vectorResource(com.acon.acon.core.designsystem.R.drawable.ic_arrow_right_20),
             contentDescription = stringResource(R.string.execute_settings_content_description),
             modifier = Modifier
-                .padding(vertical = 6.dp)
-                .clickable { onClickContinue() },
+                .padding(vertical = 6.dp),
             tint = AconTheme.color.Gray4
         )
     }
