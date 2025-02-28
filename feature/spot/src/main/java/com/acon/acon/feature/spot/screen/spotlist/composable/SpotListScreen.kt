@@ -156,7 +156,7 @@ internal fun SpotListScreen(
                                     AvailableWalkingTimeType.UNDER_10_MINUTES -> "10분"
                                     AvailableWalkingTimeType.UNDER_15_MINUTES -> "15분"
                                     AvailableWalkingTimeType.UNDER_20_MINUTES -> "20분"
-                                    AvailableWalkingTimeType.OVER_20_MINUTES -> "20분 이상"
+                                    AvailableWalkingTimeType.OVER_20_MINUTES -> "25분 이상"
                                 }
                                 val isWalkingTimeDefault = it.restaurantWalkingTime == AvailableWalkingTimeType.UNDER_15_MINUTES
                                 amplitudeFilterWalkSlideRestaurant(walkingTime, isWalkingTimeDefault)
@@ -192,7 +192,7 @@ internal fun SpotListScreen(
                                     AvailableWalkingTimeType.UNDER_10_MINUTES -> "10분"
                                     AvailableWalkingTimeType.UNDER_15_MINUTES -> "15분"
                                     AvailableWalkingTimeType.UNDER_20_MINUTES -> "20분"
-                                    AvailableWalkingTimeType.OVER_20_MINUTES -> "20분 이상"
+                                    AvailableWalkingTimeType.OVER_20_MINUTES -> "25분 이상"
                                 }
                                 val isWalkingTimeDefault = it.cafeWalkingTime == AvailableWalkingTimeType.UNDER_15_MINUTES
                                 amplitudeFilterWalkSlideCafe(walkingTime, isWalkingTimeDefault)

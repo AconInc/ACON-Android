@@ -66,7 +66,7 @@
     <string name="under_10_minutes">10분</string>
     <string name="under_15_minutes">15분</string>
     <string name="under_20_minutes">20분</string>
-    <string name="over_20_minutes">20분 이상</string>
+    <string name="over_20_minutes">25분 이상</string>
 
     <string name="under_3000">3천원 이하</string>
     <string name="under_5000">5천원 이하</string>
