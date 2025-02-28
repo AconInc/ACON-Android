@@ -1,5 +1,6 @@
 package com.acon.acon.feature.signin.screen
 
+import android.util.Log
 import com.acon.acon.core.utils.feature.base.BaseContainerHost
 import com.acon.acon.domain.error.user.CredentialException
 import com.acon.acon.domain.repository.UserRepository
@@ -64,11 +65,20 @@ class SignInViewModel @Inject constructor(
     private fun isTokenValid() = intent {
         tokenRepository.getAccessToken().onSuccess { accessToken ->
             if (!accessToken.isNullOrEmpty()) {
-                tokenRepository.getAreaVerification().onSuccess {
-                    postSideEffect(SignInSideEffect.NavigateToSpotListView)
-                }.onFailure {
-                    postSideEffect(SignInSideEffect.NavigateToAreaVerification)
-                }
+                val areaVerificationResult = tokenRepository.getAreaVerification()
+
+                areaVerificationResult.fold(
+                    onSuccess = { isVerified ->
+                        if (isVerified) {
+                            postSideEffect(SignInSideEffect.NavigateToSpotListView)
+                        } else {
+                            postSideEffect(SignInSideEffect.NavigateToAreaVerification)
+                        }
+                    },
+                    onFailure = {
+
+                    }
+                )
             }
         }
     }
