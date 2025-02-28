@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -43,10 +44,11 @@ fun <T : CardItem> FoodGrid(
     selectedCard: Set<String>,
 ){
     LazyVerticalGrid(
-        modifier = modifier,
+        modifier = modifier.wrapContentHeight(),
         columns = GridCells.Fixed(columnSize),
         horizontalArrangement = Arrangement.spacedBy(10.dp),
         verticalArrangement = Arrangement.spacedBy(15.dp),
+        userScrollEnabled = false
     ){
         items(foodItems) { food ->
             FoodCard(
