@@ -29,6 +29,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
@@ -110,6 +111,7 @@ fun AconTextField(
                 color = textColor
             ),
             singleLine = true,
+            cursorBrush = SolidColor(AconColors.Success_blue1),
             keyboardOptions = keyboardOptions,
             keyboardActions = KeyboardActions(
                 onDone = {

@@ -55,6 +55,7 @@ import com.acon.acon.feature.profile.composable.component.ProfilePhotoBox
 import com.acon.acon.feature.profile.composable.screen.profileMod.BirthdayStatus
 import com.acon.acon.feature.profile.composable.screen.profileMod.BirthdayVisualTransformation
 import com.acon.acon.feature.profile.composable.screen.profileMod.NicknameStatus
+import com.acon.acon.feature.profile.composable.screen.profileMod.PlaceholderTransformation
 import com.acon.acon.feature.profile.composable.screen.profileMod.ProfileModSideEffect
 import com.acon.acon.feature.profile.composable.screen.profileMod.ProfileModState
 import com.acon.acon.feature.profile.composable.screen.profileMod.ProfileModViewModel
