@@ -21,7 +21,10 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
@@ -57,6 +60,7 @@ fun AconTextField(
 
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
+    //var isFocused by remember { mutableStateOf(false) }
 
     val backgroundColor = when (status) {
         TextFieldStatus.Empty -> AconColors.Gray9
@@ -129,7 +133,7 @@ fun AconTextField(
                             .fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        if (text.isEmpty()) {
+                        if (text.isEmpty() && status != TextFieldStatus.Focused) {
                             Text(
                                 text = placeholder,
                                 style = AconTheme.typography.body2_14_reg,
