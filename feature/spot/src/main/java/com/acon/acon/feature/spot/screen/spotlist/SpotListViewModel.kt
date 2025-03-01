@@ -179,7 +179,8 @@ class SpotListViewModel @Inject constructor(
                             (state as? SpotListUiState.Success)?.copy(
                                 spotList = spots,
                                 isRefreshing = false,
-                                legalAddressName = legalAddressName.area
+                                legalAddressName = legalAddressName.area,
+                                isFilteredListEmpty = spots.isEmpty()
                             ) ?: SpotListUiState.Success(
                                 spotList = spots,
                                 legalAddressName = legalAddressName.area,
@@ -277,6 +278,7 @@ sealed interface SpotListUiState {
         val spotList: List<Spot>,
         val legalAddressName: String,
         val isRefreshing: Boolean = false,
+        val isFilteredListEmpty: Boolean = false,
         val currentCondition: ConditionState? = null,
         val showFilterBottomSheet: Boolean = false,
         val isFilteredResultFetching: Boolean = false,
