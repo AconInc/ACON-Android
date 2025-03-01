@@ -48,7 +48,9 @@ class ProfileModViewModel @Inject constructor(
                     reduce {
                         state.copy(
                             selectedPhotoUri = profile.image,
+                            originalNickname = profile.nickname,
                             nickNameState = profile.nickname,
+                            originalBirthday = profile.birthDate?.filter { it.isDigit() } ?: "",
                             birthdayState = profile.birthDate?.filter { it.isDigit() } ?: ""
                         )
                     }
@@ -143,7 +145,7 @@ class ProfileModViewModel @Inject constructor(
             return@intent
         }
 
-        if (digitsOnly.length <= 8) { // 일단 8자 이내면 쓰는 게 다 보여야함
+        if (digitsOnly.length <= 8) {
             reduce {
                 state.copy(
                     birthdayState = digitsOnly,
@@ -372,8 +374,6 @@ class ProfileModViewModel @Inject constructor(
 
         }
     }
-
-
 }
 
 
@@ -385,11 +385,10 @@ data class ProfileModState(
     val nicknameStatus: NicknameStatus = NicknameStatus.Empty,
     val nicknameCount: Int = 0,
 
+    val originalBirthday: String = "",
     val birthdayFieldStatus: TextFieldStatus = TextFieldStatus.Inactive,
     val birthdayState: String = "",
     val birthdayStatus: BirthdayStatus = BirthdayStatus.Empty,
-
-    val verifiedAreaList: List<String> = listOf("쌍문동"),
 
     val showExitDialog: Boolean = false,
 

@@ -19,6 +19,7 @@ fun OnboardingContainer(
     navigateToLoadingView: () -> Unit = {},
     navigateToSpotListView: () -> Unit = {},
     cancelOnboarding: () -> Unit = {},
+    skipOnboarding: () -> Unit = {},
 ){
     val state = viewModel.collectAsState().value
 
@@ -41,6 +42,9 @@ fun OnboardingContainer(
             }
             OnboardingScreenSideEffect.CancelOnboarding -> {
                 cancelOnboarding()
+            }
+            OnboardingScreenSideEffect.SkipOnboarding -> {
+                skipOnboarding()
             }
         }
     }

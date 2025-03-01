@@ -17,10 +17,14 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
@@ -28,6 +32,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
@@ -55,6 +60,7 @@ fun AconTextField(
 
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
+    //var isFocused by remember { mutableStateOf(false) }
 
     val backgroundColor = when (status) {
         TextFieldStatus.Empty -> AconColors.Gray9
@@ -75,13 +81,15 @@ fun AconTextField(
     }
 
     val textColor = when (status) {
-        TextFieldStatus.Empty -> AconColors.Gray6
+        TextFieldStatus.Empty -> AconColors.White
         TextFieldStatus.Inactive -> AconColors.White
         TextFieldStatus.Focused -> AconColors.White
         TextFieldStatus.Active -> AconColors.White
         TextFieldStatus.Error -> AconColors.White
         TextFieldStatus.Disabled -> AconColors.White
     }
+
+    val placeholderColor = AconColors.Gray6
 
     val isEnabled = status != TextFieldStatus.Disabled
 
@@ -107,6 +115,7 @@ fun AconTextField(
                 color = textColor
             ),
             singleLine = true,
+            cursorBrush = SolidColor(AconColors.Success_blue1),
             keyboardOptions = keyboardOptions,
             keyboardActions = KeyboardActions(
                 onDone = {
@@ -124,24 +133,21 @@ fun AconTextField(
                             .fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        if (text.isEmpty()) {
+                        if (text.isEmpty() && status != TextFieldStatus.Focused) {
                             Text(
                                 text = placeholder,
                                 style = AconTheme.typography.body2_14_reg,
-                                color = textColor,
+                                color = placeholderColor,
                             )
                         }
                         innerTextField()
                     }
                     if (text.isNotEmpty()) {
                         if (isTyping){
-                            Icon(
-                                modifier = Modifier
-                                    .align(Alignment.CenterEnd)
-                                    .size(20.dp),
-                                imageVector = ImageVector.vectorResource(R.drawable.and_ic_progress_w_28),
-                                contentDescription = "Progress Icon",
-                                tint = Color.Unspecified
+                            CircularProgressIndicator(
+                                modifier = Modifier.align(Alignment.CenterEnd).size(16.dp),
+                                strokeWidth = 2.dp,
+                                color = AconColors.Gray6
                             )
                         } else {
                             Icon(

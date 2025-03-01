@@ -60,14 +60,12 @@ fun OnboardingTopBar(
                 .height(56.dp),
         ){
 
-            if ( currentPage != 1 ) {
-                Box(
-                    modifier = Modifier
-                        .clickable { onLeadingIconClicked() }
-                        .align(Alignment.CenterStart)
-                ){
-                    leadingIcon()
-                }
+            Box(
+                modifier = Modifier
+                    .clickable { onLeadingIconClicked() }
+                    .align(Alignment.CenterStart)
+            ){
+                leadingIcon()
             }
 
             Box(

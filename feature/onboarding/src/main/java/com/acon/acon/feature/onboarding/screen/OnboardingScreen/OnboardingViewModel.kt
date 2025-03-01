@@ -48,7 +48,7 @@ class OnboardingViewModel @Inject constructor(
         reduce {
             state.copy(showDialog = false)
         }
-        postSideEffect(OnboardingScreenSideEffect.NavigateToSpotListView)
+        postSideEffect(OnboardingScreenSideEffect.SkipOnboarding)
     }
 
     fun onCardClicked(id: String) = intent {
@@ -226,7 +226,9 @@ class OnboardingViewModel @Inject constructor(
     }
 
     fun onBackClicked() = intent {
-        val nextPageState : OnboardingScreenState = when (state.currentState) {
+        val wasFirstPage = state.currentState is OnboardingPageState.Page1State // 기존 상태가 Page1State였는지 저장
+
+        val nextPageState: OnboardingScreenState = when (state.currentState) {
             is OnboardingPageState.Page1State -> {
                 state.copy(
                     currentPage = 1,
@@ -258,12 +260,14 @@ class OnboardingViewModel @Inject constructor(
                 )
             }
         }
-         reduce { nextPageState ?: state }
 
-        if (state.currentState == OnboardingPageState.Page1State()) {
+        reduce { nextPageState ?: state }
+
+        if (wasFirstPage) {
             postSideEffect(OnboardingScreenSideEffect.CancelOnboarding)
         }
     }
+
 
     fun navigateToSpotListView() = intent {
         postSideEffect(OnboardingScreenSideEffect.NavigateToSpotListView)
@@ -326,6 +330,7 @@ sealed interface OnboardingScreenSideEffect {
     data object NavigateToLoadingPage: OnboardingScreenSideEffect
     data object NavigateToSpotListView: OnboardingScreenSideEffect
     data object CancelOnboarding: OnboardingScreenSideEffect
+    data object SkipOnboarding: OnboardingScreenSideEffect
 }
 
 @Parcelize

@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -44,10 +45,11 @@ fun <T : CardItem> PreferFoodTypeSelectGrid(
     selectedCard: Set<String>,
 ){
     LazyVerticalGrid(
-        modifier = modifier,
+        modifier = modifier.wrapContentHeight(),
         columns = GridCells.Fixed(columnSize),
         horizontalArrangement = Arrangement.spacedBy(10.dp),
         verticalArrangement = Arrangement.spacedBy(15.dp),
+        userScrollEnabled = false
     ){
         items(foodItems) { food ->
             FoodTypeCard(
@@ -102,7 +104,7 @@ fun FoodTypeCard(
                         modifier = Modifier.clip(RoundedCornerShape(6.dp)).fillMaxSize()
                     )
 
-                    if (selected) { //top 3 이내에 선정된 경우, 체크표시 말고 등수 번호와 함께 선택된 효과
+                    if (selected) {
                         val rateIcon = if (selectedCard.indexOf(id) == 0) com.acon.acon.feature.onboarding.R.drawable.ic_1
                                         else if (selectedCard.indexOf(id) == 1) com.acon.acon.feature.onboarding.R.drawable.ic_2
                                         else if (selectedCard.indexOf(id) == 2) com.acon.acon.feature.onboarding.R.drawable.ic_3
