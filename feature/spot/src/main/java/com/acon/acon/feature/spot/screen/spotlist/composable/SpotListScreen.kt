@@ -269,7 +269,7 @@ internal fun SpotListScreen(
                                         scrollableScreenHeightPx = size.height
                                     }
                             ) {
-                                if (isResultEmpty) {
+                                if (isResultEmpty || state.isFilteredListEmpty) {
                                     Spacer(Modifier.height(100.dp))
                                     EmptySpotListView(modifier = Modifier.fillMaxSize())
                                 } else {
