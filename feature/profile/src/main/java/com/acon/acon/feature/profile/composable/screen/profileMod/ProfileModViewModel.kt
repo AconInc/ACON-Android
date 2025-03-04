@@ -48,6 +48,7 @@ class ProfileModViewModel @Inject constructor(
                     reduce {
                         state.copy(
                             selectedPhotoUri = profile.image,
+                            originalPhotoUri = profile.image,
                             originalNickname = profile.nickname,
                             nickNameState = profile.nickname,
                             originalBirthday = profile.birthDate?.filter { it.isDigit() } ?: "",
@@ -395,6 +396,7 @@ data class ProfileModState(
     val requestPhotoPermission: Boolean = false,
     val showPermissionDialog: Boolean = false,
 
+    val originalPhotoUri: String = "",
     val selectedPhotoUri: String = "",
     val showPhotoEditDialog: Boolean = false,
 
