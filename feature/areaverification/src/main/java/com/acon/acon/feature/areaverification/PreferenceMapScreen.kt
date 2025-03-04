@@ -93,7 +93,7 @@ fun PreferenceMapScreen(
     if (state.verifiedArea != null) {
         val sheetState = rememberModalBottomSheetState(
             skipPartiallyExpanded = true,
-            confirmValueChange = { it != SheetValue.Hidden }
+            confirmValueChange = { false }
         )
 
         ModalBottomSheet(
