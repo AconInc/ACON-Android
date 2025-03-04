@@ -162,7 +162,10 @@ fun UploadSearchScreen(
             rightButtonContent = "계속하기",
             contentImage = com.acon.acon.core.designsystem.R.drawable.ic_review_g_40,
             onDismissRequest = { showExitDialog = false },
-            onClickLeft = { onIntent(UploadIntent.NavigateBack) },
+            onClickLeft = {
+                showExitDialog = false
+                onIntent(UploadIntent.NavigateBack)
+            },
             onClickRight = { showExitDialog = false },
             isImageEnabled = false
         )
