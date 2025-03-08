@@ -26,6 +26,14 @@
 -keepattributes Signature
 -keepattributes EnclosingMethod
 
+# kotlin
+-keepclassmembers class kotlin.Metadata { *; }
+-keep class kotlin.** { *; }
+-dontwarn kotlin.**
+
+-keep interface com.acon.acon.feature.profile.composable.ProfileRoute { *; }
+-keep interface com.acon.acon.feature.spot.SpotRoute { *; }
+
 # Android 기본 구성 요소
 -keep public class * extends android.app.Activity
 -keep public class * extends android.app.Service
@@ -46,6 +54,7 @@
 -keep class kotlinx.serialization.** { *; }
 -keep @kotlinx.serialization.Serializable class * {*;}
 -keepclassmembers class * { @kotlinx.serialization.* <fields>; }
+
 # Compose Navigation에서 `@Serializable`을 사용하는 경우
 -keep class androidx.navigation.** { *; }
 -keep class androidx.navigation.compose.** { *; }
@@ -89,11 +98,13 @@
 # Retrofit & OkHttp
 -keep class com.squareup.okhttp3.** { *; }
 -dontwarn com.squareup.okhttp3.**
-
 -keep class com.squareup.retrofit2.** { *; }
 -keep interface com.squareup.retrofit2.** { *; }
 -keepclasseswithmembers class * { @retrofit2.http.* <methods>; }
 -dontwarn com.squareup.retrofit2.**
+
+# domain classes
+-keep class com.acon.acon.domain.model.** { *; }
 
 # Coroutines
 -keep class kotlinx.coroutines.** { *; }
@@ -112,8 +123,16 @@
 -dontnote retrofit2.**
 -dontnote kotlinx.coroutines.**
 
-# 최적화 방지 (특정 문제 디버깅 시 활성화 가능)
-# -dontoptimize
+# 에러 발생시 라인 표시
+-keepattributes SourceFile,LineNumberTable
 
-# domain classes
--keep class com.acon.acon.domain.model.** { *; }
+# jdk 컴파일할 때 발생하는 오류 메시지 방지
+-keepattributes EnclosingMethod
+
+# Begin : material, androidx
+-keep class com.google.android.material.** { *; }
+-dontwarn com.google.android.material.**
+
+-dontwarn androidx.**
+-keep class androidx.** { *; }
+-keep interface androidx.** { *; }
