@@ -31,13 +31,10 @@ jobs:
     - name: Decode Keystore
       env:
         KEYSTORE: ${{ secrets.KEYSTORE_BASE64 }}
-        RELEASE_KEYSTORE_PASSWORD: ${{ secrets.STOREPASSWORD }}
-        RELEASE_KEYSTORE_ALIAS: ${{ secrets.KEYALIAS }}
-        RELEASE_KEY_PASSWORD: ${{ secrets.KEYPASSWORD }}
 
       run: |
-        echo $KEYSTORE > keystore_base64.txt
-        base64 -d -o acon-android-release.jks < keystore_base64.txt
+        echo "$KEYSTORE" > ./keystore/keystore_base64.txt
+        base64 -d -i ./keystore/keystore_base64.txt < acon-android-release.jks
 
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
