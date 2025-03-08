@@ -44,6 +44,12 @@
 
 # Kotlin Serialization에서 사용하는 클래스 유지
 -keep class kotlinx.serialization.** { *; }
+-keep @kotlinx.serialization.Serializable class * {*;}
+-keepclassmembers class * { @kotlinx.serialization.* <fields>; }
+# Compose Navigation에서 `@Serializable`을 사용하는 경우
+-keep class androidx.navigation.** { *; }
+-keep class androidx.navigation.compose.** { *; }
+-dontwarn androidx.navigation.**
 
 # Compose
 -keep class androidx.compose.** { *; }
