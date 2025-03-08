@@ -19,3 +19,95 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# 기본 ProGuard 최적화
+-keepattributes *Annotation*
+-keepattributes InnerClasses
+-keepattributes Signature
+-keepattributes EnclosingMethod
+
+# Android 기본 구성 요소
+-keep public class * extends android.app.Activity
+-keep public class * extends android.app.Service
+-keep public class * extends android.content.BroadcastReceiver
+-keep public class * extends android.content.ContentProvider
+-keep public class * extends android.app.Application
+-keepclassmembers class * extends android.app.Activity {
+    public void *(android.view.View);
+}
+-keepclassmembers enum * { *; }
+-keepclassmembers class * {
+    public void *(android.os.Bundle);
+    public void *(android.view.Menu, android.view.MenuItem);
+}
+-dontwarn android.**
+
+# Kotlin Serialization에서 사용하는 클래스 유지
+-keep class kotlinx.serialization.** { *; }
+
+# Compose
+-keep class androidx.compose.** { *; }
+-dontwarn androidx.compose.**
+
+# Lifecycle & ViewModel
+-keep class androidx.lifecycle.** { *; }
+-keepclassmembers class androidx.lifecycle.ViewModel {
+    public <init>(...);
+}
+-dontwarn androidx.lifecycle.**
+
+# Navigation Compose
+-keep class androidx.navigation.** { *; }
+-dontwarn androidx.navigation.**
+
+# Hilt
+-keep class dagger.hilt.** { *; }
+-keep class androidx.hilt.** { *; }
+-dontwarn dagger.**
+
+# Coil
+-keep class coil.** { *; }
+-dontwarn coil.**
+
+# Naver Maps
+-keep class io.github.fornewid.naver.maps.** { *; }
+-dontwarn io.github.fornewid.naver.maps.**
+
+# Credentials
+-keep class androidx.credentials.** { *; }
+-keep class androidx.credentials.playservices.** { *; }
+-keepclassmembers class androidx.credentials.** { *; }
+-keepclassmembers class androidx.credentials.playservices.** { *; }
+-dontwarn androidx.credentials.**
+
+# Retrofit & OkHttp
+-keep class com.squareup.okhttp3.** { *; }
+-dontwarn com.squareup.okhttp3.**
+
+-keep class com.squareup.retrofit2.** { *; }
+-keep interface com.squareup.retrofit2.** { *; }
+-keepclasseswithmembers class * { @retrofit2.http.* <methods>; }
+-dontwarn com.squareup.retrofit2.**
+
+# Coroutines
+-keep class kotlinx.coroutines.** { *; }
+-dontwarn kotlinx.coroutines.**
+
+# Amplitude
+-keep class com.amplitude.** { *; }
+-dontwarn com.amplitude.**
+
+# Lottie
+-keep class com.airbnb.lottie.** { *; }
+-dontwarn com.airbnb.lottie.**
+
+# 기타 설정
+-dontnote okhttp3.**
+-dontnote retrofit2.**
+-dontnote kotlinx.coroutines.**
+
+# 최적화 방지 (특정 문제 디버깅 시 활성화 가능)
+# -dontoptimize
+
+# domain classes
+-keep class com.acon.acon.domain.model.** { *; }
