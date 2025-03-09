@@ -30,7 +30,8 @@ import com.acon.acon.feature.areaverification.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DottoriSelectionBottomSheet(
+fun AreaVerificationBottomSheet(
+    areaName: String,
     onDismiss: () -> Unit,
     onNavigateToNext: () -> Unit,
     sheetState: SheetState,
@@ -60,7 +61,7 @@ fun DottoriSelectionBottomSheet(
 
             Spacer(modifier = Modifier.padding(top = 78.dp))
             Text(
-                text = stringResource(R.string.local_dottori_available),
+                text = stringResource(R.string.local_dottori_available, areaName),
                 style = AconTheme.typography.head5_22_sb,
                 color = AconTheme.color.White,
                 modifier = Modifier.padding(start = 16.dp)

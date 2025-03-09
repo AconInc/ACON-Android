@@ -16,9 +16,7 @@ data class AreaVerificationState(
     val areaName: String = "",
     val verifiedArea: Area? = null,
     val verifiedAreaList: List<Area> = emptyList(),
-
     val isGPSEnabled: Boolean = false,
     val showGPSDialog: Boolean = false,
-
     val showLocationDialog: Boolean = false,
 )
