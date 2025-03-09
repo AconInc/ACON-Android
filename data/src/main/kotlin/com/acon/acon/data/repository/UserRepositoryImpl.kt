@@ -30,6 +30,7 @@ class UserRepositoryImpl @Inject constructor(
                     idToken = idToken
                 )
             )
+            loginResponse.hasVerifiedArea.let { tokenLocalDataSource.saveAreaVerification(it) }
             loginResponse.accessToken?.let { tokenLocalDataSource.saveAccessToken(it) }
             loginResponse.refreshToken?.let { tokenLocalDataSource.saveRefreshToken(it) }
 

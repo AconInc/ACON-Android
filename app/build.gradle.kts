@@ -19,6 +19,7 @@ android {
     compileSdk = 35
 
     defaultConfig {
+        manifestPlaceholders += mapOf()
         applicationId = "com.acon.acon"
         minSdk = 28
         targetSdk = 35
@@ -34,13 +35,28 @@ android {
         buildConfigField("String", "BASE_URL", "String.valueOf(\"${localProperties["BASE_URL"]}\")")
     }
 
+    signingConfigs {
+        create("release") {
+            storeFile = file(localProperties["storePath"].toString())
+            storePassword = localProperties["storePassword"].toString()
+            keyAlias = localProperties["keyAlias"].toString()
+            keyPassword = localProperties["keyPassword"].toString()
+        }
+    }
+
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("release")
+
+            manifestPlaceholders["naverClientId"] = getPropertyKey("naver_client_id")
+            buildConfigField("String", "NAVER_CLIENT_ID", "String.valueOf(\"${localProperties["naver_client_id"]}\")")
+            buildConfigField("String", "BASE_URL", "String.valueOf(\"${localProperties["BASE_URL"]}\")")
         }
     }
     compileOptions {
@@ -117,5 +133,5 @@ dependencies {
     implementation(libs.haze)
     implementation(libs.haze.materials)
 
-    implementation ("androidx.core:core-splashscreen:1.0.0")
+    implementation (libs.androidx.core.splashscreen)
 }
