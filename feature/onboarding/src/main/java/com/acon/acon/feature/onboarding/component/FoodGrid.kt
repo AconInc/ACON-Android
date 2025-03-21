@@ -145,12 +145,14 @@ fun FoodCard(
         }
         val cardTextAlpha = if (isNothingClicked && imageRes != 0) 0.1f else 1f
         Spacer(modifier = Modifier.height(4.dp))
-        Text(
-            modifier = Modifier.alpha(cardTextAlpha),
-            text = text,
-            color = AconTheme.color.White,
-            style = AconTheme.typography.subtitle2_14_med
-        )
+        if(imageRes != 0) {
+            Text(
+                modifier = Modifier.alpha(cardTextAlpha),
+                text = text,
+                color = AconTheme.color.White,
+                style = AconTheme.typography.subtitle2_14_med
+            )
+        }
     }
 }
 

@@ -1,5 +1,6 @@
 package com.acon.acon.feature.upload
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -141,6 +142,10 @@ fun UploadSearchScreen(
         skipPartiallyExpanded = true
     )
 
+    BackHandler {
+        showExitDialog = true
+    }
+
     if (state.showOutOfServiceDialog) {
         AconOneButtonDialog(
             title = "위치 인증 실패",
@@ -271,6 +276,10 @@ fun UploadReviewScreen(
 ) {
     var showExitDialog by remember { mutableStateOf(false) }
 
+    BackHandler {
+        showExitDialog = true
+    }
+
     if (showExitDialog) {
         AconTwoButtonDialog(
             title = "작성을 그만둘까요?",
@@ -279,7 +288,10 @@ fun UploadReviewScreen(
             rightButtonContent = "계속하기",
             contentImage = com.acon.acon.core.designsystem.R.drawable.ic_review_g_40,
             onDismissRequest = { showExitDialog = false },
-            onClickLeft = { onIntent(UploadIntent.NavigateBack) },
+            onClickLeft = {
+                showExitDialog = false
+                onIntent(UploadIntent.NavigateBack)
+            },
             onClickRight = { showExitDialog = false },
             isImageEnabled = false
         )

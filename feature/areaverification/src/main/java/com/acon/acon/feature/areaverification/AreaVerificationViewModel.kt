@@ -218,7 +218,8 @@ class AreaVerificationViewModel @Inject constructor(
                 reduce {
                     state.copy(
                         isLoading = false,
-                        verifiedArea = area
+                        verifiedArea = area,
+                        areaName = area.name
                     )
                 }
                 amplitudeCompleteArea()
@@ -228,7 +229,7 @@ class AreaVerificationViewModel @Inject constructor(
                 reduce {
                     state.copy(
                         isLoading = false,
-                        error = throwable.message
+                        error = throwable.message,
                     )
                 }
             }
