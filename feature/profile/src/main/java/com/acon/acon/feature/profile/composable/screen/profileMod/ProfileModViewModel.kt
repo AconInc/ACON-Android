@@ -2,14 +2,11 @@ package com.acon.acon.feature.profile.composable.screen.profileMod
 
 import android.app.Application
 import android.net.Uri
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.acon.acon.core.designsystem.component.textfield.TextFieldStatus
 import com.acon.acon.domain.error.profile.ValidateNicknameError
 import com.acon.acon.domain.repository.ProfileRepository
-import com.acon.acon.feature.profile.composable.screen.profile.ProfileUiState
+import com.acon.acon.feature.profile.composable.component.TextFieldStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -28,16 +25,21 @@ class ProfileModViewModel @Inject constructor(
     application: Application
 ) : AndroidViewModel(application), ContainerHost<ProfileModState, ProfileModSideEffect> {
 
-    override val container = container<ProfileModState, ProfileModSideEffect>(ProfileModState()){
+    override val container = container<ProfileModState, ProfileModSideEffect>(ProfileModState()) {
         fetchUserProfileInfo()
     }
 
-    fun onFocusChanged(isFocused: Boolean) = intent {
+    fun onFocusChanged(isFocused: Boolean, field: FocusType) = intent {
         reduce {
-            state.copy(
-                nickNameFieldStatus = if (isFocused) TextFieldStatus.Focused else TextFieldStatus.Inactive,
-                birthdayFieldStatus = if (isFocused) TextFieldStatus.Focused else TextFieldStatus.Inactive
-            )
+            when (field) {
+                FocusType.Nickname -> state.copy(
+                    nickNameFieldStatus = if (isFocused) TextFieldStatus.Focused else TextFieldStatus.Inactive
+                )
+
+                FocusType.Birthday -> state.copy(
+                    birthdayFieldStatus = if (isFocused) TextFieldStatus.Focused else TextFieldStatus.Inactive
+                )
+            }
         }
     }
 
@@ -95,9 +97,13 @@ class ProfileModViewModel @Inject constructor(
             return@intent
         }
 
-        if (nicknameCount <= 16){
+        if (nicknameCount <= 16) {
             reduce {
-                state.copy(nickNameState = filteredText, nicknameStatus = NicknameStatus.Typing, nicknameCount = nicknameCount)
+                state.copy(
+                    nickNameState = filteredText,
+                    nicknameStatus = NicknameStatus.Typing,
+                    nicknameCount = nicknameCount
+                )
             }
         }
 
@@ -123,7 +129,7 @@ class ProfileModViewModel @Inject constructor(
             reduce {
                 state.copy(
                     nicknameStatus = when {
-                        filteredText.isEmpty() -> NicknameStatus.Empty
+                        filteredText.isBlank() -> NicknameStatus.Empty
                         errors.isNotEmpty() -> NicknameStatus.Error(errors)
                         else -> NicknameStatus.Valid
                     }
@@ -135,7 +141,7 @@ class ProfileModViewModel @Inject constructor(
     fun onBirthdayChanged(text: String) = intent {
         val digitsOnly = text.filter { it.isDigit() }
 
-        if (digitsOnly.isEmpty()){
+        if (digitsOnly.isEmpty()) {
             reduce {
                 state.copy(
                     birthdayState = "",
@@ -258,7 +264,10 @@ class ProfileModViewModel @Inject constructor(
         }
     }
 
-    private suspend fun validateNickname(nickname: String, errors: MutableList<NicknameErrorType>): Boolean {
+    private suspend fun validateNickname(
+        nickname: String,
+        errors: MutableList<NicknameErrorType>
+    ): Boolean {
         return profileRepository.validateNickname(nickname)
             .map { true }
             .recover { throwable ->
@@ -267,10 +276,12 @@ class ProfileModViewModel @Inject constructor(
                         errors.add(NicknameErrorType.InvalidChar)
                         false
                     }
+
                     is ValidateNicknameError.AlreadyUsedNickname -> {
                         errors.add(NicknameErrorType.AlreadyUsed)
                         false
                     }
+
                     else -> {
                         false
                     }
@@ -281,11 +292,19 @@ class ProfileModViewModel @Inject constructor(
 
     fun getPreSignedUrl() = intent {
 
-        if (state.selectedPhotoUri == ""){
-            if (state.birthdayStatus == BirthdayStatus.Valid){
-                updateProfile(fileName = state.uploadFileName, nickname = state.nickNameState, birthday = state.birthdayState)
+        if (state.selectedPhotoUri == "") {
+            if (state.birthdayStatus == BirthdayStatus.Valid) {
+                updateProfile(
+                    fileName = state.uploadFileName,
+                    nickname = state.nickNameState,
+                    birthday = state.birthdayState
+                )
             } else {
-                updateProfile(fileName = state.uploadFileName, nickname = state.nickNameState, birthday = null)
+                updateProfile(
+                    fileName = state.uploadFileName,
+                    nickname = state.nickNameState,
+                    birthday = null
+                )
             }
         } else {
             viewModelScope.launch {
@@ -297,7 +316,10 @@ class ProfileModViewModel @Inject constructor(
                                 preSignedUrl = result.preSignedUrl
                             )
                         }
-                        putPhotoToPreSignedUrl(Uri.parse(state.selectedPhotoUri), state.preSignedUrl)
+                        putPhotoToPreSignedUrl(
+                            Uri.parse(state.selectedPhotoUri),
+                            state.preSignedUrl
+                        )
                     }
                     .onFailure {
                         // 실패시 에러 처리
@@ -316,10 +338,14 @@ class ProfileModViewModel @Inject constructor(
 
             if (state.selectedPhotoUri.startsWith("content://")) {
                 val inputStream = context.contentResolver.openInputStream(imageUri)
-                byteArray = inputStream?.readBytes() ?: throw IllegalArgumentException("Failed to read image")
+                byteArray = inputStream?.readBytes()
+                    ?: throw IllegalArgumentException("Failed to read image")
                 mimeType = context.contentResolver.getType(imageUri) ?: "image/jpeg"
 
-            } else if (state.selectedPhotoUri.startsWith("http://") || state.selectedPhotoUri.startsWith("https://")) {
+            } else if (state.selectedPhotoUri.startsWith("http://") || state.selectedPhotoUri.startsWith(
+                    "https://"
+                )
+            ) {
                 val getRequest = Request.Builder().url(imageUri.toString()).build()
                 val getResponse = client.newCall(getRequest).execute()
 
@@ -327,7 +353,8 @@ class ProfileModViewModel @Inject constructor(
                     throw IllegalArgumentException("Failed to fetch remote image")
                 }
 
-                byteArray = getResponse.body?.bytes() ?: throw IllegalArgumentException("Failed to read remote image")
+                byteArray = getResponse.body?.bytes()
+                    ?: throw IllegalArgumentException("Failed to read remote image")
                 mimeType = getResponse.header("Content-Type") ?: "image/jpeg"
 
             } else {
@@ -346,9 +373,17 @@ class ProfileModViewModel @Inject constructor(
 
             if (response.isSuccessful) {
                 if (state.birthdayStatus == BirthdayStatus.Valid) {
-                    updateProfile(fileName = state.uploadFileName, nickname = state.nickNameState, birthday = state.birthdayState)
+                    updateProfile(
+                        fileName = state.uploadFileName,
+                        nickname = state.nickNameState,
+                        birthday = state.birthdayState
+                    )
                 } else {
-                    updateProfile(fileName = state.uploadFileName, nickname = state.nickNameState, birthday = null)
+                    updateProfile(
+                        fileName = state.uploadFileName,
+                        nickname = state.nickNameState,
+                        birthday = null
+                    )
                 }
             } else {
                 // PUT 실패 시 에러 처리
@@ -377,9 +412,11 @@ class ProfileModViewModel @Inject constructor(
     }
 }
 
+enum class FocusType {
+    Nickname, Birthday
+}
 
 data class ProfileModState(
-
     val originalNickname: String = "",
     val nickNameFieldStatus: TextFieldStatus = TextFieldStatus.Inactive,
     val nickNameState: String = "",
@@ -402,7 +439,7 @@ data class ProfileModState(
 
     val preSignedUrl: String = "",
     val uploadFileName: String = "",
-    )
+)
 
 sealed class NicknameErrorType(val message: String) {
     data object InvalidChar : NicknameErrorType("._ 이외의 특수기호는 사용할 수 없어요")
@@ -420,7 +457,7 @@ sealed class NicknameStatus {
 sealed class BirthdayStatus {
     data object Empty : BirthdayStatus()
     data class Invalid(val errorMsg: String?) : BirthdayStatus()
-    data object Valid :BirthdayStatus()
+    data object Valid : BirthdayStatus()
 }
 
 enum class ProfileUpdateResult {

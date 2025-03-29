@@ -30,6 +30,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
@@ -41,19 +42,19 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.acon.acon.core.designsystem.component.button.AconFilledLargeButton
 import com.acon.acon.core.designsystem.component.dialog.AconTwoButtonDialog
-import com.acon.acon.core.designsystem.component.textfield.AconTextField
-import com.acon.acon.core.designsystem.component.textfield.TextFieldStatus
-import com.acon.acon.core.designsystem.component.textfield.addFocusCleaner
 import com.acon.acon.core.designsystem.component.topbar.AconTopBar
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.core.utils.feature.permission.CheckAndRequestPhotoPermission
 import com.acon.acon.feature.profile.R
+import com.acon.acon.feature.profile.composable.component.AconTextField
 import com.acon.acon.feature.profile.composable.component.CustomModalBottomSheet
 import com.acon.acon.feature.profile.composable.component.NicknameErrMessageRow
 import com.acon.acon.feature.profile.composable.component.ProfilePhotoBox
+import com.acon.acon.feature.profile.composable.component.TextFieldStatus
+import com.acon.acon.feature.profile.composable.component.addFocusCleaner
 import com.acon.acon.feature.profile.composable.screen.profileMod.BirthdayStatus
-import com.acon.acon.feature.profile.composable.screen.profileMod.BirthdayVisualTransformation
+import com.acon.acon.feature.profile.composable.screen.profileMod.FocusType
 import com.acon.acon.feature.profile.composable.screen.profileMod.NicknameStatus
 import com.acon.acon.feature.profile.composable.screen.profileMod.ProfileModSideEffect
 import com.acon.acon.feature.profile.composable.screen.profileMod.ProfileModState
@@ -188,11 +189,13 @@ fun ProfileModScreen(
     state: ProfileModState,
     onNicknameChanged: (String) -> Unit = {},
     onBirthdayChanged: (String) -> Unit = {},
-    onFocusChanged: (Boolean) -> Unit = {},
+    onFocusChanged: (Boolean, FocusType) -> Unit = { _, _ -> },
     onBackClicked: () -> Unit,
     onSaveClicked: () -> Unit,
     onProfileClicked: () -> Unit = {},
 ) {
+    val nickNameFocusRequester = remember { FocusRequester() }
+    val birthDayFocusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
     val scrollState = rememberScrollState()
 
@@ -236,7 +239,6 @@ fun ProfileModScreen(
                     .verticalScroll(scrollState),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -288,15 +290,22 @@ fun ProfileModScreen(
                             color = AconTheme.color.Main_org1
                         )
                     }
+
                     Spacer(modifier = Modifier.height(12.dp))
                     AconTextField(
                         status = state.nickNameFieldStatus,
-                        text = state.nickNameState,
-                        onTextChanged = onNicknameChanged,
-                        onFocusChanged = onFocusChanged,
+                        focusType = FocusType.Nickname,
+                        focusRequester = nickNameFocusRequester,
+                        value = state.nickNameState,
                         placeholder = "16자 이내 영문, 한글, 숫자, ., _만 사용 가능",
                         isTyping = (state.nicknameStatus == NicknameStatus.Typing),
+                        onTextChanged = onNicknameChanged,
+                        onFocusChanged = onFocusChanged,
+                        onClick = {
+                            nickNameFocusRequester.requestFocus()
+                        },
                     )
+
                     Spacer(modifier = Modifier.height(8.dp))
                     Row(
                         modifier = Modifier.fillMaxWidth()
@@ -344,7 +353,7 @@ fun ProfileModScreen(
                             horizontalArrangement = Arrangement.End
                         ) {
                             Text(
-                                text = "${state.nicknameCount}",
+                                text = "${state.nickNameState.length}",
                                 style = AconTheme.typography.subtitle2_14_med,
                                 color = AconTheme.color.White
                             )
@@ -374,12 +383,17 @@ fun ProfileModScreen(
                     Spacer(modifier = Modifier.height(12.dp))
                     AconTextField(
                         status = state.birthdayFieldStatus,
-                        text = state.birthdayState,
+                        focusType = FocusType.Birthday,
+                        focusRequester = birthDayFocusRequester,
+                        value = state.birthdayState,
+                        placeholder = "YYYY.MM.DD",
                         onTextChanged = onBirthdayChanged,
                         onFocusChanged = onFocusChanged,
-                        placeholder = "YYYY.MM.DD",
-                        visualTransformation = BirthdayVisualTransformation()
+                        onClick = {
+                            birthDayFocusRequester.requestFocus()
+                        }
                     )
+
                     Spacer(modifier = Modifier.height(8.dp))
                     when (val status = state.birthdayStatus) {
                         is BirthdayStatus.Valid -> {
@@ -431,6 +445,7 @@ private fun ProfileModScreenPreview() {
     val birthdayState = remember { mutableStateOf("") }
 
     ProfileModScreen(
+        onFocusChanged = { _, _ -> },
         state = ProfileModState(
             nickNameState = nickNameState.value,
             birthdayState = birthdayState.value,
@@ -439,7 +454,6 @@ private fun ProfileModScreenPreview() {
         ),
         onNicknameChanged = { newValue -> nickNameState.value = newValue },
         onBirthdayChanged = { newValue -> birthdayState.value = newValue },
-        onFocusChanged = {},
         onBackClicked = {},
         onSaveClicked = {},
     )
