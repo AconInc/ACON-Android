@@ -1,10 +1,13 @@
 package com.acon.acon.feature.onboarding.screen
 
-import com.acon.acon.core.designsystem.component.textfield.AconTextField
 import com.acon.acon.core.utils.feature.amplitude.AconAmplitude
 import com.acon.acon.core.utils.feature.amplitude.AconTestAmplitude
 
-fun amplitudeOnboarding(completeProperty: String, selectedItems: Set<String>, userProperty: String) {
+fun amplitudeOnboarding(
+    completeProperty: String,
+    selectedItems: Set<String>,
+    userProperty: String
+) {
     AconAmplitude.trackEvent(
         "onboarding",
         mapOf(
