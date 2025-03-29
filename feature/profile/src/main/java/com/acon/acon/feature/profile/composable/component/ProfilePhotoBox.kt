@@ -53,12 +53,24 @@ fun ProfilePhotoBox(
                         )
                     }
 
-                    photoUri.startsWith("http://") || photoUri.startsWith("https://") -> {
+                    // && !photoUri.endsWith(".svg"), TODO -> 추후 서버 확인 후 삭제해야 할 코드
+                    photoUri.startsWith("http://") || photoUri.startsWith("https://")
+                            && !photoUri.endsWith(".svg") -> {
                         AsyncImage(
                             model = photoUri,
                             contentDescription = "프로필 사진",
                             modifier = Modifier.fillMaxSize(),
                             contentScale = ContentScale.Crop
+                        )
+                    }
+
+                    // SVG는 기본 아이콘 뷰어로 대체 표시, TODO -> 추후 스프린트에서 삭제해야 할 코드
+                    photoUri.endsWith(".svg") -> {
+                        Icon(
+                            modifier = Modifier.fillMaxSize(),
+                            imageVector = ImageVector.vectorResource(R.drawable.img_profile_basic_80),
+                            contentDescription = "SVG Profile Image",
+                            tint = Color.Unspecified,
                         )
                     }
 
