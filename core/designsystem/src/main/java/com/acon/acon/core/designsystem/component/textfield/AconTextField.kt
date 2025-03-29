@@ -13,18 +13,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
@@ -89,7 +86,7 @@ fun AconTextField(
         TextFieldStatus.Disabled -> AconColors.White
     }
 
-    val placeholderColor = AconColors.Gray6
+    val placeholderColor = AconColors.Gray3
 
     val isEnabled = status != TextFieldStatus.Disabled
 
@@ -100,7 +97,7 @@ fun AconTextField(
             .border(1.dp, borderColor, shape = RoundedCornerShape(4.dp))
             .padding(horizontal = 12.dp, vertical = 10.dp),
         contentAlignment = Alignment.CenterStart
-    ){
+    ) {
         BasicTextField(
             modifier = Modifier
                 .fillMaxWidth()
@@ -143,9 +140,11 @@ fun AconTextField(
                         innerTextField()
                     }
                     if (text.isNotEmpty()) {
-                        if (isTyping){
+                        if (isTyping) {
                             CircularProgressIndicator(
-                                modifier = Modifier.align(Alignment.CenterEnd).size(16.dp),
+                                modifier = Modifier
+                                    .align(Alignment.CenterEnd)
+                                    .size(16.dp),
                                 strokeWidth = 2.dp,
                                 color = AconColors.Gray6
                             )
@@ -162,19 +161,18 @@ fun AconTextField(
                         }
                     }
                 }
-            }
-            ,
+            },
         )
     }
 }
 
 sealed interface TextFieldStatus {
-    data object Empty: TextFieldStatus
-    data object Inactive: TextFieldStatus
-    data object Focused: TextFieldStatus
-    data object Active: TextFieldStatus
-    data object Error: TextFieldStatus
-    data object Disabled: TextFieldStatus
+    data object Empty : TextFieldStatus
+    data object Inactive : TextFieldStatus
+    data object Focused : TextFieldStatus
+    data object Active : TextFieldStatus
+    data object Error : TextFieldStatus
+    data object Disabled : TextFieldStatus
 }
 
 fun Modifier.addFocusCleaner(focusManager: FocusManager, doOnClear: () -> Unit = {}): Modifier {
@@ -188,11 +186,11 @@ fun Modifier.addFocusCleaner(focusManager: FocusManager, doOnClear: () -> Unit =
 
 @Preview
 @Composable
-private fun AconTextFieldPreview(){
+private fun AconTextFieldPreview() {
 
     Column(
         modifier = Modifier.fillMaxSize(),
-    ){
+    ) {
         AconTextField(
             status = TextFieldStatus.Inactive,
         )

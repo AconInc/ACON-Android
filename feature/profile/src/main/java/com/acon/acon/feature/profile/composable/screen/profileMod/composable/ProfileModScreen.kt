@@ -73,7 +73,7 @@ fun ProfileModScreenContainer(
     val state = viewModel.collectAsState().value
     val context = LocalContext.current
 
-    LaunchedEffect(selectedPhotoId){
+    LaunchedEffect(selectedPhotoId) {
         selectedPhotoId.let {
             viewModel.updateProfileImage(selectedPhotoId)
         }
@@ -89,20 +89,25 @@ fun ProfileModScreenContainer(
                     }
                     context.startActivity(intent)
                 }
+
                 is ProfileModSideEffect.NavigateBack -> {
                     backToProfile()
                 }
+
                 is ProfileModSideEffect.NavigateToCustomGallery -> {
                     onNavigateToCustomGallery()
                 }
+
                 is ProfileModSideEffect.UpdateProfileImage -> {
                     selectedPhotoId.let {
                         viewModel.updateProfileImage(selectedPhotoId)
                     }
                 }
+
                 is ProfileModSideEffect.NavigateToProfileSuccess -> {
                     onNavigateToProfile(ProfileUpdateResult.SUCCESS)
                 }
+
                 is ProfileModSideEffect.NavigateToProfileFailed -> {
                     onNavigateToProfile(ProfileUpdateResult.FAILURE)
                 }
@@ -221,12 +226,14 @@ fun ProfileModScreen(
                 )
             }
         )
-        
+
         Box(
             modifier = Modifier.weight(1f)
-        ){
+        ) {
             Column(
-                modifier = Modifier.fillMaxSize().verticalScroll(scrollState),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(scrollState),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
 
@@ -235,14 +242,18 @@ fun ProfileModScreen(
                         .fillMaxWidth()
                         .padding(vertical = 10.dp),
                     horizontalArrangement = Arrangement.Center
-                ){
+                ) {
                     Spacer(modifier = Modifier.weight(1f))
                     Box(
-                        modifier = Modifier.weight(1f).aspectRatio(1f),
+                        modifier = Modifier
+                            .weight(1f)
+                            .aspectRatio(1f),
                         contentAlignment = Alignment.Center
-                    ){
+                    ) {
                         ProfilePhotoBox(
-                            modifier = Modifier.fillMaxSize().align(Alignment.Center),
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .align(Alignment.Center),
                             photoUri = state.selectedPhotoUri
                         )
                         Icon(
@@ -251,7 +262,7 @@ fun ProfileModScreen(
                             tint = Color.Unspecified,
                             modifier = Modifier
                                 .align(alignment = Alignment.BottomEnd)
-                                .noRippleClickable{ onProfileClicked() }
+                                .noRippleClickable { onProfileClicked() }
                         )
                     }
                     Spacer(modifier = Modifier.weight(1f))
@@ -259,14 +270,22 @@ fun ProfileModScreen(
 
                 Column(
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 15.dp),
-                ){
+                ) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.Start
-                    ){
-                        Text(text = "닉네임", style = AconTheme.typography.head8_16_sb, color = AconTheme.color.White)
+                    ) {
+                        Text(
+                            text = "닉네임",
+                            style = AconTheme.typography.head8_16_sb,
+                            color = AconTheme.color.White
+                        )
                         Spacer(modifier = Modifier.width(4.dp))
-                        Text(text = "*", style = AconTheme.typography.head8_16_sb, color = AconTheme.color.Main_org1)
+                        Text(
+                            text = "*",
+                            style = AconTheme.typography.head8_16_sb,
+                            color = AconTheme.color.Main_org1
+                        )
                     }
                     Spacer(modifier = Modifier.height(12.dp))
                     AconTextField(
@@ -280,7 +299,7 @@ fun ProfileModScreen(
                     Spacer(modifier = Modifier.height(8.dp))
                     Row(
                         modifier = Modifier.fillMaxWidth()
-                    ){
+                    ) {
                         Column(
                             modifier = Modifier.weight(1f),
                             verticalArrangement = Arrangement.Top,
@@ -295,6 +314,7 @@ fun ProfileModScreen(
                                         textColor = AconTheme.color.Error_red1
                                     )
                                 }
+
                                 is NicknameStatus.Error -> {
                                     status.errorTypes.forEach { error ->
                                         NicknameErrMessageRow(
@@ -305,6 +325,7 @@ fun ProfileModScreen(
                                         )
                                     }
                                 }
+
                                 is NicknameStatus.Valid -> {
                                     NicknameErrMessageRow(
                                         modifier = modifier,
@@ -313,27 +334,40 @@ fun ProfileModScreen(
                                         textColor = AconTheme.color.Success_blue1
                                     )
                                 }
+
                                 else -> Unit
                             }
                         }
 
                         Row(
                             horizontalArrangement = Arrangement.End
-                        ){
-                            Text(text = "${state.nicknameCount}", style = AconTheme.typography.subtitle2_14_med, color = AconTheme.color.White)
-                            Text(text = "/16", style = AconTheme.typography.subtitle2_14_med, color = AconTheme.color.Gray5)
+                        ) {
+                            Text(
+                                text = "${state.nicknameCount}",
+                                style = AconTheme.typography.subtitle2_14_med,
+                                color = AconTheme.color.White
+                            )
+                            Text(
+                                text = "/16",
+                                style = AconTheme.typography.subtitle2_14_med,
+                                color = AconTheme.color.Gray5
+                            )
                         }
                     }
                 }
 
                 Column(
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 15.dp),
-                ){
+                ) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.Start
-                    ){
-                        Text(text = "생년월일", style = AconTheme.typography.head8_16_sb, color = AconTheme.color.White)
+                    ) {
+                        Text(
+                            text = "생년월일",
+                            style = AconTheme.typography.head8_16_sb,
+                            color = AconTheme.color.White
+                        )
                         Spacer(modifier = Modifier.width(4.dp))
                     }
                     Spacer(modifier = Modifier.height(12.dp))
@@ -342,7 +376,7 @@ fun ProfileModScreen(
                         text = state.birthdayState,
                         onTextChanged = onBirthdayChanged,
                         onFocusChanged = onFocusChanged,
-                        placeholder = "ex) 2025.01.01",
+                        placeholder = "YYYY.MM.DD",
                         visualTransformation = BirthdayVisualTransformation()
                     )
                     Spacer(modifier = Modifier.height(8.dp))
@@ -350,6 +384,7 @@ fun ProfileModScreen(
                         is BirthdayStatus.Valid -> {
                             Spacer(modifier = Modifier.height(4.dp))
                         }
+
                         is BirthdayStatus.Invalid -> {
                             NicknameErrMessageRow(
                                 modifier = modifier,
@@ -358,6 +393,7 @@ fun ProfileModScreen(
                                 textColor = AconTheme.color.Error_red1
                             )
                         }
+
                         else -> Spacer(modifier = Modifier.height(4.dp))
                     }
                 }
