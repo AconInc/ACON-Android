@@ -100,15 +100,28 @@ fun ProfileScreen(
                     modifier = Modifier
                         .padding(vertical = 32.dp)
                 ) {
-                    if(state.profileImage.isNotEmpty()) {
-                        AsyncImage(
-                            model = state.profileImage,
-                            contentDescription = stringResource(R.string.content_description_profile_image),
-                            modifier = Modifier
-                                .size(60.dp)
-                                .clip(CircleShape),
-                            contentScale = ContentScale.Crop
-                        )
+                    if (state.profileImage.isNotEmpty()) {
+                        // profileImage.endsWith(".svg"), TODO -> 추후 서버 확인 후 삭제해야 할 코드
+                        if (state.profileImage.endsWith(".svg")) {
+                            Image(
+                                imageVector = ImageVector.vectorResource(com.acon.acon.core.designsystem.R.drawable.ic_default_profile_40),
+                                contentDescription = stringResource(R.string.content_description_default_profile_image),
+                                modifier = Modifier
+                                    .size(60.dp)
+                                    .clip(CircleShape)
+                                    .background(AconTheme.color.Gray7)
+                                    .padding(10.dp)
+                            )
+                        } else {
+                            AsyncImage(
+                                model = state.profileImage,
+                                contentDescription = stringResource(R.string.content_description_profile_image),
+                                modifier = Modifier
+                                    .size(60.dp)
+                                    .clip(CircleShape),
+                                contentScale = ContentScale.Crop
+                            )
+                        }
                     } else {
                         Image(
                             imageVector = ImageVector.vectorResource(com.acon.acon.core.designsystem.R.drawable.ic_default_profile_40),
@@ -163,10 +176,9 @@ fun ProfileScreen(
                     )
                     ProfileInfo(
                         profileInfoType = ProfileInfoType.AREA,
-                        area = if(state.verifiedArea.size > 1) {
+                        area = if (state.verifiedArea.size > 1) {
                             "${state.verifiedArea[0].name} 외${state.verifiedArea.size - 1}"
-                        }
-                        else {
+                        } else {
                             state.verifiedArea[0].name
                         },
                         modifier = Modifier.weight(1f)
