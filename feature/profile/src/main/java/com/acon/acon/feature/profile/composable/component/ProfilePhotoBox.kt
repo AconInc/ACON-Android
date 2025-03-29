@@ -1,29 +1,31 @@
 package com.acon.acon.feature.profile.composable.component
 
+import android.net.Uri
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.layout.ContentScale
-import coil3.compose.rememberAsyncImagePainter
-import android.net.Uri
-import androidx.compose.material3.Icon
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.vectorResource
 import coil3.compose.AsyncImage
+import coil3.compose.rememberAsyncImagePainter
+import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.feature.profile.R
 
 @Composable
 fun ProfilePhotoBox(
     modifier: Modifier = Modifier,
+    onProfileClicked: () -> Unit = {},
     photoUri: String = "",
 ) {
     BoxWithConstraints(
@@ -36,7 +38,8 @@ fun ProfilePhotoBox(
                     .fillMaxSize()
                     .width(imageWidth)
                     .height(imageWidth)
-                    .clip(CircleShape),
+                    .clip(CircleShape)
+                    .noRippleClickable { onProfileClicked() },
                 contentAlignment = Alignment.Center
             ) {
                 when {

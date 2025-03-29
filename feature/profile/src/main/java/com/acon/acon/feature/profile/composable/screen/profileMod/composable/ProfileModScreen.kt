@@ -254,6 +254,7 @@ fun ProfileModScreen(
                             modifier = Modifier
                                 .fillMaxSize()
                                 .align(Alignment.Center),
+                            onProfileClicked = onProfileClicked,
                             photoUri = state.selectedPhotoUri
                         )
                         Icon(
