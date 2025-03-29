@@ -38,6 +38,7 @@ import com.acon.acon.core.designsystem.blur.defaultHazeEffect
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.domain.type.SpotType
+import com.acon.acon.feature.spot.R
 import com.acon.acon.feature.spot.getNameResId
 import com.acon.acon.feature.spot.state.ConditionState
 import com.acon.acon.feature.spot.type.AvailableWalkingTimeType
@@ -47,7 +48,6 @@ import com.airbnb.lottie.LottieComposition
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.rememberLottieComposition
-import com.acon.acon.feature.spot.R
 import dev.chrisbanes.haze.HazeState
 
 
@@ -148,13 +148,13 @@ fun SpotFilterBottomSheet(
             selectedCafePriceRange
         ) {
             selectedRestaurantFeatures.isNotEmpty() ||
-            selectedCafeFeatures.isNotEmpty() ||
-            selectedCompanionTypes.isNotEmpty() ||
-            selectedVisitPurposes.isNotEmpty() ||
-            selectedRestaurantWalkingTime != AvailableWalkingTimeType.UNDER_15_MINUTES ||
-            selectedCafeWalkingTime != AvailableWalkingTimeType.UNDER_15_MINUTES ||
-            selectedRestaurantPriceRange != RestaurantPriceRangeType.UNDER_10000 ||
-            selectedCafePriceRange != CafePriceRangeType.UNDER_5000
+                    selectedCafeFeatures.isNotEmpty() ||
+                    selectedCompanionTypes.isNotEmpty() ||
+                    selectedVisitPurposes.isNotEmpty() ||
+                    selectedRestaurantWalkingTime != AvailableWalkingTimeType.UNDER_15_MINUTES ||
+                    selectedCafeWalkingTime != AvailableWalkingTimeType.UNDER_15_MINUTES ||
+                    selectedRestaurantPriceRange != RestaurantPriceRangeType.UNDER_10000 ||
+                    selectedCafePriceRange != CafePriceRangeType.UNDER_5000
         }
 
         Box {
@@ -182,17 +182,6 @@ fun SpotFilterBottomSheet(
                         text = stringResource(R.string.filter_detail),
                         style = AconTheme.typography.head6_20_sb,
                         color = AconTheme.color.White
-                    )
-                    Icon(
-                        imageVector = ImageVector.vectorResource(com.acon.acon.core.designsystem.R.drawable.ic_dissmiss_28),
-                        contentDescription = stringResource(com.acon.acon.core.designsystem.R.string.dismiss_content_description),
-                        modifier = Modifier
-                            .align(Alignment.CenterEnd)
-                            .padding(end = 24.dp)
-                            .noRippleClickable {
-                                onDismissRequest()
-                            },
-                        tint = AconTheme.color.White
                     )
                 }
                 Column(
@@ -413,9 +402,10 @@ private fun BottomCompleteRow(
                 .clip(RoundedCornerShape(6.dp))
                 .background(
                     color = if (isEnabled) AconTheme.color.Gray5 else AconTheme.color.Gray7
-                ).padding(vertical = 12.dp)
+                )
+                .padding(vertical = 12.dp)
                 .noRippleClickable(enabled = isEnabled) { onComplete() },
-                contentAlignment = Alignment.Center
+            contentAlignment = Alignment.Center
         ) {
             if (isFilteredResultFetching) {
                 LottieAnimation(

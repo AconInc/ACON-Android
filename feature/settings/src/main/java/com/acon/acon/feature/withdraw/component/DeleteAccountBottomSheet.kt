@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -29,7 +28,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.acon.acon.core.designsystem.blur.defaultHazeEffect
 import com.acon.acon.core.designsystem.component.button.AconFilledLargeButton
-import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.feature.settings.R
 import dev.chrisbanes.haze.HazeState
@@ -39,7 +37,7 @@ import dev.chrisbanes.haze.HazeState
 fun DeleteAccountBottomSheet(
     hazeState: HazeState,
     modifier: Modifier = Modifier,
-    onDismissRequest:() -> Unit = {},
+    onDismissRequest: () -> Unit = {},
     onDeleteAccount: () -> Unit = {},
 ) {
     ModalBottomSheet(
@@ -71,24 +69,7 @@ fun DeleteAccountBottomSheet(
                         .size(width = 36.dp, height = 5.dp)
                         .background(AconTheme.color.Gray5)
                 )
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 12.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(com.acon.acon.core.designsystem.R.drawable.ic_dissmiss_28),
-                        contentDescription = stringResource(R.string.dismiss_btn_content_description),
-                        modifier = Modifier
-                            .align(Alignment.CenterEnd)
-                            .padding(end = 24.dp)
-                            .noRippleClickable {
-                                onDismissRequest()
-                            },
-                        tint = AconTheme.color.White
-                    )
-                }
+
                 Column(
                     modifier = Modifier
                         .padding(horizontal = 16.dp)
