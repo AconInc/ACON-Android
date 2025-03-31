@@ -30,6 +30,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
@@ -41,19 +42,19 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.acon.acon.core.designsystem.component.button.AconFilledLargeButton
 import com.acon.acon.core.designsystem.component.dialog.AconTwoButtonDialog
-import com.acon.acon.core.designsystem.component.textfield.AconTextField
-import com.acon.acon.core.designsystem.component.textfield.TextFieldStatus
-import com.acon.acon.core.designsystem.component.textfield.addFocusCleaner
 import com.acon.acon.core.designsystem.component.topbar.AconTopBar
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.core.utils.feature.permission.CheckAndRequestPhotoPermission
 import com.acon.acon.feature.profile.R
+import com.acon.acon.feature.profile.composable.component.AconTextField
 import com.acon.acon.feature.profile.composable.component.CustomModalBottomSheet
 import com.acon.acon.feature.profile.composable.component.NicknameErrMessageRow
 import com.acon.acon.feature.profile.composable.component.ProfilePhotoBox
+import com.acon.acon.feature.profile.composable.component.TextFieldStatus
+import com.acon.acon.feature.profile.composable.component.addFocusCleaner
 import com.acon.acon.feature.profile.composable.screen.profileMod.BirthdayStatus
-import com.acon.acon.feature.profile.composable.screen.profileMod.BirthdayVisualTransformation
+import com.acon.acon.feature.profile.composable.screen.profileMod.FocusType
 import com.acon.acon.feature.profile.composable.screen.profileMod.NicknameStatus
 import com.acon.acon.feature.profile.composable.screen.profileMod.ProfileModSideEffect
 import com.acon.acon.feature.profile.composable.screen.profileMod.ProfileModState
@@ -73,7 +74,7 @@ fun ProfileModScreenContainer(
     val state = viewModel.collectAsState().value
     val context = LocalContext.current
 
-    LaunchedEffect(selectedPhotoId){
+    LaunchedEffect(selectedPhotoId) {
         selectedPhotoId.let {
             viewModel.updateProfileImage(selectedPhotoId)
         }
@@ -89,20 +90,25 @@ fun ProfileModScreenContainer(
                     }
                     context.startActivity(intent)
                 }
+
                 is ProfileModSideEffect.NavigateBack -> {
                     backToProfile()
                 }
+
                 is ProfileModSideEffect.NavigateToCustomGallery -> {
                     onNavigateToCustomGallery()
                 }
+
                 is ProfileModSideEffect.UpdateProfileImage -> {
                     selectedPhotoId.let {
                         viewModel.updateProfileImage(selectedPhotoId)
                     }
                 }
+
                 is ProfileModSideEffect.NavigateToProfileSuccess -> {
                     onNavigateToProfile(ProfileUpdateResult.SUCCESS)
                 }
+
                 is ProfileModSideEffect.NavigateToProfileFailed -> {
                     onNavigateToProfile(ProfileUpdateResult.FAILURE)
                 }
@@ -183,11 +189,13 @@ fun ProfileModScreen(
     state: ProfileModState,
     onNicknameChanged: (String) -> Unit = {},
     onBirthdayChanged: (String) -> Unit = {},
-    onFocusChanged: (Boolean) -> Unit = {},
+    onFocusChanged: (Boolean, FocusType) -> Unit = { _, _ -> },
     onBackClicked: () -> Unit,
     onSaveClicked: () -> Unit,
     onProfileClicked: () -> Unit = {},
 ) {
+    val nickNameFocusRequester = remember { FocusRequester() }
+    val birthDayFocusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
     val scrollState = rememberScrollState()
 
@@ -221,28 +229,34 @@ fun ProfileModScreen(
                 )
             }
         )
-        
+
         Box(
             modifier = Modifier.weight(1f)
-        ){
+        ) {
             Column(
-                modifier = Modifier.fillMaxSize().verticalScroll(scrollState),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(scrollState),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 10.dp),
                     horizontalArrangement = Arrangement.Center
-                ){
+                ) {
                     Spacer(modifier = Modifier.weight(1f))
                     Box(
-                        modifier = Modifier.weight(1f).aspectRatio(1f),
+                        modifier = Modifier
+                            .weight(1f)
+                            .aspectRatio(1f),
                         contentAlignment = Alignment.Center
-                    ){
+                    ) {
                         ProfilePhotoBox(
-                            modifier = Modifier.fillMaxSize().align(Alignment.Center),
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .align(Alignment.Center),
+                            onProfileClicked = onProfileClicked,
                             photoUri = state.selectedPhotoUri
                         )
                         Icon(
@@ -251,7 +265,7 @@ fun ProfileModScreen(
                             tint = Color.Unspecified,
                             modifier = Modifier
                                 .align(alignment = Alignment.BottomEnd)
-                                .noRippleClickable{ onProfileClicked() }
+                                .noRippleClickable { onProfileClicked() }
                         )
                     }
                     Spacer(modifier = Modifier.weight(1f))
@@ -259,28 +273,43 @@ fun ProfileModScreen(
 
                 Column(
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 15.dp),
-                ){
+                ) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.Start
-                    ){
-                        Text(text = "닉네임", style = AconTheme.typography.head8_16_sb, color = AconTheme.color.White)
+                    ) {
+                        Text(
+                            text = "닉네임",
+                            style = AconTheme.typography.head8_16_sb,
+                            color = AconTheme.color.White
+                        )
                         Spacer(modifier = Modifier.width(4.dp))
-                        Text(text = "*", style = AconTheme.typography.head8_16_sb, color = AconTheme.color.Main_org1)
+                        Text(
+                            text = "*",
+                            style = AconTheme.typography.head8_16_sb,
+                            color = AconTheme.color.Main_org1
+                        )
                     }
+
                     Spacer(modifier = Modifier.height(12.dp))
                     AconTextField(
                         status = state.nickNameFieldStatus,
-                        text = state.nickNameState,
-                        onTextChanged = onNicknameChanged,
-                        onFocusChanged = onFocusChanged,
+                        focusType = FocusType.Nickname,
+                        focusRequester = nickNameFocusRequester,
+                        value = state.nickNameState,
                         placeholder = "16자 이내 영문, 한글, 숫자, ., _만 사용 가능",
                         isTyping = (state.nicknameStatus == NicknameStatus.Typing),
+                        onTextChanged = onNicknameChanged,
+                        onFocusChanged = onFocusChanged,
+                        onClick = {
+                            nickNameFocusRequester.requestFocus()
+                        },
                     )
+
                     Spacer(modifier = Modifier.height(8.dp))
                     Row(
                         modifier = Modifier.fillMaxWidth()
-                    ){
+                    ) {
                         Column(
                             modifier = Modifier.weight(1f),
                             verticalArrangement = Arrangement.Top,
@@ -295,6 +324,7 @@ fun ProfileModScreen(
                                         textColor = AconTheme.color.Error_red1
                                     )
                                 }
+
                                 is NicknameStatus.Error -> {
                                     status.errorTypes.forEach { error ->
                                         NicknameErrMessageRow(
@@ -305,6 +335,7 @@ fun ProfileModScreen(
                                         )
                                     }
                                 }
+
                                 is NicknameStatus.Valid -> {
                                     NicknameErrMessageRow(
                                         modifier = modifier,
@@ -313,43 +344,62 @@ fun ProfileModScreen(
                                         textColor = AconTheme.color.Success_blue1
                                     )
                                 }
+
                                 else -> Unit
                             }
                         }
 
                         Row(
                             horizontalArrangement = Arrangement.End
-                        ){
-                            Text(text = "${state.nicknameCount}", style = AconTheme.typography.subtitle2_14_med, color = AconTheme.color.White)
-                            Text(text = "/16", style = AconTheme.typography.subtitle2_14_med, color = AconTheme.color.Gray5)
+                        ) {
+                            Text(
+                                text = "${state.nickNameState.length}",
+                                style = AconTheme.typography.subtitle2_14_med,
+                                color = AconTheme.color.White
+                            )
+                            Text(
+                                text = "/16",
+                                style = AconTheme.typography.subtitle2_14_med,
+                                color = AconTheme.color.Gray5
+                            )
                         }
                     }
                 }
 
                 Column(
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 15.dp),
-                ){
+                ) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.Start
-                    ){
-                        Text(text = "생년월일", style = AconTheme.typography.head8_16_sb, color = AconTheme.color.White)
+                    ) {
+                        Text(
+                            text = "생년월일",
+                            style = AconTheme.typography.head8_16_sb,
+                            color = AconTheme.color.White
+                        )
                         Spacer(modifier = Modifier.width(4.dp))
                     }
                     Spacer(modifier = Modifier.height(12.dp))
                     AconTextField(
                         status = state.birthdayFieldStatus,
-                        text = state.birthdayState,
+                        focusType = FocusType.Birthday,
+                        focusRequester = birthDayFocusRequester,
+                        value = state.birthdayState,
+                        placeholder = "YYYY.MM.DD",
                         onTextChanged = onBirthdayChanged,
                         onFocusChanged = onFocusChanged,
-                        placeholder = "ex) 2025.01.01",
-                        visualTransformation = BirthdayVisualTransformation()
+                        onClick = {
+                            birthDayFocusRequester.requestFocus()
+                        }
                     )
+
                     Spacer(modifier = Modifier.height(8.dp))
                     when (val status = state.birthdayStatus) {
                         is BirthdayStatus.Valid -> {
                             Spacer(modifier = Modifier.height(4.dp))
                         }
+
                         is BirthdayStatus.Invalid -> {
                             NicknameErrMessageRow(
                                 modifier = modifier,
@@ -358,6 +408,7 @@ fun ProfileModScreen(
                                 textColor = AconTheme.color.Error_red1
                             )
                         }
+
                         else -> Spacer(modifier = Modifier.height(4.dp))
                     }
                 }
@@ -394,6 +445,7 @@ private fun ProfileModScreenPreview() {
     val birthdayState = remember { mutableStateOf("") }
 
     ProfileModScreen(
+        onFocusChanged = { _, _ -> },
         state = ProfileModState(
             nickNameState = nickNameState.value,
             birthdayState = birthdayState.value,
@@ -402,7 +454,6 @@ private fun ProfileModScreenPreview() {
         ),
         onNicknameChanged = { newValue -> nickNameState.value = newValue },
         onBirthdayChanged = { newValue -> birthdayState.value = newValue },
-        onFocusChanged = {},
         onBackClicked = {},
         onSaveClicked = {},
     )

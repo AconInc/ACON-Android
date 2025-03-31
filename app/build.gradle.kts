@@ -23,7 +23,7 @@ android {
         applicationId = "com.acon.acon"
         minSdk = 28
         targetSdk = 35
-        versionCode = 3
+        versionCode = 4
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -31,7 +31,11 @@ android {
             useSupportLibrary = true
         }
         manifestPlaceholders["naverClientId"] = getPropertyKey("naver_client_id")
-        buildConfigField("String", "NAVER_CLIENT_ID", "String.valueOf(\"${localProperties["naver_client_id"]}\")")
+        buildConfigField(
+            "String",
+            "NAVER_CLIENT_ID",
+            "String.valueOf(\"${localProperties["naver_client_id"]}\")"
+        )
         buildConfigField("String", "BASE_URL", "String.valueOf(\"${localProperties["BASE_URL"]}\")")
     }
 
@@ -55,8 +59,16 @@ android {
             signingConfig = signingConfigs.getByName("release")
 
             manifestPlaceholders["naverClientId"] = getPropertyKey("naver_client_id")
-            buildConfigField("String", "NAVER_CLIENT_ID", "String.valueOf(\"${localProperties["naver_client_id"]}\")")
-            buildConfigField("String", "BASE_URL", "String.valueOf(\"${localProperties["BASE_URL"]}\")")
+            buildConfigField(
+                "String",
+                "NAVER_CLIENT_ID",
+                "String.valueOf(\"${localProperties["naver_client_id"]}\")"
+            )
+            buildConfigField(
+                "String",
+                "BASE_URL",
+                "String.valueOf(\"${localProperties["BASE_URL"]}\")"
+            )
         }
     }
     compileOptions {
@@ -133,5 +145,5 @@ dependencies {
     implementation(libs.haze)
     implementation(libs.haze.materials)
 
-    implementation (libs.androidx.core.splashscreen)
+    implementation(libs.androidx.core.splashscreen)
 }

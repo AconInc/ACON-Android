@@ -78,7 +78,7 @@ internal fun NavGraphBuilder.profileNavigation(
                 modifier = Modifier.fillMaxSize(),
                 selectedPhotoId = selectedPhotoId.value.toString(),
                 backToProfile = {
-                    navController.navigate(ProfileRoute.Profile)
+                    navController.popBackStack()
                 },
                 onNavigateToProfile = { profileUpdateResult ->
                     navController.previousBackStackEntry
