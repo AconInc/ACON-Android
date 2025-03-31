@@ -188,7 +188,7 @@ class ProfileModViewModel @Inject constructor(
         val day = birthday.substring(6, 8).toIntOrNull() ?: return false
 
         val currentYear = java.time.Year.now().value
-        if (year > currentYear || year <= 1900) return false
+        if (year > currentYear || year <= 1940) return false
 
         if (month !in 1..12) return false
 
