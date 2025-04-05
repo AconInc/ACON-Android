@@ -26,8 +26,10 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -37,6 +39,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -54,12 +58,15 @@ import com.acon.acon.feature.profile.composable.component.ProfilePhotoBox
 import com.acon.acon.feature.profile.composable.component.TextFieldStatus
 import com.acon.acon.feature.profile.composable.component.addFocusCleaner
 import com.acon.acon.feature.profile.composable.screen.profileMod.BirthdayStatus
-import com.acon.acon.feature.profile.composable.screen.profileMod.FocusType
 import com.acon.acon.feature.profile.composable.screen.profileMod.NicknameStatus
 import com.acon.acon.feature.profile.composable.screen.profileMod.ProfileModSideEffect
 import com.acon.acon.feature.profile.composable.screen.profileMod.ProfileModState
 import com.acon.acon.feature.profile.composable.screen.profileMod.ProfileModViewModel
-import com.acon.acon.feature.profile.composable.screen.profileMod.ProfileUpdateResult
+import com.acon.acon.feature.profile.composable.type.FocusType
+import com.acon.acon.feature.profile.composable.type.ProfileUpdateResult
+import com.acon.acon.feature.profile.composable.utils.BirthdayTransformation
+import com.acon.acon.feature.profile.composable.utils.isAllowedChar
+import com.acon.acon.feature.profile.composable.utils.isKorean
 import org.orbitmvi.orbit.compose.collectAsState
 
 @Composable
@@ -71,7 +78,7 @@ fun ProfileModScreenContainer(
     onNavigateToProfile: (ProfileUpdateResult) -> Unit = { }, // 이건 수정 성공/실패 값을 갖고 넘기는 함수.
     onNavigateToCustomGallery: () -> Unit = {},
 ) {
-    val state = viewModel.collectAsState().value
+    val state by viewModel.collectAsState()
     val context = LocalContext.current
 
     LaunchedEffect(selectedPhotoId) {
@@ -81,7 +88,6 @@ fun ProfileModScreenContainer(
     }
 
     LaunchedEffect(Unit) {
-
         viewModel.container.sideEffectFlow.collect { effect ->
             when (effect) {
                 is ProfileModSideEffect.NavigateToSettings -> {
@@ -199,6 +205,21 @@ fun ProfileModScreen(
     val focusManager = LocalFocusManager.current
     val scrollState = rememberScrollState()
 
+    var nicknameText by remember { mutableStateOf(TextFieldValue("")) }
+    var birthdayText by remember { mutableStateOf(TextFieldValue("")) }
+
+    LaunchedEffect(state.birthdayState) {
+        if (birthdayText.text != state.birthdayState) {
+            birthdayText = TextFieldValue(state.birthdayState)
+        }
+    }
+
+    LaunchedEffect(state.nickNameState) {
+        if (nicknameText.text != state.nickNameState) {
+            nicknameText = TextFieldValue(state.nickNameState)
+        }
+    }
+
     BackHandler(enabled = true) {
         onBackClicked()
     }
@@ -296,10 +317,31 @@ fun ProfileModScreen(
                         status = state.nickNameFieldStatus,
                         focusType = FocusType.Nickname,
                         focusRequester = nickNameFocusRequester,
-                        value = state.nickNameState,
+                        value = nicknameText,
                         placeholder = "16자 이내 영문, 한글, 숫자, ., _만 사용 가능",
                         isTyping = (state.nicknameStatus == NicknameStatus.Typing),
-                        onTextChanged = onNicknameChanged,
+                        onTextChanged = { fieldValue ->
+                            val inputText = fieldValue.text
+                            var count = 0
+
+                            val validText = buildString {
+                                for (char in inputText) {
+                                    if (!char.isAllowedChar()) continue
+                                    val weight = if (char.isKorean()) 2 else 1
+                                    if (count + weight > 16) break
+                                    append(char)
+                                    count += weight
+                                }
+                            }
+
+                            if (validText.length < inputText.length) {
+                                // 초과된 입력이므로 무시하고 아무것도 하지 않음
+                            } else {
+                                // 정상적인 입력만 반영
+                                nicknameText = fieldValue
+                                onNicknameChanged(inputText)
+                            }
+                        },
                         onFocusChanged = onFocusChanged,
                         onClick = {
                             nickNameFocusRequester.requestFocus()
@@ -353,7 +395,7 @@ fun ProfileModScreen(
                             horizontalArrangement = Arrangement.End
                         ) {
                             Text(
-                                text = "${state.nickNameState.length}",
+                                text = "${state.nicknameCount}",
                                 style = AconTheme.typography.subtitle2_14_med,
                                 color = AconTheme.color.White
                             )
@@ -385,10 +427,20 @@ fun ProfileModScreen(
                         status = state.birthdayFieldStatus,
                         focusType = FocusType.Birthday,
                         focusRequester = birthDayFocusRequester,
-                        value = state.birthdayState,
+                        value = birthdayText,
                         placeholder = "YYYY.MM.DD",
-                        onTextChanged = onBirthdayChanged,
+                        onTextChanged = { fieldValue ->
+                            val digitsOnly = fieldValue.text.filter { it.isDigit() }.take(8)
+                            val cursorPos = minOf(digitsOnly.length, fieldValue.selection.start)
+
+                            birthdayText = fieldValue.copy(
+                                text = digitsOnly,
+                                selection = TextRange(cursorPos)
+                            )
+                            onBirthdayChanged(digitsOnly)
+                        },
                         onFocusChanged = onFocusChanged,
+                        visualTransformation = BirthdayTransformation(),
                         onClick = {
                             birthDayFocusRequester.requestFocus()
                         }
@@ -432,7 +484,8 @@ fun ProfileModScreen(
                 onClick = onSaveClicked,
                 isEnabled = (state.nicknameStatus == NicknameStatus.Valid) &&
                         (state.birthdayStatus != BirthdayStatus.Invalid("정확한 생년월일을 입력해주세요")) &&
-                        (state.nickNameState != state.originalNickname || state.birthdayState != state.originalBirthday || state.selectedPhotoUri != state.originalPhotoUri)
+                        ((state.nickNameState != state.originalNickname || state.birthdayState != state.originalBirthday || state.selectedPhotoUri != state.originalPhotoUri)
+                                && state.birthdayState.isNotEmpty())
             )
         }
     }
@@ -458,3 +511,5 @@ private fun ProfileModScreenPreview() {
         onSaveClicked = {},
     )
 }
+
+
