@@ -75,7 +75,7 @@ fun ProfileModScreenContainer(
     viewModel: ProfileModViewModel = hiltViewModel(),
     selectedPhotoId: String = "",
     backToProfile: () -> Unit = {},
-    onNavigateToProfile: (ProfileUpdateResult) -> Unit = { }, // 이건 수정 성공/실패 값을 갖고 넘기는 함수.
+    onNavigateToProfile: (ProfileUpdateResult) -> Unit = { },
     onNavigateToCustomGallery: () -> Unit = {},
 ) {
     val state by viewModel.collectAsState()
@@ -200,23 +200,26 @@ fun ProfileModScreen(
     onSaveClicked: () -> Unit,
     onProfileClicked: () -> Unit = {},
 ) {
+    val scrollState = rememberScrollState()
+    val focusManager = LocalFocusManager.current
     val nickNameFocusRequester = remember { FocusRequester() }
     val birthDayFocusRequester = remember { FocusRequester() }
-    val focusManager = LocalFocusManager.current
-    val scrollState = rememberScrollState()
 
+    // 커서 위치를 관리하기 위해 사용
     var nicknameText by remember { mutableStateOf(TextFieldValue("")) }
     var birthdayText by remember { mutableStateOf(TextFieldValue("")) }
 
-    LaunchedEffect(state.birthdayState) {
-        if (birthdayText.text != state.birthdayState) {
-            birthdayText = TextFieldValue(state.birthdayState)
-        }
-    }
-
+    // 서버로 부터 받아온 초기값 설정 (닉네임)
     LaunchedEffect(state.nickNameState) {
         if (nicknameText.text != state.nickNameState) {
             nicknameText = TextFieldValue(state.nickNameState)
+        }
+    }
+
+    // 서버로 부터 받아온 초기값 설정 (생일)
+    LaunchedEffect(state.birthdayState) {
+        if (birthdayText.text != state.birthdayState) {
+            birthdayText = TextFieldValue(state.birthdayState)
         }
     }
 
@@ -335,9 +338,9 @@ fun ProfileModScreen(
                             }
 
                             if (validText.length < inputText.length) {
-                                // 초과된 입력이므로 무시하고 아무것도 하지 않음
+                                // 초과된 입력이므로 무시하고 아무것도 하지 않음 (16자 이상은 입력 무시(불가능))
                             } else {
-                                // 정상적인 입력만 반영
+                                // 정상적인 입력만 가능
                                 nicknameText = fieldValue
                                 onNicknameChanged(inputText)
                             }
