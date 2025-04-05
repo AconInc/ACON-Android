@@ -7,6 +7,9 @@ import androidx.lifecycle.viewModelScope
 import com.acon.acon.domain.error.profile.ValidateNicknameError
 import com.acon.acon.domain.repository.ProfileRepository
 import com.acon.acon.feature.profile.composable.component.TextFieldStatus
+import com.acon.acon.feature.profile.composable.type.FocusType
+import com.acon.acon.feature.profile.composable.utils.isAllowedChar
+import com.acon.acon.feature.profile.composable.utils.isKorean
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -24,6 +27,8 @@ class ProfileModViewModel @Inject constructor(
     private val profileRepository: ProfileRepository,
     application: Application
 ) : AndroidViewModel(application), ContainerHost<ProfileModState, ProfileModSideEffect> {
+
+    private var isInitialNicknameValidated = false
 
     override val container = container<ProfileModState, ProfileModSideEffect>(ProfileModState()) {
         fetchUserProfileInfo()
@@ -44,96 +49,113 @@ class ProfileModViewModel @Inject constructor(
     }
 
     private fun fetchUserProfileInfo() = intent {
-        viewModelScope.launch {
-            profileRepository.fetchProfile()
-                .onSuccess { profile ->
-                    reduce {
-                        state.copy(
-                            selectedPhotoUri = profile.image,
-                            originalPhotoUri = profile.image,
-                            originalNickname = profile.nickname,
-                            nickNameState = profile.nickname,
-                            originalBirthday = profile.birthDate?.filter { it.isDigit() } ?: "",
-                            birthdayState = profile.birthDate?.filter { it.isDigit() } ?: ""
-                        )
-                    }
-                    onNicknameChanged(state.nickNameState)
-                    onBirthdayChanged(state.birthdayState)
-                }
+        profileRepository.fetchProfile().onSuccess { profile ->
+            val cleanedNickname = profile.nickname
+            val cleanedBirthday = profile.birthDate?.filter { it.isDigit() } ?: ""
+
+            reduce {
+                state.copy(
+                    selectedPhotoUri = profile.image,
+                    originalPhotoUri = profile.image,
+                    originalNickname = profile.nickname,
+                    nickNameState = profile.nickname,
+                    originalBirthday = profile.birthDate?.filter { it.isDigit() } ?: "",
+                    birthdayState = profile.birthDate?.filter { it.isDigit() } ?: ""
+                )
+            }
+            onNicknameChanged(cleanedNickname, delayValidation = true)
+            onBirthdayChanged(cleanedBirthday)
         }
     }
 
-    private fun Char.isAllowedChar(): Boolean {
-        return this in 'a'..'z' ||
-                this in 'A'..'Z' ||
-                this in '0'..'9' ||
-                this in '가'..'힣' ||
-                this in 'ㄱ'..'ㅎ' ||
-                this in 'ㅏ'..'ㅣ' ||
-                this == '.' || this == '_'
-    }
-
-    private val koreanCharRegex = Regex("[가-힣ㄱ-ㅎㅏ-ㅣ]")
-
     private var nicknameValidationJob: Job? = null
 
-    fun onNicknameChanged(text: String) = intent {
+    private suspend fun validateNickname(
+        nickname: String,
+        errors: MutableList<NicknameErrorType>
+    ): Boolean {
+        return profileRepository.validateNickname(nickname)
+            .map { true }
+            .recover { throwable ->
+                when (throwable) {
+                    is ValidateNicknameError.UnsatisfiedCondition -> {
+                        errors.add(NicknameErrorType.InvalidChar)
+                        false
+                    }
+
+                    is ValidateNicknameError.AlreadyUsedNickname -> {
+                        errors.add(NicknameErrorType.AlreadyUsed)
+                        false
+                    }
+
+                    else -> {
+                        false
+                    }
+                }
+            }
+            .getOrDefault(false)
+    }
+
+    fun onNicknameChanged(text: String, delayValidation: Boolean = false) = intent {
         val filteredText = text.filter { it.isAllowedChar() }
 
         var nicknameCount = 0
         for (char in filteredText) {
-            nicknameCount += if (koreanCharRegex.matches(char.toString())) 2 else 1
+            nicknameCount += if (char.isKorean()) 2 else 1
             if (nicknameCount > 16) break
         }
 
-        if (filteredText.isEmpty()) {
-            reduce {
-                state.copy(
-                    nickNameState = "",
-                    nicknameStatus = NicknameStatus.Empty,
-                    nickNameFieldStatus = TextFieldStatus.Empty
-                )
-            }
-            return@intent
+        val updatedNicknameStatus = when {
+            filteredText.isEmpty() -> NicknameStatus.Empty
+            else -> NicknameStatus.Typing
         }
 
-        if (nicknameCount <= 16) {
-            reduce {
-                state.copy(
-                    nickNameState = filteredText,
-                    nicknameStatus = NicknameStatus.Typing,
-                    nicknameCount = nicknameCount
-                )
-            }
+        val updatedFieldStatus = when {
+            filteredText.isEmpty() -> TextFieldStatus.Empty
+            else -> state.nickNameFieldStatus
         }
+
+        reduce {
+            state.copy(
+                nickNameState = filteredText,
+                nicknameCount = nicknameCount,
+                nicknameStatus = updatedNicknameStatus,
+                nickNameFieldStatus = updatedFieldStatus
+            )
+        }
+
+        if (filteredText.isEmpty()) return@intent
+        if (delayValidation && isInitialNicknameValidated) return@intent
 
         nicknameValidationJob?.cancel()
-
         nicknameValidationJob = viewModelScope.launch {
-            delay(500L)
+            if (delayValidation) delay(2000L)
+            else delay(500L)
 
             val errors = mutableListOf<NicknameErrorType>()
 
-            if (text.any { it in "!@#$%^&*()-=+[]{};:'\",<>/?\\|" }) {
+            if (filteredText.any { it in "!@#$%^&*()-=+[]{};:'\",<>/?\\|" }) {
                 errors.add(NicknameErrorType.InvalidChar)
             }
 
             val allowedChars = (33..126).map { it.toChar() } +
                     ('가'..'힣') + ('ㄱ'..'ㅎ') + ('ㅏ'..'ㅣ')
-            if (text.any { it !in allowedChars }) {
+            if (filteredText.any { it !in allowedChars }) {
                 errors.add(NicknameErrorType.InvalidLang)
             }
 
-            val isValid = validateNickname(nickname = filteredText, errors = errors)
+            validateNickname(nickname = filteredText, errors = errors)
 
-            reduce {
-                state.copy(
-                    nicknameStatus = when {
-                        filteredText.isBlank() -> NicknameStatus.Empty
-                        errors.isNotEmpty() -> NicknameStatus.Error(errors)
-                        else -> NicknameStatus.Valid
-                    }
-                )
+            intent {
+                reduce {
+                    state.copy(
+                        nicknameStatus = when {
+                            filteredText.isBlank() -> NicknameStatus.Empty
+                            errors.isNotEmpty() -> NicknameStatus.Error(errors)
+                            else -> NicknameStatus.Valid
+                        }
+                    )
+                }
             }
         }
     }
@@ -188,7 +210,7 @@ class ProfileModViewModel @Inject constructor(
         val day = birthday.substring(6, 8).toIntOrNull() ?: return false
 
         val currentYear = java.time.Year.now().value
-        if (year > currentYear || year <= 1900) return false
+        if (year > currentYear || year <= 1940) return false
 
         if (month !in 1..12) return false
 
@@ -262,32 +284,6 @@ class ProfileModViewModel @Inject constructor(
         reduce {
             state.copy(showPhotoEditDialog = false)
         }
-    }
-
-    private suspend fun validateNickname(
-        nickname: String,
-        errors: MutableList<NicknameErrorType>
-    ): Boolean {
-        return profileRepository.validateNickname(nickname)
-            .map { true }
-            .recover { throwable ->
-                when (throwable) {
-                    is ValidateNicknameError.UnsatisfiedCondition -> {
-                        errors.add(NicknameErrorType.InvalidChar)
-                        false
-                    }
-
-                    is ValidateNicknameError.AlreadyUsedNickname -> {
-                        errors.add(NicknameErrorType.AlreadyUsed)
-                        false
-                    }
-
-                    else -> {
-                        false
-                    }
-                }
-            }
-            .getOrDefault(false)
     }
 
     fun getPreSignedUrl() = intent {
@@ -392,28 +388,20 @@ class ProfileModViewModel @Inject constructor(
         }
     }
 
-
-    private fun updateProfile(fileName: String, nickname: String, birthday: String?) {
-
-        viewModelScope.launch {
-            profileRepository.updateProfile(fileName, nickname, birthday)
-                .onSuccess {
-                    intent {
-                        postSideEffect(ProfileModSideEffect.NavigateToProfileSuccess)
-                    }
+    private fun updateProfile(fileName: String, nickname: String, birthday: String?) = intent {
+        profileRepository.updateProfile(fileName, nickname, birthday)
+            .onSuccess {
+                intent {
+                    postSideEffect(ProfileModSideEffect.NavigateToProfileSuccess)
                 }
-                .onFailure {
-                    intent {
-                        postSideEffect(ProfileModSideEffect.NavigateToProfileFailed)
-                    }
+            }
+            .onFailure {
+                intent {
+                    postSideEffect(ProfileModSideEffect.NavigateToProfileFailed)
                 }
-
-        }
+            }
     }
-}
 
-enum class FocusType {
-    Nickname, Birthday
 }
 
 data class ProfileModState(
@@ -458,11 +446,6 @@ sealed class BirthdayStatus {
     data object Empty : BirthdayStatus()
     data class Invalid(val errorMsg: String?) : BirthdayStatus()
     data object Valid : BirthdayStatus()
-}
-
-enum class ProfileUpdateResult {
-    SUCCESS,
-    FAILURE
 }
 
 sealed interface ProfileModSideEffect {

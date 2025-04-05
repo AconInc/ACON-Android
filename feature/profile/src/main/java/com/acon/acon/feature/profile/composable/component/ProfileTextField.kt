@@ -30,25 +30,28 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.core.designsystem.theme.AconTheme.color
-import com.acon.acon.feature.profile.composable.screen.profileMod.FocusType
+import com.acon.acon.feature.profile.composable.type.FocusType
 
 @Composable
-fun AconTextField(
+fun ProfileTextField(
     status: TextFieldStatus,
     focusType: FocusType,
     focusRequester: FocusRequester,
     modifier: Modifier = Modifier,
-    value: String = "",
+    value: TextFieldValue = TextFieldValue(),
     placeholder: String = "",
     isTyping: Boolean = false,
-    onTextChanged: (String) -> Unit = {},
+    onTextChanged: (TextFieldValue) -> Unit = {},
     onFocusChanged: (Boolean, FocusType) -> Unit = { _, _ -> },
+    visualTransformation: VisualTransformation = VisualTransformation.None,
     onClick: () -> Unit = {},
 ) {
     val backgroundColor = when (status) {
@@ -95,7 +98,7 @@ fun AconTextField(
                 value = value,
                 onValueChange = onTextChanged,
                 maxLines = 1,
-                cursorBrush = SolidColor(AconTheme.color.Success_blue1),
+                cursorBrush = SolidColor(color.Success_blue1),
                 modifier = Modifier
                     .weight(1f)
                     .focusRequester(focusRequester)
@@ -105,16 +108,17 @@ fun AconTextField(
                 textStyle = AconTheme.typography.body2_14_reg.copy(
                     color = textColor
                 ),
+                visualTransformation = visualTransformation,
                 decorationBox = { innerTextField ->
                     Box(
                         modifier = Modifier.fillMaxWidth(),
                         contentAlignment = Alignment.CenterStart
                     ) {
-                        if (value.isEmpty() && status != TextFieldStatus.Focused) {
+                        if (value.text.isEmpty() && status != TextFieldStatus.Focused) {
                             Text(
                                 text = placeholder,
                                 style = AconTheme.typography.body2_14_reg,
-                                color = AconTheme.color.Gray3,
+                                color = color.Gray3,
                             )
                         }
                         innerTextField()
@@ -122,7 +126,7 @@ fun AconTextField(
                 }
             )
 
-            if (value.isNotEmpty()) {
+            if (value.text.isNotEmpty()) {
                 if (isTyping) {
                     CircularProgressIndicator(
                         modifier = Modifier.size(16.dp),
@@ -132,7 +136,7 @@ fun AconTextField(
                 } else {
                     Icon(
                         modifier = Modifier
-                            .clickable { onTextChanged("") }
+                            .clickable { onTextChanged(TextFieldValue()) }
                             .size(20.dp),
                         imageVector = ImageVector.vectorResource(R.drawable.ic_dissmiss_circle_gray),
                         contentDescription = "Clear text",
@@ -164,36 +168,36 @@ fun Modifier.addFocusCleaner(focusManager: FocusManager, doOnClear: () -> Unit =
 
 @Preview
 @Composable
-private fun AconTextFieldPreview() {
+private fun ProfileTextFieldPreview() {
 
     Column(
         modifier = Modifier.fillMaxSize(),
     ) {
-        AconTextField(
+        ProfileTextField(
             status = TextFieldStatus.Inactive,
             focusRequester = FocusRequester(),
             focusType = FocusType.Nickname,
         )
         Spacer(modifier = Modifier.height(30.dp))
-        AconTextField(
+        ProfileTextField(
             status = TextFieldStatus.Focused,
             focusRequester = FocusRequester(),
             focusType = FocusType.Nickname,
         )
         Spacer(modifier = Modifier.height(30.dp))
-        AconTextField(
+        ProfileTextField(
             status = TextFieldStatus.Active,
             focusRequester = FocusRequester(),
             focusType = FocusType.Nickname,
         )
         Spacer(modifier = Modifier.height(30.dp))
-        AconTextField(
+        ProfileTextField(
             status = TextFieldStatus.Error,
             focusRequester = FocusRequester(),
             focusType = FocusType.Nickname,
         )
         Spacer(modifier = Modifier.height(30.dp))
-        AconTextField(
+        ProfileTextField(
             status = TextFieldStatus.Disabled,
             focusRequester = FocusRequester(),
             focusType = FocusType.Nickname,
