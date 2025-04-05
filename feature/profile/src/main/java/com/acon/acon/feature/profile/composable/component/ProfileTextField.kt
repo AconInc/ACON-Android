@@ -41,7 +41,7 @@ import com.acon.acon.core.designsystem.theme.AconTheme.color
 import com.acon.acon.feature.profile.composable.type.FocusType
 
 @Composable
-fun AconTextField(
+fun ProfileTextField(
     status: TextFieldStatus,
     focusType: FocusType,
     focusRequester: FocusRequester,
@@ -168,36 +168,36 @@ fun Modifier.addFocusCleaner(focusManager: FocusManager, doOnClear: () -> Unit =
 
 @Preview
 @Composable
-private fun AconTextFieldPreview() {
+private fun ProfileTextFieldPreview() {
 
     Column(
         modifier = Modifier.fillMaxSize(),
     ) {
-        AconTextField(
+        ProfileTextField(
             status = TextFieldStatus.Inactive,
             focusRequester = FocusRequester(),
             focusType = FocusType.Nickname,
         )
         Spacer(modifier = Modifier.height(30.dp))
-        AconTextField(
+        ProfileTextField(
             status = TextFieldStatus.Focused,
             focusRequester = FocusRequester(),
             focusType = FocusType.Nickname,
         )
         Spacer(modifier = Modifier.height(30.dp))
-        AconTextField(
+        ProfileTextField(
             status = TextFieldStatus.Active,
             focusRequester = FocusRequester(),
             focusType = FocusType.Nickname,
         )
         Spacer(modifier = Modifier.height(30.dp))
-        AconTextField(
+        ProfileTextField(
             status = TextFieldStatus.Error,
             focusRequester = FocusRequester(),
             focusType = FocusType.Nickname,
         )
         Spacer(modifier = Modifier.height(30.dp))
-        AconTextField(
+        ProfileTextField(
             status = TextFieldStatus.Disabled,
             focusRequester = FocusRequester(),
             focusType = FocusType.Nickname,

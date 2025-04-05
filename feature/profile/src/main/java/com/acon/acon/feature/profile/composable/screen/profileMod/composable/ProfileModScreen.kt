@@ -51,10 +51,10 @@ import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.core.utils.feature.permission.CheckAndRequestPhotoPermission
 import com.acon.acon.feature.profile.R
-import com.acon.acon.feature.profile.composable.component.AconTextField
 import com.acon.acon.feature.profile.composable.component.CustomModalBottomSheet
 import com.acon.acon.feature.profile.composable.component.NicknameErrMessageRow
 import com.acon.acon.feature.profile.composable.component.ProfilePhotoBox
+import com.acon.acon.feature.profile.composable.component.ProfileTextField
 import com.acon.acon.feature.profile.composable.component.TextFieldStatus
 import com.acon.acon.feature.profile.composable.component.addFocusCleaner
 import com.acon.acon.feature.profile.composable.screen.profileMod.BirthdayStatus
@@ -313,7 +313,7 @@ fun ProfileModScreen(
                     }
 
                     Spacer(modifier = Modifier.height(12.dp))
-                    AconTextField(
+                    ProfileTextField(
                         status = state.nickNameFieldStatus,
                         focusType = FocusType.Nickname,
                         focusRequester = nickNameFocusRequester,
@@ -423,7 +423,7 @@ fun ProfileModScreen(
                         Spacer(modifier = Modifier.width(4.dp))
                     }
                     Spacer(modifier = Modifier.height(12.dp))
-                    AconTextField(
+                    ProfileTextField(
                         status = state.birthdayFieldStatus,
                         focusType = FocusType.Birthday,
                         focusRequester = birthDayFocusRequester,
