@@ -17,7 +17,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.vectorResource
-import coil3.compose.AsyncImage
 import coil3.compose.rememberAsyncImagePainter
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.feature.profile.R
@@ -50,27 +49,6 @@ fun ProfilePhotoBox(
                             modifier = Modifier.fillMaxSize(),
                             contentScale = ContentScale.Crop,
                             alignment = Alignment.Center
-                        )
-                    }
-
-                    // && !photoUri.endsWith(".svg"), TODO -> 추후 서버 확인 후 삭제해야 할 코드
-                    photoUri.startsWith("http://") || photoUri.startsWith("https://")
-                            && !photoUri.endsWith(".svg") -> {
-                        AsyncImage(
-                            model = photoUri,
-                            contentDescription = "프로필 사진",
-                            modifier = Modifier.fillMaxSize(),
-                            contentScale = ContentScale.Crop
-                        )
-                    }
-
-                    // SVG는 기본 아이콘 뷰어로 대체 표시, TODO -> 추후 스프린트에서 삭제해야 할 코드
-                    photoUri.endsWith(".svg") -> {
-                        Icon(
-                            modifier = Modifier.fillMaxSize(),
-                            imageVector = ImageVector.vectorResource(R.drawable.img_profile_basic_80),
-                            contentDescription = "SVG Profile Image",
-                            tint = Color.Unspecified,
                         )
                     }
 
