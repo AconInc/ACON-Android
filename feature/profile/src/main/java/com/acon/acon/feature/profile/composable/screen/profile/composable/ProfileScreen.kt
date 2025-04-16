@@ -188,7 +188,7 @@ fun ProfileScreen(
         is ProfileUiState.Loading -> {}
         is ProfileUiState.LoadFailed -> {}
 
-        is ProfileUiState.GUEST -> {
+        is ProfileUiState.Guest -> {
             if (state.showLoginBottomSheet) {
                 LoginBottomSheet(
                     hazeState = LocalHazeState.current,
@@ -293,7 +293,7 @@ fun ProfileScreen(
 private fun ProfileScreenPreview() {
     AconTheme {
         ProfileScreen(
-            state = ProfileUiState.GUEST(),
+            state = ProfileUiState.Guest(),
             profileUpdateResult = ""
         )
     }

@@ -4,7 +4,9 @@ import androidx.lifecycle.viewModelScope
 import com.acon.acon.core.utils.feature.base.BaseContainerHost
 import com.acon.acon.domain.repository.TokenRepository
 import com.acon.acon.domain.repository.UserRepository
+import com.acon.acon.domain.type.UserType
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.viewmodel.container
@@ -18,19 +20,23 @@ class SettingsViewModel @Inject constructor(
 ) : BaseContainerHost<SettingsUiState, SettingsSideEffect>() {
 
     override val container =
-        container<SettingsUiState, SettingsSideEffect>(SettingsUiState.Default(false)) {
-            val isLogin = tokenRepository.getIsLogin().getOrElse { false }
-            reduce { SettingsUiState.Default(isLogin) }
+        container<SettingsUiState, SettingsSideEffect>(SettingsUiState.Guest(false)) {
+            userRepository.getUserType().collectLatest { userType ->
+                when (userType) {
+                    UserType.GUEST -> reduce { SettingsUiState.Guest() }
+                    UserType.USER -> reduce { SettingsUiState.User }
+                    UserType.ADMIN -> reduce { SettingsUiState.User }
+                }
+            }
         }
 
     fun onSingOut() = intent {
         tokenRepository.getRefreshToken().onSuccess { refreshToken ->
             viewModelScope.launch {
                 refreshToken?.let {
-                    userRepository.postLogout(it)
+                    userRepository.logout(it)
                 }
                 ?.onSuccess {
-                    tokenRepository.removeAllToken()
                     postSideEffect(SettingsSideEffect.NavigateToSignIn)
                 }
                 ?.onFailure {
@@ -42,8 +48,8 @@ class SettingsViewModel @Inject constructor(
     }
 
      fun onSignInDialogShowStateChange(show: Boolean) = intent {
-        runOn<SettingsUiState.Default> {
-            reduce { state.copy(onSignInDialogShowStateChange = show) }
+        runOn<SettingsUiState.Guest> {
+            reduce { state.copy(showLoginBottomSheet = show) }
         }
     }
 
@@ -78,9 +84,9 @@ class SettingsViewModel @Inject constructor(
 }
 
 sealed interface SettingsUiState{
-    data class Default(
-        val isLogin: Boolean = false,
-        val onSignInDialogShowStateChange: Boolean = false
+    data object User : SettingsUiState
+    data class Guest(
+        val showLoginBottomSheet: Boolean = false
     ) : SettingsUiState
 }
 

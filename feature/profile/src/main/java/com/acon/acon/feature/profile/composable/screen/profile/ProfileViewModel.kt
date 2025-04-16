@@ -5,7 +5,8 @@ import com.acon.acon.core.utils.feature.base.BaseContainerHost
 import com.acon.acon.domain.model.profile.VerifiedArea
 import com.acon.acon.domain.repository.ProfileRepository
 import com.acon.acon.domain.repository.SocialRepository
-import com.acon.acon.domain.repository.TokenRepository
+import com.acon.acon.domain.repository.UserRepository
+import com.acon.acon.domain.type.UserType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.viewmodel.container
@@ -15,24 +16,23 @@ import kotlin.coroutines.cancellation.CancellationException
 @OptIn(OrbitExperimental::class)
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
-    private val tokenRepository: TokenRepository,
-    private val profileRepository: ProfileRepository
+    private val profileRepository: ProfileRepository,
+    private val userRepository: UserRepository
 ) : BaseContainerHost<ProfileUiState, ProfileUiSideEffect>() {
 
     override val container =
         container<ProfileUiState, ProfileUiSideEffect>(ProfileUiState.Loading) {
-            val isLogin = tokenRepository.getIsLogin().getOrElse { false }
-            if (isLogin) {
-                fetchUserProfileInfo()
-            } else {
-                reduce { ProfileUiState.GUEST() }
+            userRepository.getUserType().collect {
+                when(it) {
+                    UserType.GUEST -> reduce { ProfileUiState.Guest() }
+                    else -> fetchUserProfileInfo()
+                }
             }
         }
 
     fun googleLogin(socialRepository: SocialRepository) = intent {
-        socialRepository.signIn()
+        socialRepository.googleLogin()
             .onSuccess {
-                tokenRepository.saveIsLogin(true)
                 if(it.hasVerifiedArea) {
                     postSideEffect(ProfileUiSideEffect.OnNavigateToSpotListScreen)
                 } else {
@@ -41,16 +41,16 @@ class ProfileViewModel @Inject constructor(
             }.onFailure { error ->
                 when (error) {
                     is CancellationException -> {
-                        reduce { ProfileUiState.GUEST() }
+                        reduce { ProfileUiState.Guest() }
                     }
                     is NoSuchElementException -> {
-                        reduce { ProfileUiState.GUEST() }
+                        reduce { ProfileUiState.Guest() }
                     }
                     is SecurityException -> {
-                        reduce { ProfileUiState.GUEST() }
+                        reduce { ProfileUiState.Guest() }
                     }
                     else -> {
-                        reduce { ProfileUiState.GUEST() }
+                        reduce { ProfileUiState.Guest() }
                     }
                 }
             }
@@ -90,7 +90,7 @@ class ProfileViewModel @Inject constructor(
     }
 
     fun onBottomSheetShowStateChange(show: Boolean) = intent {
-        runOn<ProfileUiState.GUEST> {
+        runOn<ProfileUiState.Guest> {
             reduce {
                 state.copy(showLoginBottomSheet = show)
             }
@@ -110,7 +110,7 @@ sealed interface ProfileUiState {
     data object Loading : ProfileUiState
     data object LoadFailed : ProfileUiState
 
-    data class GUEST(
+    data class Guest(
         val showLoginBottomSheet: Boolean = false
     ) : ProfileUiState
 }

@@ -29,7 +29,7 @@ class DeleteAccountViewModel @Inject constructor(
                 tokenRepository.getRefreshToken()
                     .onSuccess { refreshToken ->
                         refreshToken?.let { token ->
-                            userRepository.postDeleteAccount(reason, token)
+                            userRepository.deleteAccount(reason, token)
                                 .onSuccess {
                                     tokenRepository.removeAllToken()
                                     postSideEffect(DeleteAccountSideEffect.NavigateToSignIn)
