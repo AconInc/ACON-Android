@@ -1,7 +1,7 @@
 package com.acon.acon.di
 
 import com.acon.acon.core.common.DefaultDispatcher
-import com.acon.acon.core.common.IoDispatcher
+import com.acon.acon.core.common.IODispatcher
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -15,7 +15,7 @@ object CoroutineDispatchersModule {
 
     @Singleton
     @Provides
-    @IoDispatcher
+    @IODispatcher
     fun providesIoDispatcher() = Dispatchers.IO
 
     @Singleton

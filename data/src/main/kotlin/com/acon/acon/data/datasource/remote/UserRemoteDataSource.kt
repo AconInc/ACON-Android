@@ -10,15 +10,15 @@ import javax.inject.Inject
 class UserRemoteDataSource @Inject constructor(
     private val userApi: UserApi
 ) {
-    suspend fun postLogin(googleLoginRequest: LoginRequest): LoginResponse {
+    suspend fun login(googleLoginRequest: LoginRequest): LoginResponse {
         return userApi.postLogin(googleLoginRequest)
     }
 
-    suspend fun postLogout(logoutRequest: LogoutRequest) {
+    suspend fun logout(logoutRequest: LogoutRequest) {
         return userApi.postLogout(logoutRequest)
     }
 
-    suspend fun postDeleteAccount(deleteAccountRequest: DeleteAccountRequest) {
+    suspend fun deleteAccount(deleteAccountRequest: DeleteAccountRequest) {
         return userApi.postDeleteAccount(deleteAccountRequest)
     }
 }

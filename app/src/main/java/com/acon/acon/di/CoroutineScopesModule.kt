@@ -1,7 +1,7 @@
 package com.acon.acon.di
 
 import com.acon.acon.core.common.DefaultDispatcher
-import com.acon.acon.core.common.IoDispatcher
+import com.acon.acon.core.common.IODispatcher
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,9 +17,9 @@ object CoroutineScopesModule {
 
     @Singleton
     @Provides
-    @IoDispatcher
-    fun providesIoCoroutineScope(
-        @IoDispatcher ioDispatcher: CoroutineDispatcher
+    @IODispatcher
+    fun providesIOCoroutineScope(
+        @IODispatcher ioDispatcher: CoroutineDispatcher
     ) = CoroutineScope(SupervisorJob() + ioDispatcher)
 
     @Singleton

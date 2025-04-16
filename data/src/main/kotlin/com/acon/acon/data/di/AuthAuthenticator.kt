@@ -2,6 +2,7 @@ package com.acon.acon.data.di
 
 import android.util.Log
 import com.acon.acon.data.BuildConfig
+import com.acon.acon.data.SessionManager
 import com.acon.acon.data.datasource.local.TokenLocalDataSource
 import com.acon.acon.data.dto.request.DeleteAccountRequest
 import com.acon.acon.data.dto.request.LogoutRequest
@@ -26,6 +27,7 @@ import javax.inject.Inject
 class AuthAuthenticator @Inject constructor(
     private val tokenLocalDataSource: TokenLocalDataSource,
     private val reissueTokenApi: ReissueTokenApi,
+    private val sessionManager: SessionManager
 ) : Authenticator {
 
     private val mutex = Mutex()
@@ -40,7 +42,7 @@ class AuthAuthenticator @Inject constructor(
 
             if (currentRefreshToken.isEmpty()) {
                 Log.e(TAG, "저장된 Refresh Token이 없음. 토큰 제거 후 로그인 화면으로 이동")
-                tokenLocalDataSource.removeAllTokens()
+                sessionManager.clearSession()
                 goToSignInScreen()
                 return@withLock null
             }
@@ -55,7 +57,7 @@ class AuthAuthenticator @Inject constructor(
                     val tokenResponse = result.getOrNull()
 
                     if (tokenResponse == null) {
-                        tokenLocalDataSource.removeAllTokens()
+                        sessionManager.clearSession()
                         goToSignInScreen()
                         return@withLock null
                     }
@@ -65,7 +67,7 @@ class AuthAuthenticator @Inject constructor(
                         if(BuildConfig.DEBUG) {
                             Log.e(TAG, "토큰이 비어 있음. 토큰 제거 후 로그인 화면으로 이동")
                         }
-                        tokenLocalDataSource.removeAllTokens()
+                        sessionManager.clearSession()
                         goToSignInScreen()
                         return@withLock null
                     }
@@ -123,7 +125,7 @@ class AuthAuthenticator @Inject constructor(
                     if(BuildConfig.DEBUG) {
                         Log.e(TAG, "토큰 재발급 실패. 토큰 제거 후 로그인 화면으로 이동")
                     }
-                    tokenLocalDataSource.removeAllTokens()
+                    sessionManager.clearSession()
                     goToSignInScreen()
                     return@withLock null
                 }

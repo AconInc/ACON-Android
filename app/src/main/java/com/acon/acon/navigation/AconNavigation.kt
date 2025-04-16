@@ -21,6 +21,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -39,6 +40,8 @@ import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.core.utils.feature.constants.AppURL
 import com.acon.acon.domain.repository.SocialRepository
 import com.acon.acon.domain.repository.TokenRepository
+import com.acon.acon.domain.repository.UserRepository
+import com.acon.acon.domain.type.UserType
 import com.acon.acon.feature.areaverification.AreaVerificationRoute
 import com.acon.acon.feature.profile.composable.ProfileRoute
 import com.acon.acon.feature.signin.screen.SignInRoute
@@ -61,7 +64,7 @@ fun AconNavigation(
     modifier: Modifier = Modifier,
     navController: NavHostController,
     socialRepository: SocialRepository,
-    tokenRepository: TokenRepository
+    userRepository: UserRepository
 ) {
 
     val backStackEntry by navController.currentBackStackEntryAsState()
@@ -74,6 +77,10 @@ fun AconNavigation(
     var showLoginBottomSheet by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
 
+    val userType by userRepository.getUserType().collectAsStateWithLifecycle(
+        initialValue = UserType.GUEST
+    )
+
     CompositionLocalProvider(LocalHazeState provides hazeState) {
         if(showLoginBottomSheet) {
             LoginBottomSheet(
@@ -82,7 +89,7 @@ fun AconNavigation(
                 onGoogleSignIn = {
                     coroutineScope.launch {
                         bottomAmplitudeSignIn()
-                        socialRepository.signIn()
+                        socialRepository.googleLogin()
                             .onSuccess {
                                 if (it.hasVerifiedArea) {
                                     showLoginBottomSheet = false
@@ -138,12 +145,11 @@ fun AconNavigation(
                         onItemClick = { item ->
                             if (item == BottomNavType.UPLOAD) {
                                 coroutineScope.launch {
-                                    if (tokenRepository.getIsLogin().getOrElse { false }) {
+                                    if (userType != UserType.GUEST) {
                                         bottomAmplitudeUpload()
                                         navController.navigate(UploadRoute.Upload)
                                     } else {
                                         showLoginBottomSheet = true
-
                                     }
                                 }
                             } else {
