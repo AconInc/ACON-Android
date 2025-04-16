@@ -14,11 +14,6 @@ import retrofit2.http.Query
 
 interface SpotApi {
 
-    @POST("/api/v1/spots")
-    suspend fun fetchSpotList(
-        @Body request: SpotListRequest
-    ): SpotListResponse
-
     @POST("/api/v1/members/guided-spots")
     suspend fun fetchRecentNavigationLocation(
         @Body request: RecentNavigationLocationRequest
