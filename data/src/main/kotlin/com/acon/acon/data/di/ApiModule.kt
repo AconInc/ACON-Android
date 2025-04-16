@@ -5,12 +5,13 @@ import com.acon.acon.data.remote.UserApi
 import com.acon.acon.data.remote.MapApi
 import com.acon.acon.data.remote.OnboardingApi
 import com.acon.acon.data.remote.ReissueTokenApi
-import com.acon.acon.data.remote.SpotApi
+import com.acon.acon.data.remote.SpotNoAuthApi
 import com.acon.acon.data.remote.UploadApi
 import com.acon.acon.core.common.Auth
 import com.acon.acon.core.common.Naver
 import com.acon.acon.core.common.NoAuth
 import com.acon.acon.data.remote.ProfileApi
+import com.acon.acon.data.remote.SpotAuthApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -38,10 +39,18 @@ internal object ApiModule {
 
     @Singleton
     @Provides
-    fun providesSpotApi(
+    fun providesSpotNoAuthApi(
+        @NoAuth retrofit: Retrofit
+    ): SpotNoAuthApi {
+        return retrofit.create(SpotNoAuthApi::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun providesSpotAuthApi(
         @Auth retrofit: Retrofit
-    ): SpotApi {
-        return retrofit.create(SpotApi::class.java)
+    ): SpotAuthApi {
+        return retrofit.create(SpotAuthApi::class.java)
     }
 
     @Singleton
