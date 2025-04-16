@@ -38,7 +38,7 @@ class TokenRemoteDataSource @Inject constructor(
         CredentialManager.create(context)
     }
 
-    suspend fun signIn(): Result<String> = runCatching {
+    suspend fun googleLogin(): Result<String> = runCatching {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
            credentialManager.prepareGetCredential(

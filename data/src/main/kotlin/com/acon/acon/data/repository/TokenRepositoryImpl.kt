@@ -1,5 +1,6 @@
 package com.acon.acon.data.repository
 
+import com.acon.acon.data.SessionManager
 import com.acon.acon.data.datasource.local.TokenLocalDataSource
 import com.acon.acon.data.error.runCatchingWith
 import com.acon.acon.domain.repository.TokenRepository
@@ -7,12 +8,8 @@ import javax.inject.Inject
 
 class TokenRepositoryImpl @Inject constructor(
     private val tokenLocalDataSource: TokenLocalDataSource,
+    private val sessionManager: SessionManager
 ): TokenRepository {
-    override suspend fun saveGoogleIdToken(accessToken: String): Result<Unit> {
-        return runCatchingWith() {
-            tokenLocalDataSource.saveGoogleIdToken(accessToken)
-        }
-    }
 
     override suspend fun saveAccessToken(accessToken: String): Result<Unit> {
         return runCatchingWith() {
@@ -29,18 +26,6 @@ class TokenRepositoryImpl @Inject constructor(
     override suspend fun saveAreaVerification(state: Boolean): Result<Unit> {
         return runCatchingWith() {
             tokenLocalDataSource.saveAreaVerification(state)
-        }
-    }
-
-    override suspend fun saveIsLogin(isLogin: Boolean): Result<Unit> {
-        return runCatchingWith() {
-            tokenLocalDataSource.saveIsLogin(isLogin)
-        }
-    }
-
-    override suspend fun getGoogleIdToken(): Result<String?> {
-        return runCatchingWith() {
-            tokenLocalDataSource.getGoogleIdToken()
         }
     }
 
@@ -62,18 +47,6 @@ class TokenRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getIsLogin(): Result<Boolean> {
-        return runCatchingWith() {
-            tokenLocalDataSource.getIsLogin()
-        }
-    }
-
-    override suspend fun removeGoogleIdToken(): Result<Unit> {
-        return runCatching {
-            tokenLocalDataSource.removeGoogleIdToken()
-        }
-    }
-
     override suspend fun removeAccessToken(): Result<Unit> {
         return runCatchingWith() {
             tokenLocalDataSource.removeAccessToken()
@@ -92,16 +65,9 @@ class TokenRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun removeIsLogin(): Result<Unit> {
-        return runCatchingWith() {
-            tokenLocalDataSource.removeIsLogin()
-        }
-    }
-
     override suspend fun removeAllToken(): Result<Unit> {
         return runCatchingWith() {
-            tokenLocalDataSource.removeAllTokens()
+            sessionManager.clearSession()
         }
     }
-
 }
