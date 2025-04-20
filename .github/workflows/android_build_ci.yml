@@ -28,14 +28,6 @@ jobs:
         echo AMPLITUDE_API_TEST_KEY=${{ secrets.AMPLITUDE_API_TEST_KEY }} >> ./local.properties
         echo AMPLITUDE_API_PRODUCTION_KEY=${{ secrets.AMPLITUDE_API_PRODUCTION_KEY }} >> ./local.properties
 
-    - name: Decode Keystore
-      env:
-        KEYSTORE: ${{ secrets.KEYSTORE_BASE64 }}
-
-      run: |
-        echo "$KEYSTORE" > keystore_base64.txt
-        base64 -d keystore_base64.txt > acon-android-release.jks
-
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
 
