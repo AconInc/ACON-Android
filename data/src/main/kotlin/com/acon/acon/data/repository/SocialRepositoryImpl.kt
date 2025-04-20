@@ -15,9 +15,7 @@ class SocialRepositoryImpl @Inject constructor(
 ) : SocialRepository {
     override suspend fun googleLogin(): Result<VerificationStatus> {
         return runCatchingWith(*PostLoginError.createErrorInstances()) {
-            println("ddddddddddd11")
             val idToken = tokenRemoteDataSource.googleLogin().getOrThrow()
-            println("ddddddddddd22")
 
             userRepository.login(
                 socialType = SocialType.GOOGLE, idToken = idToken

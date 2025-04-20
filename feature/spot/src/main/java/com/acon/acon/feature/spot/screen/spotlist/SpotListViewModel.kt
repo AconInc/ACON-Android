@@ -94,7 +94,8 @@ class SpotListViewModel @Inject constructor(
             onSuccess = {
                 SpotListUiState.Success(
                     spotList = it,
-                    legalAddressName = legalArea.area
+                    legalAddressName = legalArea.area,
+                    userType = userType.value,
                 )
             }, onFailure = {
                 when (it) {
@@ -104,77 +105,6 @@ class SpotListViewModel @Inject constructor(
             }
         )
     }
-
-//    private fun onLocationReady(newLocation: Location) = blockingIntent {
-//        val legalAddressNameDeferred = viewModelScope.async {
-//            spotRepository.getLegalDong(
-//                latitude = newLocation.latitude,
-//                longitude = newLocation.longitude
-//            )
-//        }
-//
-//        val spotListResultDeferred = viewModelScope.async {
-//            spotRepository.fetchSpotList(
-//                latitude = newLocation.latitude,
-//                longitude = newLocation.longitude,
-//                condition = (state as? SpotListUiState.Success)?.currentCondition?.toCondition()
-//                    ?: Condition.Default,
-//            )
-//        }
-//
-//        val legalAddressName = legalAddressNameDeferred.await()
-//        val spotListResult = spotListResultDeferred.await()
-//        val isLogin = tokenRepository.getIsLogin().getOrElse { false }
-//
-//        if (legalAddressName.isFailure || spotListResult.isFailure) {
-//            legalAddressName.exceptionOrNull()?.let { error ->
-//                if (error is FetchSpotListError.OutOfServiceAreaError) {
-//                    reduce { SpotListUiState.OutOfServiceArea }
-//                }
-//            }
-//
-//            spotListResult.exceptionOrNull()?.let { error ->
-//                if (error is FetchSpotListError.OutOfServiceAreaError) {
-//                    reduce { SpotListUiState.OutOfServiceArea }
-//                }
-//
-//            }
-//
-//            reduce { SpotListUiState.LoadFailed }
-//        } else {
-//            spotListResult.onSuccess { spots ->
-//                legalAddressName.onSuccess { legalAddressName ->
-//                    reduce {
-//                        if (isLogin) {
-//                            (state as? SpotListUiState.Success)?.copy(
-//                                spotList = spots,
-//                                isRefreshing = false,
-//                                legalAddressName = legalAddressName.area,
-//                                isFilteredListEmpty = spots.isEmpty()
-//                            ) ?: SpotListUiState.Success(
-//                                spotList = spots,
-//                                legalAddressName = legalAddressName.area,
-//                                isRefreshing = false
-//                            )
-//                        } else {
-//                            (state as? SpotListUiState.Guest)?.copy(
-//                                spotList = spots,
-//                                isRefreshing = false,
-//                                legalAddressName = legalAddressName.area,
-//                                showLoginBottomSheet = (state as? SpotListUiState.Guest)?.showLoginBottomSheet
-//                                    ?: false
-//                            ) ?: SpotListUiState.Guest(
-//                                spotList = spots,
-//                                legalAddressName = legalAddressName.area,
-//                                isRefreshing = false,
-//                                showLoginBottomSheet = false
-//                            )
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
 
     fun onRefresh(location: Location) = intent {
         reduce {

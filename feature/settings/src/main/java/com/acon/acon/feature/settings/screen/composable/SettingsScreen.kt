@@ -143,7 +143,7 @@ fun SettingsScreen(
                 Spacer(Modifier.height(16.dp))
                 SettingSectionItem(
                     settingsType = SettingsType.LOGOUT,
-                    onClickContinue = { onSignInDialogShowStateChange(true) }
+                    onClickContinue = { onSignOut() }
                 )
 
                 Spacer(Modifier.height(16.dp))

@@ -41,7 +41,7 @@ fun SettingsScreenContainer(
         onRetryOnBoarding = viewModel::onRetryOnBoarding,
         onAreaVerification = viewModel::onNavigateToLocalVerification,
         onUpdateVersion = viewModel::onUpdateVersion,
-        onSignOut = viewModel::onSingOut,
+        onSignOut = viewModel::onSignOut,
         onDeleteAccountScreen = viewModel::onDeleteAccount,
     )
 

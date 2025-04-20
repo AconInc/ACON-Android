@@ -30,7 +30,7 @@ class SettingsViewModel @Inject constructor(
             }
         }
 
-    fun onSingOut() = intent {
+    fun onSignOut() = intent {
         tokenRepository.getRefreshToken().onSuccess { refreshToken ->
             viewModelScope.launch {
                 refreshToken?.let {
