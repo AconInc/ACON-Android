@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.acon.android.library.hilt)
     alias(libs.plugins.acon.android.library.orbit)
     alias(libs.plugins.acon.android.library.haze)
+    alias(libs.plugins.acon.android.library.coil)
 }
 
 android {
@@ -31,7 +32,4 @@ dependencies {
     implementation(project(":core:common"))
     implementation(project(":core:designsystem"))
     implementation(project(":core:utils:feature"))
-
-    implementation(libs.coil.compose)
-    implementation(libs.coil.network.okhttp)
 }

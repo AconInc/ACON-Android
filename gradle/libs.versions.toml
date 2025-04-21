@@ -147,6 +147,7 @@ acon-android-library-compose = { id = "com.acon.android.library.compose", versio
 acon-android-library-hilt = { id = "com.acon.android.library.hilt", version = "unspecified" }
 acon-android-library-orbit = { id = "com.acon.android.library.orbit", version = "unspecified" }
 acon-android-library-haze = { id = "com.acon.android.library.haze", version = "unspecified" }
+acon-android-library-coil = { id = "com.acon.android.library.coil", version = "unspecified" }
 
 [bundles]
 googleSignIn = ["androidx-credentials", "androidx-credentials-play-services-auth", "googleid"]
@@ -155,3 +156,4 @@ haze = ["haze", "haze-materials"]
 android-defaults = ["androidx-core-ktx", "androidx-lifecycle-runtime-ktx", "androidx-appcompat", "material"]
 compose-defaults = ["androidx-ui", "androidx-ui-graphics", "androidx-ui-tooling-preview",
     "androidx-navigation-compose", "androidx-activity-compose", "material3", "androidx-runtime"]
+coil = ["coil-compose", "coil-network-okhttp"]

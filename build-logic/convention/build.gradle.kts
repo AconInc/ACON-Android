@@ -60,4 +60,10 @@ gradlePlugin {
             implementationClass = "AndroidLibraryHazeConventionPlugin"
         }
     }
+    plugins {
+        register("androidLibraryCoil") {
+            id = "com.acon.android.library.coil"
+            implementationClass = "AndroidLibraryCoilConventionPlugin"
+        }
+    }
 }
