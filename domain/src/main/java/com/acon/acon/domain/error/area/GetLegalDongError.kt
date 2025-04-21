@@ -4,14 +4,14 @@ import com.acon.acon.domain.error.ErrorFactory
 import com.acon.acon.domain.error.RootError
 
 sealed class GetLegalDongError : RootError() {
-    class OutOfServiceAreaError : GetLegalDongError() {
+    class OutOfServiceArea : GetLegalDongError() {
         override val code: Int = 40405
     }
 
     companion object : ErrorFactory {
         override fun createErrorInstances(): Array<RootError> {
             return arrayOf(
-                OutOfServiceAreaError()
+                OutOfServiceArea()
             )
         }
     }

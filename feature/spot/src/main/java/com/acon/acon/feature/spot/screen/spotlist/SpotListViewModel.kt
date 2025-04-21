@@ -6,70 +6,61 @@ import androidx.lifecycle.viewModelScope
 import com.acon.acon.core.utils.feature.base.BaseContainerHost
 import com.acon.acon.domain.error.area.GetLegalDongError
 import com.acon.acon.domain.error.spot.FetchSpotListError
-import com.acon.acon.domain.error.user.CredentialException
 import com.acon.acon.domain.model.spot.Condition
 import com.acon.acon.domain.model.spot.Spot
 import com.acon.acon.domain.repository.SocialRepository
 import com.acon.acon.domain.repository.SpotRepository
-import com.acon.acon.domain.repository.TokenRepository
+import com.acon.acon.domain.repository.UserRepository
+import com.acon.acon.domain.type.UserType
 import com.acon.acon.feature.spot.amplitudeClickFilter
 import com.acon.acon.feature.spot.state.ConditionState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.stateIn
 import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.viewmodel.container
 import javax.inject.Inject
-import kotlin.coroutines.cancellation.CancellationException
 
 @OptIn(OrbitExperimental::class)
 @HiltViewModel
 class SpotListViewModel @Inject constructor(
-    private val tokenRepository: TokenRepository,
-    private val spotRepository: SpotRepository
+    private val spotRepository: SpotRepository,
+    private val userRepository: UserRepository
 ) : BaseContainerHost<SpotListUiState, SpotListSideEffect>() {
 
     override val container =
-        container<SpotListUiState, SpotListSideEffect>(SpotListUiState.Loading) { }
-
-    fun googleLogin(socialRepository: SocialRepository, location: Location) = intent {
-        socialRepository.signIn()
-            .onSuccess {
-                tokenRepository.saveIsLogin(true)
-                if(it.hasVerifiedArea) {
-                    onLocationReady(location)
-                } else {
-                    postSideEffect(SpotListSideEffect.NavigateToAreaVerification)
-                }
-            }.onFailure { error ->
-                when (error) {
-                    is CredentialException.UserCanceled -> {
-                        reduce { SpotListUiState.Guest() }
-                    }
-
-                    is CancellationException -> {
-                        reduce { SpotListUiState.Guest() }
-                    }
-
-                    is CredentialException.NoStoredCredentials -> {
-                        tokenRepository.removeGoogleIdToken()
-                        reduce { SpotListUiState.Guest() }
-                    }
-
-                    is SecurityException -> {
-                        tokenRepository.removeGoogleIdToken()
-                        reduce { SpotListUiState.Guest() }
-                    }
-
-                    else -> {
-                        tokenRepository.removeGoogleIdToken()
-                        reduce { SpotListUiState.Guest() }
-                        postSideEffect(SpotListSideEffect.ShowToastMessage)
+        container<SpotListUiState, SpotListSideEffect>(SpotListUiState.Loading) {
+            userType.collectLatest {
+                runOn<SpotListUiState.Success> {
+                    reduce {
+                        state.copy(userType = it)
                     }
                 }
             }
+        }
+
+    private val userType = userRepository.getUserType().stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = UserType.GUEST
+    )
+
+    fun googleLogin(socialRepository: SocialRepository, location: Location) = intent {
+        socialRepository.googleLogin()
+            .onSuccess {
+                if(it.hasVerifiedArea) {
+                    fetchSpots(location)
+                } else {
+                    postSideEffect(SpotListSideEffect.NavigateToAreaVerification)
+                }
+            }.onFailure {
+                postSideEffect(SpotListSideEffect.ShowToastMessage)
+            }
     }
 
-    fun fetchInitialSpots(location: Location) = intent {
+    fun fetchSpots(location: Location) = intent {
         val legalAddressNameDeferred = viewModelScope.async {
             spotRepository.getLegalDong(
                 latitude = location.latitude,
@@ -85,140 +76,48 @@ class SpotListViewModel @Inject constructor(
             )
         }
 
-        val legalAddressName = legalAddressNameDeferred.await()
+        val legalAddressNameResult = legalAddressNameDeferred.await()
         val spotListResult = spotListResultDeferred.await()
-        val isLogin = tokenRepository.getIsLogin().getOrElse { false }
 
-        if (legalAddressName.isFailure || spotListResult.isFailure) {
-            val isOutOfServiceArea = legalAddressName.exceptionOrNull()?.let { error ->
-                error is GetLegalDongError.OutOfServiceAreaError
-            } ?: spotListResult.exceptionOrNull()?.let { error ->
-                error is FetchSpotListError.OutOfServiceAreaError
-            } ?: false
-
-            if (isOutOfServiceArea) {
-                reduce { SpotListUiState.OutOfServiceArea }
-            } else {
-                reduce { SpotListUiState.LoadFailed }
-            }
-        } else {
-            spotListResult.onSuccess { spots ->
-                legalAddressName.onSuccess { legalAddressName ->
-                    reduce {
-                        if (isLogin) {
-                            (state as? SpotListUiState.Success)?.copy(
-                                spotList = spots,
-                                isRefreshing = false,
-                                legalAddressName = legalAddressName.area
-                            ) ?: SpotListUiState.Success(
-                                spotList = spots,
-                                legalAddressName = legalAddressName.area,
-                                isRefreshing = false
-                            )
-                        } else {
-                            (state as? SpotListUiState.Guest)?.copy(
-                                spotList = spots,
-                                isRefreshing = false,
-                                legalAddressName = legalAddressName.area,
-                                showLoginBottomSheet = (state as? SpotListUiState.Guest)?.showLoginBottomSheet
-                                    ?: false
-                            ) ?: SpotListUiState.Guest(
-                                spotList = spots,
-                                legalAddressName = legalAddressName.area,
-                                isRefreshing = false,
-                                showLoginBottomSheet = false
-                            )
-                        }
-                    }
+        val legalArea = legalAddressNameResult.getOrElse {
+            reduce {
+                when (it) {
+                    is GetLegalDongError.OutOfServiceArea -> SpotListUiState.OutOfServiceArea
+                    else -> SpotListUiState.LoadFailed
                 }
             }
-        }
-    }
-
-    private fun onLocationReady(newLocation: Location) = blockingIntent {
-        val legalAddressNameDeferred = viewModelScope.async {
-            spotRepository.getLegalDong(
-                latitude = newLocation.latitude,
-                longitude = newLocation.longitude
-            )
+            return@intent
         }
 
-        val spotListResultDeferred = viewModelScope.async {
-            spotRepository.fetchSpotList(
-                latitude = newLocation.latitude,
-                longitude = newLocation.longitude,
-                condition = (state as? SpotListUiState.Success)?.currentCondition?.toCondition()
-                    ?: Condition.Default,
-            )
-        }
-
-        val legalAddressName = legalAddressNameDeferred.await()
-        val spotListResult = spotListResultDeferred.await()
-        val isLogin = tokenRepository.getIsLogin().getOrElse { false }
-
-        if (legalAddressName.isFailure || spotListResult.isFailure) {
-            legalAddressName.exceptionOrNull()?.let { error ->
-                if (error is FetchSpotListError.OutOfServiceAreaError) {
-                    reduce { SpotListUiState.OutOfServiceArea }
+        spotListResult.reduceResult(
+            syntax = this,
+            onSuccess = {
+                SpotListUiState.Success(
+                    spotList = it,
+                    legalAddressName = legalArea.area,
+                    userType = userType.value,
+                )
+            }, onFailure = {
+                when (it) {
+                    is FetchSpotListError.OutOfServiceAreaError -> SpotListUiState.OutOfServiceArea
+                    else -> SpotListUiState.LoadFailed
                 }
             }
-
-            spotListResult.exceptionOrNull()?.let { error ->
-                if (error is FetchSpotListError.OutOfServiceAreaError) {
-                    reduce { SpotListUiState.OutOfServiceArea }
-                }
-
-            }
-
-            reduce { SpotListUiState.LoadFailed }
-        } else {
-            spotListResult.onSuccess { spots ->
-                legalAddressName.onSuccess { legalAddressName ->
-                    reduce {
-                        if (isLogin) {
-                            (state as? SpotListUiState.Success)?.copy(
-                                spotList = spots,
-                                isRefreshing = false,
-                                legalAddressName = legalAddressName.area,
-                                isFilteredListEmpty = spots.isEmpty()
-                            ) ?: SpotListUiState.Success(
-                                spotList = spots,
-                                legalAddressName = legalAddressName.area,
-                                isRefreshing = false
-                            )
-                        } else {
-                            (state as? SpotListUiState.Guest)?.copy(
-                                spotList = spots,
-                                isRefreshing = false,
-                                legalAddressName = legalAddressName.area,
-                                showLoginBottomSheet = (state as? SpotListUiState.Guest)?.showLoginBottomSheet
-                                    ?: false
-                            ) ?: SpotListUiState.Guest(
-                                spotList = spots,
-                                legalAddressName = legalAddressName.area,
-                                isRefreshing = false,
-                                showLoginBottomSheet = false
-                            )
-                        }
-                    }
-                }
-            }
-        }
+        )
     }
 
     fun onRefresh(location: Location) = intent {
         reduce {
             when (state) {
                 is SpotListUiState.Success -> (state as SpotListUiState.Success).copy(isRefreshing = true)
-                is SpotListUiState.Guest -> (state as SpotListUiState.Guest).copy(isRefreshing = true)
-                else -> state
+                else -> SpotListUiState.Loading
             }
         }
-        onLocationReady(location)
+        fetchSpots(location)
     }
 
     fun onLoginBottomSheetShowStateChange(show: Boolean) = intent {
-        runOn<SpotListUiState.Guest> {
+        runOn<SpotListUiState.Success> {
             reduce {
                 state.copy(showLoginBottomSheet = show)
             }
@@ -239,7 +138,7 @@ class SpotListViewModel @Inject constructor(
             reduce {
                 SpotListUiState.Loading
             }
-            fetchInitialSpots(location)
+            fetchSpots(location)
         }
     }
 
@@ -249,7 +148,7 @@ class SpotListViewModel @Inject constructor(
                 reduce {
                     state.copy(isFilteredResultFetching = true, currentCondition = condition)
                 }
-                onLocationReady(location)
+                fetchSpots(location)
                 reduce {
                     state.copy(isFilteredResultFetching = false, showFilterBottomSheet = false)
                         .also {
@@ -277,26 +176,18 @@ sealed interface SpotListUiState {
     data class Success(
         val spotList: List<Spot>,
         val legalAddressName: String,
+        val userType: UserType = UserType.GUEST,
         val isRefreshing: Boolean = false,
         val isFilteredListEmpty: Boolean = false,
         val currentCondition: ConditionState? = null,
         val showFilterBottomSheet: Boolean = false,
-        val isFilteredResultFetching: Boolean = false,
+        val showLoginBottomSheet: Boolean = false,
+        val isFilteredResultFetching: Boolean = false
     ) : SpotListUiState
 
     data object Loading : SpotListUiState
     data object LoadFailed : SpotListUiState
     data object OutOfServiceArea : SpotListUiState
-
-    @Immutable
-    data class Guest(
-        val spotList: List<Spot> = emptyList(),
-        val legalAddressName: String = "",
-        val isRefreshing: Boolean = false,
-        val currentCondition: ConditionState? = null,
-        val showLoginBottomSheet: Boolean = false,
-    ) : SpotListUiState
-
 }
 
 sealed interface SpotListSideEffect {

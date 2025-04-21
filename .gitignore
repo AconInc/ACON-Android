@@ -152,6 +152,7 @@ obj/
 .idea/jarRepositories.xml
 .idea/navEditor.xml
 .idea/*.iml
+.idea/appInsightsSettings.xml
 
 # Legacy Eclipse project files
 .classpath

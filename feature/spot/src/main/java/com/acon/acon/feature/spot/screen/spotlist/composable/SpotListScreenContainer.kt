@@ -35,9 +35,7 @@ fun SpotListScreenContainer(
     CheckAndRequestLocationPermission(
         onPermissionGranted = {
             if (state !is SpotListUiState.Success) {
-                context.onLocationReady {
-                    viewModel.fetchInitialSpots(it)
-                }
+                context.onLocationReady(viewModel::fetchSpots)
             }
         }
     )
@@ -46,16 +44,12 @@ fun SpotListScreenContainer(
         state = state,
         modifier = modifier.fillMaxSize(),
         onRefresh = {
-            context.onLocationReady {
-                viewModel.onRefresh(it)
-            }
+            context.onLocationReady(viewModel::onRefresh)
         },
         onLoginBottomSheetShowStateChange = viewModel::onLoginBottomSheetShowStateChange,
         onFilterBottomSheetShowStateChange = viewModel::onFilterBottomSheetStateChange,
         onResetFilter = {
-            context.onLocationReady {
-                viewModel.onResetFilter(it)
-            }
+            context.onLocationReady(viewModel::onResetFilter)
         },
         onCompleteFilter = { condition, proceed ->
             context.onLocationReady {
