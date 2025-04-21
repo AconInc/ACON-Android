@@ -22,6 +22,7 @@ class AndroidLibraryComposeConventionPlugin: Plugin<Project> {
                     implementation(catalog.findLibrary("kotlinx-serialization-json").get())
                     implementation(catalog.findBundle("compose-defaults").get())
                     implementation(platform(catalog.findLibrary("androidx-compose-bom").get()))
+                    implementation(catalog.findLibrary("kotlinx-immutable").get())
 
                     androidTestImplementation(platform(catalog.findLibrary("androidx-compose-bom").get()))
                 }

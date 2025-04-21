@@ -35,6 +35,4 @@ dependencies {
     implementation(project(":core:map"))
 
     implementation(libs.lottie.compose)
-
-    implementation(libs.kotlinx.immutable)
 }

@@ -39,6 +39,5 @@ dependencies {
 
     implementation(libs.pulltorefresh)
 
-    implementation(libs.kotlinx.collections.immutable)
     implementation(libs.lottie.compose)
 }
