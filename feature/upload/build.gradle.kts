@@ -8,16 +8,6 @@ plugins {
 
 android {
     namespace = "com.acon.acon.feature.upload"
-
-    buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-        }
-    }
 }
 
 dependencies {

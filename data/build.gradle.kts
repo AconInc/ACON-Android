@@ -19,16 +19,6 @@ android {
         buildConfigField("String", "NAVER_CLIENT_ID", "String.valueOf(\"${localProperties["naver_client_id"]}\")")
         buildConfigField("String", "NAVER_CLIENT_SECRET", "String.valueOf(\"${localProperties["naver_client_secret"]}\")")
     }
-
-    buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-        }
-    }
 }
 
 dependencies {
