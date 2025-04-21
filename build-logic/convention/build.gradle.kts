@@ -48,4 +48,10 @@ gradlePlugin {
             implementationClass = "AndroidLibraryHiltConventionPlugin"
         }
     }
+    plugins {
+        register("androidLibraryOrbit") {
+            id = "com.acon.android.library.orbit"
+            implementationClass = "AndroidLibraryOrbitConventionPlugin"
+        }
+    }
 }

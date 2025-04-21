@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.acon.android.library)
     alias(libs.plugins.acon.android.library.compose)
     alias(libs.plugins.acon.android.library.hilt)
+    alias(libs.plugins.acon.android.library.orbit)
 }
 
 android {
@@ -52,9 +53,6 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.map.sdk)
     implementation(libs.gms.play.services.location)
-
-    implementation(libs.orbit.compose)
-    implementation(libs.orbit.viewmodel)
 
     // naver map
     implementation(libs.naver.map.compose)

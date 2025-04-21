@@ -189,6 +189,8 @@ acon-android-application-compose = { id = "com.acon.android.application.compose"
 acon-android-library = { id = "com.acon.android.library", version = "unspecified" }
 acon-android-library-compose = { id = "com.acon.android.library.compose", version = "unspecified" }
 acon-android-library-hilt = { id = "com.acon.android.library.hilt", version = "unspecified" }
+acon-android-library-orbit = { id = "com.acon.android.library.orbit", version = "unspecified" }
 
 [bundles]
 googleSignIn = ["androidx-credentials", "androidx-credentials-play-services-auth", "googleid"]
+orbit = ["orbit-compose", "orbit-viewmodel"]

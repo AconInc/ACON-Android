@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.acon.android.library)
     alias(libs.plugins.acon.android.library.compose)
     alias(libs.plugins.acon.android.library.hilt)
+    alias(libs.plugins.acon.android.library.orbit)
 }
 
 android {
@@ -50,7 +51,4 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
     implementation(libs.lottie.compose)
-
-    implementation(libs.orbit.viewmodel)
-    implementation(libs.orbit.compose)
 }
