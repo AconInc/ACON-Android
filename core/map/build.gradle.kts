@@ -27,9 +27,6 @@ dependencies {
 
     implementation(project(":core:utils:feature"))
 
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.material)
     testImplementation(libs.junit)
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))

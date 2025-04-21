@@ -14,9 +14,13 @@ class AndroidLibraryComposeConventionPlugin: Plugin<Project> {
                 apply("org.jetbrains.kotlin.plugin.compose")
             }
 
-            dependencies {
-                implementation(catalog.findLibrary("hilt-compose").get())
-                implementation(catalog.findLibrary("kotlinx-serialization-json").get())
+            afterEvaluate {
+                dependencies {
+                    implementation(catalog.findLibrary("hilt-compose").get())
+                    implementation(catalog.findLibrary("kotlinx-serialization-json").get())
+                    implementation(catalog.findBundle("compose-defaults").get())
+                    implementation(platform(catalog.findLibrary("androidx-compose-bom").get()))
+                }
             }
         }
     }

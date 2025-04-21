@@ -25,8 +25,12 @@ class AndroidApplicationComposeConventionPlugin: Plugin<Project> {
                 }
             }
 
-            dependencies {
-                implementation(catalog.findLibrary("kotlinx-serialization-json").get())
+            afterEvaluate {
+                dependencies {
+                    implementation(catalog.findLibrary("kotlinx-serialization-json").get())
+                    implementation(platform(catalog.findLibrary("androidx-compose-bom").get()))
+                    implementation(catalog.findBundle("compose-defaults").get())
+                }
             }
         }
     }

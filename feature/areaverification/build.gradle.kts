@@ -32,14 +32,6 @@ dependencies {
     implementation(project(":core:utils:feature"))
     implementation(project(":core:map"))
 
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.material)
-    implementation(libs.runtime.android)
-    implementation(libs.androidx.storage)
-    implementation(libs.material3.android)
-    implementation(libs.ui.tooling.preview.android)
-    implementation(libs.map.sdk)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -51,7 +43,6 @@ dependencies {
     implementation(libs.map.sdk)
     implementation(libs.gms.play.services.location)
 
-    // naver map
     implementation(libs.naver.map.compose)
     implementation(libs.play.services.location)
     implementation(libs.naver.map.location)
