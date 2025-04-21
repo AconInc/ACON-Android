@@ -24,7 +24,6 @@ android {
 dependencies {
 
     implementation(project(":domain"))
-    implementation(project(":core:common"))
     implementation(project(":core:utils:feature"))
 
 
