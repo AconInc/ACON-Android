@@ -1,7 +1,9 @@
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.dependencies
+import utils.androidTestImplementation
 import utils.catalog
+import utils.debugImplementation
 import utils.implementation
 import utils.ksp
 
@@ -20,6 +22,8 @@ class AndroidLibraryComposeConventionPlugin: Plugin<Project> {
                     implementation(catalog.findLibrary("kotlinx-serialization-json").get())
                     implementation(catalog.findBundle("compose-defaults").get())
                     implementation(platform(catalog.findLibrary("androidx-compose-bom").get()))
+
+                    androidTestImplementation(platform(catalog.findLibrary("androidx-compose-bom").get()))
                 }
             }
         }

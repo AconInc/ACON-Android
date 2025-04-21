@@ -24,14 +24,7 @@ android {
 }
 
 dependencies {
-
     implementation(project(":core:utils:feature"))
-
-    testImplementation(libs.junit)
-    implementation(libs.androidx.activity.compose)
-    implementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
 
     implementation(libs.naver.map.compose)
     implementation(libs.play.services.location)

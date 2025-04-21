@@ -44,20 +44,10 @@ naverMapCompose = "1.8.0"
 naverMapLocation = "21.0.2"
 playServicesLocation = "21.0.1"
 
-lifecycleRuntimeComposeAndroid = "2.8.7"
-foundationAndroidVersion = "1.8.0-alpha04"
-
 ##lottie
 lottie = "6.6.2"
 
-##glassmorphism
-uiTestAndroid = "1.7.0"
-uiTestAndroidVersion = "1.7.6"
-
 kotlinxImmutable = "0.3.7"
-activityKtx = "1.8.2"
-foundationLayoutAndroid = "1.7.2"
-compiler = "3.2.0-alpha11"
 
 # Project
 projectApplicationId = "com.acon.acon"
@@ -90,9 +80,7 @@ androidx-activity-compose = { group = "androidx.activity", name = "activity-comp
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
 androidx-ui = { group = "androidx.compose.ui", name = "ui" }
 androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
-androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
-androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
@@ -128,14 +116,10 @@ play-services-location = { module = "com.google.android.gms:play-services-locati
 
 lottie-compose = { group = "com.airbnb.android", name = "lottie-compose", version.ref= "lottie" }
 
-androidx-ui-test-android = { group = "androidx.compose.ui", name = "ui-test-android", version.ref = "uiTestAndroid" }
-ui-test-android = { group = "androidx.compose.ui", name = "ui-test-android", version.ref = "uiTestAndroidVersion" }
-
 kotlinx-immutable = { group = "org.jetbrains.kotlinx", name = "kotlinx-collections-immutable", version.ref = "kotlinxImmutable" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version = "1.7.3" }
 
 gson = {module = "com.google.code.gson:gson", version.ref = "gson"}
-androidx-compiler = { group = "androidx.databinding", name = "compiler", version.ref = "compiler" }
 
 # Gradle
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }

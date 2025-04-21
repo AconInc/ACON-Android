@@ -89,14 +89,6 @@ dependencies {
     implementation(project(":feature:settings"))
     implementation(project(":feature:profile"))
 
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.ui.test.junit4)
-    debugImplementation(libs.androidx.ui.tooling)
-    debugImplementation(libs.androidx.ui.test.manifest)
-
     implementation(libs.naver.map.compose)
     implementation(libs.play.services.location)
     implementation(libs.naver.map.location)

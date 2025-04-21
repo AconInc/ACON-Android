@@ -3,9 +3,11 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
+import utils.androidTestImplementation
 import utils.catalog
 import utils.configureKotlinAndroid
 import utils.implementation
+import utils.testImplementation
 
 class AndroidApplicationConventionPlugin : Plugin<Project> {
 
@@ -34,6 +36,11 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
             afterEvaluate {
                 dependencies {
                     implementation(catalog.findBundle("android-defaults").get())
+
+                    testImplementation(catalog.findLibrary("junit").get())
+                    androidTestImplementation(catalog.findLibrary("androidx-junit").get())
+                    androidTestImplementation(catalog.findLibrary("androidx-espresso-core").get())
+                    androidTestImplementation(catalog.findLibrary("androidx-ui-test-junit4").get())
                 }
             }
         }

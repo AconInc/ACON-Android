@@ -34,10 +34,6 @@ dependencies {
     implementation(project(":core:utils:feature"))
     implementation(project(":core:map"))
 
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-
     implementation(libs.lottie.compose)
 
     implementation(libs.kotlinx.immutable)
