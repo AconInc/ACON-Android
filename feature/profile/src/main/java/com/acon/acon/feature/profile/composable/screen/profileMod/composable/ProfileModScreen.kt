@@ -485,9 +485,10 @@ fun ProfileModScreen(
                 enabledTextColor = AconTheme.color.White,
                 onClick = onSaveClicked,
                 isEnabled = (state.nicknameStatus == NicknameStatus.Valid) &&
-                        (state.birthdayStatus != BirthdayStatus.Invalid("정확한 생년월일을 입력해주세요")) &&
-                        ((state.nickNameState != state.originalNickname || state.birthdayState != state.originalBirthday || state.selectedPhotoUri != state.originalPhotoUri)
-                                && state.birthdayState.isNotEmpty())
+                        (state.nickNameState != state.originalNickname ||
+                                state.birthdayState != state.originalBirthday ||
+                                state.selectedPhotoUri != state.originalPhotoUri)
+
             )
         }
     }
