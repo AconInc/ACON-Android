@@ -54,4 +54,10 @@ gradlePlugin {
             implementationClass = "AndroidLibraryOrbitConventionPlugin"
         }
     }
+    plugins {
+        register("androidLibraryHaze") {
+            id = "com.acon.android.library.haze"
+            implementationClass = "AndroidLibraryHazeConventionPlugin"
+        }
+    }
 }

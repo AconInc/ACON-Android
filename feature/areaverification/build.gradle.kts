@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.acon.android.library.compose)
     alias(libs.plugins.acon.android.library.hilt)
     alias(libs.plugins.acon.android.library.orbit)
+    alias(libs.plugins.acon.android.library.haze)
 }
 
 android {
@@ -39,7 +40,6 @@ dependencies {
     implementation(libs.material3.android)
     implementation(libs.ui.tooling.preview.android)
     implementation(libs.map.sdk)
-    implementation(libs.haze.android)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

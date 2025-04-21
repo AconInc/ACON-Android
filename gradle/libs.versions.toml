@@ -61,7 +61,6 @@ foundationAndroidVersion = "1.8.0-alpha04"
 lottie = "6.6.2"
 
 ##glassmorphism
-hazeAndroid = "1.2.1"
 uiTestAndroid = "1.7.0"
 uiTestAndroidVersion = "1.7.6"
 
@@ -151,7 +150,6 @@ foundation-android = { group = "androidx.compose.foundation", name = "foundation
 
 lottie-compose = { group = "com.airbnb.android", name = "lottie-compose", version.ref= "lottie" }
 
-haze-android = { group = "dev.chrisbanes.haze", name = "haze-android", version.ref = "hazeAndroid" }
 androidx-ui-test-android = { group = "androidx.compose.ui", name = "ui-test-android", version.ref = "uiTestAndroid" }
 ui-test-android = { group = "androidx.compose.ui", name = "ui-test-android", version.ref = "uiTestAndroidVersion" }
 
@@ -190,7 +188,9 @@ acon-android-library = { id = "com.acon.android.library", version = "unspecified
 acon-android-library-compose = { id = "com.acon.android.library.compose", version = "unspecified" }
 acon-android-library-hilt = { id = "com.acon.android.library.hilt", version = "unspecified" }
 acon-android-library-orbit = { id = "com.acon.android.library.orbit", version = "unspecified" }
+acon-android-library-haze = { id = "com.acon.android.library.haze", version = "unspecified" }
 
 [bundles]
 googleSignIn = ["androidx-credentials", "androidx-credentials-play-services-auth", "googleid"]
 orbit = ["orbit-compose", "orbit-viewmodel"]
+haze = ["haze", "haze-materials"]
