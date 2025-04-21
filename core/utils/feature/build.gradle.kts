@@ -20,7 +20,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":core:designsystem"))
+    implementation(projects.core.designsystem)
 
     implementation(libs.accompanist.permissions)
     implementation(libs.amplitude)

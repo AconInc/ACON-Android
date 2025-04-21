@@ -9,7 +9,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":core:utils:feature"))
+    implementation(projects.core.utils.feature)
 
     implementation(libs.play.services.location)
 }

@@ -13,10 +13,10 @@ android {
 
 dependencies {
 
-    implementation(project(":domain"))
-    implementation(project(":core:designsystem"))
-    implementation(project(":core:utils:feature"))
-    implementation(project(":core:map"))
+    implementation(projects.domain)
+    implementation(projects.core.designsystem)
+    implementation(projects.core.utils.feature)
+    implementation(projects.core.map)
 
     implementation(libs.pulltorefresh)
 

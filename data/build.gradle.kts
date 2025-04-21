@@ -23,8 +23,8 @@ android {
 
 dependencies {
 
-    implementation(project(":domain"))
-    implementation(project(":core:utils:feature"))
+    implementation(projects.domain)
+    implementation(projects.core.utils.feature)
 
 
     implementation(platform(libs.okhttp.bom))
