@@ -48,7 +48,6 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
-    implementation(libs.kotlinx.serialization.json)
     implementation(libs.map.sdk)
     implementation(libs.gms.play.services.location)
 

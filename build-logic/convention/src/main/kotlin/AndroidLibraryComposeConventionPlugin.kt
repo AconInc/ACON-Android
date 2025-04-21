@@ -16,6 +16,7 @@ class AndroidLibraryComposeConventionPlugin: Plugin<Project> {
 
             dependencies {
                 implementation(catalog.findLibrary("hilt-compose").get())
+                implementation(catalog.findLibrary("kotlinx-serialization-json").get())
             }
         }
     }

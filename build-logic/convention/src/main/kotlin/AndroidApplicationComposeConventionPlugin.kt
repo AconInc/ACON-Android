@@ -2,7 +2,9 @@ import com.android.build.api.dsl.ApplicationExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
+import org.gradle.kotlin.dsl.dependencies
 import utils.catalog
+import utils.implementation
 
 class AndroidApplicationComposeConventionPlugin: Plugin<Project> {
 
@@ -21,6 +23,10 @@ class AndroidApplicationComposeConventionPlugin: Plugin<Project> {
                     kotlinCompilerExtensionVersion =
                         catalog.findVersion("composeCompilerVersion").get().requiredVersion
                 }
+            }
+
+            dependencies {
+                implementation(catalog.findLibrary("kotlinx-serialization-json").get())
             }
         }
     }
