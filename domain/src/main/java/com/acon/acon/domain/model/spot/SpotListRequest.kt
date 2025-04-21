@@ -9,7 +9,7 @@ import com.acon.acon.domain.type.SpotType
 data class Condition(
     val spotType: SpotType?,
     val filterList: List<Filter>?,
-    val walkingTime: Int,
+    val walkingTime: Int?,
     val priceRange: Int?
 ) {
 
