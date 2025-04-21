@@ -34,7 +34,6 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
-    implementation(libs.hilt.android)
     implementation(libs.runtime.android)
     implementation(libs.androidx.storage)
     implementation(libs.material3.android)
@@ -49,7 +48,6 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
-    implementation(libs.hilt.android)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.map.sdk)
     implementation(libs.gms.play.services.location)
