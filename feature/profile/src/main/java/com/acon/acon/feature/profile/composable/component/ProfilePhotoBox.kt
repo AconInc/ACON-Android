@@ -17,6 +17,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.vectorResource
+import coil3.compose.AsyncImage
 import coil3.compose.rememberAsyncImagePainter
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.feature.profile.R
@@ -52,12 +53,13 @@ fun ProfilePhotoBox(
                         )
                     }
 
-                    else -> {
-                        Icon(
+                    photoUri.startsWith("https://") -> {
+                        AsyncImage(
+                            model = photoUri,
+                            contentDescription = "선택한 프로필 사진",
                             modifier = Modifier.fillMaxSize(),
-                            imageVector = ImageVector.vectorResource(R.drawable.img_profile_basic_80),
-                            contentDescription = "Profile Image",
-                            tint = Color.Unspecified,
+                            contentScale = ContentScale.Crop,
+                            alignment = Alignment.Center
                         )
                     }
                 }

@@ -60,6 +60,7 @@ fun ProfileScreen(
 
     val snackBarText = stringResource(R.string.snackbar_profile_save_success)
     val success = stringResource(R.string.success)
+
     LaunchedEffect(profileUpdateResult) {
         if (profileUpdateResult == success) {
             snackbarHostState.showSnackbar(snackBarText)
@@ -100,7 +101,7 @@ fun ProfileScreen(
                     modifier = Modifier
                         .padding(vertical = 32.dp)
                 ) {
-                    if (state.profileImage.isNotEmpty()) {
+                    if (state.profileImage.isEmpty()) {
                         Image(
                             imageVector = ImageVector.vectorResource(com.acon.acon.core.designsystem.R.drawable.ic_default_profile_40),
                             contentDescription = stringResource(R.string.content_description_default_profile_image),

@@ -68,6 +68,7 @@ import com.acon.acon.feature.profile.composable.utils.BirthdayTransformation
 import com.acon.acon.feature.profile.composable.utils.isAllowedChar
 import com.acon.acon.feature.profile.composable.utils.isKorean
 import org.orbitmvi.orbit.compose.collectAsState
+import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
 fun ProfileModScreenContainer(
@@ -87,37 +88,35 @@ fun ProfileModScreenContainer(
         }
     }
 
-    LaunchedEffect(Unit) {
-        viewModel.container.sideEffectFlow.collect { effect ->
-            when (effect) {
-                is ProfileModSideEffect.NavigateToSettings -> {
-                    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                        data = Uri.fromParts("package", effect.packageName, null)
-                    }
-                    context.startActivity(intent)
+    viewModel.collectSideEffect { effect ->
+        when (effect) {
+            is ProfileModSideEffect.NavigateToSettings -> {
+                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                    data = Uri.fromParts("package", effect.packageName, null)
                 }
+                context.startActivity(intent)
+            }
 
-                is ProfileModSideEffect.NavigateBack -> {
-                    backToProfile()
-                }
+            is ProfileModSideEffect.NavigateBack -> {
+                backToProfile()
+            }
 
-                is ProfileModSideEffect.NavigateToCustomGallery -> {
-                    onNavigateToCustomGallery()
-                }
+            is ProfileModSideEffect.NavigateToCustomGallery -> {
+                onNavigateToCustomGallery()
+            }
 
-                is ProfileModSideEffect.UpdateProfileImage -> {
-                    selectedPhotoId.let {
-                        viewModel.updateProfileImage(selectedPhotoId)
-                    }
+            is ProfileModSideEffect.UpdateProfileImage -> {
+                selectedPhotoId.let {
+                    viewModel.updateProfileImage(selectedPhotoId)
                 }
+            }
 
-                is ProfileModSideEffect.NavigateToProfileSuccess -> {
-                    onNavigateToProfile(ProfileUpdateResult.SUCCESS)
-                }
+            is ProfileModSideEffect.NavigateToProfileSuccess -> {
+                onNavigateToProfile(ProfileUpdateResult.SUCCESS)
+            }
 
-                is ProfileModSideEffect.NavigateToProfileFailed -> {
-                    onNavigateToProfile(ProfileUpdateResult.FAILURE)
-                }
+            is ProfileModSideEffect.NavigateToProfileFailed -> {
+                onNavigateToProfile(ProfileUpdateResult.FAILURE)
             }
         }
     }
