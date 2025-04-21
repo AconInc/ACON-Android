@@ -1,19 +1,13 @@
 plugins {
-    alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.compose.compiler)
-    alias(libs.plugins.ksp)
-    alias(libs.plugins.hilt.android)
-    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.acon.android.library)
+    alias(libs.plugins.acon.android.library.compose)
+    alias(libs.plugins.acon.android.library.hilt)
 }
 
 android {
     namespace = "com.acon.acon.feature.areaverification"
-    compileSdk = 35
 
     defaultConfig {
-        minSdk = 28
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
@@ -26,13 +20,6 @@ android {
                 "proguard-rules.pro"
             )
         }
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = "1.8"
     }
 }
 
@@ -65,9 +52,6 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.map.sdk)
     implementation(libs.gms.play.services.location)
-    implementation(libs.hilt.android)
-    ksp(libs.hilt.compiler)
-    implementation(libs.hilt.compose)
 
     implementation(libs.orbit.compose)
     implementation(libs.orbit.viewmodel)

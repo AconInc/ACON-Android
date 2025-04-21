@@ -1,18 +1,13 @@
 plugins {
-    alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.compose.compiler)
-    alias(libs.plugins.ksp)
-    alias(libs.plugins.hilt.android)
-    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.acon.android.library)
+    alias(libs.plugins.acon.android.library.compose)
+    alias(libs.plugins.acon.android.library.hilt)
 }
 
 android {
     namespace = "com.acon.acon.feature.spot"
-    compileSdk = 35
 
     defaultConfig {
-        minSdk = 28
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
@@ -26,16 +21,6 @@ android {
                 "proguard-rules.pro"
             )
         }
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-    buildFeatures {
-        buildConfig = true
-    }
-    kotlinOptions {
-        jvmTarget = "11"
     }
 }
 
@@ -64,10 +49,6 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-
-    implementation(libs.hilt.android)
-    ksp(libs.hilt.compiler)
-    implementation(libs.hilt.compose)
 
     implementation(libs.orbit.viewmodel)
     implementation(libs.orbit.compose)
