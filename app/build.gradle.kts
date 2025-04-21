@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.acon.android.application.compose)
     alias(libs.plugins.acon.android.library.hilt)
     alias(libs.plugins.acon.android.library.haze)
+    alias(libs.plugins.acon.android.library.naver.map)
 }
 
 val localProperties = Properties().apply {
@@ -89,9 +90,7 @@ dependencies {
     implementation(project(":feature:settings"))
     implementation(project(":feature:profile"))
 
-    implementation(libs.naver.map.compose)
     implementation(libs.play.services.location)
-    implementation(libs.naver.map.location)
 
     implementation(libs.androidx.core.splashscreen)
 }

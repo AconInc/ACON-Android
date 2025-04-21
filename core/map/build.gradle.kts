@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.acon.android.library)
     alias(libs.plugins.acon.android.library.compose)
+    alias(libs.plugins.acon.android.library.naver.map)
 }
 
 android {
@@ -26,7 +27,5 @@ android {
 dependencies {
     implementation(project(":core:utils:feature"))
 
-    implementation(libs.naver.map.compose)
     implementation(libs.play.services.location)
-    implementation(libs.naver.map.location)
 }

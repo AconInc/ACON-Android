@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.acon.android.library.hilt)
     alias(libs.plugins.acon.android.library.orbit)
     alias(libs.plugins.acon.android.library.haze)
+    alias(libs.plugins.acon.android.library.naver.map)
 }
 
 android {
@@ -32,10 +33,5 @@ dependencies {
     implementation(project(":core:utils:feature"))
     implementation(project(":core:map"))
 
-    implementation(libs.map.sdk)
-    implementation(libs.gms.play.services.location)
-
-    implementation(libs.naver.map.compose)
     implementation(libs.play.services.location)
-    implementation(libs.naver.map.location)
 }

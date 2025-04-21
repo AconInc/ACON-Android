@@ -66,4 +66,10 @@ gradlePlugin {
             implementationClass = "AndroidLibraryCoilConventionPlugin"
         }
     }
+    plugins {
+        register("androidLibraryNaverMap") {
+            id = "com.acon.android.library.naver.map"
+            implementationClass = "AndroidLibraryNaverMapConventionPlugin"
+        }
+    }
 }

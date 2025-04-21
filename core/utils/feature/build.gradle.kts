@@ -37,5 +37,5 @@ dependencies {
     implementation(project(":core:designsystem"))
 
     implementation(libs.accompanist.permissions)
-    implementation (libs.amplitude)
+    implementation(libs.amplitude)
 }

@@ -13,7 +13,6 @@ coreKtx = "1.16.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.5.0"
-kotlinxCollectionsImmutable = "0.3.8"
 lifecycleRuntimeKtx = "2.8.7"
 activityCompose = "1.8.0"
 composeBom = "2024.04.01"
@@ -34,7 +33,6 @@ hilt = "2.52"
 hiltCompose = "1.2.0"
 javaxInject = "1"
 orbit = "9.0.0"
-playServicesLocationVersion = "21.3.0"
 gson = "2.10.1"
 
 amplitudeVersion="1.20.1"
@@ -42,7 +40,7 @@ amplitudeVersion="1.20.1"
 ## Naver Map
 naverMapCompose = "1.8.0"
 naverMapLocation = "21.0.2"
-playServicesLocation = "21.0.1"
+playServicesLocation = "21.3.0"
 
 ##lottie
 lottie = "6.6.2"
@@ -84,7 +82,6 @@ androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-toolin
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
-map-sdk = { module = "com.naver.maps:map-sdk", version.ref = "mapSdk" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-runtime = { group = "androidx.compose.runtime", name = "runtime-android", version.ref = "runtimeAndroid" }
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }
@@ -104,14 +101,9 @@ retrofit-kotlin-serialization-converter = { group = "com.jakewharton.retrofit", 
 
 amplitude = { module = "com.amplitude:analytics-android", version.ref = "amplitudeVersion" }
 
+
 orbit-compose = { module = "org.orbit-mvi:orbit-compose", version.ref = "orbit" }
 orbit-viewmodel = { module = "org.orbit-mvi:orbit-viewmodel", version.ref = "orbit" }
-
-gms-play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocationVersion" }
-
-naver-map-compose = { module = "io.github.fornewid:naver-map-compose", version.ref = "naverMapCompose" }
-naver-map-location = { module = "io.github.fornewid:naver-map-location", version.ref = "naverMapLocation" }
-play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocation" }
 
 lottie-compose = { group = "com.airbnb.android", name = "lottie-compose", version.ref= "lottie" }
 
@@ -119,6 +111,12 @@ kotlinx-immutable = { group = "org.jetbrains.kotlinx", name = "kotlinx-collectio
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version = "1.7.3" }
 
 gson = {module = "com.google.code.gson:gson", version.ref = "gson"}
+
+naver-map-compose = { module = "io.github.fornewid:naver-map-compose", version.ref = "naverMapCompose" }
+naver-map-location = { module = "io.github.fornewid:naver-map-location", version.ref = "naverMapLocation" }
+naver-map-sdk = { module = "com.naver.maps:map-sdk", version.ref = "mapSdk" }
+
+play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocation" }
 
 # Gradle
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
@@ -148,6 +146,7 @@ acon-android-library-hilt = { id = "com.acon.android.library.hilt", version = "u
 acon-android-library-orbit = { id = "com.acon.android.library.orbit", version = "unspecified" }
 acon-android-library-haze = { id = "com.acon.android.library.haze", version = "unspecified" }
 acon-android-library-coil = { id = "com.acon.android.library.coil", version = "unspecified" }
+acon-android-library-naver-map = { id = "com.acon.android.library.naver.map", version = "unspecified" }
 
 [bundles]
 googleSignIn = ["androidx-credentials", "androidx-credentials-play-services-auth", "googleid"]
@@ -157,3 +156,4 @@ android-defaults = ["androidx-core-ktx", "androidx-lifecycle-runtime-ktx", "andr
 compose-defaults = ["androidx-ui", "androidx-ui-graphics", "androidx-ui-tooling-preview",
     "androidx-navigation-compose", "androidx-activity-compose", "material3", "androidx-runtime"]
 coil = ["coil-compose", "coil-network-okhttp"]
+naver-map = ["naver-map-compose", "naver-map-location", "naver-map-sdk"]
