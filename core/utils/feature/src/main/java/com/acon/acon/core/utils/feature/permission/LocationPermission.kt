@@ -30,22 +30,19 @@ import kotlinx.coroutines.withContext
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun CheckAndRequestLocationPermission(
-    enableDialog: Boolean = true,
-    onPermissionGranted: () -> Unit = {}
+    showDialogAutomatically: Boolean = true,
+    onPermissionGranted: () -> Unit
 ) {
-    val context = LocalContext.current
-    val lifecycleOwner = LocalLifecycleOwner.current
-
+    var trigger by rememberSaveable { mutableIntStateOf(0) }
     var showPermissionDialog by rememberSaveable { mutableStateOf(false) }
-    var isPermissionGranted by remember { mutableStateOf(context.checkLocationPermission()) }
 
     val locationPermissionState = rememberMultiplePermissionsState(
         permissions = listOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION),
         onPermissionsResult = { permMap ->
-            isPermissionGranted = permMap.values.all { it }
+            trigger = (trigger + 1).coerceAtMost(2)
         }
     )
-    if (showPermissionDialog && enableDialog)
+    if (showPermissionDialog && showDialogAutomatically)
         AconPermissionDialog(
             onPermissionGranted = {
                 showPermissionDialog = false
@@ -53,30 +50,18 @@ fun CheckAndRequestLocationPermission(
             }
         )
 
-    DisposableEffect(lifecycleOwner) {
-        val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_RESUME) {
-                isPermissionGranted = context.checkLocationPermission()
-                if (!isPermissionGranted) {
+    LaunchedEffect(trigger) {
+        withContext(Dispatchers.Main.immediate) {
+            if (locationPermissionState.allPermissionsGranted) {
+                onPermissionGranted()
+            } else {
+                if (locationPermissionState.shouldShowRationale) {
                     showPermissionDialog = true
                 } else {
-                    showPermissionDialog = false
+                    if (trigger == 2) {
+                        showPermissionDialog = true
+                    } else locationPermissionState.launchMultiplePermissionRequest()
                 }
-            }
-        }
-
-        lifecycleOwner.lifecycle.addObserver(observer)
-        onDispose {
-            lifecycleOwner.lifecycle.removeObserver(observer)
-        }
-    }
-
-    LaunchedEffect(isPermissionGranted) {
-        if (isPermissionGranted) {
-            onPermissionGranted()
-        } else {
-            if (locationPermissionState.shouldShowRationale || !locationPermissionState.allPermissionsGranted) {
-                showPermissionDialog = true
             }
         }
     }

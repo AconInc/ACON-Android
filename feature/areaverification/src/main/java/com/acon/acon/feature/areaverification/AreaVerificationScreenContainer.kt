@@ -3,7 +3,6 @@ package com.acon.acon.feature.areaverification
 import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -85,9 +84,7 @@ fun AreaVerificationScreenContainer(
         }
     }
 
-    CheckAndRequestLocationPermission(
-        enableDialog = false
-    )
+    CheckAndRequestLocationPermission(showDialogAutomatically = false) {}
 
     AreaVerificationScreen(
         state = state,

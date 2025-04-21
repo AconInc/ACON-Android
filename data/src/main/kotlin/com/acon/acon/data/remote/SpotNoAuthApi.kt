@@ -1,10 +1,8 @@
 package com.acon.acon.data.remote
 
 import com.acon.acon.data.dto.request.RecentNavigationLocationRequest
-import com.acon.acon.data.dto.request.SpotListRequest
 import com.acon.acon.data.dto.response.SpotDetailInfoResponse
 import com.acon.acon.data.dto.response.SpotDetailMenuListResponse
-import com.acon.acon.data.dto.response.SpotListResponse
 import com.acon.acon.data.dto.response.area.LegalAreaResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -12,12 +10,7 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
 
-interface SpotApi {
-
-    @POST("/api/v1/spots")
-    suspend fun fetchSpotList(
-        @Body request: SpotListRequest
-    ): SpotListResponse
+interface SpotNoAuthApi {
 
     @POST("/api/v1/members/guided-spots")
     suspend fun fetchRecentNavigationLocation(

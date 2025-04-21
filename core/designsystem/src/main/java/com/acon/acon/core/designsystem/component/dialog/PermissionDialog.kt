@@ -33,6 +33,7 @@ fun AconPermissionDialog(
     }
 
     AconOneButtonDialog(
+        modifier = modifier,
         title = stringResource(R.string.no_permission_title),
         content = stringResource(R.string.no_permission_content),
         buttonContent = stringResource(R.string.go_to_setting),

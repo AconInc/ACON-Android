@@ -52,7 +52,6 @@ dependencies {
     implementation(libs.material3.android)
     implementation(libs.ui.tooling.preview.android)
     implementation(libs.map.sdk)
-    implementation(libs.gms.play.services.location)
     implementation(libs.haze.android)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

@@ -30,11 +30,8 @@ internal fun NavGraphBuilder.profileNavigation(
 
     navigation<ProfileRoute.Graph>(
         startDestination = ProfileRoute.Profile,
-        enterTransition = {
-            EnterTransition.None
-        }, exitTransition = {
-            ExitTransition.None
-        }
+        enterTransition = { EnterTransition.None },
+        exitTransition = { ExitTransition.None }
     ) {
         composable<ProfileRoute.Profile> {
             val profileUpdateResult = navController.currentBackStackEntry

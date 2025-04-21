@@ -1,6 +1,5 @@
 package com.acon.acon.feature.signin.screen
 
-import android.util.Log
 import com.acon.acon.core.utils.feature.base.BaseContainerHost
 import com.acon.acon.domain.error.user.CredentialException
 import com.acon.acon.domain.repository.UserRepository
@@ -24,9 +23,8 @@ class SignInViewModel @Inject constructor(
         }
 
     fun googleLogin(socialRepository: SocialRepository) = intent {
-        socialRepository.signIn()
+        socialRepository.googleLogin()
             .onSuccess {
-                tokenRepository.saveIsLogin(true)
                 if(it.hasVerifiedArea) {
                     postSideEffect(SignInSideEffect.NavigateToSpotListView)
                 } else {
@@ -44,17 +42,14 @@ class SignInViewModel @Inject constructor(
                     }
 
                     is CredentialException.NoStoredCredentials -> {
-                        tokenRepository.removeGoogleIdToken()
                         reduce { SignInUiState.Loading }
                     }
 
                     is SecurityException -> {
-                        tokenRepository.removeGoogleIdToken()
                         reduce { SignInUiState.Loading }
                     }
 
                     else -> {
-                        tokenRepository.removeGoogleIdToken()
                         reduce { SignInUiState.Loading }
                         postSideEffect(SignInSideEffect.ShowToastMessage)
                     }

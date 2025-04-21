@@ -37,16 +37,13 @@ class OnboardingRepositoryImpl @Inject constructor(
             )
 
             val requestJson = Json.encodeToString(request)
-            Log.d("OnboardingRequest", "Request Data: $requestJson")
 
             val response = onboardingRemoteDataSource.postResult(request)
 
             if (response.isSuccessful) {
-                Log.d("OnboardingResponse", "Success: ${response.code()} - ${response.body()}")
                 _onboardingResultStateFlow.emit(Result.success(Unit))
                 Result.success(Unit)
             } else {
-                Log.d("OnboardingResponse", "Failed: ${response.errorBody()?.string() ?: "Unknown error"}")
                 val errorBody = response.errorBody()?.string() ?: "Unknown error"
                 val exception = RuntimeException("Server error: $errorBody")
                 _onboardingResultStateFlow.emit(Result.failure(exception))

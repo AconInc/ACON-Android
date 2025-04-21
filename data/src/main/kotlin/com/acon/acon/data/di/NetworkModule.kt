@@ -12,6 +12,7 @@ import com.acon.acon.core.common.NaverAuthInterceptor
 import com.acon.acon.core.common.NoAuth
 import com.acon.acon.core.common.ResponseInterceptor
 import com.acon.acon.core.common.TokenInterceptor
+import com.acon.acon.data.SessionManager
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides
@@ -178,8 +179,9 @@ internal object NetworkModule {
     fun provideRefreshInterceptor(
         @ApplicationContext context: Context,
         tokenLocalDataSource: TokenLocalDataSource,
-        reissueTokenApi: ReissueTokenApi
-    ): Authenticator = AuthAuthenticator(tokenLocalDataSource, reissueTokenApi)
+        reissueTokenApi: ReissueTokenApi,
+        sessionManager: SessionManager
+    ): Authenticator = AuthAuthenticator(tokenLocalDataSource, reissueTokenApi, sessionManager)
 
     @ResponseInterceptor
     @Singleton

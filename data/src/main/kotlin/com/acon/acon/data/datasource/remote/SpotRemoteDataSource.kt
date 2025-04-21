@@ -6,30 +6,32 @@ import com.acon.acon.data.dto.response.SpotDetailInfoResponse
 import com.acon.acon.data.dto.response.SpotDetailMenuListResponse
 import com.acon.acon.data.dto.response.SpotListResponse
 import com.acon.acon.data.dto.response.area.LegalAreaResponse
-import com.acon.acon.data.remote.SpotApi
+import com.acon.acon.data.remote.SpotNoAuthApi
+import com.acon.acon.data.remote.SpotAuthApi
 import javax.inject.Inject
 
 class SpotRemoteDataSource @Inject constructor(
-    private val spotApi: SpotApi
+    private val spotNoAuthApi: SpotNoAuthApi,
+    private val spotAuthApi: SpotAuthApi
 ) {
 
     suspend fun fetchSpotList(request: SpotListRequest): SpotListResponse {
-        return spotApi.fetchSpotList(request)
+        return spotAuthApi.fetchSpotList(request)
     }
 
     suspend fun fetchRecentNavigationLocation(request: RecentNavigationLocationRequest) {
-        return spotApi.fetchRecentNavigationLocation(request)
+        return spotNoAuthApi.fetchRecentNavigationLocation(request)
     }
 
     suspend fun getSpotDetailInfo(spotId: Long): SpotDetailInfoResponse {
-        return spotApi.getSpotDetailInfo(spotId)
+        return spotNoAuthApi.getSpotDetailInfo(spotId)
     }
 
     suspend fun getSpotMenuList(spotId: Long): SpotDetailMenuListResponse {
-        return spotApi.getSpotMenuList(spotId)
+        return spotNoAuthApi.getSpotMenuList(spotId)
     }
 
     suspend fun getLegalDong(latitude: Double, longitude: Double): LegalAreaResponse {
-        return spotApi.getLegalDong(latitude, longitude)
+        return spotNoAuthApi.getLegalDong(latitude, longitude)
     }
 }
