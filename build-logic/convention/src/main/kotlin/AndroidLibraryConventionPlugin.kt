@@ -22,7 +22,13 @@ class AndroidLibraryConventionPlugin: Plugin<Project> {
 
             extensions.configure<LibraryExtension> {
                 configureKotlinAndroid(this)
+
+                defaultConfig {
+                    testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+                    consumerProguardFiles("consumer-rules.pro")
+                }
             }
+
             afterEvaluate {
                 dependencies {
                     implementation(catalog.findBundle("android-defaults").get())
