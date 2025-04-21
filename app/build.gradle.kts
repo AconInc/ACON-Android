@@ -18,11 +18,6 @@ android {
 
     defaultConfig {
         manifestPlaceholders += mapOf()
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        vectorDrawables {
-            useSupportLibrary = true
-        }
         manifestPlaceholders["naverClientId"] = getPropertyKey("naver_client_id")
         buildConfigField(
             "String",

@@ -31,6 +31,8 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
                     targetSdk = catalog.findVersion("projectTargetSdk").get().toString().toInt()
                     versionCode = catalog.findVersion("projectVersionCode").get().toString().toInt()
                     versionName = catalog.findVersion("projectVersionName").get().toString()
+
+                    testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
                 }
                 configureKotlinAndroid(this)
             }
