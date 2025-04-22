@@ -83,11 +83,7 @@ fun ProfileModScreenContainer(
     val context = LocalContext.current
 
     LaunchedEffect(selectedPhotoId) {
-        if (selectedPhotoId.isNotEmpty()) {
-            viewModel.updateProfileImage(selectedPhotoId)
-        } else {
-            viewModel.updateProfileImage(state.originalPhotoUri)
-        }
+        viewModel.updateProfileImage(selectedPhotoId)
     }
 
 
