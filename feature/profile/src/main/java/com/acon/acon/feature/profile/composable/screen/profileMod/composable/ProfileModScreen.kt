@@ -83,10 +83,13 @@ fun ProfileModScreenContainer(
     val context = LocalContext.current
 
     LaunchedEffect(selectedPhotoId) {
-        selectedPhotoId.let {
+        if (selectedPhotoId.isNotEmpty()) {
             viewModel.updateProfileImage(selectedPhotoId)
+        } else {
+            viewModel.updateProfileImage(state.originalPhotoUri)
         }
     }
+
 
     viewModel.collectSideEffect { effect ->
         when (effect) {
@@ -325,22 +328,23 @@ fun ProfileModScreen(
                         onTextChanged = { fieldValue ->
                             val inputText = fieldValue.text
                             var count = 0
+                            var textLimit = false
 
-                            val validText = buildString {
+                            val displayText = buildString {
                                 for (char in inputText) {
-                                    if (!char.isAllowedChar()) continue
                                     val weight = if (char.isKorean()) 2 else 1
-                                    if (count + weight > 16) break
-                                    append(char)
-                                    count += weight
+                                    if (count + weight > 16) {
+                                        textLimit = true
+                                        break
+                                    }
+                                    if (char.isAllowedChar()) {
+                                        append(char)
+                                        count += weight
+                                    }
                                 }
                             }
-
-                            if (validText.length < inputText.length) {
-                                // 초과된 입력이므로 무시하고 아무것도 하지 않음 (16자 이상은 입력 무시(불가능))
-                            } else {
-                                // 정상적인 입력만 가능
-                                nicknameText = fieldValue
+                            if (!textLimit || displayText.length <= nicknameText.text.length) {
+                                nicknameText = fieldValue.copy(text = displayText)
                                 onNicknameChanged(inputText)
                             }
                         },

@@ -100,24 +100,27 @@ class ProfileModViewModel @Inject constructor(
         val filteredText = text.filter { it.isAllowedChar() }
 
         var nicknameCount = 0
+        var limitedText = ""
         for (char in filteredText) {
-            nicknameCount += if (char.isKorean()) 2 else 1
-            if (nicknameCount > 16) break
+            val weight = if (char.isKorean()) 2 else 1
+            if (nicknameCount + weight > 16) break
+            limitedText += char
+            nicknameCount += weight
         }
 
         val updatedNicknameStatus = when {
-            filteredText.isEmpty() -> NicknameStatus.Empty
+            text.isEmpty() -> NicknameStatus.Empty
             else -> NicknameStatus.Typing
         }
 
         val updatedFieldStatus = when {
-            filteredText.isEmpty() -> TextFieldStatus.Empty
+            text.isEmpty() -> TextFieldStatus.Empty
             else -> state.nickNameFieldStatus
         }
 
         reduce {
             state.copy(
-                nickNameState = filteredText,
+                nickNameState = limitedText,
                 nicknameCount = nicknameCount,
                 nicknameStatus = updatedNicknameStatus,
                 nickNameFieldStatus = updatedFieldStatus
@@ -134,23 +137,23 @@ class ProfileModViewModel @Inject constructor(
 
             val errors = mutableListOf<NicknameErrorType>()
 
-            if (filteredText.any { it in "!@#$%^&*()-=+[]{};:'\",<>/?\\|" }) {
+            if (text.any { it in "!@#$%^&*()-=+[]{};:'\",<>/?\\|" }) {
                 errors.add(NicknameErrorType.InvalidChar)
             }
 
             val allowedChars = (33..126).map { it.toChar() } +
                     ('가'..'힣') + ('ㄱ'..'ㅎ') + ('ㅏ'..'ㅣ')
-            if (filteredText.any { it !in allowedChars }) {
+            if (text.any { it !in allowedChars }) {
                 errors.add(NicknameErrorType.InvalidLang)
             }
 
-            validateNickname(nickname = filteredText, errors = errors)
+            validateNickname(nickname = limitedText, errors = errors)
 
             intent {
                 reduce {
                     state.copy(
                         nicknameStatus = when {
-                            filteredText.isBlank() -> NicknameStatus.Empty
+                            limitedText.isBlank() -> NicknameStatus.Empty
                             errors.isNotEmpty() -> NicknameStatus.Error(errors)
                             else -> NicknameStatus.Valid
                         }
