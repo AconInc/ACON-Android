@@ -485,10 +485,11 @@ fun ProfileModScreen(
                 enabledTextColor = AconTheme.color.White,
                 onClick = onSaveClicked,
                 isEnabled = (state.nicknameStatus == NicknameStatus.Valid) &&
-                        (state.nickNameState != state.originalNickname ||
-                                state.birthdayState != state.originalBirthday ||
-                                state.selectedPhotoUri != state.originalPhotoUri)
-
+                        (
+                                (state.nickNameState != state.originalNickname) ||
+                                        (state.birthdayState != state.originalBirthday && state.birthdayStatus == BirthdayStatus.Valid) ||
+                                        (state.selectedPhotoUri != state.originalPhotoUri)
+                                )
             )
         }
     }
