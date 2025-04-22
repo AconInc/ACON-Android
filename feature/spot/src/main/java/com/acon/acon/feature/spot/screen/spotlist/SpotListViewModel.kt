@@ -50,7 +50,7 @@ class SpotListViewModel @Inject constructor(
     fun googleLogin(socialRepository: SocialRepository, location: Location) = intent {
         socialRepository.googleLogin()
             .onSuccess {
-                if(it.hasVerifiedArea) {
+                if (it.hasVerifiedArea) {
                     fetchSpots(location)
                 } else {
                     postSideEffect(SpotListSideEffect.NavigateToAreaVerification)
@@ -72,7 +72,8 @@ class SpotListViewModel @Inject constructor(
             spotRepository.fetchSpotList(
                 latitude = location.latitude,
                 longitude = location.longitude,
-                condition = Condition.Default,
+                condition = (state as? SpotListUiState.Success)?.currentCondition?.toCondition()
+                    ?: Condition.Default,
             )
         }
 
@@ -92,10 +93,18 @@ class SpotListViewModel @Inject constructor(
         spotListResult.reduceResult(
             syntax = this,
             onSuccess = {
-                SpotListUiState.Success(
+                (state as? SpotListUiState.Success)?.copy(
                     spotList = it,
-                    legalAddressName = legalArea.area,
+                    isRefreshing = false,
                     userType = userType.value,
+                    legalAddressName = legalArea.area,
+                    isFilteredResultFetching = it.isEmpty()
+                ) ?: SpotListUiState.Success(
+                    spotList = it,
+                    isRefreshing = false,
+                    userType = userType.value,
+                    legalAddressName = legalArea.area,
+                    isFilteredResultFetching = it.isEmpty()
                 )
             }, onFailure = {
                 when (it) {
