@@ -24,7 +24,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -48,7 +47,6 @@ import com.acon.acon.core.designsystem.component.bottomsheet.LoginBottomSheet
 import com.acon.acon.core.designsystem.component.loading.SkeletonItem
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.core.utils.feature.action.BackOnPressed
-import com.acon.acon.core.utils.feature.amplitude.AconAmplitude
 import com.acon.acon.domain.type.SpotType
 import com.acon.acon.domain.type.UserType
 import com.acon.acon.feature.spot.R
@@ -66,8 +64,8 @@ import com.acon.acon.feature.spot.amplitudeFilterWalkSlideCafe
 import com.acon.acon.feature.spot.amplitudeFilterWalkSlideRestaurant
 import com.acon.acon.feature.spot.screen.spotlist.SpotListUiState
 import com.acon.acon.feature.spot.screen.spotlist.amplitude.amplitudeSpotListSignIn
-import com.acon.acon.feature.spot.screen.spotlist.composable.bottomsheet.SpotFilterBottomSheet
 import com.acon.acon.feature.spot.screen.spotlist.amplitude.spotListSpotNumberAmplitude
+import com.acon.acon.feature.spot.screen.spotlist.composable.bottomsheet.SpotFilterBottomSheet
 import com.acon.acon.feature.spot.state.ConditionState
 import com.acon.acon.feature.spot.type.AvailableWalkingTimeType
 import com.acon.acon.feature.spot.type.CafePriceRangeType
@@ -156,12 +154,16 @@ internal fun SpotListScreen(
                                 amplitudeFilterRestaurant()
 
                                 if (it.restaurantFeatureOptionType.isNotEmpty()) {
-                                    val restaurantCategories = it.restaurantFeatureOptionType.map { option -> option.name }.toSet()
+                                    val restaurantCategories =
+                                        it.restaurantFeatureOptionType.map { option -> option.name }
+                                            .toSet()
                                     amplitudeFilterVisitRestaurant(restaurantCategories)
                                 }
 
                                 if (it.companionTypeOptionType.isNotEmpty()) {
-                                    val companions = it.companionTypeOptionType.map { option -> option.name }.toSet()
+                                    val companions =
+                                        it.companionTypeOptionType.map { option -> option.name }
+                                            .toSet()
                                     amplitudeFilterPassengerRestaurant(companions)
                                 }
 
@@ -172,8 +174,12 @@ internal fun SpotListScreen(
                                     AvailableWalkingTimeType.UNDER_20_MINUTES -> "20분"
                                     AvailableWalkingTimeType.OVER_20_MINUTES -> "25분 이상"
                                 }
-                                val isWalkingTimeDefault = it.restaurantWalkingTime == AvailableWalkingTimeType.UNDER_15_MINUTES
-                                amplitudeFilterWalkSlideRestaurant(walkingTime, isWalkingTimeDefault)
+                                val isWalkingTimeDefault =
+                                    it.restaurantWalkingTime == AvailableWalkingTimeType.UNDER_15_MINUTES
+                                amplitudeFilterWalkSlideRestaurant(
+                                    walkingTime,
+                                    isWalkingTimeDefault
+                                )
 
 
                                 val priceRange = when (it.restaurantPriceRange) {
@@ -183,21 +189,27 @@ internal fun SpotListScreen(
                                     RestaurantPriceRangeType.UNDER_50000 -> "5만원"
                                     RestaurantPriceRangeType.OVER_50000 -> "5만원 이상"
                                 }
-                                val isPriceDefault = it.restaurantPriceRange == RestaurantPriceRangeType.UNDER_10000
+                                val isPriceDefault =
+                                    it.restaurantPriceRange == RestaurantPriceRangeType.UNDER_10000
                                 amplitudeFilterPriceSlideRestaurant(priceRange, isPriceDefault)
 
-                                val isCompleteFilter = !(isWalkingTimeDefault && isPriceDefault && it.restaurantFeatureOptionType.isEmpty() && it.companionTypeOptionType.isEmpty())
+                                val isCompleteFilter =
+                                    !(isWalkingTimeDefault && isPriceDefault && it.restaurantFeatureOptionType.isEmpty() && it.companionTypeOptionType.isEmpty())
                                 amplitudeFilterCompleteRestaurant(isCompleteFilter)
                             } else {
                                 amplitudeFilterCafe()
 
                                 if (it.cafeFeatureOptionType.isNotEmpty()) {
-                                    val cafeCategories = it.cafeFeatureOptionType.map { option -> option.name }.toSet()
+                                    val cafeCategories =
+                                        it.cafeFeatureOptionType.map { option -> option.name }
+                                            .toSet()
                                     amplitudeFilterVisitCafe(cafeCategories)
                                 }
 
                                 if (it.visitPurposeOptionType.isNotEmpty()) {
-                                    val purposes = it.visitPurposeOptionType.map { option -> option.name }.toSet()
+                                    val purposes =
+                                        it.visitPurposeOptionType.map { option -> option.name }
+                                            .toSet()
                                     amplitudeFilterPurposeCafe(purposes)
                                 }
 
@@ -208,7 +220,8 @@ internal fun SpotListScreen(
                                     AvailableWalkingTimeType.UNDER_20_MINUTES -> "20분"
                                     AvailableWalkingTimeType.OVER_20_MINUTES -> "25분 이상"
                                 }
-                                val isWalkingTimeDefault = it.cafeWalkingTime == AvailableWalkingTimeType.UNDER_15_MINUTES
+                                val isWalkingTimeDefault =
+                                    it.cafeWalkingTime == AvailableWalkingTimeType.UNDER_15_MINUTES
                                 amplitudeFilterWalkSlideCafe(walkingTime, isWalkingTimeDefault)
 
                                 val priceRange = when (it.cafePriceRange) {
@@ -216,10 +229,12 @@ internal fun SpotListScreen(
                                     CafePriceRangeType.UNDER_5000 -> "5천원 이하"
                                     CafePriceRangeType.OVER_10000 -> "1만원 이상"
                                 }
-                                val isPriceDefault = it.cafePriceRange == CafePriceRangeType.UNDER_5000
+                                val isPriceDefault =
+                                    it.cafePriceRange == CafePriceRangeType.UNDER_5000
                                 amplitudeFilterPriceSlideCafe(priceRange, isPriceDefault)
 
-                                val isCompleteFilter = !(isWalkingTimeDefault && isPriceDefault && it.visitPurposeOptionType.isEmpty() && it.cafeFeatureOptionType.isEmpty())
+                                val isCompleteFilter =
+                                    !(isWalkingTimeDefault && isPriceDefault && it.visitPurposeOptionType.isEmpty() && it.cafeFeatureOptionType.isEmpty())
                                 amplitudeFilterCompleteCafe(isCompleteFilter)
                             }
                         },
@@ -239,11 +254,6 @@ internal fun SpotListScreen(
                     )
                 }
 
-                val isResultEmpty by remember {
-                    derivedStateOf {
-                        state.spotList.isEmpty()
-                    }
-                }
                 Box(
                     modifier = Modifier.fillMaxSize()
                 ) {
@@ -283,7 +293,7 @@ internal fun SpotListScreen(
                                         scrollableScreenHeightPx = size.height
                                     }
                             ) {
-                                if (isResultEmpty || state.isFilteredListEmpty) {
+                                if (state.isFilteredListEmpty) {
                                     Spacer(Modifier.height(100.dp))
                                     EmptySpotListView(modifier = Modifier.fillMaxSize())
                                 } else {
@@ -322,7 +332,10 @@ internal fun SpotListScreen(
                                         horizontalAlignment = Alignment.CenterHorizontally
                                     ) {
                                         Text(
-                                            modifier = Modifier.padding(top = 38.dp, bottom = 50.dp),
+                                            modifier = Modifier.padding(
+                                                top = 38.dp,
+                                                bottom = 50.dp
+                                            ),
                                             text = stringResource(R.string.alert_max_spot_count),
                                             style = AconTheme.typography.body2_14_reg,
                                             color = AconTheme.color.Gray5
