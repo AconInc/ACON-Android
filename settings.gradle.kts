@@ -22,6 +22,8 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "Acon"
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+includeBuild("build-logic")
 
 include(":app")
 
