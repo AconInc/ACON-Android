@@ -11,5 +11,5 @@ enum class AvailableWalkingTimeType(
     UNDER_10_MINUTES(titleResId = R.string.under_10_minutes, 10),
     UNDER_15_MINUTES(titleResId = R.string.under_15_minutes, 15),
     UNDER_20_MINUTES(titleResId = R.string.under_20_minutes, 20),
-    OVER_20_MINUTES(titleResId = R.string.over_20_minutes, 25),
+    OVER_20_MINUTES(titleResId = R.string.over_20_minutes, null),
 }
