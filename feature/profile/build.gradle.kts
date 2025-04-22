@@ -16,6 +16,4 @@ dependencies {
     implementation(projects.domain)
     implementation(projects.core.designsystem)
     implementation(projects.core.utils.feature)
-
-    implementation(libs.gson)
 }

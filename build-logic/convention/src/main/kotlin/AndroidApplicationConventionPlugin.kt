@@ -7,13 +7,19 @@ import org.gradle.kotlin.dsl.project
 import utils.androidTestImplementation
 import utils.catalog
 import utils.configureKotlinAndroid
+import utils.getPropertyKey
 import utils.implementation
 import utils.testImplementation
+import java.util.Properties
 
 class AndroidApplicationConventionPlugin : Plugin<Project> {
 
     override fun apply(target: Project) {
-        target.run {
+        val localProperties = Properties().apply {
+            load(target.rootProject.file("local.properties").inputStream())
+        }
+
+        with(target) {
             pluginManager.run {
                 apply("com.android.application")
                 apply("org.jetbrains.kotlin.android")
@@ -21,12 +27,20 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
             }
 
             extensions.configure<ApplicationExtension> {
-                packaging {
-                    resources {
-                        excludes += "/META-INF/{AL2.0,LGPL2.1}"
+
+                signingConfigs {
+                    create("release") {
+                        storeFile = file(localProperties["storePath"].toString())
+                        storePassword = localProperties["storePassword"].toString()
+                        keyAlias = localProperties["keyAlias"].toString()
+                        keyPassword = localProperties["keyPassword"].toString()
                     }
                 }
+
                 defaultConfig {
+                    manifestPlaceholders += mapOf()
+                    manifestPlaceholders["naverClientId"] = getPropertyKey("naver_client_id")
+
                     applicationId = catalog.findVersion("projectApplicationId").get().toString()
                     targetSdk = catalog.findVersion("projectTargetSdk").get().toString().toInt()
                     versionCode = catalog.findVersion("projectVersionCode").get().toString().toInt()
@@ -35,7 +49,14 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
                     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
                 }
                 configureKotlinAndroid(this)
+
+                packaging {
+                    resources {
+                        excludes += "/META-INF/{AL2.0,LGPL2.1}"
+                    }
+                }
             }
+
             afterEvaluate {
                 dependencies {
                     implementation(project(":core:common"))
@@ -50,3 +71,4 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
         }
     }
 }
+

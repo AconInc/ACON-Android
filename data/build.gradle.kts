@@ -16,8 +16,8 @@ android {
     defaultConfig {
         buildConfigField("String", "GOOGLE_CLIENT_ID", "\"${localProperties["GOOGLE_CLIENT_ID"]}\"")
         buildConfigField("String", "BASE_URL", "\"${localProperties["BASE_URL"]}\"")
-        buildConfigField("String", "NAVER_CLIENT_ID", "String.valueOf(\"${localProperties["naver_client_id"]}\")")
-        buildConfigField("String", "NAVER_CLIENT_SECRET", "String.valueOf(\"${localProperties["naver_client_secret"]}\")")
+        buildConfigField("String", "NAVER_CLIENT_ID", "\"${localProperties["naver_client_id"]}\"")
+        buildConfigField("String", "NAVER_CLIENT_SECRET", "\"${localProperties["naver_client_secret"]}\"")
     }
 }
 
@@ -26,14 +26,15 @@ dependencies {
     implementation(projects.domain)
     implementation(projects.core.utils.feature)
 
-
     implementation(platform(libs.okhttp.bom))
     implementation(libs.okhttp)
     implementation(libs.logging.interceptor)
+
     implementation(libs.retrofit)
     implementation(libs.retrofit.kotlin.serialization.converter)
+
     implementation(libs.kotlinx.serialization.json)
+
     implementation(libs.androidx.security.crypto.ktx)
     implementation(libs.bundles.googleSignIn)
-    implementation(libs.androidx.lifecycle.runtime.ktx)
 }
