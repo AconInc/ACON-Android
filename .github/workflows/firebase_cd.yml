@@ -45,8 +45,8 @@ jobs:
 
      - name: Add local.properties
        run: |
-         echo ${{ secrets.LOCAL_PROPERTIES }} > ./local.properties
-         echo ${{ secrets.RELEASE_PROPERTIES }} >> ./local.properties
+         echo '${{ secrets.LOCAL_PROPERTIES }}' > ./local.properties
+         echo '${{ secrets.RELEASE_PROPERTIES }}' >> ./local.properties
          echo "storePath=keystore.jks" >> ./local.properties
         
      - name: Access Google-Service file
