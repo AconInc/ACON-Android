@@ -1,0 +1,81 @@
+name: Firebase CD
+
+on:
+  workflow_dispatch:
+    inputs:
+      major:
+        description: 'Major version'
+        required: true
+      minor:
+        description: 'Minor version'
+        required: true
+      patch:
+        description: 'Patch version'
+        required: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+     - uses: actions/checkout@v4
+
+     - name: set up JDK 17
+       uses: actions/setup-java@v4
+       with:
+          distribution: 'zulu'
+          java-version: '17'
+
+     - name: Make gradlew executable
+       run: chmod +x ./gradlew
+
+     - name: Gradle cache
+       uses: actions/cache@v4
+       with:
+         path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+         key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+         restore-keys: |
+          ${{ runner.os }}-gradle-
+
+     - name: Save Keystore
+       run: |
+         echo "${{ secrets.JKS_BASE64 }}" > keystore.b64
+         base64 -d -i keystore.b64 > keystore.jks
+
+     - name: Add local.properties
+       run: |
+         echo '${{ secrets.LOCAL_PROPERTIES }}' > ./local.properties
+         echo '${{ secrets.RELEASE_PROPERTIES }}' >> ./local.properties
+         echo "storePath=keystore.jks" >> ./local.properties
+        
+     - name: Access Google-Service file
+       run: echo '${{ secrets.GOOGLE_SERVICES_JSON }}' > ./app/google-services.json
+
+     - name: Debug - Check keystore file size
+       run: ls -lh keystore.jks
+
+     - name: Debug - Check SHA256 of keystore
+       run: sha256sum keystore.jks
+
+     - name: Debug - Check local.properties
+       run: cat local.properties
+       
+     - name: Build with Gradle
+       run: ./gradlew assembleRelease
+
+     - name: Rename APK file
+       run: |
+         major=${{ github.event.inputs.major }}
+         minor=${{ github.event.inputs.minor }}
+         patch=${{ github.event.inputs.patch }}
+         formatted_version="${major}_${minor}_${patch}"
+         mv app/build/outputs/apk/release/app-release.apk app/build/outputs/apk/release/Acon-${formatted_version}.apk
+
+     - name: Upload artifact to Firebase App Distribution
+       uses: wzieba/Firebase-Distribution-Github-Action@v1
+       with:
+         appId: ${{ secrets.FIREBASE_APP_ID }}
+         serviceCredentialsFileContent: ${{ secrets.CREDENTIAL_FILE_CONTENT }}
+         groups: Acon
+         file: app/build/outputs/apk/release/Acon-${{ github.event.inputs.major }}_${{ github.event.inputs.minor }}_${{ github.event.inputs.patch }}.apk
