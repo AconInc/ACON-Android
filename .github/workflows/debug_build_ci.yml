@@ -1,0 +1,49 @@
+name: Debug Build CI
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: gradle
+
+    - name: add local.properties
+      run: |
+        echo BASE_URL=${{ secrets.BASE_URL }} >> ./local.properties
+        echo GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} >> ./local.properties
+        echo naver_client_id=${{ secrets.NAVER_CLIENT_ID }} >> ./local.properties
+        echo naver_client_secret=${{ secrets.NAVER_CLIENT_SECRET }} >> ./local.properties
+        echo AMPLITUDE_API_TEST_KEY=${{ secrets.AMPLITUDE_API_TEST_KEY }} >> ./local.properties
+        echo AMPLITUDE_API_PRODUCTION_KEY=${{ secrets.AMPLITUDE_API_PRODUCTION_KEY }} >> ./local.properties
+        
+    - name: Access Google-Service file
+      run: echo '${{ secrets.GOOGLE_SERVICES_JSON }}' > ./app/google-services.json
+      
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+
+    - name: Gradle cache
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+        restore-keys: |
+          ${{ runner.os }}-gradle-
+      
+    - name: Build with Gradle
+      run: ./gradlew assembleDebug
