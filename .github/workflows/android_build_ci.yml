@@ -27,7 +27,10 @@ jobs:
         echo naver_client_secret=${{ secrets.NAVER_CLIENT_SECRET }} >> ./local.properties
         echo AMPLITUDE_API_TEST_KEY=${{ secrets.AMPLITUDE_API_TEST_KEY }} >> ./local.properties
         echo AMPLITUDE_API_PRODUCTION_KEY=${{ secrets.AMPLITUDE_API_PRODUCTION_KEY }} >> ./local.properties
-
+        
+    - name: Access Google-Service file
+      run: echo '${{ secrets.GOOGLE_SERVICES_JSON }}' > ./app/google-services.json
+      
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
 
