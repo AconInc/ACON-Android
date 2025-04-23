@@ -39,13 +39,13 @@ jobs:
           ${{ runner.os }}-gradle-
 
      - name: Save Keystore
-       run: echo "${{ secrets.JKS_BASE64 }}" | base64 --decode > ./keystore.jks
+       run: echo "${{ secrets.JKS_BASE64 }}" | base64 --decode > app/keystore.jks
 
      - name: Add local.properties
        run: |
          echo ${{ secrets.LOCAL_PROPERTIES }} > ./local.properties
          echo ${{ secrets.RELEASE_PROPERTIES }} >> ./local.properties
-         echo "storePath=./keystore.jks" >> ./local.properties
+         echo "storePath=keystore.jks" >> ./local.properties
         
      - name: Access Google-Service file
        run: echo '${{ secrets.GOOGLE_SERVICES_JSON }}' > ./app/google-services.json
