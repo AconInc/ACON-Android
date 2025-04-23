@@ -30,7 +30,7 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
 
                 signingConfigs {
                     create("release") {
-                        storeFile = file(localProperties["storePath"].toString())
+                        storeFile = rootProject.file(localProperties["storePath"].toString())
                         storePassword = localProperties["storePassword"].toString()
                         keyAlias = localProperties["keyAlias"].toString()
                         keyPassword = localProperties["keyPassword"].toString()
