@@ -1,6 +1,7 @@
-name: Android Build CI
+name: Debug Build CI
 
 on:
+  workflow_dispatch:
   push:
     branches: [ main, develop ]
   pull_request:
