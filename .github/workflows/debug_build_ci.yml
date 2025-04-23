@@ -20,14 +20,9 @@ jobs:
         distribution: 'temurin'
         cache: gradle
 
-    - name: add local.properties
+    - name: Add local.properties
       run: |
-        echo BASE_URL=${{ secrets.BASE_URL }} >> ./local.properties
-        echo GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} >> ./local.properties
-        echo naver_client_id=${{ secrets.NAVER_CLIENT_ID }} >> ./local.properties
-        echo naver_client_secret=${{ secrets.NAVER_CLIENT_SECRET }} >> ./local.properties
-        echo AMPLITUDE_API_TEST_KEY=${{ secrets.AMPLITUDE_API_TEST_KEY }} >> ./local.properties
-        echo AMPLITUDE_API_PRODUCTION_KEY=${{ secrets.AMPLITUDE_API_PRODUCTION_KEY }} >> ./local.properties
+        echo LOCAL_PROPERTIES=${{ secrets.LOCAL_PROPERTIES }} >> ./local.properties
         
     - name: Access Google-Service file
       run: echo '${{ secrets.GOOGLE_SERVICES_JSON }}' > ./app/google-services.json
