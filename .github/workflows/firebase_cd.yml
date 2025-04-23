@@ -39,7 +39,9 @@ jobs:
           ${{ runner.os }}-gradle-
 
      - name: Save Keystore
-       run: echo "${{ secrets.JKS_BASE64 }}" | base64 --decode > keystore.jks
+       run: |
+         echo "${{ secrets.JKS_BASE64 }}" > keystore.b64
+         base64 -d -i keystore.jks
 
      - name: Add local.properties
        run: |
