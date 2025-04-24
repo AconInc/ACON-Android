@@ -12,6 +12,11 @@ android {
     namespace = "com.acon.acon"
 
     buildTypes {
+        debug {
+            applicationIdSuffix = ".debug"
+            versionNameSuffix = "-debug"
+            manifestPlaceholders["app_name"] = "Acon Debug"
+        }
         release {
             isMinifyEnabled = true
             isShrinkResources = true
@@ -20,6 +25,7 @@ android {
                 "proguard-rules.pro"
             )
             signingConfig = signingConfigs.getByName("release")
+            manifestPlaceholders["app_name"] = "Acon"
         }
     }
 }
