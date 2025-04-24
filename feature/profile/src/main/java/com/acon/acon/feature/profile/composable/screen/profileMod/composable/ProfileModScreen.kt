@@ -68,6 +68,7 @@ import com.acon.acon.feature.profile.composable.utils.BirthdayTransformation
 import com.acon.acon.feature.profile.composable.utils.isAllowedChar
 import com.acon.acon.feature.profile.composable.utils.isKorean
 import org.orbitmvi.orbit.compose.collectAsState
+import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
 fun ProfileModScreenContainer(
@@ -82,42 +83,39 @@ fun ProfileModScreenContainer(
     val context = LocalContext.current
 
     LaunchedEffect(selectedPhotoId) {
-        selectedPhotoId.let {
-            viewModel.updateProfileImage(selectedPhotoId)
-        }
+        viewModel.updateProfileImage(selectedPhotoId)
     }
 
-    LaunchedEffect(Unit) {
-        viewModel.container.sideEffectFlow.collect { effect ->
-            when (effect) {
-                is ProfileModSideEffect.NavigateToSettings -> {
-                    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                        data = Uri.fromParts("package", effect.packageName, null)
-                    }
-                    context.startActivity(intent)
-                }
 
-                is ProfileModSideEffect.NavigateBack -> {
-                    backToProfile()
+    viewModel.collectSideEffect { effect ->
+        when (effect) {
+            is ProfileModSideEffect.NavigateToSettings -> {
+                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                    data = Uri.fromParts("package", effect.packageName, null)
                 }
+                context.startActivity(intent)
+            }
 
-                is ProfileModSideEffect.NavigateToCustomGallery -> {
-                    onNavigateToCustomGallery()
-                }
+            is ProfileModSideEffect.NavigateBack -> {
+                backToProfile()
+            }
 
-                is ProfileModSideEffect.UpdateProfileImage -> {
-                    selectedPhotoId.let {
-                        viewModel.updateProfileImage(selectedPhotoId)
-                    }
-                }
+            is ProfileModSideEffect.NavigateToCustomGallery -> {
+                onNavigateToCustomGallery()
+            }
 
-                is ProfileModSideEffect.NavigateToProfileSuccess -> {
-                    onNavigateToProfile(ProfileUpdateResult.SUCCESS)
+            is ProfileModSideEffect.UpdateProfileImage -> {
+                selectedPhotoId.let {
+                    viewModel.updateProfileImage(selectedPhotoId)
                 }
+            }
 
-                is ProfileModSideEffect.NavigateToProfileFailed -> {
-                    onNavigateToProfile(ProfileUpdateResult.FAILURE)
-                }
+            is ProfileModSideEffect.NavigateToProfileSuccess -> {
+                onNavigateToProfile(ProfileUpdateResult.SUCCESS)
+            }
+
+            is ProfileModSideEffect.NavigateToProfileFailed -> {
+                onNavigateToProfile(ProfileUpdateResult.FAILURE)
             }
         }
     }
@@ -326,22 +324,23 @@ fun ProfileModScreen(
                         onTextChanged = { fieldValue ->
                             val inputText = fieldValue.text
                             var count = 0
+                            var textLimit = false
 
-                            val validText = buildString {
+                            val displayText = buildString {
                                 for (char in inputText) {
-                                    if (!char.isAllowedChar()) continue
                                     val weight = if (char.isKorean()) 2 else 1
-                                    if (count + weight > 16) break
-                                    append(char)
-                                    count += weight
+                                    if (count + weight > 16) {
+                                        textLimit = true
+                                        break
+                                    }
+                                    if (char.isAllowedChar()) {
+                                        append(char)
+                                        count += weight
+                                    }
                                 }
                             }
-
-                            if (validText.length < inputText.length) {
-                                // 초과된 입력이므로 무시하고 아무것도 하지 않음 (16자 이상은 입력 무시(불가능))
-                            } else {
-                                // 정상적인 입력만 가능
-                                nicknameText = fieldValue
+                            if (!textLimit || displayText.length <= nicknameText.text.length) {
+                                nicknameText = fieldValue.copy(text = displayText)
                                 onNicknameChanged(inputText)
                             }
                         },
@@ -486,9 +485,11 @@ fun ProfileModScreen(
                 enabledTextColor = AconTheme.color.White,
                 onClick = onSaveClicked,
                 isEnabled = (state.nicknameStatus == NicknameStatus.Valid) &&
-                        (state.birthdayStatus != BirthdayStatus.Invalid("정확한 생년월일을 입력해주세요")) &&
-                        ((state.nickNameState != state.originalNickname || state.birthdayState != state.originalBirthday || state.selectedPhotoUri != state.originalPhotoUri)
-                                && state.birthdayState.isNotEmpty())
+                        (
+                                (state.nickNameState != state.originalNickname) ||
+                                        (state.birthdayState != state.originalBirthday && state.birthdayStatus == BirthdayStatus.Valid) ||
+                                        (state.selectedPhotoUri != state.originalPhotoUri)
+                                )
             )
         }
     }

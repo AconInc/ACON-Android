@@ -32,21 +32,21 @@ data class ConditionState(
         )
     }
 
-    private fun getPriceRange() : Int {
+    private fun getPriceRange(): Int? {
         return when (spotType) {
             SpotType.RESTAURANT -> restaurantPriceRange.value
             SpotType.CAFE -> cafePriceRange.value
         }
     }
 
-    private fun getWalkingTime() : Int {
+    private fun getWalkingTime(): Int? {
         return when (spotType) {
             SpotType.RESTAURANT -> restaurantWalkingTime.value
             SpotType.CAFE -> cafeWalkingTime.value
         }
     }
 
-    private fun getFilterList() : List<Filter> {
+    private fun getFilterList(): List<Filter> {
         return when (spotType) {
             SpotType.RESTAURANT -> {
                 listOf(

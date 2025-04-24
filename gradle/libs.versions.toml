@@ -1,4 +1,14 @@
 [versions]
+############### Project ###############
+projectApplicationId = "com.acon.acon"
+projectCompileSdk = "35"
+projectTargetSdk = "35"
+projectMinSdk = "28"
+projectVersionCode = "10000"
+projectVersionName = "1.0.0"
+#######################################
+
+composeCompilerVersion = "1.5.1"
 accompanistPermissions = "0.37.0"
 agp = "8.6.0"
 androidTools = "31.9.1"
@@ -44,16 +54,6 @@ playServicesLocation = "21.3.0"
 lottie = "6.6.2"
 
 kotlinxImmutable = "0.3.7"
-
-# Project
-projectApplicationId = "com.acon.acon"
-projectCompileSdk = "35"
-projectTargetSdk = "35"
-projectMinSdk = "28"
-projectVersionCode = "5"
-projectVersionName = "1.0"
-
-composeCompilerVersion = "1.5.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
