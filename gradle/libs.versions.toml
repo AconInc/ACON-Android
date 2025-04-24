@@ -24,8 +24,8 @@ junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.5.0"
 lifecycleRuntimeKtx = "2.8.7"
-activityCompose = "1.8.0"
-composeBom = "2024.04.01"
+composeBom = "2025.03.01"
+composeFoundation = "1.7.8"
 appcompat = "1.7.0"
 mapSdk = "3.19.1"
 material = "1.12.0"
@@ -37,7 +37,6 @@ pulltorefresh = "0.2.0"
 retrofitKotlinSerializationConverter = "1.0.0"
 retrofit = "2.11.0"
 securityCryptoKtx = "1.1.0-alpha06"
-runtimeAndroid = "1.6.6"
 ksp = "2.0.21-1.0.27"
 hilt = "2.52"
 hiltCompose = "1.2.0"
@@ -61,13 +60,18 @@ androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = 
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
-androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
+androidx-activity-compose = { group = "androidx.activity", name = "activity-compose" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
-androidx-ui = { group = "androidx.compose.ui", name = "ui" }
-androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
-androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
-androidx-runtime = { group = "androidx.compose.runtime", name = "runtime-android", version.ref = "runtimeAndroid" }
-material3 = { group = "androidx.compose.material3", name = "material3" }
+androidx-compose-animation = { group = "androidx.compose.animation", name = "animation" }
+androidx-compose-animation-core = { group = "androidx.compose.animation", name = "animation-core" }
+androidx-compose-animation-graphics = { group = "androidx.compose.animation", name = "animation-graphics" }
+androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation" }
+androidx-compose-foundation-layout = { group = "androidx.compose.foundation", name = "foundation-layout", version = { strictly = "1.7.8" } }
+androidx-compose-ui = { group = "androidx.compose.ui", name = "ui" }
+androidx-compose-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
+androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
+androidx-compose-runtime = { group = "androidx.compose.runtime", name = "runtime-android" }
+compose-material3 = { group = "androidx.compose.material3", name = "material3" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
 androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
@@ -170,6 +174,8 @@ googleSignIn = ["androidx-credentials", "androidx-credentials-play-services-auth
 orbit = ["orbit-compose", "orbit-viewmodel"]
 haze = ["haze", "haze-materials"]
 android-defaults = ["androidx-core-ktx", "androidx-lifecycle-runtime-ktx", "androidx-appcompat", "material"]
-compose-defaults = ["androidx-ui", "androidx-ui-graphics", "androidx-ui-tooling-preview", "androidx-navigation-compose", "androidx-activity-compose", "material3", "androidx-runtime"]
+compose-defaults = ["androidx-compose-ui", "androidx-compose-ui-graphics", "androidx-compose-ui-tooling-preview", "androidx-navigation-compose",
+    "androidx-activity-compose", "compose-material3", "androidx-compose-runtime", "androidx-compose-foundation", "androidx-compose-foundation-layout",
+    "androidx-compose-animation", "androidx-compose-animation-core", "androidx-compose-animation-graphics"]
 coil = ["coil-compose", "coil-network-okhttp"]
 naver-map = ["naver-map-compose", "naver-map-location", "naver-map-sdk"]
