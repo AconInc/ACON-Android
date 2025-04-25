@@ -25,7 +25,6 @@ class NonAndroidLibraryConventionPlugin: Plugin<Project> {
             dependencies {
                 implementation(catalog.findLibrary("javax-inject").get())
                 implementation(catalog.findLibrary("kotlinx-coroutines-core").get())
-                implementation(catalog.findLibrary("timber").get())
                 compileOnly(catalog.findLibrary("compose-stable-marker").get())
             }
         }
