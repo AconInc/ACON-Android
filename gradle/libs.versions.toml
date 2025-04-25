@@ -25,7 +25,6 @@ junitVersion = "1.2.1"
 espressoCore = "3.5.0"
 lifecycleRuntimeKtx = "2.8.7"
 composeBom = "2025.03.01"
-composeFoundation = "1.7.8"
 appcompat = "1.7.0"
 mapSdk = "3.19.1"
 material = "1.12.0"
@@ -43,16 +42,20 @@ hiltCompose = "1.2.0"
 javaxInject = "1"
 orbit = "9.0.0"
 
+
 amplitudeVersion="1.20.1"
 
 firebaseBom ="33.12.0"
 firebaseCrashlytics = "3.0.3"
-playServicesLocation = "21.3.0"
 googleServices = "4.4.2"
 
 ## Naver Map
-naverMapCompose = "1.8.0"
+naverMapCompose = "1.7.0"
 naverMapLocation = "21.0.2"
+
+## Play services
+playServicesLocation = "21.3.0"
+playAppUpdate = "2.1.0"
 
 ##lottie
 lottie = "6.6.2"
@@ -73,7 +76,7 @@ androidx-compose-animation = { group = "androidx.compose.animation", name = "ani
 androidx-compose-animation-core = { group = "androidx.compose.animation", name = "animation-core" }
 androidx-compose-animation-graphics = { group = "androidx.compose.animation", name = "animation-graphics" }
 androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation" }
-androidx-compose-foundation-layout = { group = "androidx.compose.foundation", name = "foundation-layout", version = { strictly = "1.7.8" } }
+androidx-compose-foundation-layout = { group = "androidx.compose.foundation", name = "foundation-layout" }
 androidx-compose-ui = { group = "androidx.compose.ui", name = "ui" }
 androidx-compose-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
 androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
@@ -149,6 +152,8 @@ naver-map-sdk = { module = "com.naver.maps:map-sdk", version.ref = "mapSdk" }
 
 # Google Play Services
 play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocation" }
+play-core = { module = "com.google.android.play:app-update", version.ref = "playAppUpdate" }
+play-core-ktx = { module = "com.google.android.play:app-update-ktx", version.ref = "playAppUpdate" }
 
 # Firebase
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
@@ -199,3 +204,4 @@ compose-defaults = ["androidx-compose-ui", "androidx-compose-ui-graphics", "andr
 coil = ["coil-compose", "coil-network-okhttp"]
 naver-map = ["naver-map-compose", "naver-map-location", "naver-map-sdk"]
 firebase = ["firebase-analytics-sdk", "firebase-crashlytics-sdk"]
+play-app-update = ["play-core", "play-core-ktx"]
