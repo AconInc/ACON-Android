@@ -1,4 +1,4 @@
-package com.acon.acon.data.remote
+package com.acon.acon.data.api.remote
 
 import com.acon.acon.data.dto.request.RefreshRequest
 import com.acon.acon.data.dto.response.RefreshResponse

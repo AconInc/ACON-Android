@@ -6,8 +6,8 @@ import com.acon.acon.data.dto.response.SpotDetailInfoResponse
 import com.acon.acon.data.dto.response.SpotDetailMenuListResponse
 import com.acon.acon.data.dto.response.SpotListResponse
 import com.acon.acon.data.dto.response.area.LegalAreaResponse
-import com.acon.acon.data.remote.SpotNoAuthApi
-import com.acon.acon.data.remote.SpotAuthApi
+import com.acon.acon.data.api.remote.SpotNoAuthApi
+import com.acon.acon.data.api.remote.SpotAuthApi
 import javax.inject.Inject
 
 class SpotRemoteDataSource @Inject constructor(

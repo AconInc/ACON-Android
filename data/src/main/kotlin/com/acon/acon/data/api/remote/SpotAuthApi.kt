@@ -1,4 +1,4 @@
-package com.acon.acon.data.remote
+package com.acon.acon.data.api.remote
 
 import com.acon.acon.data.dto.request.SpotListRequest
 import com.acon.acon.data.dto.response.SpotListResponse

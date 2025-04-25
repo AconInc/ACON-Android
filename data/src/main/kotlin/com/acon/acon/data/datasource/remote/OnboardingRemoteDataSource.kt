@@ -1,7 +1,7 @@
 package com.acon.acon.data.datasource.remote
 
 import com.acon.acon.data.dto.request.PostOnboardingResultRequest
-import com.acon.acon.data.remote.OnboardingApi
+import com.acon.acon.data.api.remote.OnboardingApi
 import retrofit2.Response
 import javax.inject.Inject
 

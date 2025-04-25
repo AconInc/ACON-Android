@@ -1,6 +1,5 @@
 package com.acon.acon.data.repository
 
-import android.util.Log
 import com.acon.acon.data.datasource.remote.OnboardingRemoteDataSource
 import com.acon.acon.data.dto.request.PostOnboardingResultRequest
 import com.acon.acon.data.error.runCatchingWith

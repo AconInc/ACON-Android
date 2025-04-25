@@ -1,4 +1,4 @@
-package com.acon.acon.data.remote
+package com.acon.acon.data.api.remote
 
 import com.acon.acon.data.dto.request.DeleteAccountRequest
 import com.acon.acon.data.dto.request.LoginRequest

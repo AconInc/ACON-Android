@@ -5,7 +5,7 @@ import com.acon.acon.data.BuildConfig
 import com.acon.acon.data.datasource.local.TokenLocalDataSource
 import com.acon.acon.data.error.NetworkErrorResponse
 import com.acon.acon.data.error.RemoteError
-import com.acon.acon.data.remote.ReissueTokenApi
+import com.acon.acon.data.api.remote.ReissueTokenApi
 import com.acon.acon.core.common.Auth
 import com.acon.acon.core.common.Naver
 import com.acon.acon.core.common.NaverAuthInterceptor

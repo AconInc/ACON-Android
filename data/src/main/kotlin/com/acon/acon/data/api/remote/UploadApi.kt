@@ -1,4 +1,4 @@
-package com.acon.acon.data.remote
+package com.acon.acon.data.api.remote
 
 import com.acon.acon.data.dto.request.ReviewRequest
 import com.acon.acon.data.dto.response.upload.UploadGetDotoriResponse
@@ -7,7 +7,6 @@ import com.acon.acon.data.dto.response.upload.UploadGetSpotVerifyResponse
 import com.acon.acon.data.dto.response.upload.UploadGetSuggestionsResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
-import retrofit2.http.Headers
 import retrofit2.http.POST
 import retrofit2.http.Query
 

@@ -1,6 +1,5 @@
 package com.acon.acon.feature.onboarding.screen.PrefResultLoadingScreen
 
-import android.util.Log
 import com.acon.acon.core.utils.feature.base.BaseContainerHost
 import com.acon.acon.domain.repository.OnboardingRepository
 import dagger.hilt.android.lifecycle.HiltViewModel

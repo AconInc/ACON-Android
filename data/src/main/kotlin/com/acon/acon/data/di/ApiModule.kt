@@ -1,17 +1,17 @@
 package com.acon.acon.data.di
 
-import com.acon.acon.data.remote.AreaVerificationApi
-import com.acon.acon.data.remote.UserApi
-import com.acon.acon.data.remote.MapApi
-import com.acon.acon.data.remote.OnboardingApi
-import com.acon.acon.data.remote.ReissueTokenApi
-import com.acon.acon.data.remote.SpotNoAuthApi
-import com.acon.acon.data.remote.UploadApi
+import com.acon.acon.data.api.remote.AreaVerificationApi
+import com.acon.acon.data.api.remote.UserApi
+import com.acon.acon.data.api.remote.MapApi
+import com.acon.acon.data.api.remote.OnboardingApi
+import com.acon.acon.data.api.remote.ReissueTokenApi
+import com.acon.acon.data.api.remote.SpotNoAuthApi
+import com.acon.acon.data.api.remote.UploadApi
 import com.acon.acon.core.common.Auth
 import com.acon.acon.core.common.Naver
 import com.acon.acon.core.common.NoAuth
-import com.acon.acon.data.remote.ProfileApi
-import com.acon.acon.data.remote.SpotAuthApi
+import com.acon.acon.data.api.remote.ProfileApi
+import com.acon.acon.data.api.remote.SpotAuthApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

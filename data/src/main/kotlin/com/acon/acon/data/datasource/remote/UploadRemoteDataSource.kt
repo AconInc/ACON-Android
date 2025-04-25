@@ -5,7 +5,7 @@ import com.acon.acon.data.dto.response.upload.UploadGetDotoriResponse
 import com.acon.acon.data.dto.response.upload.UploadGetKeyWordResponse
 import com.acon.acon.data.dto.response.upload.UploadGetSpotVerifyResponse
 import com.acon.acon.data.dto.response.upload.UploadGetSuggestionsResponse
-import com.acon.acon.data.remote.UploadApi
+import com.acon.acon.data.api.remote.UploadApi
 import javax.inject.Inject
 
 class UploadRemoteDataSource @Inject constructor(

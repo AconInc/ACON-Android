@@ -1,6 +1,5 @@
 package com.acon.acon.feature.onboarding.screen.OnboardingScreen.composable
 
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
