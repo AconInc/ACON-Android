@@ -33,7 +33,7 @@ class MainActivity : ComponentActivity() {
             installSplashScreen()
         }
         super.onCreate(savedInstanceState)
-        
+
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
         }

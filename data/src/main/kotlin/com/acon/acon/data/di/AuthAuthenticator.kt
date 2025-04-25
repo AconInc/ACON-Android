@@ -22,6 +22,7 @@ import okhttp3.Response
 import okhttp3.Route
 import okio.Buffer
 import org.json.JSONObject
+import timber.log.Timber
 import javax.inject.Inject
 
 class AuthAuthenticator @Inject constructor(
@@ -34,14 +35,14 @@ class AuthAuthenticator @Inject constructor(
 
     override fun authenticate(route: Route?, response: Response): Request? = runBlocking {
         if(BuildConfig.DEBUG) {
-            Log.d(TAG, "[authenticate] 호출됨. 요청 URL: ${response.request.url}")
+            Timber.tag(TAG).d("[authenticate] 호출됨. 요청 URL: ${response.request.url}")
         }
 
         mutex.withLock {
             val currentRefreshToken = tokenLocalDataSource.getRefreshToken() ?: ""
 
             if (currentRefreshToken.isEmpty()) {
-                Log.e(TAG, "저장된 Refresh Token이 없음. 토큰 제거 후 로그인 화면으로 이동")
+                Timber.tag(TAG).e("저장된 Refresh Token이 없음. 토큰 제거 후 로그인 화면으로 이동")
                 sessionManager.clearSession()
                 goToSignInScreen()
                 return@withLock null
@@ -53,7 +54,8 @@ class AuthAuthenticator @Inject constructor(
 
             when {
                 result.isSuccess -> {
-                    if(BuildConfig.DEBUG) { Log.d(TAG, "토큰 재발급 요청 성공") }
+                    if(BuildConfig.DEBUG) {
+                        Timber.tag(TAG).d("토큰 재발급 요청 성공") }
                     val tokenResponse = result.getOrNull()
 
                     if (tokenResponse == null) {
@@ -65,7 +67,7 @@ class AuthAuthenticator @Inject constructor(
                     val tokenBody = tokenResponse.toRefreshToken()
                     if (tokenBody.accessToken.isNullOrEmpty() || tokenBody.refreshToken.isNullOrEmpty()) {
                         if(BuildConfig.DEBUG) {
-                            Log.e(TAG, "토큰이 비어 있음. 토큰 제거 후 로그인 화면으로 이동")
+                            Timber.tag(TAG).e("토큰이 비어 있음. 토큰 제거 후 로그인 화면으로 이동")
                         }
                         sessionManager.clearSession()
                         goToSignInScreen()
@@ -76,8 +78,9 @@ class AuthAuthenticator @Inject constructor(
                     tokenBody.refreshToken?.let { tokenLocalDataSource.saveRefreshToken(it) }
 
                     if(BuildConfig.DEBUG) {
-                        Log.d(TAG, "[authenticate] 새 액세스 토큰으로 요청 재시도")
-                        Log.d(TAG, "재실행 요청 정보: ${response.request.method} ${response.request.url}")
+                        Timber.tag(TAG).d("[authenticate] 새 액세스 토큰으로 요청 재시도")
+                        Timber.tag(TAG)
+                            .d("재실행 요청 정보: ${response.request.method} ${response.request.url}")
                     }
 
                     return@withLock when {
@@ -123,7 +126,7 @@ class AuthAuthenticator @Inject constructor(
 
                 else -> {
                     if(BuildConfig.DEBUG) {
-                        Log.e(TAG, "토큰 재발급 실패. 토큰 제거 후 로그인 화면으로 이동")
+                        Timber.tag(TAG).e("토큰 재발급 실패. 토큰 제거 후 로그인 화면으로 이동")
                     }
                     sessionManager.clearSession()
                     goToSignInScreen()

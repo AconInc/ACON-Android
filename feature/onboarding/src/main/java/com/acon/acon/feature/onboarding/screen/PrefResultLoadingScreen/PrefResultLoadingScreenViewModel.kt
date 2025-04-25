@@ -6,6 +6,7 @@ import com.acon.acon.domain.repository.OnboardingRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import org.orbitmvi.orbit.viewmodel.container
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -35,39 +36,29 @@ class PrefResultLoadingScreenViewModel @Inject constructor(
 
                     val throwable = result.exceptionOrNull()
                     when (throwable) {
-                        is com.acon.acon.domain.error.onboarding.PostOnboardingResultError.InvalidDislikeFood -> Log.e(
-                            "OnboardingError",
-                            "Invalid Dislike Food: ${throwable.code}"
-                        )
-                        is com.acon.acon.domain.error.onboarding.PostOnboardingResultError.InvalidCuisine -> Log.e(
-                            "OnboardingError",
-                            "Invalid Cuisine: ${throwable.code}"
-                        )
-                        is com.acon.acon.domain.error.onboarding.PostOnboardingResultError.InvalidSpotType -> Log.e(
-                            "OnboardingError",
-                            "Invalid Spot Type: ${throwable.code}"
-                        )
-                        is com.acon.acon.domain.error.onboarding.PostOnboardingResultError.InvalidSpotStyle -> Log.e(
-                            "OnboardingError",
-                            "Invalid Spot Style: ${throwable.code}"
-                        )
-                        is com.acon.acon.domain.error.onboarding.PostOnboardingResultError.InvalidSpotRank -> Log.e(
-                            "OnboardingError",
-                            "Invalid Spot Rank: ${throwable.code}"
-                        )
-                        is com.acon.acon.domain.error.onboarding.PostOnboardingResultError.InvalidFavSpotRankSize -> Log.e(
-                            "OnboardingError",
-                            "Invalid Favorite Spot Rank Size: ${throwable.code}"
-                        )
-                        is com.acon.acon.domain.error.onboarding.PostOnboardingResultError.InvalidFavCuisineRankSize -> Log.e(
-                            "OnboardingError",
-                            "Invalid Favorite Cuisine Rank Size: ${throwable.code}"
-                        )
-                        else -> Log.e(
-                            "OnboardingError",
-                            "Unexpected Error: ${throwable?.localizedMessage}",
-                            throwable
-                        )
+                        is com.acon.acon.domain.error.onboarding.PostOnboardingResultError.InvalidDislikeFood -> Timber.tag(
+                            "OnboardingError"
+                        ).e("Invalid Dislike Food: ${throwable.code}")
+                        is com.acon.acon.domain.error.onboarding.PostOnboardingResultError.InvalidCuisine -> Timber.tag(
+                            "OnboardingError"
+                        ).e("Invalid Cuisine: ${throwable.code}")
+                        is com.acon.acon.domain.error.onboarding.PostOnboardingResultError.InvalidSpotType -> Timber.tag(
+                            "OnboardingError"
+                        ).e("Invalid Spot Type: ${throwable.code}")
+                        is com.acon.acon.domain.error.onboarding.PostOnboardingResultError.InvalidSpotStyle -> Timber.tag(
+                            "OnboardingError"
+                        ).e("Invalid Spot Style: ${throwable.code}")
+                        is com.acon.acon.domain.error.onboarding.PostOnboardingResultError.InvalidSpotRank -> Timber.tag(
+                            "OnboardingError"
+                        ).e("Invalid Spot Rank: ${throwable.code}")
+                        is com.acon.acon.domain.error.onboarding.PostOnboardingResultError.InvalidFavSpotRankSize -> Timber.tag(
+                            "OnboardingError"
+                        ).e("Invalid Favorite Spot Rank Size: ${throwable.code}")
+                        is com.acon.acon.domain.error.onboarding.PostOnboardingResultError.InvalidFavCuisineRankSize -> Timber.tag(
+                            "OnboardingError"
+                        ).e("Invalid Favorite Cuisine Rank Size: ${throwable.code}")
+                        else -> Timber.tag("OnboardingError")
+                            .e(throwable, "Unexpected Error: ${throwable?.localizedMessage}")
                     }
                 }
                 else -> {  }

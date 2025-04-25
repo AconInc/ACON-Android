@@ -17,6 +17,7 @@ import com.google.android.gms.location.LocationServices
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.viewmodel.container
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -184,11 +185,11 @@ class AreaVerificationViewModel @Inject constructor(
                     showLocationDialog()
                 }
             } else {
-                Log.d("로그", "GPS 좌표 가져오기 실패")
+                Timber.tag("로그").d("GPS 좌표 가져오기 실패")
             }
 
         }.addOnFailureListener { e ->
-            Log.d("로그", "GPS 좌표 가져오기 오류 발생, ${e.message}")
+            Timber.tag("로그").d("GPS 좌표 가져오기 오류 발생, ${e.message}")
         }
     }
 
