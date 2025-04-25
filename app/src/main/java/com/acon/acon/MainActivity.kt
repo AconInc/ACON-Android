@@ -17,6 +17,7 @@ import com.acon.acon.domain.repository.SocialRepository
 import com.acon.acon.domain.repository.UserRepository
 import com.acon.acon.navigation.AconNavigation
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -32,6 +33,11 @@ class MainActivity : ComponentActivity() {
             installSplashScreen()
         }
         super.onCreate(savedInstanceState)
+        
+        if (BuildConfig.DEBUG) {
+            Timber.plant(Timber.DebugTree())
+        }
+
         enableEdgeToEdge(
             navigationBarStyle = SystemBarStyle.light(
                 scrim = Color.BLACK, darkScrim = Color.BLACK
