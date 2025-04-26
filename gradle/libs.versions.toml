@@ -45,10 +45,14 @@ orbit = "9.0.0"
 
 amplitudeVersion="1.20.1"
 
+firebaseBom ="33.12.0"
+firebaseCrashlytics = "3.0.3"
+playServicesLocation = "21.3.0"
+googleServices = "4.4.2"
+
 ## Naver Map
 naverMapCompose = "1.8.0"
 naverMapLocation = "21.0.2"
-playServicesLocation = "21.3.0"
 
 ##lottie
 lottie = "6.6.2"
@@ -139,6 +143,11 @@ naver-map-sdk = { module = "com.naver.maps:map-sdk", version.ref = "mapSdk" }
 # Google Play Services
 play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocation" }
 
+# Firebase
+firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
+firebase-analytics-sdk = { group = "com.google.firebase", name = "firebase-analytics" }
+firebase-crashlytics-sdk = { group = "com.google.firebase", name = "firebase-crashlytics" }
+
 # Gradle
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
 android-tools-common = { group = "com.android.tools", name = "common", version.ref = "androidTools" }
@@ -155,7 +164,9 @@ ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebaseCrashlytics" }
 jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrainsKotlinJvm" }
+google-services = { id = "com.google.gms.google-services", version.ref = "googleServices" }
 
 # build-logic plugins
 acon-non-android-library = { id = "com.acon.non.android.library", version = "unspecified" }
@@ -168,6 +179,7 @@ acon-android-library-orbit = { id = "com.acon.android.library.orbit", version = 
 acon-android-library-haze = { id = "com.acon.android.library.haze", version = "unspecified" }
 acon-android-library-coil = { id = "com.acon.android.library.coil", version = "unspecified" }
 acon-android-library-naver-map = { id = "com.acon.android.library.naver.map", version = "unspecified" }
+acon-firebase = { id = "com.acon.firebase", version = "unspecified" }
 
 [bundles]
 googleSignIn = ["androidx-credentials", "androidx-credentials-play-services-auth", "googleid"]
@@ -179,3 +191,4 @@ compose-defaults = ["androidx-compose-ui", "androidx-compose-ui-graphics", "andr
     "androidx-compose-animation", "androidx-compose-animation-core", "androidx-compose-animation-graphics"]
 coil = ["coil-compose", "coil-network-okhttp"]
 naver-map = ["naver-map-compose", "naver-map-location", "naver-map-sdk"]
+firebase = ["firebase-analytics-sdk", "firebase-crashlytics-sdk"]

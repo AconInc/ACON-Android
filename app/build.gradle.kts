@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.acon.android.library.hilt)
     alias(libs.plugins.acon.android.library.haze)
     alias(libs.plugins.acon.android.library.naver.map)
+    alias(libs.plugins.acon.firebase)
 }
 
 android {
