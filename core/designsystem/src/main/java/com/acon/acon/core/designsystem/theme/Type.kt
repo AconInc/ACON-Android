@@ -152,6 +152,94 @@ internal val Typography = AconTypography(
         lineHeight = 16.sp,
         letterSpacing = (-0.023).em
     ),
+
+    Headline1 = TextStyle(
+        fontFamily = Pretendard,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 32.sp,
+        lineHeight = 42.sp,
+        letterSpacing = (-0.025).em
+    ),
+    Headline2 = TextStyle(
+        fontFamily = Pretendard,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 28.sp,
+        lineHeight = 38.sp,
+        letterSpacing = (-0.025).em
+    ),
+    Headline3 = TextStyle(
+        fontFamily = Pretendard,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 24.sp,
+        lineHeight = 34.sp,
+        letterSpacing = (-0.025).em
+    ),
+    Headline4 = TextStyle(
+        fontFamily = Pretendard,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 20.sp,
+        lineHeight = 28.sp,
+        letterSpacing = (-0.025).em
+    ),
+
+    Title1 = TextStyle(
+        fontFamily = Pretendard,
+        fontWeight = FontWeight.Bold,
+        fontSize = 24.sp,
+        lineHeight = 34.sp,
+        letterSpacing = (-0.025).em
+    ),
+    Title2 = TextStyle(
+        fontFamily = Pretendard,
+        fontWeight = FontWeight.Bold,
+        fontSize = 20.sp,
+        lineHeight = 28.sp,
+        letterSpacing = (-0.025).em
+    ),
+    Title3 = TextStyle(
+        fontFamily = Pretendard,
+        fontWeight = FontWeight.Bold,
+        fontSize = 18.sp,
+        lineHeight = 26.sp,
+        letterSpacing = (-0.025).em
+    ),
+    Title4 = TextStyle(
+        fontFamily = Pretendard,
+        fontWeight = FontWeight.Bold,
+        fontSize = 16.sp,
+        lineHeight = 24.sp,
+        letterSpacing = (-0.025).em
+    ),
+    Title5 = TextStyle(
+        fontFamily = Pretendard,
+        fontWeight = FontWeight.Bold,
+        fontSize = 14.sp,
+        lineHeight = 20.sp,
+        letterSpacing = (-0.025).em
+    ),
+
+    Body1 = TextStyle(
+        fontFamily = Pretendard,
+        fontWeight = FontWeight.Normal,
+        fontSize = 14.sp,
+        lineHeight = 20.sp,
+        letterSpacing = (-0.025).em
+    ),
+
+    Caption1 = TextStyle(
+        fontFamily = Pretendard,
+        fontWeight = FontWeight.Normal,
+        fontSize = 12.sp,
+        lineHeight = 18.sp,
+        letterSpacing = (-0.025).em
+    ),
+    Caption2 = TextStyle(
+        fontFamily = Pretendard,
+        fontWeight = FontWeight.Normal,
+        fontSize = 11.sp,
+        lineHeight = 16.sp,
+        letterSpacing = (-0.025).em
+    ),
 )
 
 @Immutable
@@ -178,6 +266,24 @@ data class AconTypography(
     val body4_12_reg: TextStyle,
 
     val cap1_11_reg: TextStyle,
+
+    // Acon 2.0
+    val Headline1: TextStyle,
+    val Headline2: TextStyle,
+    val Headline3: TextStyle,
+    val Headline4: TextStyle,
+
+    val Title1: TextStyle,
+    val Title2: TextStyle,
+    val Title3: TextStyle,
+    val Title4: TextStyle,
+    val Title5: TextStyle,
+
+    val Body1: TextStyle,
+
+    val Caption1: TextStyle,
+    val Caption2: TextStyle,
+
 )
 
 internal val LocalAconTypography = staticCompositionLocalOf {

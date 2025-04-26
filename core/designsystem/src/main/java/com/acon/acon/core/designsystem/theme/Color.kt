@@ -59,7 +59,35 @@ internal val AconColors = AconColor(
     Error_red1 = Color(0xFFFF3434),
     Error_red2 = Color(0xFFFFD9D9),
     Success_blue1 = Color(0xFF4375FF),
-    Error_blue2 = Color(0xFFD2DEFF)
+    Error_blue2 = Color(0xFFD2DEFF),
+
+
+    // Acon 2.0
+    PrimaryLighten = Color(0xFFFF692D),
+    PrimaryDefault = Color(0xFFFF4A02),
+    PrimaryDark = Color(0xFFDE3F00),
+
+    Gray900 = Color(0xFF111111),
+    Gray800 = Color(0xFF333333),
+    Gray700 = Color(0xFF505050),
+    Gray600 = Color(0xFF666666),
+    Gray500 = Color(0xFF767676),
+    Gray400 = Color(0xFF888888),
+    Gray300 = Color(0xFF999999),
+    Gray200 = Color(0xFFBBBBBB),
+    Gray100 = Color(0xFFE1E1E1),
+    Gray50 = Color(0xFFF1F1F5),
+
+    Danger = Color(0xFFFF2C51),
+    Success = Color(0xFF04B014),
+    Action = Color(0xFF00AAFE),
+
+    GlassWhiteDefault = Color(0X33FFFFFF),
+    GlassWhitePressed = Color(0X99FFFFFF),
+    GlassWhiteSelected = Color(0X4DFFFFFF),
+    GlassWhiteDisabled = Color(0X1AFFFFFF),
+
+    GlassBlackDefault = Color(0X33000000),
 )
 
 @Immutable
@@ -103,6 +131,34 @@ data class AconColor(
     val Error_red2: Color,
     val Success_blue1: Color,
     val Error_blue2: Color,
+
+
+    // Acon 2.0
+    val PrimaryLighten: Color,
+    val PrimaryDefault: Color,
+    val PrimaryDark: Color,
+
+    val Gray900: Color,
+    val Gray800: Color,
+    val Gray700: Color,
+    val Gray600: Color,
+    val Gray500: Color,
+    val Gray400: Color,
+    val Gray300: Color,
+    val Gray200: Color,
+    val Gray100: Color,
+    val Gray50: Color,
+
+    val Danger: Color,
+    val Success: Color,
+    val Action: Color,
+
+    val GlassWhiteDefault: Color,
+    val GlassWhitePressed: Color,
+    val GlassWhiteSelected: Color,
+    val GlassWhiteDisabled: Color,
+
+    val GlassBlackDefault: Color,
 
 )
 
