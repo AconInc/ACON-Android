@@ -80,7 +80,14 @@ internal val AconColors = AconColor(
 
     Danger = Color(0xFFFF2C51),
     Success = Color(0xFF04B014),
-    Action = Color(0xFF00AAFE)
+    Action = Color(0xFF00AAFE),
+
+    GlassWhiteDefault = Color(0X33FFFFFF),
+    GlassWhitePressed = Color(0X99FFFFFF),
+    GlassWhiteSelected = Color(0X4DFFFFFF),
+    GlassWhiteDisabled = Color(0X1AFFFFFF),
+
+    GlassBlackDefault = Color(0X33000000),
 )
 
 @Immutable
@@ -145,6 +152,14 @@ data class AconColor(
     val Danger: Color,
     val Success: Color,
     val Action: Color,
+
+    val GlassWhiteDefault: Color,
+    val GlassWhitePressed: Color,
+    val GlassWhiteSelected: Color,
+    val GlassWhiteDisabled: Color,
+
+    val GlassBlackDefault: Color,
+
 )
 
 internal val LocalAconColor = staticCompositionLocalOf {
