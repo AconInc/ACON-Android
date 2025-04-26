@@ -42,8 +42,8 @@ class AndroidLibraryConventionPlugin: Plugin<Project> {
             afterEvaluate {
                 dependencies {
                     implementation(project(":core:common"))
-
                     implementation(catalog.findBundle("android-defaults").get())
+                    implementation(catalog.findLibrary("timber").get())
 
                     testImplementation(catalog.findLibrary("junit").get())
                     androidTestImplementation(catalog.findLibrary("androidx-junit").get())
