@@ -13,6 +13,8 @@
     <string name="dismiss_content_description">닫기</string>
     <string name="reset_content_description">초기화</string>
     <string name="content_description_dismiss_bottom_sheet">로그인 창 닫기</string>
+    <string name="search_content_description">검색</string>
+    <string name="clear_search_content_description">검색어 초기화</string>
 
     <!-- login BottomSheet -->
     <string name="login_bottom_sheet_title">acon에 로그인</string>
