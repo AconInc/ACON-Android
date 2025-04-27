@@ -1,4 +1,4 @@
-package com.acon.acon.core.designsystem.component.textfield
+package com.acon.acon.core.designsystem.component.textfield.v2
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -38,7 +38,7 @@ fun AconSearchTextField(
     visualTransformation: VisualTransformation = VisualTransformation.None,
     onTextLayout: (TextLayoutResult) -> Unit = {},
 ) {
-    AconDefaultTextField(
+    AconFilledTextField(
         value = value,
         onValueChange = onValueChange,
         modifier = modifier,

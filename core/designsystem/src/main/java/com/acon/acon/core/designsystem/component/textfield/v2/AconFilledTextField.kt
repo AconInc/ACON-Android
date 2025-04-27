@@ -1,7 +1,6 @@
-package com.acon.acon.core.designsystem.component.textfield
+package com.acon.acon.core.designsystem.component.textfield.v2
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -10,8 +9,6 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
@@ -24,7 +21,7 @@ import com.acon.acon.core.designsystem.blur.defaultHazeEffect
 import com.acon.acon.core.designsystem.theme.AconTheme
 
 @Composable
-fun AconDefaultTextField(
+fun AconFilledTextField(
     value: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
@@ -71,7 +68,7 @@ fun AconDefaultTextField(
 @Preview
 private fun AconDefaultTextFieldPreview(
 ) {
-    AconDefaultTextField(
+    AconFilledTextField(
         value = "Search Text",
         onValueChange = { },
         modifier = Modifier.fillMaxWidth(),
