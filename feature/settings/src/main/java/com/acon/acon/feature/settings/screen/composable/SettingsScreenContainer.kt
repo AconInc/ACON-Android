@@ -34,7 +34,7 @@ fun SettingsScreenContainer(
         state = state,
         versionName = versionName,
         modifier = modifier.fillMaxSize(),
-        onSignInDialogShowStateChange = viewModel::onSignInDialogShowStateChange,
+        onLogoutDialogShowStateChange = viewModel::onLogoutDialogShowStateChange,
         navigateBack = viewModel::navigateBack,
         onTermOfUse = viewModel::onTermOfUse,
         onPrivatePolicy = viewModel::onPrivatePolicy,

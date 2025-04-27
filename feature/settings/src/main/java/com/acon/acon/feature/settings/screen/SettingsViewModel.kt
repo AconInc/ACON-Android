@@ -20,12 +20,12 @@ class SettingsViewModel @Inject constructor(
 ) : BaseContainerHost<SettingsUiState, SettingsSideEffect>() {
 
     override val container =
-        container<SettingsUiState, SettingsSideEffect>(SettingsUiState.Guest(false)) {
+        container<SettingsUiState, SettingsSideEffect>(SettingsUiState.Guest) {
             userRepository.getUserType().collectLatest { userType ->
                 when (userType) {
-                    UserType.GUEST -> reduce { SettingsUiState.Guest() }
-                    UserType.USER -> reduce { SettingsUiState.User }
-                    UserType.ADMIN -> reduce { SettingsUiState.User }
+                    UserType.GUEST -> reduce { SettingsUiState.Guest }
+                    UserType.USER -> reduce { SettingsUiState.User() }
+                    UserType.ADMIN -> reduce { SettingsUiState.User() }
                 }
             }
         }
@@ -40,16 +40,16 @@ class SettingsViewModel @Inject constructor(
                     postSideEffect(SettingsSideEffect.NavigateToSignIn)
                 }
                 ?.onFailure {
-                    onSignInDialogShowStateChange(false)
+                    onLogoutDialogShowStateChange(false)
                     postSideEffect(SettingsSideEffect.ShowToastMessage)
                 }
             }
         }
     }
 
-     fun onSignInDialogShowStateChange(show: Boolean) = intent {
-        runOn<SettingsUiState.Guest> {
-            reduce { state.copy(showLoginBottomSheet = show) }
+    fun onLogoutDialogShowStateChange(show: Boolean) = intent {
+        runOn<SettingsUiState.User> {
+            reduce { state.copy(showLogOutDialog = show) }
         }
     }
 
@@ -84,10 +84,11 @@ class SettingsViewModel @Inject constructor(
 }
 
 sealed interface SettingsUiState{
-    data object User : SettingsUiState
-    data class Guest(
-        val showLoginBottomSheet: Boolean = false
+    data class User(
+        val showLogOutDialog: Boolean = false
     ) : SettingsUiState
+
+    data object Guest : SettingsUiState
 }
 
 sealed interface SettingsSideEffect {
