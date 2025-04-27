@@ -89,7 +89,9 @@ internal val AconColors = AconColor(
 
     GlassBlackDefault = Color(0X33000000),
 
-    Light = Color(0x33E1E1E1)
+    Light = Color(0x33E1E1E1),
+
+    New = Color(0xFFFF4646)
 )
 
 @Immutable
@@ -162,7 +164,9 @@ data class AconColor(
 
     val GlassBlackDefault: Color,
 
-    val Light: Color
+    val Light: Color,
+
+    val New: Color
 )
 
 internal val LocalAconColor = staticCompositionLocalOf {
