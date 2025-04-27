@@ -143,10 +143,10 @@ fun ProfileModScreenContainer(
             onDismissRequest = {
                 viewModel.hideExitDialog()
             },
-            onClickLeft = { // 나가기 (프로필 뷰로 이동)
+            onClickLeft = {
                 backToProfile()
             },
-            onClickRight = { // 계속 작성하기
+            onClickRight = {
                 viewModel.hideExitDialog()
             },
             isImageEnabled = false
@@ -484,12 +484,15 @@ fun ProfileModScreen(
                 disabledTextColor = AconTheme.color.Gray5,
                 enabledTextColor = AconTheme.color.White,
                 onClick = onSaveClicked,
-                isEnabled = (state.nicknameStatus == NicknameStatus.Valid) &&
-                        (
-                                (state.nickNameState != state.originalNickname) ||
-                                        (state.birthdayState != state.originalBirthday && state.birthdayStatus == BirthdayStatus.Valid) ||
-                                        (state.selectedPhotoUri != state.originalPhotoUri)
-                                )
+                isEnabled =
+                (state.selectedPhotoUri != state.originalPhotoUri) ||
+                (state.nickNameState != state.originalNickname && state.nicknameStatus == NicknameStatus.Valid) ||
+                (
+                    (state.birthdayState != state.originalBirthday && state.birthdayStatus == BirthdayStatus.Valid) ||
+                    (state.originalBirthday.isNotEmpty() && state.birthdayState.isEmpty()) ||
+                    (state.originalBirthday.isEmpty() && state.birthdayState.isNotEmpty() &&
+                            state.birthdayStatus == BirthdayStatus.Valid)
+                )
             )
         }
     }
