@@ -132,7 +132,7 @@ class ProfileModViewModel @Inject constructor(
 
         nicknameValidationJob?.cancel()
         nicknameValidationJob = viewModelScope.launch {
-            if (delayValidation) delay(2000L)
+            if (delayValidation) delay(1000L)
             else delay(500L)
 
             val errors = mutableListOf<NicknameErrorType>()
