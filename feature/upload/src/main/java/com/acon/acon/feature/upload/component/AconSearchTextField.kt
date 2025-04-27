@@ -61,7 +61,7 @@ fun AconSearchTextField(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Image(
-                imageVector = ImageVector.vectorResource(id = com.acon.acon.core.designsystem.R.drawable.ic_search_24),
+                imageVector = ImageVector.vectorResource(id = com.acon.acon.core.designsystem.R.drawable.ic_search),
                 contentDescription = null,
             )
 
