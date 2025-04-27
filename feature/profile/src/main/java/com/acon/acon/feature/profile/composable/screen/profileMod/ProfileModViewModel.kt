@@ -137,13 +137,15 @@ class ProfileModViewModel @Inject constructor(
 
             val errors = mutableListOf<NicknameErrorType>()
 
-            if (text.any { it in "!@#$%^&*()-=+[]{};:'\",<>/?\\|" }) {
-                errors.add(NicknameErrorType.InvalidChar)
-            }
+            val invalidCharRegex = Regex("""[!@#$%^&*()\-=+\[\]{};:'",<>/?\\|`~]""")
+            val allowedCharRegex = Regex("""^[A-Za-z0-9._가-힣ㄱ-ㅎㅏ-ㅣ]*$""")
 
-            val allowedChars = (33..126).map { it.toChar() } +
-                    ('가'..'힣') + ('ㄱ'..'ㅎ') + ('ㅏ'..'ㅣ')
-            if (text.any { it !in allowedChars }) {
+            val hasInvalidChar = invalidCharRegex.containsMatchIn(text)
+            val matchesAllowedChars = allowedCharRegex.matches(text)
+
+            if (hasInvalidChar) {
+                errors.add(NicknameErrorType.InvalidChar)
+            } else if (!matchesAllowedChars) {
                 errors.add(NicknameErrorType.InvalidLang)
             }
 
