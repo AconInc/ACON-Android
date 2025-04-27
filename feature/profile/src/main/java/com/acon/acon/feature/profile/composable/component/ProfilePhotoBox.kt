@@ -8,14 +8,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import coil3.compose.AsyncImage
 import coil3.compose.rememberAsyncImagePainter
@@ -65,11 +64,12 @@ fun ProfilePhotoBox(
                 }
             }
         } else {
-            Icon(
+            Image(
+                imageVector = ImageVector.vectorResource(com.acon.acon.core.designsystem.R.drawable.ic_default_profile_40),
+                contentDescription = stringResource(R.string.content_description_default_profile_image),
                 modifier = Modifier.fillMaxSize(),
-                imageVector = ImageVector.vectorResource(R.drawable.img_profile_basic_80),
-                contentDescription = "Profile Image",
-                tint = Color.Unspecified,
+                contentScale = ContentScale.Crop,
+                alignment = Alignment.Center
             )
         }
     }
