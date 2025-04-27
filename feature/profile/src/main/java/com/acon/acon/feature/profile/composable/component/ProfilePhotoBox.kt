@@ -65,7 +65,7 @@ fun ProfilePhotoBox(
             }
         } else {
             Image(
-                imageVector = ImageVector.vectorResource(com.acon.acon.core.designsystem.R.drawable.ic_default_profile_40),
+                imageVector = ImageVector.vectorResource(R.drawable.img_profile_basic_80),
                 contentDescription = stringResource(R.string.content_description_default_profile_image),
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop,
