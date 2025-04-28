@@ -397,12 +397,12 @@ class ProfileModViewModel @Inject constructor(
         profileRepository.updateProfile(fileName, nickname, birthday)
             .onSuccess {
                 intent {
-                    postSideEffect(ProfileModSideEffect.NavigateToProfileSuccess)
+                    postSideEffect(ProfileModSideEffect.NavigateToProfile)
                 }
             }
             .onFailure {
                 intent {
-                    postSideEffect(ProfileModSideEffect.NavigateToProfileFailed)
+                    postSideEffect(ProfileModSideEffect.NavigateToProfile)
                 }
             }
     }
@@ -458,6 +458,5 @@ sealed interface ProfileModSideEffect {
     data class NavigateToSettings(val packageName: String) : ProfileModSideEffect
     data object NavigateToCustomGallery : ProfileModSideEffect
     data class UpdateProfileImage(val imageUri: String?) : ProfileModSideEffect
-    data object NavigateToProfileSuccess : ProfileModSideEffect
-    data object NavigateToProfileFailed : ProfileModSideEffect
+    data object NavigateToProfile : ProfileModSideEffect
 }

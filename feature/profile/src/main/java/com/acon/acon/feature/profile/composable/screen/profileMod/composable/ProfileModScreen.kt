@@ -63,7 +63,6 @@ import com.acon.acon.feature.profile.composable.screen.profileMod.ProfileModSide
 import com.acon.acon.feature.profile.composable.screen.profileMod.ProfileModState
 import com.acon.acon.feature.profile.composable.screen.profileMod.ProfileModViewModel
 import com.acon.acon.feature.profile.composable.type.FocusType
-import com.acon.acon.feature.profile.composable.type.ProfileUpdateResult
 import com.acon.acon.feature.profile.composable.utils.BirthdayTransformation
 import com.acon.acon.feature.profile.composable.utils.isAllowedChar
 import com.acon.acon.feature.profile.composable.utils.isKorean
@@ -76,7 +75,7 @@ fun ProfileModScreenContainer(
     viewModel: ProfileModViewModel = hiltViewModel(),
     selectedPhotoId: String = "",
     backToProfile: () -> Unit = {},
-    onNavigateToProfile: (ProfileUpdateResult) -> Unit = { },
+    onClickComplete: () -> Unit = { },
     onNavigateToCustomGallery: () -> Unit = {},
 ) {
     val state by viewModel.collectAsState()
@@ -109,12 +108,8 @@ fun ProfileModScreenContainer(
                 }
             }
 
-            is ProfileModSideEffect.NavigateToProfileSuccess -> {
-                onNavigateToProfile(ProfileUpdateResult.SUCCESS)
-            }
-
-            is ProfileModSideEffect.NavigateToProfileFailed -> {
-                onNavigateToProfile(ProfileUpdateResult.FAILURE)
+            is ProfileModSideEffect.NavigateToProfile -> {
+                onClickComplete()
             }
         }
     }

@@ -3,10 +3,14 @@ package com.acon.acon.navigation.nested
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
@@ -22,10 +26,12 @@ import com.acon.acon.feature.profile.composable.screen.photoCrop.composable.Phot
 import com.acon.acon.feature.profile.composable.screen.profile.composable.ProfileScreenContainer
 import com.acon.acon.feature.profile.composable.screen.profileMod.composable.ProfileModScreenContainer
 import com.acon.acon.feature.spot.SpotRoute
+import kotlinx.coroutines.launch
 
 internal fun NavGraphBuilder.profileNavigation(
     navController: NavHostController,
-    socialRepository: SocialRepository
+    socialRepository: SocialRepository,
+    snackbarHostState: SnackbarHostState
 ) {
 
     navigation<ProfileRoute.Graph>(
@@ -34,13 +40,8 @@ internal fun NavGraphBuilder.profileNavigation(
         exitTransition = { ExitTransition.None }
     ) {
         composable<ProfileRoute.Profile> {
-            val profileUpdateResult = navController.currentBackStackEntry
-                ?.savedStateHandle
-                ?.getLiveData<String>("profileUpdateResult")?.value ?: ""
-
             ProfileScreenContainer(
                 socialRepository = socialRepository,
-                profileUpdateResult = profileUpdateResult,
                 modifier = Modifier.fillMaxSize(),
                 onNavigateToSpotListScreen = {
                     navController.navigate(SpotRoute.SpotList) {
@@ -65,6 +66,9 @@ internal fun NavGraphBuilder.profileNavigation(
             val savedStateHandle = backStackEntry.savedStateHandle
             val selectedPhotoId = remember { mutableStateOf<String?>(null) }
 
+            val coroutineScope = rememberCoroutineScope()
+            val snackbar = stringResource(com.acon.acon.feature.profile.R.string.snackbar_profile_save_success)
+
             LaunchedEffect(Unit) {
                 savedStateHandle.getLiveData<String>("selectedPhotoId").observeForever { result ->
                     selectedPhotoId.value = result
@@ -77,11 +81,15 @@ internal fun NavGraphBuilder.profileNavigation(
                 backToProfile = {
                     navController.popBackStack()
                 },
-                onNavigateToProfile = { profileUpdateResult ->
-                    navController.previousBackStackEntry
-                        ?.savedStateHandle
-                        ?.set("profileUpdateResult", profileUpdateResult.name)
+                onClickComplete = {
+                    coroutineScope.launch {
+                        snackbarHostState.showSnackbar(
+                            message = snackbar,
+                            duration = SnackbarDuration.Long,
+                        )
+                    }
                     navController.popBackStack()
+
                 },
                 onNavigateToCustomGallery = {
                     navController.navigate(ProfileRoute.GalleryList)
