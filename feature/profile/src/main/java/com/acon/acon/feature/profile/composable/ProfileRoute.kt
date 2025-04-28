@@ -11,12 +11,7 @@ interface ProfileRoute {
     data object Profile : ProfileRoute
 
     @Serializable
-    data class ProfileMod(val photoId: String) : ProfileRoute {
-        companion object {
-            fun applyDefault() = ProfileMod(photoId = "")
-            fun applySelectedPhotoId(photoId: String) = ProfileMod(photoId = photoId)
-        }
-    }
+    data class ProfileMod(val photoId: String?) : ProfileRoute
 
     @Serializable
     data object GalleryList : ProfileRoute
