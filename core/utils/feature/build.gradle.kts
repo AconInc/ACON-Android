@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.acon.android.library)
     alias(libs.plugins.acon.android.library.compose)
     alias(libs.plugins.acon.android.library.orbit)
+    alias(libs.plugins.acon.android.library.hilt)
 }
 
 val localProperties = Properties().apply {
@@ -21,7 +22,9 @@ android {
 
 dependencies {
     implementation(projects.core.designsystem)
+    implementation(projects.domain)
 
     implementation(libs.accompanist.permissions)
     implementation(libs.amplitude)
+    implementation(libs.bundles.play.app.update)
 }
