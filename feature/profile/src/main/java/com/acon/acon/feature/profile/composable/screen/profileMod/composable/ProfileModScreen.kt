@@ -86,7 +86,6 @@ fun ProfileModScreenContainer(
         viewModel.updateProfileImage(selectedPhotoId)
     }
 
-
     viewModel.collectSideEffect { effect ->
         when (effect) {
             is ProfileModSideEffect.NavigateToSettings -> {
@@ -486,13 +485,13 @@ fun ProfileModScreen(
                 onClick = onSaveClicked,
                 isEnabled =
                 (state.selectedPhotoUri != state.originalPhotoUri) ||
-                (state.nickNameState != state.originalNickname && state.nicknameStatus == NicknameStatus.Valid) ||
-                (
-                    (state.birthdayState != state.originalBirthday && state.birthdayStatus == BirthdayStatus.Valid) ||
-                    (state.originalBirthday.isNotEmpty() && state.birthdayState.isEmpty()) ||
-                    (state.originalBirthday.isEmpty() && state.birthdayState.isNotEmpty() &&
-                            state.birthdayStatus == BirthdayStatus.Valid)
-                )
+                        (state.nickNameState != state.originalNickname && state.nicknameStatus == NicknameStatus.Valid) ||
+                        (
+                                (state.birthdayState != state.originalBirthday && state.birthdayStatus == BirthdayStatus.Valid) ||
+                                        (state.originalBirthday.isNotEmpty() && state.birthdayState.isEmpty()) ||
+                                        (state.originalBirthday.isEmpty() && state.birthdayState.isNotEmpty() &&
+                                                state.birthdayStatus == BirthdayStatus.Valid)
+                                )
             )
         }
     }
