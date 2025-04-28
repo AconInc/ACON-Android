@@ -55,8 +55,8 @@ class ProfileModViewModel @Inject constructor(
 
             reduce {
                 state.copy(
-                    selectedPhotoUri = profile.image,
                     originalPhotoUri = profile.image,
+                    selectedPhotoUri = state.selectedPhotoUri.ifEmpty { profile.image },
                     originalNickname = profile.nickname,
                     nickNameState = profile.nickname,
                     originalBirthday = profile.birthDate?.filter { it.isDigit() } ?: "",
@@ -290,7 +290,6 @@ class ProfileModViewModel @Inject constructor(
     }
 
     fun getPreSignedUrl() = intent {
-
         if (state.selectedPhotoUri == "") {
             if (state.birthdayStatus == BirthdayStatus.Valid) {
                 updateProfile(
@@ -455,7 +454,6 @@ sealed interface ProfileModSideEffect {
     data object NavigateBack : ProfileModSideEffect
     data class NavigateToSettings(val packageName: String) : ProfileModSideEffect
     data object NavigateToCustomGallery : ProfileModSideEffect
-    data class UpdateProfileImage(val imageUri: String?) : ProfileModSideEffect
     data object NavigateToProfileSuccess : ProfileModSideEffect
     data object NavigateToProfileFailed : ProfileModSideEffect
 }

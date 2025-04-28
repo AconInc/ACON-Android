@@ -74,7 +74,7 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 fun ProfileModScreenContainer(
     modifier: Modifier = Modifier,
     viewModel: ProfileModViewModel = hiltViewModel(),
-    selectedPhotoId: String = "",
+    selectedPhotoId: String? = null,
     backToProfile: () -> Unit = {},
     onNavigateToProfile: (ProfileUpdateResult) -> Unit = { },
     onNavigateToCustomGallery: () -> Unit = {},
@@ -82,10 +82,11 @@ fun ProfileModScreenContainer(
     val state by viewModel.collectAsState()
     val context = LocalContext.current
 
-    LaunchedEffect(selectedPhotoId) {
-        viewModel.updateProfileImage(selectedPhotoId)
+    if (!selectedPhotoId.isNullOrBlank() && state.originalPhotoUri != selectedPhotoId) {
+        LaunchedEffect(selectedPhotoId) {
+            viewModel.updateProfileImage(selectedPhotoId)
+        }
     }
-
 
     viewModel.collectSideEffect { effect ->
         when (effect) {
@@ -102,12 +103,6 @@ fun ProfileModScreenContainer(
 
             is ProfileModSideEffect.NavigateToCustomGallery -> {
                 onNavigateToCustomGallery()
-            }
-
-            is ProfileModSideEffect.UpdateProfileImage -> {
-                selectedPhotoId.let {
-                    viewModel.updateProfileImage(selectedPhotoId)
-                }
             }
 
             is ProfileModSideEffect.NavigateToProfileSuccess -> {
