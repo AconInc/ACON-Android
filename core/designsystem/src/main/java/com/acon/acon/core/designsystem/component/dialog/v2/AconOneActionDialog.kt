@@ -23,7 +23,7 @@ import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
 
 @Composable
-fun AconDefaultDialog(
+fun AconOneActionDialog(
     title: String,
     action: String,
     onAction: () -> Unit,
@@ -35,7 +35,7 @@ fun AconDefaultDialog(
         usePlatformDefaultWidth = true,
         decorFitsSystemWindows = true
     ),
-    content: @Composable () -> Unit,
+    content: @Composable () -> Unit = {},
 ) {
     Dialog(
         onDismissRequest = onDismissRequest,
@@ -87,7 +87,7 @@ fun AconDefaultDialog(
 @Composable
 @Preview
 private fun AconDefaultDialogPreview() {
-    AconDefaultDialog(
+    AconOneActionDialog(
         title = "Title",
         action = "Action",
         onDismissRequest = {},
@@ -98,7 +98,7 @@ private fun AconDefaultDialogPreview() {
 @Composable
 @Preview
 private fun AconDefaultDialogWithContentPreview() {
-    AconDefaultDialog(
+    AconOneActionDialog(
         title = "Title",
         action = "Action",
         onDismissRequest = {},
