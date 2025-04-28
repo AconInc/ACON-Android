@@ -41,10 +41,9 @@ class RemoteErrorCallAdapterFactory(
                                 else {
                                     callback.onFailure(
                                         call, RemoteError(
-                                            statusCode = response.code(),
+                                            response = response,
                                             errorCode = 0,
                                             message = "Empty body",
-                                            httpErrorMessage = mapHttpError(response.code())
                                         )
                                     )
                                 }
@@ -57,10 +56,9 @@ class RemoteErrorCallAdapterFactory(
                                 }
                                 callback.onFailure(
                                     call, RemoteError(
-                                        statusCode = response.code(),
+                                        response = response,
                                         errorCode = errResp?.code ?: 0,
                                         message = errResp?.message ?: response.message(),
-                                        httpErrorMessage = mapHttpError(response.code())
                                     )
                                 )
                             }
@@ -82,10 +80,9 @@ class RemoteErrorCallAdapterFactory(
                         null
                     }
                     throw RemoteError(
-                        statusCode = response.code(),
+                        response = response,
                         errorCode = errResp?.code ?: 0,
                         message = errResp?.message ?: response.message(),
-                        httpErrorMessage = mapHttpError(response.code())
                     )
                 }
 
@@ -96,14 +93,7 @@ class RemoteErrorCallAdapterFactory(
                 override fun request(): Request = call.request()
                 override fun timeout(): Timeout = call.timeout()
 
-                private fun mapHttpError(code: Int) = when (code) {
-                    400 -> "Bad Request: 잘못된 요청입니다."
-                    401 -> "Unauthorized: 인증되지 않은 사용자입니다."
-                    403 -> "Forbidden: 접근 권한이 없습니다."
-                    404 -> "Not Found: 요청한 리소스를 찾을 수 없습니다."
-                    in 500 until 600 -> "Internal Server Error: 서버 내부 오류입니다."
-                    else -> "Unknown Error: 알 수 없는 오류입니다."
-                }
+
             }
         }
     }
