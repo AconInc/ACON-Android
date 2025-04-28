@@ -28,9 +28,11 @@ import coil3.compose.rememberAsyncImagePainter
 import com.acon.acon.core.designsystem.component.topbar.AconTopBar
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
+import com.acon.acon.feature.profile.composable.screen.galleryGrid.GalleryGridSideEffect
 import com.acon.acon.feature.profile.composable.screen.galleryGrid.GalleryGridState
 import com.acon.acon.feature.profile.composable.screen.galleryGrid.GalleryGridViewModel
 import org.orbitmvi.orbit.compose.collectAsState
+import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
 fun GalleryGridContainer(
@@ -47,12 +49,22 @@ fun GalleryGridContainer(
         viewModel.loadPhotos(albumId)
     }
 
+    viewModel.collectSideEffect {
+        when(it) {
+            is GalleryGridSideEffect.NavigateToPhotoCropScreen -> {
+                state.selectedPhotoUri?.let { selectedPhotoUri ->
+                    onConfirmSelected(selectedPhotoUri.toString())
+                }
+            }
+        }
+    }
+
     GalleryGridScreen(
         modifier = modifier,
         state = state,
         albumName = albumName,
         onPhotoSelected = viewModel::onPhotoSelected,
-        onConfirmSelected = onConfirmSelected,
+        onConfirmSelected = viewModel::onConfirmSelected,
         onBackClicked = onBackClicked,
     )
 }
