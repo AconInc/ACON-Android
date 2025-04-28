@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">designsystem</string>
 
+    <!-- Common -->
+    <string name="cancel">취소</string>
+
     <!-- Button component -->
     <string name="login_btn_preview_content">button</string>
     <string name="google_login_btn_description">구글 로그인 버튼</string>
@@ -28,4 +31,11 @@
     <string name="no_permission_title">\'acon\'에 대한 위치접근\n 권한이 없습니다</string>
     <string name="no_permission_content">설정에서 정확한 위치 권한을 허용해주세요</string>
     <string name="go_to_setting">설정으로 이동</string>
+
+    <!-- Update -->
+    <string name="update">업데이트</string>
+    <string name="update_required_title">필수적인 업데이트가 있습니다</string>
+    <string name="update_available_title">최선 버전 업데이트가 가능합니다</string>
+    <string name="update_complete">최신 버전을 이용할 수 있어요</string>
+    <string name="restart">재시작</string>
 </resources>
