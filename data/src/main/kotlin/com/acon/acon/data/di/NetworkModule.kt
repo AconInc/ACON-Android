@@ -1,18 +1,16 @@
 package com.acon.acon.data.di
 
 import android.content.Context
-import com.acon.acon.data.BuildConfig
-import com.acon.acon.data.datasource.local.TokenLocalDataSource
-import com.acon.acon.data.error.NetworkErrorResponse
-import com.acon.acon.data.error.RemoteError
-import com.acon.acon.data.remote.ReissueTokenApi
 import com.acon.acon.core.common.Auth
 import com.acon.acon.core.common.Naver
 import com.acon.acon.core.common.NaverAuthInterceptor
 import com.acon.acon.core.common.NoAuth
-import com.acon.acon.core.common.ResponseInterceptor
 import com.acon.acon.core.common.TokenInterceptor
+import com.acon.acon.data.BuildConfig
 import com.acon.acon.data.SessionManager
+import com.acon.acon.data.datasource.local.TokenLocalDataSource
+import com.acon.acon.data.error.RemoteErrorCallAdapterFactory
+import com.acon.acon.data.remote.ReissueTokenApi
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides
@@ -59,7 +57,6 @@ internal object NetworkModule {
     @Singleton
     @Provides
     fun provideAuthClient(
-        @ResponseInterceptor responseInterceptor: Interceptor,
         @TokenInterceptor authInterceptor: Interceptor,
         refreshAuthenticator: Authenticator,
     ): OkHttpClient {
@@ -74,7 +71,6 @@ internal object NetworkModule {
                     })
                 }
             }
-            .addInterceptor(responseInterceptor)
             .addInterceptor(authInterceptor)
             .authenticator(refreshAuthenticator)
             .build()
@@ -83,9 +79,7 @@ internal object NetworkModule {
     @NoAuth
     @Singleton
     @Provides
-    fun provideNoAuthClient(
-        @ResponseInterceptor responseInterceptor: Interceptor
-    ): OkHttpClient {
+    fun provideNoAuthClient(): OkHttpClient {
         return OkHttpClient.Builder()
             .connectTimeout(30, TimeUnit.SECONDS)
             .readTimeout(30, TimeUnit.SECONDS)
@@ -96,7 +90,7 @@ internal object NetworkModule {
                         level = HttpLoggingInterceptor.Level.BODY
                     })
                 }
-            }.addInterceptor(responseInterceptor)
+            }
             .build()
     }
 
@@ -127,6 +121,7 @@ internal object NetworkModule {
             .baseUrl(BuildConfig.BASE_URL)
             .client(client)
             .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
+            .addCallAdapterFactory(RemoteErrorCallAdapterFactory(json))
             .build()
     }
 
@@ -182,39 +177,4 @@ internal object NetworkModule {
         reissueTokenApi: ReissueTokenApi,
         sessionManager: SessionManager
     ): Authenticator = AuthAuthenticator(tokenLocalDataSource, reissueTokenApi, sessionManager)
-
-    @ResponseInterceptor
-    @Singleton
-    @Provides
-    fun providesResponseInterceptor() : Interceptor {
-        return Interceptor { chain: Interceptor.Chain ->
-            val response = chain.proceed(chain.request())
-
-            if (response.isSuccessful.not()) {  // response 실패 시 실행
-                val errorBody = response.body?.string()
-                val errorResponse = try {
-                    errorBody?.let {
-                        Json.decodeFromString<NetworkErrorResponse>(it)
-                    }
-                } catch (e: Exception) {
-                    null
-                }
-
-                throw RemoteError(
-                    statusCode = response.code,
-                    errorCode = errorResponse?.code ?: 0,
-                    message = errorResponse?.message ?: response.message,
-                    httpErrorMessage = when(response.code) {
-                        400 -> "Bad Request: 잘못된 요청입니다."
-                        401 -> "Unauthorized: 인증되지 않은 사용자입니다."
-                        403 -> "Forbidden: 접근 권한이 없습니다."
-                        404 -> "Not Found: 요청한 리소스를 찾을 수 없습니다."
-                        in 500 until 600 -> "Internal Server Error: 서버 내부 오류입니다."
-                        else -> "Unknown Error: 알 수 없는 오류입니다."
-                    },
-                )
-            }
-            response
-        }
-    }
 }

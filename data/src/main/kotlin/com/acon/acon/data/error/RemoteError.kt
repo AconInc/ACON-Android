@@ -1,10 +1,11 @@
 package com.acon.acon.data.error
 
-import java.io.IOException
-
+/**
+ * 400, 500번대 에러 발생 시 던져지는 에러
+ */
 data class RemoteError(
     val statusCode: Int,
     val errorCode: Int,
     override val message: String,
     val httpErrorMessage: String
-) : IOException()
+) : Exception()
