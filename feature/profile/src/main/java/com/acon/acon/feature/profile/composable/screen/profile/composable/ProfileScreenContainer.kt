@@ -4,15 +4,12 @@ import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.acon.acon.core.utils.feature.constants.AppURL
 import com.acon.acon.domain.repository.SocialRepository
-import com.acon.acon.feature.profile.R
 import com.acon.acon.feature.profile.composable.screen.profile.ProfileUiSideEffect
 import com.acon.acon.feature.profile.composable.screen.profile.ProfileViewModel
 import org.orbitmvi.orbit.compose.collectAsState
@@ -21,7 +18,6 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 @Composable
 fun ProfileScreenContainer(
     socialRepository: SocialRepository,
-    profileUpdateResult: String,
     modifier: Modifier = Modifier,
     onNavigateToSpotListScreen: () -> Unit = {},
     onNavigateToSettingsScreen: () -> Unit = {},
@@ -34,7 +30,6 @@ fun ProfileScreenContainer(
 
     ProfileScreen(
         state = state,
-        profileUpdateResult = profileUpdateResult,
         modifier = modifier.fillMaxSize(),
         onSettings = viewModel::onSettings,
         onEditProfile = viewModel::onEditProfile,
@@ -43,13 +38,6 @@ fun ProfileScreenContainer(
         onPrivatePolicy = viewModel::onPrivatePolicy,
         onBottomSheetShowStateChange = viewModel::onBottomSheetShowStateChange,
     )
-
-    val success = stringResource(R.string.success)
-    LaunchedEffect(profileUpdateResult) {
-        if(profileUpdateResult == success) {
-            viewModel.fetchUserProfileInfo()
-        }
-    }
 
     viewModel.collectSideEffect {
         when(it) {

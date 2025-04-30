@@ -48,7 +48,7 @@ fun AconSearchBar(
     leadingIcon: @Composable () -> Unit = {
         Row {
             Icon(
-                painter = painterResource(id = R.drawable.ic_search_24),
+                painter = painterResource(id = R.drawable.ic_search),
                 contentDescription = "Search",
                 tint = AconColors.White
             )

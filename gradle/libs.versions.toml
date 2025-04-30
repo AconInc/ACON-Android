@@ -76,6 +76,7 @@ androidx-compose-foundation = { group = "androidx.compose.foundation", name = "f
 androidx-compose-foundation-layout = { group = "androidx.compose.foundation", name = "foundation-layout", version = { strictly = "1.7.8" } }
 androidx-compose-ui = { group = "androidx.compose.ui", name = "ui" }
 androidx-compose-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
+androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 androidx-compose-runtime = { group = "androidx.compose.runtime", name = "runtime-android" }
 compose-material3 = { group = "androidx.compose.material3", name = "material3" }
@@ -194,7 +195,7 @@ haze = ["haze", "haze-materials"]
 android-defaults = ["androidx-core-ktx", "androidx-lifecycle-runtime-ktx", "androidx-appcompat", "material"]
 compose-defaults = ["androidx-compose-ui", "androidx-compose-ui-graphics", "androidx-compose-ui-tooling-preview", "androidx-navigation-compose",
     "androidx-activity-compose", "compose-material3", "androidx-compose-runtime", "androidx-compose-foundation", "androidx-compose-foundation-layout",
-    "androidx-compose-animation", "androidx-compose-animation-core", "androidx-compose-animation-graphics"]
+    "androidx-compose-animation", "androidx-compose-animation-core", "androidx-compose-animation-graphics", "androidx-compose-ui-tooling"]
 coil = ["coil-compose", "coil-network-okhttp"]
 naver-map = ["naver-map-compose", "naver-map-location", "naver-map-sdk"]
 firebase = ["firebase-analytics-sdk", "firebase-crashlytics-sdk"]

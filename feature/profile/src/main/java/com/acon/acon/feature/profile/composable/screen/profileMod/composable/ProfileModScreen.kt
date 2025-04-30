@@ -63,7 +63,6 @@ import com.acon.acon.feature.profile.composable.screen.profileMod.ProfileModSide
 import com.acon.acon.feature.profile.composable.screen.profileMod.ProfileModState
 import com.acon.acon.feature.profile.composable.screen.profileMod.ProfileModViewModel
 import com.acon.acon.feature.profile.composable.type.FocusType
-import com.acon.acon.feature.profile.composable.type.ProfileUpdateResult
 import com.acon.acon.feature.profile.composable.utils.BirthdayTransformation
 import com.acon.acon.feature.profile.composable.utils.isAllowedChar
 import com.acon.acon.feature.profile.composable.utils.isKorean
@@ -76,7 +75,7 @@ fun ProfileModScreenContainer(
     viewModel: ProfileModViewModel = hiltViewModel(),
     selectedPhotoId: String? = null,
     backToProfile: () -> Unit = {},
-    onNavigateToProfile: (ProfileUpdateResult) -> Unit = { },
+    onClickComplete: () -> Unit = { },
     onNavigateToCustomGallery: () -> Unit = {},
 ) {
     val state by viewModel.collectAsState()
@@ -105,12 +104,14 @@ fun ProfileModScreenContainer(
                 onNavigateToCustomGallery()
             }
 
-            is ProfileModSideEffect.NavigateToProfileSuccess -> {
-                onNavigateToProfile(ProfileUpdateResult.SUCCESS)
+            is ProfileModSideEffect.UpdateProfileImage -> {
+                selectedPhotoId.let {
+                    viewModel.updateProfileImage(selectedPhotoId)
+                }
             }
 
-            is ProfileModSideEffect.NavigateToProfileFailed -> {
-                onNavigateToProfile(ProfileUpdateResult.FAILURE)
+            is ProfileModSideEffect.NavigateToProfile -> {
+                onClickComplete()
             }
         }
     }
@@ -138,10 +139,10 @@ fun ProfileModScreenContainer(
             onDismissRequest = {
                 viewModel.hideExitDialog()
             },
-            onClickLeft = { // 나가기 (프로필 뷰로 이동)
+            onClickLeft = {
                 backToProfile()
             },
-            onClickRight = { // 계속 작성하기
+            onClickRight = {
                 viewModel.hideExitDialog()
             },
             isImageEnabled = false
@@ -479,11 +480,14 @@ fun ProfileModScreen(
                 disabledTextColor = AconTheme.color.Gray5,
                 enabledTextColor = AconTheme.color.White,
                 onClick = onSaveClicked,
-                isEnabled = (state.nicknameStatus == NicknameStatus.Valid) &&
+                isEnabled =
+                (state.selectedPhotoUri != state.originalPhotoUri) ||
+                        (state.nickNameState != state.originalNickname && state.nicknameStatus == NicknameStatus.Valid) ||
                         (
-                                (state.nickNameState != state.originalNickname) ||
-                                        (state.birthdayState != state.originalBirthday && state.birthdayStatus == BirthdayStatus.Valid) ||
-                                        (state.selectedPhotoUri != state.originalPhotoUri)
+                                (state.birthdayState != state.originalBirthday && state.birthdayStatus == BirthdayStatus.Valid) ||
+                                        (state.originalBirthday.isNotEmpty() && state.birthdayState.isEmpty()) ||
+                                        (state.originalBirthday.isEmpty() && state.birthdayState.isNotEmpty() &&
+                                                state.birthdayStatus == BirthdayStatus.Valid)
                                 )
             )
         }

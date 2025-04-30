@@ -35,7 +35,7 @@ fun SettingsScreen(
     state: SettingsUiState,
     versionName: String,
     modifier: Modifier = Modifier,
-    onSignInDialogShowStateChange: (Boolean) -> Unit = {},
+    onLogoutDialogShowStateChange: (Boolean) -> Unit = {},
     navigateBack: () -> Unit = {},
     onTermOfUse: () -> Unit = {},
     onPrivatePolicy: () -> Unit = {},
@@ -58,6 +58,22 @@ fun SettingsScreen(
     ) {
         when (state) {
             is SettingsUiState.User -> {
+                if(state.showLogOutDialog) {
+                    AconTwoButtonDialog(
+                        title = stringResource(R.string.logout_dialog_title),
+                        content = stringResource(R.string.logout_dialog_content),
+                        leftButtonContent = stringResource(R.string.logout_dialog_cancel_btn),
+                        rightButtonContent = stringResource(R.string.settings_section_logout),
+                        onDismissRequest = { onLogoutDialogShowStateChange(false) },
+                        onClickLeft = { onLogoutDialogShowStateChange(false) },
+                        onClickRight = {
+                            onSignOut()
+                            settingsAmplitudeSignOut()
+                        },
+                        isImageEnabled = false
+                    )
+                }
+
                 Spacer(Modifier.height(42.dp))
                 AconTopBar(
                     modifier = Modifier
@@ -143,7 +159,7 @@ fun SettingsScreen(
                 Spacer(Modifier.height(16.dp))
                 SettingSectionItem(
                     settingsType = SettingsType.LOGOUT,
-                    onClickContinue = { onSignOut() }
+                    onClickContinue = { onLogoutDialogShowStateChange(true)  }
                 )
 
                 Spacer(Modifier.height(16.dp))
@@ -156,21 +172,6 @@ fun SettingsScreen(
                 )
             }
             is SettingsUiState.Guest -> {
-                if (state.showLoginBottomSheet) {
-                    AconTwoButtonDialog(
-                        title = stringResource(R.string.logout_dialog_title),
-                        content = stringResource(R.string.logout_dialog_content),
-                        leftButtonContent = stringResource(R.string.logout_dialog_cancel_btn),
-                        rightButtonContent = stringResource(R.string.settings_section_logout),
-                        onDismissRequest = { onSignInDialogShowStateChange(false) },
-                        onClickLeft = { onSignInDialogShowStateChange(false) },
-                        onClickRight = {
-                            onSignOut()
-                            settingsAmplitudeSignOut()
-                        },
-                        isImageEnabled = false
-                    )
-                }
                 Spacer(Modifier.height(42.dp))
                 AconTopBar(
                     modifier = Modifier
@@ -237,7 +238,7 @@ fun SettingsScreen(
 fun SettingsScreenPreview() {
     AconTheme {
         SettingsScreen(
-            state = SettingsUiState.User,
+            state = SettingsUiState.User(),
             versionName = ""
         )
     }

@@ -8,6 +8,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarData
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -36,6 +39,7 @@ import com.acon.acon.core.designsystem.blur.LocalHazeState
 import com.acon.acon.core.designsystem.blur.defaultHazeEffect
 import com.acon.acon.core.designsystem.blur.rememberHazeState
 import com.acon.acon.core.designsystem.component.bottomsheet.LoginBottomSheet
+import com.acon.acon.core.designsystem.component.snackbar.AconTextSnackBar
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.core.utils.feature.constants.AppURL
 import com.acon.acon.domain.repository.SocialRepository
@@ -65,7 +69,7 @@ fun AconNavigation(
     socialRepository: SocialRepository,
     userRepository: UserRepository
 ) {
-
+    val snackbarHostState = remember { SnackbarHostState() }
     val backStackEntry by navController.currentBackStackEntryAsState()
     var selectedBottomNavItem by rememberSaveable { mutableStateOf(BottomNavType.SPOT) }
     val currentRoute by remember { derivedStateOf { backStackEntry?.destination?.route } }
@@ -124,9 +128,19 @@ fun AconNavigation(
             )
         }
 
-        Scaffold(
+            Scaffold(
             containerColor = AconTheme.color.Gray9,
             modifier = modifier.navigationBarsPadding(),
+            snackbarHost = {
+                SnackbarHost(
+                    modifier = Modifier.padding(bottom = 36.dp),
+                    hostState = snackbarHostState
+                ) { snackbarData: SnackbarData ->
+                    AconTextSnackBar(
+                        message = snackbarData.visuals.message
+                    )
+                }
+            },
             topBar = {
                 Spacer(modifier = Modifier.padding(0.dp))
             },
@@ -197,7 +211,7 @@ fun AconNavigation(
 
                 uploadNavigation(navController)
 
-                profileNavigation(navController, socialRepository)
+                profileNavigation(navController, socialRepository, snackbarHostState)
 
                 settingsNavigation(navController)
             }
