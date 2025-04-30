@@ -3,13 +3,10 @@ package com.acon.acon.navigation.nested
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -69,16 +66,9 @@ internal fun NavGraphBuilder.profileNavigation(
             val selectedPhotoId by savedStateHandle
                 .getStateFlow<String?>("selectedPhotoId", null)
                 .collectAsState()
-            val selectedPhotoId = remember { mutableStateOf<String?>(null) }
 
             val coroutineScope = rememberCoroutineScope()
             val snackbar = stringResource(com.acon.acon.feature.profile.R.string.snackbar_profile_save_success)
-
-            LaunchedEffect(Unit) {
-                savedStateHandle.getLiveData<String>("selectedPhotoId").observeForever { result ->
-                    selectedPhotoId.value = result
-                }
-            }
 
             ProfileModScreenContainer(
                 modifier = Modifier.fillMaxSize(),

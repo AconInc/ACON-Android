@@ -106,7 +106,7 @@ fun ProfileModScreenContainer(
 
             is ProfileModSideEffect.UpdateProfileImage -> {
                 selectedPhotoId.let {
-                    viewModel.updateProfileImage(selectedPhotoId)
+                    viewModel.updateProfileImage(selectedPhotoId ?: "")
                 }
             }
 
