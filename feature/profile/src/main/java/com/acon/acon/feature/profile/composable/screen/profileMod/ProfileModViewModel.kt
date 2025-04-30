@@ -132,18 +132,20 @@ class ProfileModViewModel @Inject constructor(
 
         nicknameValidationJob?.cancel()
         nicknameValidationJob = viewModelScope.launch {
-            if (delayValidation) delay(2000L)
+            if (delayValidation) delay(1000L)
             else delay(500L)
 
             val errors = mutableListOf<NicknameErrorType>()
 
-            if (text.any { it in "!@#$%^&*()-=+[]{};:'\",<>/?\\|" }) {
-                errors.add(NicknameErrorType.InvalidChar)
-            }
+            val invalidCharRegex = Regex("""[!@#$%^&*()\-=+\[\]{};:'",<>/?\\|`~]""")
+            val allowedCharRegex = Regex("""^[A-Za-z0-9._가-힣ㄱ-ㅎㅏ-ㅣ]*$""")
 
-            val allowedChars = (33..126).map { it.toChar() } +
-                    ('가'..'힣') + ('ㄱ'..'ㅎ') + ('ㅏ'..'ㅣ')
-            if (text.any { it !in allowedChars }) {
+            val hasInvalidChar = invalidCharRegex.containsMatchIn(text)
+            val matchesAllowedChars = allowedCharRegex.matches(text)
+
+            if (hasInvalidChar) {
+                errors.add(NicknameErrorType.InvalidChar)
+            } else if (!matchesAllowedChars) {
                 errors.add(NicknameErrorType.InvalidLang)
             }
 
@@ -395,12 +397,12 @@ class ProfileModViewModel @Inject constructor(
         profileRepository.updateProfile(fileName, nickname, birthday)
             .onSuccess {
                 intent {
-                    postSideEffect(ProfileModSideEffect.NavigateToProfileSuccess)
+                    postSideEffect(ProfileModSideEffect.NavigateToProfile)
                 }
             }
             .onFailure {
                 intent {
-                    postSideEffect(ProfileModSideEffect.NavigateToProfileFailed)
+                    postSideEffect(ProfileModSideEffect.NavigateToProfile)
                 }
             }
     }
@@ -456,6 +458,5 @@ sealed interface ProfileModSideEffect {
     data class NavigateToSettings(val packageName: String) : ProfileModSideEffect
     data object NavigateToCustomGallery : ProfileModSideEffect
     data class UpdateProfileImage(val imageUri: String?) : ProfileModSideEffect
-    data object NavigateToProfileSuccess : ProfileModSideEffect
-    data object NavigateToProfileFailed : ProfileModSideEffect
+    data object NavigateToProfile : ProfileModSideEffect
 }
