@@ -48,7 +48,6 @@ fun ProfileScreen(
     onPrivatePolicy: () -> Unit = {},
     onBottomSheetShowStateChange: (Boolean) -> Unit = {}
 ) {
-
     when (state) {
         is ProfileUiState.Success -> {
             Column(

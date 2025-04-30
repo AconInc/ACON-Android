@@ -5,9 +5,8 @@ import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -51,7 +50,7 @@ internal fun NavGraphBuilder.profileNavigation(
                     }
                 },
                 onNavigateToSettingsScreen = { navController.navigate(SettingsRoute.Settings) },
-                onNavigateToProfileEditScreen = { navController.navigate(ProfileRoute.ProfileMod.applyDefault()) },
+                onNavigateToProfileEditScreen = { navController.navigate(ProfileRoute.ProfileMod(null)) },
                 onNavigateToAreaVerificationScreen = {
                     navController.navigate(AreaVerificationRoute.RequireAreaVerification("onboarding")) {
                         popUpTo(ProfileRoute.Graph) {
@@ -64,20 +63,16 @@ internal fun NavGraphBuilder.profileNavigation(
 
         composable<ProfileRoute.ProfileMod> { backStackEntry ->
             val savedStateHandle = backStackEntry.savedStateHandle
-            val selectedPhotoId = remember { mutableStateOf<String?>(null) }
+            val selectedPhotoId by savedStateHandle
+                .getStateFlow<String?>("selectedPhotoId", null)
+                .collectAsState()
 
             val coroutineScope = rememberCoroutineScope()
             val snackbar = stringResource(com.acon.acon.feature.profile.R.string.snackbar_profile_save_success)
 
-            LaunchedEffect(Unit) {
-                savedStateHandle.getLiveData<String>("selectedPhotoId").observeForever { result ->
-                    selectedPhotoId.value = result
-                }
-            }
-
             ProfileModScreenContainer(
                 modifier = Modifier.fillMaxSize(),
-                selectedPhotoId = selectedPhotoId.value.toString(),
+                selectedPhotoId = selectedPhotoId,
                 backToProfile = {
                     navController.popBackStack()
                 },
@@ -89,7 +84,6 @@ internal fun NavGraphBuilder.profileNavigation(
                         )
                     }
                     navController.popBackStack()
-
                 },
                 onNavigateToCustomGallery = {
                     navController.navigate(ProfileRoute.GalleryList)
@@ -101,7 +95,6 @@ internal fun NavGraphBuilder.profileNavigation(
             GalleryListContainer(
                 modifier = Modifier.fillMaxSize(),
                 onAlbumSelected = { albumId, albumName ->
-                    navController.popBackStack()
                     navController.navigate(ProfileRoute.GalleryGrid(albumId, albumName))
                 },
                 onBackClicked = {
@@ -120,8 +113,7 @@ internal fun NavGraphBuilder.profileNavigation(
                 onBackClicked = {
                     navController.popBackStack()
                 },
-                onConfirmSelected = { photoId ->
-                    navController.popBackStack()
+                onNavigateToPhotoCrop = { photoId ->
                     navController.navigate(ProfileRoute.PhotoCrop(photoId))
                 }
             )
@@ -137,12 +129,10 @@ internal fun NavGraphBuilder.profileNavigation(
                     navController.popBackStack()
                 },
                 onCompleteSelected = { photoId: String ->
+                    navController.getBackStackEntry(ProfileRoute.ProfileMod(null))
+                        .savedStateHandle["selectedPhotoId"] = photoId
 
-                    navController.previousBackStackEntry
-                        ?.savedStateHandle
-                        ?.set("selectedPhotoId", photoId)
-
-                    navController.popBackStack()
+                    navController.popBackStack(ProfileRoute.ProfileMod(null), false)
                 }
             )
         }

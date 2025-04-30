@@ -73,7 +73,7 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 fun ProfileModScreenContainer(
     modifier: Modifier = Modifier,
     viewModel: ProfileModViewModel = hiltViewModel(),
-    selectedPhotoId: String = "",
+    selectedPhotoId: String? = null,
     backToProfile: () -> Unit = {},
     onClickComplete: () -> Unit = { },
     onNavigateToCustomGallery: () -> Unit = {},
@@ -82,7 +82,9 @@ fun ProfileModScreenContainer(
     val context = LocalContext.current
 
     LaunchedEffect(selectedPhotoId) {
-        viewModel.updateProfileImage(selectedPhotoId)
+        if (!selectedPhotoId.isNullOrBlank() && state.originalPhotoUri != selectedPhotoId) {
+            viewModel.updateProfileImage(selectedPhotoId)
+        }
     }
 
     viewModel.collectSideEffect { effect ->
@@ -104,7 +106,7 @@ fun ProfileModScreenContainer(
 
             is ProfileModSideEffect.UpdateProfileImage -> {
                 selectedPhotoId.let {
-                    viewModel.updateProfileImage(selectedPhotoId)
+                    viewModel.updateProfileImage(selectedPhotoId ?: "")
                 }
             }
 
@@ -479,14 +481,16 @@ fun ProfileModScreen(
                 enabledTextColor = AconTheme.color.White,
                 onClick = onSaveClicked,
                 isEnabled =
-                (state.selectedPhotoUri != state.originalPhotoUri) ||
-                        (state.nickNameState != state.originalNickname && state.nicknameStatus == NicknameStatus.Valid) ||
-                        (
-                                (state.birthdayState != state.originalBirthday && state.birthdayStatus == BirthdayStatus.Valid) ||
-                                        (state.originalBirthday.isNotEmpty() && state.birthdayState.isEmpty()) ||
-                                        (state.originalBirthday.isEmpty() && state.birthdayState.isNotEmpty() &&
-                                                state.birthdayStatus == BirthdayStatus.Valid)
-                                )
+                (
+                        (state.selectedPhotoUri != state.originalPhotoUri) ||
+                                (state.nickNameState != state.originalNickname && state.nicknameStatus == NicknameStatus.Valid) ||
+                                (
+                                        (state.birthdayState != state.originalBirthday && state.birthdayStatus == BirthdayStatus.Valid) ||
+                                                (state.originalBirthday.isNotEmpty() && state.birthdayState.isEmpty()) ||
+                                                (state.originalBirthday.isEmpty() && state.birthdayState.isNotEmpty() &&
+                                                        state.birthdayStatus == BirthdayStatus.Valid)
+                                        )
+                        ) && state.nickNameState.isNotEmpty()
             )
         }
     }

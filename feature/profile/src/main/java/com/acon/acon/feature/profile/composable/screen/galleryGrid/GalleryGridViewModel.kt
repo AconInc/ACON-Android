@@ -46,6 +46,10 @@ class GalleryGridViewModel @Inject constructor(
         return photoList
     }
 
+    fun onConfirmSelected(photoUri: String) = intent {
+        postSideEffect(GalleryGridSideEffect.NavigateToPhotoCropScreen(photoUri))
+    }
+
     fun loadPhotos(albumId: String) = intent {
         val photos = getPhotoList(albumId, application.applicationContext)
         reduce { state.copy(photoList = photos) }
@@ -63,7 +67,7 @@ data class GalleryGridState(
 )
 
 sealed interface GalleryGridSideEffect {
-    data class NavigateToPhotoCropScreen(val photoUri: String) : GalleryGridSideEffect //이거 안쓰네..
+    data class NavigateToPhotoCropScreen(val photoUri: String) : GalleryGridSideEffect
 }
 
 
