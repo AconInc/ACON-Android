@@ -481,14 +481,16 @@ fun ProfileModScreen(
                 enabledTextColor = AconTheme.color.White,
                 onClick = onSaveClicked,
                 isEnabled =
-                (state.selectedPhotoUri != state.originalPhotoUri) ||
-                        (state.nickNameState != state.originalNickname && state.nicknameStatus == NicknameStatus.Valid) ||
-                        (
-                                (state.birthdayState != state.originalBirthday && state.birthdayStatus == BirthdayStatus.Valid) ||
-                                        (state.originalBirthday.isNotEmpty() && state.birthdayState.isEmpty()) ||
-                                        (state.originalBirthday.isEmpty() && state.birthdayState.isNotEmpty() &&
-                                                state.birthdayStatus == BirthdayStatus.Valid)
-                                )
+                (
+                        (state.selectedPhotoUri != state.originalPhotoUri) ||
+                                (state.nickNameState != state.originalNickname && state.nicknameStatus == NicknameStatus.Valid) ||
+                                (
+                                        (state.birthdayState != state.originalBirthday && state.birthdayStatus == BirthdayStatus.Valid) ||
+                                                (state.originalBirthday.isNotEmpty() && state.birthdayState.isEmpty()) ||
+                                                (state.originalBirthday.isEmpty() && state.birthdayState.isNotEmpty() &&
+                                                        state.birthdayStatus == BirthdayStatus.Valid)
+                                        )
+                        ) && state.nickNameState.isNotEmpty()
             )
         }
     }
