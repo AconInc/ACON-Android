@@ -7,3 +7,7 @@ plugins {
 android {
     namespace = "com.acon.acon.core.designsystem"
 }
+
+dependencies {
+    implementation(libs.lottie.compose)
+}

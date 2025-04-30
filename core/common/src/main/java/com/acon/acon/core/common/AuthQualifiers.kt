@@ -20,9 +20,5 @@ annotation class TokenInterceptor
 
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
-annotation class ResponseInterceptor
-
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
 annotation class NaverAuthInterceptor
 
