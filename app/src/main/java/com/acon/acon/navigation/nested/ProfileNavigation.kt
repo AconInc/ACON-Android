@@ -106,7 +106,7 @@ internal fun NavGraphBuilder.profileNavigation(
                 onBackClicked = {
                     navController.popBackStack()
                 },
-                onConfirmSelected = { photoId ->
+                onNavigateToPhotoCrop = { photoId ->
                     navController.navigate(ProfileRoute.PhotoCrop(photoId))
                 }
             )

@@ -41,7 +41,7 @@ fun GalleryGridContainer(
     albumId: String,
     albumName: String,
     onBackClicked: () -> Unit = {},
-    onConfirmSelected: (String) -> Unit = {},
+    onNavigateToPhotoCrop: (String) -> Unit = {},
 ){
     val state = viewModel.collectAsState().value
 
@@ -53,7 +53,7 @@ fun GalleryGridContainer(
         when(it) {
             is GalleryGridSideEffect.NavigateToPhotoCropScreen -> {
                 state.selectedPhotoUri?.let { selectedPhotoUri ->
-                    onConfirmSelected(selectedPhotoUri.toString())
+                    onNavigateToPhotoCrop(selectedPhotoUri.toString())
                 }
             }
         }
