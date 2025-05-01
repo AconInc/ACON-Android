@@ -1,8 +1,13 @@
 name: Create Jira Task
+
 on:
   issues:
     types:
       - opened
+      
+permissions:
+  issues: write
+  
 jobs:
   jira-sync:
     name: Create Jira Task
