@@ -12,17 +12,9 @@ body:
       required: true
 
   - type: input
-    id: startDate
-    attributes:
-      label: '🟢 시작일'
-      placeholder: '2025-05-01'
-    validations:
-      required: false
-
-  - type: input
     id: dueDate
     attributes:
-      label: '🔴 마감일'
+      label: '🗓️ 마감일'
       placeholder: '2025-05-07'
     validations:
       required: false
