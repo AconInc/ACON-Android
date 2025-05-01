@@ -55,6 +55,7 @@ jobs:
               "parent": {
                 "key": "${{ steps.issue-parser.outputs.issueparser_epicId }}"
               }
+              "duedate": "${{ steps.issue-parser.outputs.issueparser_dueDate }}",
             }
 
       - name: Update issue title
