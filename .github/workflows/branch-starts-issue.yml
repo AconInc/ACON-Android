@@ -1,4 +1,4 @@
-name: Move Jira Issue to In Progress on branch create
+name: Move Jira Issue to "In Progress"
 
 on:
   create:
@@ -53,4 +53,4 @@ jobs:
         uses: atlassian/gajira-transition@v3
         with:
           issue: ${{ steps.jira-key.outputs.jira_key }}
-          transition: '21'
+          transitionId: '21'
