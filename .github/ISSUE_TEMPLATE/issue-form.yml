@@ -1,7 +1,6 @@
 name: '이슈 생성'
 description: '이슈 생성과 동시에 Jira와 연동됩니다.'
-labels: [feat]
-title: '이슈 제목을 작성해주세요'
+title: '이슈 제목'
 body:
   - type: input
     id: epicId
