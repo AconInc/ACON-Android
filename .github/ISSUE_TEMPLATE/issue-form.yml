@@ -1,0 +1,21 @@
+name: '이슈 생성'
+description: '이슈 생성과 동시에 Jira와 연동됩니다.'
+labels: [feat]
+title: '이슈 제목을 작성해주세요'
+body:
+  - type: input
+    id: epicId
+    attributes:
+      label: '💎 에픽 ID'
+      description: '에픽 ID를 입력해주세요'
+      placeholder: 'KAN-1'
+    validations:
+      required: true
+      
+  - type: textarea
+    id: description
+    attributes:
+      label: '📝 상세 내용'
+      description: '이슈에 대해서 설명해주세요'
+    validations:
+      required: false
