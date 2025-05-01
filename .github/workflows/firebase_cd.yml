@@ -3,15 +3,9 @@ name: Firebase CD
 on:
   workflow_dispatch:
     inputs:
-      major:
-        description: 'Major version'
-        required: true
-      minor:
-        description: 'Minor version'
-        required: true
-      patch:
-        description: 'Patch version'
-        required: true
+      releaseNotes:
+        description: 'Release Notes'
+        required: false
 
 jobs:
   deploy:
@@ -38,7 +32,7 @@ jobs:
          restore-keys: |
           ${{ runner.os }}-gradle-
 
-     - name: Save Keystore
+     - name: Decode and save Keystore
        run: |
          echo "${{ secrets.JKS_BASE64 }}" > keystore.b64
          base64 -d -i keystore.b64 > keystore.jks
@@ -51,26 +45,9 @@ jobs:
         
      - name: Access Google-Service file
        run: echo '${{ secrets.GOOGLE_SERVICES_JSON }}' > ./app/google-services.json
-
-     - name: Debug - Check keystore file size
-       run: ls -lh keystore.jks
-
-     - name: Debug - Check SHA256 of keystore
-       run: sha256sum keystore.jks
-
-     - name: Debug - Check local.properties
-       run: cat local.properties
        
      - name: Build with Gradle
        run: ./gradlew assembleRelease
-
-     - name: Rename APK file
-       run: |
-         major=${{ github.event.inputs.major }}
-         minor=${{ github.event.inputs.minor }}
-         patch=${{ github.event.inputs.patch }}
-         formatted_version="${major}_${minor}_${patch}"
-         mv app/build/outputs/apk/release/app-release.apk app/build/outputs/apk/release/Acon-${formatted_version}.apk
 
      - name: Upload artifact to Firebase App Distribution
        uses: wzieba/Firebase-Distribution-Github-Action@v1
@@ -78,4 +55,5 @@ jobs:
          appId: ${{ secrets.FIREBASE_APP_ID }}
          serviceCredentialsFileContent: ${{ secrets.CREDENTIAL_FILE_CONTENT }}
          groups: Acon
-         file: app/build/outputs/apk/release/Acon-${{ github.event.inputs.major }}_${{ github.event.inputs.minor }}_${{ github.event.inputs.patch }}.apk
+         releaseNotes: ${{ github.event.inputs.releaseNotes }}
+         file: app/build/outputs/apk/release/app-release.apk

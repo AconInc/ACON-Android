@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="signin_login_failed_toast">로그인에 실패했습니다.</string>
+
+    <!-- out of service area -->
+    <string name="out_of_service_area_name">서비스 불가지역</string>
+    <string name="out_of_service_area_content_description">서비스가 불가능한 지역에 있습니다.</string>
+    <string name="out_of_service_area_content">앗! 서비스 지원이 불가능한 지역에 있어요</string>
+
+    <string name="spot_name">동네 이름</string>
+    <string name="spot_recommendation_description">지금, 나에게 딱 맞는 공간들이에요</string>
+    <string name="matching_rate">취향 일치율 %s%%</string>
+    <string name="restaurant">음식점</string>
+    <string name="cafe">카페</string>
+    <string name="walking_time">%s분</string>
+    <string name="alert_no_spot">앗! 일치하는 도토리 맛집이 없어요</string>
+    <string name="alert_max_spot_count">장소는 최대 6순위까지만 제공됩니다</string>
+
+    <string name="before_sales">영업전</string>
+    <string name="after_business">영업중</string>
+    <string name="max_acon_count">999+</string>
+    <string name="font_width_text">8888</string>
+
+    <string name="spot_detail_navigate_button">길 찾기</string>
+    <string name="spot_gps_icon">위치 아이콘</string>
+    <string name="spot_no_menu_image">메뉴 기본 사진(없음)</string>
+    <string name="spot_menu_image">메뉴 사진</string>
+    <string name="spot_store_image">가게 사진</string>
+    <string name="spot_detail_tab_menu">메뉴</string>
+    <string name="local_acon_content_description">로컬 도토리</string>
+    <string name="visitor_acon_content_description">로컬 도토리</string>
+    <string name="top_button_description">최상단 이동 버튼</string>
+    <string name="topbar_back_button_description">탑 바 뒤로가기 버튼</string>
+
+    <string name="korean">한식</string>
+    <string name="chinese">중식</string>
+    <string name="japanese">일식</string>
+    <string name="western">양식</string>
+    <string name="korean_street">분식</string>
+    <string name="asian">아시안</string>
+    <string name="bar">술/bar</string>
+    <string name="exclude_franchise">프랜차이즈 제외</string>
+
+    <string name="family">가족</string>
+    <string name="date">연인</string>
+    <string name="friend">친구</string>
+    <string name="alone">혼자</string>
+    <string name="group">단체</string>
+
+    <string name="large">대형</string>
+    <string name="good_view">뷰 좋은 곳</string>
+    <string name="dessert">디저트</string>
+    <string name="terrace">테라스</string>
+
+    <string name="meeting">만남용</string>
+    <string name="study">공부용</string>
+
+    <string name="filter_detail">상세 조건</string>
+    <string name="visit_spot">방문 장소</string>
+    <string name="spot_purpose">방문 목적</string>
+    <string name="people_together">함께하는 사람</string>
+    <string name="available_walking_time">도보 가능 거리</string>
+    <string name="price_range">가격대</string>
+
+    <string name="under_5_minutes">5분 이내</string>
+    <string name="under_10_minutes">10분</string>
+    <string name="under_15_minutes">15분</string>
+    <string name="under_20_minutes">20분</string>
+    <string name="over_20_minutes">25분 이상</string>
+
+    <string name="under_3000">3천원 이하</string>
+    <string name="under_5000">5천원 이하</string>
+    <string name="under_10000">1만원</string>
+    <string name="under_30000">3만원</string>
+    <string name="under_50000">5만원</string>
+    <string name="over_10000">1만원 이상</string>
+    <string name="over_50000">5만원 이상</string>
+
+    <string name="filter_reset">초기화</string>
+    <string name="filter_see_result">결과보기</string>
+</resources>

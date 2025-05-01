@@ -22,6 +22,7 @@ output.json
 # IntelliJ
 *.iml
 .idea/
+.idea/deploymentTargetSelector.xml
 misc.xml
 deploymentTargetDropDown.xml
 render.experimental.xml
@@ -150,6 +151,8 @@ obj/
 .idea/gradle.xml
 .idea/jarRepositories.xml
 .idea/navEditor.xml
+.idea/*.iml
+.idea/appInsightsSettings.xml
 
 # Legacy Eclipse project files
 .classpath

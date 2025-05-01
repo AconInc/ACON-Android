@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="no_permission_title">\'acon\'에 대해 위치접근\n 권한이 없습니다</string>
+    <string name="no_permission_content">설정에서 정확한 위치 권한을 허용해주세요</string>
+    <string name="go_to_setting">설정으로 가기</string>
+    <string name="toast_back_handler_close_app">한 번 더 누르면 앱이 종료됩니다.</string>
+
+    <string name="photo_permission_alert_title">\'acon\'에 대해 라이브러리\n읽기\/쓰기 권한이 없어요</string>
+    <string name="photo_permission_alert_subtitle">설정에서 라이브러리 읽기\/쓰기\n권한을 켜시겠어요?</string>
+    <string name="photo_permission_alert_left_btn">취소</string>
+    <string name="photo_permission_alert_right_btn">설정으로 가기</string>
+</resources>

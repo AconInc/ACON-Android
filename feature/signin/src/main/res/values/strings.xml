@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="signin_logo_title">매번 맛집을 찾느라\n고민중인 당신을 위한 지도</string>
+    <string name="signin_logo_title_content_description">acon 로고 이미지</string>
+    <string name="signin_policy">가입을 진행할 경우, 아래의 정책에 대해 동의한 것으로 간주합니다.</string>
+    <string name="signin_terms_of_service">이용약관</string>
+    <string name="signin_privacy_policy">개인정보처리방침</string>
+    <string name="signin_topbar_text">건너뛰기</string>
+    <string name="signin_login_failed_toast">로그인에 실패했습니다.</string>
+
+    <string name="splash_text">매번 맛집을 찾느라\n고민중인 당신을 위한 지도</string>
+    <string name="splash_text_animation_label">스플래시 텍스트 애니메이션</string>
+
+</resources>
