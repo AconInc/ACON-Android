@@ -42,7 +42,7 @@ jobs:
             ${{ steps.issue-parser.outputs.issueparser_description }}
           mode: md2jira
 
-      - name: Create Issue
+      - name: Create Task
         id: create
         uses: atlassian/gajira-create@v3
         with:
