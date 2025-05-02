@@ -8,6 +8,10 @@ on:
 permissions:
   issues: write
   
+env:
+  USERMAP: ${{ secrets.JIRA_USERMAP }}
+  ACTOR: ${{ github.actor }}
+  
 jobs:
   jira-sync:
     name: Create Jira Task
@@ -42,6 +46,22 @@ jobs:
             ${{ steps.issue-parser.outputs.issueparser_description }}
           mode: md2jira
 
+      - name: Extract Jira accountId from USERMAP
+        id: extract
+        run: |
+          #!/bin/bash
+          IFS=',' read -ra PAIRS <<< "$USERMAP"
+          for pair in "${PAIRS[@]}"; do
+            KEY="${pair%%=*}"
+            VALUE="${pair#*=}"
+            if [[ "$KEY" == "$ACTOR" ]]; then
+              echo "account_id=$VALUE" >> $GITHUB_OUTPUT
+              exit 0
+            fi
+          done
+          echo "❌ No mapping found for $ACTOR"
+          exit 1
+          
       - name: Create Task
         id: create
         uses: atlassian/gajira-create@v3
@@ -54,6 +74,9 @@ jobs:
             {
               "parent": {
                 "key": "${{ steps.issue-parser.outputs.issueparser_epicId }}"
+              },
+              "assignee": {
+                "accountId": "${{ steps.extract.outputs.account_id }}"
               },
               "duedate": "${{ steps.issue-parser.outputs.issueparser_dueDate }}"
             }
