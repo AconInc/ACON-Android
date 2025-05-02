@@ -1,0 +1,62 @@
+name: Move Jira Issue to "In Progress"
+
+on:
+  create:
+    branches-ignore:
+      - 'release'
+  push:
+    branches-ignore:
+      - 'release'
+      - 'develop'
+      - 'main'
+
+jobs:
+  move-to-in-progress:
+    if: github.event_name == 'create' || github.event.created == true
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Extract GitHub issue number from branch name
+        id: extract
+        run: |
+          BRANCH_NAME="${GITHUB_REF#refs/heads/}"
+
+          if [[ "$BRANCH_NAME" =~ \#([0-9]+) ]]; then
+            ISSUE_NUMBER="${BASH_REMATCH[1]}"
+            echo "issue_number=$ISSUE_NUMBER" >> $GITHUB_OUTPUT
+          else
+            echo "No GitHub issue number found in branch name."
+            exit 0
+          fi
+
+      - name: Get GitHub issue title
+        id: get-issue
+        uses: octokit/request-action@v2.x
+        with:
+          route: GET /repos/${{ github.repository }}/issues/${{ steps.extract.outputs.issue_number }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract Jira Issue Key from title
+        id: jira-key
+        run: |
+          TITLE="${{ fromJson(steps.get-issue.outputs.data).title }}"
+          if [[ "$TITLE" =~ \[([A-Z]+-[0-9]+)\] ]]; then
+            echo "jira_key=${BASH_REMATCH[1]}" >> $GITHUB_OUTPUT
+          else
+            echo "No Jira key found in issue title."
+            exit 0
+          fi
+
+      - name: Jira Login
+        uses: atlassian/gajira-login@v3
+        env:
+          JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
+          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+          JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
+
+      - name: Transition to In Progress
+        uses: atlassian/gajira-transition@v3
+        with:
+          issue: ${{ steps.jira-key.outputs.jira_key }}
+          transitionId: '21'
