@@ -8,10 +8,6 @@ on:
 permissions:
   issues: write
   
-env:
-  USERMAP: ${{ secrets.JIRA_USERMAP }}
-  ACTOR: ${{ github.actor }}
-  
 jobs:
   jira-sync:
     name: Create Jira Task
@@ -45,23 +41,30 @@ jobs:
 
             ${{ steps.issue-parser.outputs.issueparser_description }}
           mode: md2jira
-
-      - name: Extract Jira accountId from USERMAP
-        id: extract
+            
+      - name: Build fields JSON
+        id: issue-fields
         run: |
-          #!/bin/bash
-          IFS=',' read -ra PAIRS <<< "$USERMAP"
-          for pair in "${PAIRS[@]}"; do
-            KEY="${pair%%=*}"
-            VALUE="${pair#*=}"
-            if [[ "$KEY" == "$ACTOR" ]]; then
-              echo "account_id=$VALUE" >> $GITHUB_OUTPUT
-              exit 0
-            fi
-          done
-          echo "❌ No mapping found for $ACTOR"
-          exit 1
-          
+          EPIC_ID="${{ steps.issue-parser.outputs.issueparser_epicId }}"
+          DUE_DATE="${{ steps.issue-parser.outputs.issueparser_dueDate }}"
+          LABELS='${{ toJson(github.event.issue.labels.*.name) }}'
+          DESCRIPTION="${{ steps.md2jira.outputs.output-text }}"
+
+          FIELDS=$(jq -nc \
+            --arg parent "$EPIC_ID" \
+            --arg description "$DESCRIPTION" \
+            '{
+              parent: { key: $parent },
+              description: $description
+            }'
+          )
+
+          [ -n "$DUE_DATE" ] && FIELDS=$(echo "$FIELDS" | jq --arg duedate "$DUE_DATE" -c '. + { duedate: $duedate }')
+          [ "$(echo "$LABELS" | jq 'length')" -gt 0 ] && FIELDS=$(echo "$FIELDS" | jq --argjson labels "$LABELS" -c '. + { labels: $labels }')
+
+          FIELDS=$(echo "$FIELDS" | jq -c '.')
+          echo "fields=$FIELDS" >> $GITHUB_OUTPUT
+
       - name: Create Task
         id: create
         uses: atlassian/gajira-create@v3
@@ -70,16 +73,7 @@ jobs:
           issuetype: Task
           summary: '${{ github.event.issue.title }}'
           description: '${{ steps.md2jira.outputs.output-text }}'
-          fields: |
-            {
-              "parent": {
-                "key": "${{ steps.issue-parser.outputs.issueparser_epicId }}"
-              },
-              "assignee": {
-                "accountId": "${{ steps.extract.outputs.account_id }}"
-              },
-              "duedate": "${{ steps.issue-parser.outputs.issueparser_dueDate }}"
-            }
+          fields: '${{ steps.issue-fields.outputs.fields }}'
 
       - name: Update issue title
         uses: actions-cool/issues-helper@v3
