@@ -45,7 +45,7 @@ fun ProfilePhotoBox(
                     photoUri.startsWith("content://") -> {
                         Image(
                             painter = rememberAsyncImagePainter(Uri.parse(photoUri)),
-                            contentDescription = "선택한 프로필 사진",
+                            contentDescription = stringResource(R.string.content_description_settings),
                             modifier = Modifier.fillMaxSize(),
                             contentScale = ContentScale.Crop,
                             alignment = Alignment.Center
@@ -55,7 +55,7 @@ fun ProfilePhotoBox(
                     photoUri.startsWith("https://") -> {
                         AsyncImage(
                             model = photoUri,
-                            contentDescription = "선택한 프로필 사진",
+                            contentDescription = stringResource(R.string.content_description_settings),
                             modifier = Modifier.fillMaxSize(),
                             contentScale = ContentScale.Crop,
                             alignment = Alignment.Center

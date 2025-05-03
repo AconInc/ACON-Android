@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -31,6 +32,7 @@ import coil3.compose.rememberAsyncImagePainter
 import com.acon.acon.core.designsystem.component.topbar.AconTopBar
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
+import com.acon.acon.feature.profile.R
 import com.acon.acon.feature.profile.composable.screen.galleryList.Album
 import com.acon.acon.feature.profile.composable.screen.galleryList.GalleryListState
 import com.acon.acon.feature.profile.composable.screen.galleryList.GalleryListViewModel
@@ -78,13 +80,13 @@ fun GalleryListScreen(
                 IconButton(onClick = onBackClicked) {
                     Image(
                         imageVector = ImageVector.vectorResource(id = com.acon.acon.core.designsystem.R.drawable.ic_arrow_left_28),
-                        contentDescription = "Back",
+                        contentDescription = stringResource(R.string.content_description_back),
                     )
                 }
             },
             content = {
                 Text(
-                    text = "나의 앨범",
+                    text = stringResource(R.string.my_album),
                     style = AconTheme.typography.head5_22_sb,
                     color = AconTheme.color.White
                 )
@@ -111,7 +113,7 @@ fun AlbumItem(album: Album, onAlbumSelected: (String, String) -> Unit) {
     ) {
         Image(
             painter = rememberAsyncImagePainter(album.coverUri),
-            contentDescription = "앨범 대표 이미지",
+            contentDescription = stringResource(R.string.content_description_thumbnail),
             modifier = Modifier
                 .size(64.dp)
                 .aspectRatio(1f).clip(RoundedCornerShape(6.dp))
@@ -127,7 +129,7 @@ fun AlbumItem(album: Album, onAlbumSelected: (String, String) -> Unit) {
                 color = AconTheme.color.White
             )
             Text(
-                text = "00000",
+                text = stringResource(R.string.default_album_photo_count),
                 style = AconTheme.typography.body2_14_reg,
                 color = AconTheme.color.Gray4
             )
