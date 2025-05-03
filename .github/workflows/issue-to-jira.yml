@@ -65,15 +65,13 @@ jobs:
       - name: Build fields JSON
         id: issue-fields
         run: |
-          # parser에서 받아온 값들
           EPIC_ID="${{ steps.issue-parser.outputs.issueparser_epicId }}"
           DUE_DATE="${{ steps.issue-parser.outputs.issueparser_dueDate }}"
           LABELS='${{ toJson(github.event.issue.labels.*.name) }}'
-          # md2jira 출력 텍스트를 JSON string으로 인코딩
           DESCRIPTION=$(echo "${{ steps.md2jira.outputs.output-text }}" | jq -Rs .)
 
-          # 기본 필드 객체 생성
-          FIELDS=$(jq -n \
+          # compact output(-c) 로 한 줄 JSON 생성
+          FIELDS=$(jq -nc \
             --arg parent "$EPIC_ID" \
             --arg accountId "${{ steps.extract.outputs.account_id }}" \
             --arg description "$DESCRIPTION" \
@@ -84,19 +82,10 @@ jobs:
             }'
           )
 
-          # duedate가 있으면 추가
-          if [ -n "$DUE_DATE" ]; then
-            FIELDS=$(echo "$FIELDS" | jq --arg duedate "$DUE_DATE" '. + { duedate: $duedate }')
-          fi
-
-          # labels 배열 길이가 0 초과면 추가
-          if [ "$(echo "$LABELS" | jq 'length')" -gt 0 ]; then
-            FIELDS=$(echo "$FIELDS" | jq --argjson labels "$LABELS" '. + { labels: $labels }')
-          fi
+          [ -n "$DUE_DATE" ] && FIELDS=$(echo "$FIELDS" | jq --arg duedate "$DUE_DATE" -c '. + { duedate: $duedate }')
+          [ "$(echo "$LABELS" | jq 'length')" -gt 0 ] && FIELDS=$(echo "$FIELDS" | jq --argjson labels "$LABELS" -c '. + { labels: $labels }')
 
           echo "fields=$FIELDS" >> $GITHUB_OUTPUT
-
-
 
       - name: Create Task
         id: create
