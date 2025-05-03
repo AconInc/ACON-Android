@@ -64,10 +64,9 @@ jobs:
             
       - name: Build fields JSON
         id: issue-fields
-        env:
-          DESCRIPTION: ${{ steps.md2jira.outputs.output-text }}
         run: |
           LABELS=$(jq -c <<< '${{ toJson(github.event.issue.labels.*.name) }}')
+          DESCRIPTION=$(jq -Rs <<< '${{ steps.md2jira.outputs.output-text }}')
       
           FIELDS=$(jq -n \
             --arg parent "${{ steps.issue-parser.outputs.issueparser_epicId }}" \
