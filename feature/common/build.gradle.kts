@@ -9,4 +9,9 @@ android {
 
 dependencies {
     implementation(projects.core.designsystem)
+
+    implementation(libs.play.services.location)
+    implementation(libs.play.services.coroutines)
+
+    implementation(libs.accompanist.permissions)
 }
