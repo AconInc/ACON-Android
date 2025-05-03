@@ -1,10 +1,15 @@
 package com.acon.acon.feature.spot.screen.spotlist.composable
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -18,6 +23,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
@@ -37,9 +43,9 @@ import com.acon.acon.core.designsystem.component.button.v2.AconFilledButton
 @Composable
 internal fun SpotItemV2(
     spot: SpotV2,
+    onItemClick: (SpotV2) -> Unit,
+    onFindWayButtonClick: (spotId: Long) -> Unit,
     modifier: Modifier = Modifier,
-    onItemClick: (SpotV2) -> Unit = {},
-    onFindWayButtonClick: (spotId: Long) -> Unit = {},
 ) {
 
     val textMeasurer = rememberTextMeasurer()
@@ -61,59 +67,91 @@ internal fun SpotItemV2(
             onItemClick(spot)
         },
     ) {
-        Column(
-            modifier = Modifier.padding(20.dp)
+        Box(
+            modifier = Modifier.fillMaxSize()
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
+            Box(
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .fillMaxWidth()
+                    .fillMaxHeight(.25f)
+                    .background(
+                        brush = Brush.verticalGradient(
+                            listOf(
+                                AconTheme.color.Gray900,
+                                AconTheme.color.Gray900.copy(alpha = 0.0f),
+                            )
+                        )
+                    )
+            )
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .fillMaxWidth()
+                    .fillMaxHeight(.25f)
+                    .background(
+                        brush = Brush.verticalGradient(
+                            listOf(
+                                AconTheme.color.Gray900.copy(alpha = 0.0f),
+                                AconTheme.color.Gray900
+                            )
+                        )
+                    )
+            )
+            Column(
+                modifier = Modifier.padding(20.dp)
             ) {
-                Text(
-                    text = spot.name,
-                    style = AconTheme.typography.Title4,
-                    fontWeight = FontWeight.SemiBold,
-                    color = AconTheme.color.White,
-                    modifier = Modifier.padding()
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = spot.name,
+                        style = AconTheme.typography.Title4,
+                        fontWeight = FontWeight.SemiBold,
+                        color = AconTheme.color.White,
+                        modifier = Modifier.padding()
+                    )
+                    Spacer(modifier = Modifier.weight(1f))
+                    Icon(
+                        imageVector = ImageVector.vectorResource(R.drawable.acon_line),
+                        contentDescription = stringResource(R.string.dotori_count_content_description),
+                        tint = AconTheme.color.Gray50
+                    )
+                    Text(
+                        text = spot.dotori,
+                        style = AconTheme.typography.Body1,
+                        fontWeight = FontWeight.W400,
+                        color = AconTheme.color.White,
+                        modifier = Modifier.padding(start = 2.dp).width(
+                            with(LocalDensity.current) {
+                                textLayoutResult.size.width.toDp()
+                            }
+                        ),
+                        textAlign = TextAlign.End
+                    )
+                }
                 Spacer(modifier = Modifier.weight(1f))
-                Icon(
-                    imageVector = ImageVector.vectorResource(R.drawable.acon_line),
-                    contentDescription = stringResource(R.string.dotori_count_content_description),
-                    tint = AconTheme.color.Gray50
-                )
-                Text(
-                    text = spot.dotori,
-                    style = AconTheme.typography.Body1,
-                    fontWeight = FontWeight.W400,
-                    color = AconTheme.color.White,
-                    modifier = Modifier.padding(start = 2.dp).width(
-                        with(LocalDensity.current) {
-                            textLayoutResult.size.width.toDp()
-                        }
+                AconFilledButton(
+                    modifier = Modifier.align(Alignment.End).defaultHazeEffect(
+                        hazeState = LocalHazeState.current,
+                        tintColor = AconTheme.color.GlassWhiteDefault
                     ),
-                    textAlign = TextAlign.End
-                )
-            }
-            Spacer(modifier = Modifier.weight(1f))
-            AconFilledButton(
-                modifier = Modifier.align(Alignment.End).defaultHazeEffect(
-                    hazeState = LocalHazeState.current,
-                    tintColor = AconTheme.color.GlassWhiteDefault
-                ),
-                onClick = {
-                    onFindWayButtonClick(spot.id)
-                },
-                contentPadding = PaddingValues(
-                    horizontal = 23.dp,
-                    vertical = 8.dp
-                ),
-            ) {
-                Text(
-                    text = "${spot.walkingTime} ${stringResource(R.string.find_way)}",
-                    style = AconTheme.typography.Body1,
-                    fontWeight = FontWeight.SemiBold,
-                    color = AconTheme.color.White,
-                )
+                    onClick = {
+                        onFindWayButtonClick(spot.id)
+                    },
+                    contentPadding = PaddingValues(
+                        horizontal = 23.dp,
+                        vertical = 8.dp
+                    ),
+                ) {
+                    Text(
+                        text = "${spot.walkingTime} ${stringResource(R.string.find_way)}",
+                        style = AconTheme.typography.Body1,
+                        fontWeight = FontWeight.SemiBold,
+                        color = AconTheme.color.White,
+                    )
+                }
             }
         }
     }
@@ -129,6 +167,9 @@ private fun SpotItemV2Preview() {
             image = "",
             dotori = "+9999",
             walkingTime = "도보 10분"
-        )
+        ),
+        onItemClick = {},
+        onFindWayButtonClick = {},
+        modifier = Modifier.height(600.dp)
     )
 }
