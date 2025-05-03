@@ -278,7 +278,7 @@ fun ProfileModScreen(
                             photoUri = state.selectedPhotoUri
                         )
                         Icon(
-                            imageVector = ImageVector.vectorResource(R.drawable.and_ic_profile_img_edit),
+                            imageVector = ImageVector.vectorResource(com.acon.acon.core.designsystem.R.drawable.and_ic_profile_img_edit),
                             contentDescription = "Profile edit icon",
                             tint = Color.Unspecified,
                             modifier = Modifier
@@ -359,7 +359,7 @@ fun ProfileModScreen(
                                 is NicknameStatus.Empty -> {
                                     NicknameErrMessageRow(
                                         modifier = modifier,
-                                        iconRes = ImageVector.vectorResource(R.drawable.and_ic_error_20),
+                                        iconRes = ImageVector.vectorResource(com.acon.acon.core.designsystem.R.drawable.and_ic_error_20),
                                         errMessage = "닉네임을 입력해 주세요",
                                         textColor = AconTheme.color.Error_red1
                                     )
@@ -369,7 +369,7 @@ fun ProfileModScreen(
                                     status.errorTypes.forEach { error ->
                                         NicknameErrMessageRow(
                                             modifier = modifier,
-                                            iconRes = ImageVector.vectorResource(R.drawable.and_ic_error_20),
+                                            iconRes = ImageVector.vectorResource(com.acon.acon.core.designsystem.R.drawable.and_ic_error_20),
                                             errMessage = error.message,
                                             textColor = AconTheme.color.Error_red1
                                         )
@@ -379,7 +379,7 @@ fun ProfileModScreen(
                                 is NicknameStatus.Valid -> {
                                     NicknameErrMessageRow(
                                         modifier = modifier,
-                                        iconRes = ImageVector.vectorResource(R.drawable.and_ic_local_check_mark_20),
+                                        iconRes = ImageVector.vectorResource(com.acon.acon.core.designsystem.R.drawable.and_ic_local_check_mark_20),
                                         errMessage = "사용할 수 있는 닉네임이에요",
                                         textColor = AconTheme.color.Success_blue1
                                     )
@@ -453,7 +453,7 @@ fun ProfileModScreen(
                         is BirthdayStatus.Invalid -> {
                             NicknameErrMessageRow(
                                 modifier = modifier,
-                                iconRes = ImageVector.vectorResource(R.drawable.and_ic_error_20),
+                                iconRes = ImageVector.vectorResource(com.acon.acon.core.designsystem.R.drawable.and_ic_error_20),
                                 errMessage = status.errorMsg ?: "",
                                 textColor = AconTheme.color.Error_red1
                             )

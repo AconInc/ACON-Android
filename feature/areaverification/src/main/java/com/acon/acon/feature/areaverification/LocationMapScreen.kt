@@ -33,7 +33,7 @@ fun LocationMapScreen(
             position = LatLng(latitude, longitude)
             width = 80
             height = 100
-            icon = OverlayImage.fromResource(R.drawable.ic_mark_48)
+            icon = OverlayImage.fromResource(com.acon.acon.core.designsystem.R.drawable.ic_mark_48)
             this.map = map
         }
     }

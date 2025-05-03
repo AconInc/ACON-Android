@@ -110,7 +110,7 @@ fun SpotFilterBottomSheet(
     }
 
     val lottieComposition by rememberLottieComposition(
-        LottieCompositionSpec.RawRes(R.raw.lottie_progress_w)
+        LottieCompositionSpec.RawRes(com.acon.acon.core.designsystem.R.raw.lottie_progress_w)
     )
 
     fun resetCafeFilter() {

@@ -19,7 +19,6 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.feature.profile.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -52,7 +51,7 @@ fun CustomModalBottomSheet(
                 horizontalArrangement = Arrangement.Start
             ){
                 Icon(
-                    imageVector = ImageVector.vectorResource(R.drawable.and_ic_gallery_w_28),
+                    imageVector = ImageVector.vectorResource(com.acon.acon.core.designsystem.R.drawable.and_ic_gallery_w_28),
                     contentDescription = "onGallerySelect Icon",
                     tint = Color.Unspecified,
                     modifier = Modifier.padding(end = 28.dp)
@@ -76,7 +75,7 @@ fun CustomModalBottomSheet(
                 horizontalArrangement = Arrangement.Start
             ){
                 Icon(
-                    imageVector = ImageVector.vectorResource(R.drawable.and_ic_basic_profile_w_28),
+                    imageVector = ImageVector.vectorResource(com.acon.acon.core.designsystem.R.drawable.and_ic_basic_profile_w_28),
                     contentDescription = "onGallerySelect Icon",
                     tint = Color.Unspecified,
                     modifier = Modifier.padding(end = 28.dp)
