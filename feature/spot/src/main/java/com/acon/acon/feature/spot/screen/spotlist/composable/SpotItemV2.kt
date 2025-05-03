@@ -65,12 +65,10 @@ internal fun SpotItemV2(
             modifier = Modifier.fillMaxSize()
         ) {
             VerticalGradient()
-
             SpotImage(
                 spot = spot,
                 modifier = Modifier.fillMaxSize()
             )
-            
             SpotInfo(
                 spot = spot,
                 onFindWayButtonClick = onFindWayButtonClick,
