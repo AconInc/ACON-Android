@@ -20,7 +20,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
@@ -33,7 +32,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -44,6 +42,7 @@ import com.acon.acon.core.designsystem.blur.defaultHazeEffect
 import com.acon.acon.core.designsystem.component.button.v2.AconFilledButton
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.domain.model.spot.v2.SpotV2
+import com.feature.acon.common.compose.getTextSizeDp
 
 @Composable
 internal fun SpotItemV2(
@@ -91,15 +90,6 @@ private fun SpotInfo(
     modifier: Modifier = Modifier,
 ) {
 
-    val textMeasurer = rememberTextMeasurer()
-    val measureTextStyle = AconTheme.typography.Body1
-    val textLayoutResult = remember {
-        textMeasurer.measure(
-            text = "+9999",
-            style = measureTextStyle,
-        )
-    }
-
     Column(
         modifier = modifier
     ) {
@@ -127,7 +117,7 @@ private fun SpotInfo(
                 color = AconTheme.color.White,
                 modifier = Modifier.padding(start = 2.dp).width(
                     with(LocalDensity.current) {
-                        textLayoutResult.size.width.toDp()
+                        getTextSizeDp("+9999", AconTheme.typography.Body1).width
                     }
                 ),
                 textAlign = TextAlign.End
