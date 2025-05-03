@@ -83,7 +83,7 @@ jobs:
             }
             + (if $duedate != "" then { duedate: $duedate } else {} end)
             + (if (labels | length) > 0 then { labels: labels } else {} end)
-          )
+          ' )
       
           echo "fields=$FIELDS" >> $GITHUB_OUTPUT
 
