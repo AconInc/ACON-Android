@@ -66,7 +66,9 @@ jobs:
         id: issue-fields
         run: |
           LABELS=$(jq -c <<< '${{ toJson(github.event.issue.labels.*.name) }}')
-          DESCRIPTION=$(jq -Rs <<< '${{ steps.md2jira.outputs.output-text }}')
+      
+          echo '${{ steps.md2jira.outputs.output-text }}' > desc.txt
+          DESCRIPTION=$(jq -Rs . < desc.txt)
       
           FIELDS=$(jq -n \
             --arg parent "${{ steps.issue-parser.outputs.issueparser_epicId }}" \
@@ -84,6 +86,7 @@ jobs:
           )
       
           echo "fields=$FIELDS" >> $GITHUB_OUTPUT
+
 
       - name: Create Task
         id: create
