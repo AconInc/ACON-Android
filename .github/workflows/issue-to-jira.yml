@@ -8,10 +8,6 @@ on:
 permissions:
   issues: write
   
-env:
-  USERMAP: ${{ secrets.JIRA_USERMAP }}
-  ACTOR: ${{ github.actor }}
-  
 jobs:
   jira-sync:
     name: Create Jira Task
@@ -45,22 +41,6 @@ jobs:
 
             ${{ steps.issue-parser.outputs.issueparser_description }}
           mode: md2jira
-
-      - name: Extract Jira accountId from USERMAP
-        id: extract
-        run: |
-          #!/bin/bash
-          IFS=',' read -ra PAIRS <<< "$USERMAP"
-          for pair in "${PAIRS[@]}"; do
-            KEY="${pair%%=*}"
-            VALUE="${pair#*=}"
-            if [[ "$KEY" == "$ACTOR" ]]; then
-              echo "account_id=$VALUE" >> $GITHUB_OUTPUT
-              exit 0
-            fi
-          done
-          echo "❌ No mapping found for $ACTOR"
-          exit 1
             
       - name: Build fields JSON
         id: issue-fields
@@ -70,14 +50,11 @@ jobs:
           LABELS='${{ toJson(github.event.issue.labels.*.name) }}'
           DESCRIPTION=$(echo "${{ steps.md2jira.outputs.output-text }}" | jq -Rs .)
 
-          # compact output(-c) 로 한 줄 JSON 생성
           FIELDS=$(jq -nc \
             --arg parent "$EPIC_ID" \
-            --arg accountId "${{ steps.extract.outputs.account_id }}" \
             --arg description "$DESCRIPTION" \
             '{
               parent: { key: $parent },
-              assignee: { accountId: $accountId },
               description: $description
             }'
           )
