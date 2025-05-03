@@ -79,7 +79,7 @@ jobs:
                 "accountId": "${{ steps.extract.outputs.account_id }}"
               },
               "duedate": "${{ steps.issue-parser.outputs.issueparser_dueDate }}",
-              "labels": '${{ github.event.issue.labels.*.name }}'
+              "labels": ${{ toJson(github.event.issue.labels.*.name) }}
             }
 
       - name: Update issue title
