@@ -78,7 +78,8 @@ jobs:
               "assignee": {
                 "accountId": "${{ steps.extract.outputs.account_id }}"
               },
-              "duedate": "${{ steps.issue-parser.outputs.issueparser_dueDate }}"
+              "duedate": "${{ steps.issue-parser.outputs.issueparser_dueDate }}",
+              "labels": '${{ github.event.issue.labels.*.name }}'
             }
 
       - name: Update issue title
