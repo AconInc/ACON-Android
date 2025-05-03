@@ -48,7 +48,7 @@ jobs:
           EPIC_ID="${{ steps.issue-parser.outputs.issueparser_epicId }}"
           DUE_DATE="${{ steps.issue-parser.outputs.issueparser_dueDate }}"
           LABELS='${{ toJson(github.event.issue.labels.*.name) }}'
-          DESCRIPTION=$(echo "${{ steps.md2jira.outputs.output-text }}" | jq -Rs .)
+          DESCRIPTION="${{ steps.md2jira.outputs.output-text }}"
 
           FIELDS=$(jq -nc \
             --arg parent "$EPIC_ID" \
@@ -62,6 +62,7 @@ jobs:
           [ -n "$DUE_DATE" ] && FIELDS=$(echo "$FIELDS" | jq --arg duedate "$DUE_DATE" -c '. + { duedate: $duedate }')
           [ "$(echo "$LABELS" | jq 'length')" -gt 0 ] && FIELDS=$(echo "$FIELDS" | jq --argjson labels "$LABELS" -c '. + { labels: $labels }')
 
+          FIELDS=$(echo "$FIELDS" | jq -c '.')
           echo "fields=$FIELDS" >> $GITHUB_OUTPUT
 
       - name: Create Task
