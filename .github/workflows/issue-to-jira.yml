@@ -63,21 +63,22 @@ jobs:
           exit 1
 
       - name: Build fields JSON
-        id: issue-fields
+        id: build-fields
         run: |
+          LABELS=$(jq -c <<< '${{ toJson(github.event.issue.labels.*.name) }}')
           FIELDS=$(jq -n \
             --arg parent "${{ steps.issue-parser.outputs.issueparser_epicId }}" \
             --arg accountId "${{ steps.extract.outputs.account_id }}" \
             --arg summary "${{ github.event.issue.title }}" \
             --arg description "${{ steps.md2jira.outputs.output-text }}" \
-            --argjson labels $(jq -c <<< '${{ toJson(github.event.issue.labels.*.name) }}') \
-            --arg duedate "${{ steps.issue-parser.outputs.issueparser_dueDate }}" '
+            --arg duedate "${{ steps.issue-parser.outputs.issueparser_dueDate }}" \
+            --argjson labels "$LABELS" '
             {
               parent: { key: $parent },
-              assignee: { accountId: $accountId },
-              labels: $labels
-            } + 
-            (if $duedate != "" then { duedate: $duedate } else {} end)
+              assignee: { accountId: $accountId }
+            }
+            + (if $duedate != "" then { duedate: $duedate } else {} end)
+            + (if (labels | length) > 0 then { labels: labels } else {} end)
           )
           echo "fields=$FIELDS" >> $GITHUB_OUTPUT
 
