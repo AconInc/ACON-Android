@@ -1,13 +1,16 @@
 package com.acon.acon.feature.profile.composable.screen.profile
 
 import androidx.compose.runtime.Immutable
+import androidx.lifecycle.viewModelScope
 import com.acon.acon.core.utils.feature.base.BaseContainerHost
 import com.acon.acon.domain.model.profile.VerifiedArea
 import com.acon.acon.domain.repository.ProfileRepository
 import com.acon.acon.domain.repository.SocialRepository
 import com.acon.acon.domain.repository.UserRepository
+import com.acon.acon.domain.repository.local.LocalProfileRepository
 import com.acon.acon.domain.type.UserType
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.viewmodel.container
 import javax.inject.Inject
@@ -17,8 +20,11 @@ import kotlin.coroutines.cancellation.CancellationException
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     private val profileRepository: ProfileRepository,
+    private val localProfileRepository: LocalProfileRepository,
     private val userRepository: UserRepository
 ) : BaseContainerHost<ProfileUiState, ProfileUiSideEffect>() {
+
+    val updateProfileState = localProfileRepository.getProfileType()
 
     override val container =
         container<ProfileUiState, ProfileUiSideEffect>(ProfileUiState.Loading) {
@@ -29,6 +35,12 @@ class ProfileViewModel @Inject constructor(
                 }
             }
         }
+
+    fun resetUpdateProfileType() {
+        viewModelScope.launch {
+            localProfileRepository.resetProfileType()
+        }
+    }
 
     fun googleLogin(socialRepository: SocialRepository) = intent {
         socialRepository.googleLogin()
