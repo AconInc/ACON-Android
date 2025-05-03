@@ -61,7 +61,26 @@ jobs:
           done
           echo "❌ No mapping found for $ACTOR"
           exit 1
-          
+
+      - name: Build fields JSON
+        id: issue-fields
+        run: |
+          FIELDS=$(jq -n \
+            --arg parent "${{ steps.issue-parser.outputs.issueparser_epicId }}" \
+            --arg accountId "${{ steps.extract.outputs.account_id }}" \
+            --arg summary "${{ github.event.issue.title }}" \
+            --arg description "${{ steps.md2jira.outputs.output-text }}" \
+            --argjson labels $(jq -c <<< '${{ toJson(github.event.issue.labels.*.name) }}') \
+            --arg duedate "${{ steps.issue-parser.outputs.issueparser_dueDate }}" '
+            {
+              parent: { key: $parent },
+              assignee: { accountId: $accountId },
+              labels: $labels
+            } + 
+            (if $duedate != "" then { duedate: $duedate } else {} end)
+          )
+          echo "fields=$FIELDS" >> $GITHUB_OUTPUT
+
       - name: Create Task
         id: create
         uses: atlassian/gajira-create@v3
@@ -70,17 +89,7 @@ jobs:
           issuetype: Task
           summary: '${{ github.event.issue.title }}'
           description: '${{ steps.md2jira.outputs.output-text }}'
-          fields: |
-            {
-              "parent": {
-                "key": "${{ steps.issue-parser.outputs.issueparser_epicId }}"
-              },
-              "assignee": {
-                "accountId": "${{ steps.extract.outputs.account_id }}"
-              },
-              "duedate": "${{ steps.issue-parser.outputs.issueparser_dueDate }}",
-              "labels": ${{ toJson(github.event.issue.labels.*.name) }}
-            }
+          fields: '${{ steps.issue-fields.outputs.fields }}'
 
       - name: Update issue title
         uses: actions-cool/issues-helper@v3
