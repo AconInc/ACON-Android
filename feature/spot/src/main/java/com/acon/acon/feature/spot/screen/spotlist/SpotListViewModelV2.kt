@@ -10,6 +10,8 @@ import com.acon.acon.domain.repository.SpotRepository
 import com.acon.acon.domain.repository.UserRepository
 import com.acon.acon.domain.type.SpotType
 import com.acon.acon.domain.type.UserType
+import com.acon.acon.feature.spot.BuildConfig
+import com.acon.acon.feature.spot.mock.spotListUiStateMock
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.collectLatest
@@ -42,7 +44,12 @@ class SpotListViewModelV2 @Inject constructor(
 
     fun onNewLocationEmitted(location: Location) = intent {
         runOn<SpotListUiStateV2.Loading> {
-            // Repository Call
+            // TODO("Repository Call")
+            if (BuildConfig.DEBUG) {
+                reduce {
+                    spotListUiStateMock
+                }
+            }
         }
         runOn<SpotListUiStateV2.Success> {
             reduce {
@@ -56,6 +63,18 @@ class SpotListViewModelV2 @Inject constructor(
             reduce {
                 state.copy(selectedSpotType = spotType)
             }
+        }
+    }
+
+    fun onSpotClick(spot: SpotV2) = intent {
+        runOn<SpotListUiStateV2.Success> {
+            postSideEffect(SpotListSideEffectV2.NavigateToSpotDetailScreen(spot))
+        }
+    }
+
+    fun onTryFindWay(spotId: Long) = intent {
+        runOn<SpotListUiStateV2.Success> {
+            postSideEffect(SpotListSideEffectV2.NavigateToExternalMap(spotId))
         }
     }
 }
@@ -75,6 +94,6 @@ sealed interface SpotListUiStateV2 {
 
 sealed interface SpotListSideEffectV2 {
     data object ShowToastMessage : SpotListSideEffectV2
-    data object NavigateToExternalMap : SpotListSideEffectV2
-    data object NavigateToSpotDetailScreen : SpotListSideEffectV2
+    data class NavigateToExternalMap(val spotId: Long) : SpotListSideEffectV2
+    data class NavigateToSpotDetailScreen(val spot: SpotV2) : SpotListSideEffectV2
 }
