@@ -26,6 +26,7 @@ import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
@@ -36,6 +37,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import coil3.request.ImageRequest
+import coil3.request.crossfade
+import coil3.size.Scale
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.blur.LocalHazeState
 import com.acon.acon.core.designsystem.blur.defaultHazeEffect
@@ -64,11 +68,11 @@ internal fun SpotItemV2(
         Box(
             modifier = Modifier.fillMaxSize()
         ) {
-            VerticalGradient()
             SpotImage(
                 spot = spot,
                 modifier = Modifier.fillMaxSize()
             )
+            VerticalGradient()
             SpotInfo(
                 spot = spot,
                 onFindWayButtonClick = onFindWayButtonClick,
@@ -160,8 +164,14 @@ private fun SpotImage(
     } else {
         AsyncImage(
             modifier = modifier,
-            model = spot.image,
+            model = ImageRequest
+                .Builder(LocalContext.current)
+                .crossfade(true)
+                .data(spot.image)
+                .scale(Scale.FILL)
+                .build(),
             contentDescription = spot.name,
+            contentScale = ContentScale.Crop
         )
     }
 }
