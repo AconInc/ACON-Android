@@ -42,7 +42,7 @@ import com.acon.acon.core.designsystem.blur.defaultHazeEffect
 import com.acon.acon.core.designsystem.component.button.v2.AconFilledButton
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.domain.model.spot.v2.SpotV2
-import com.feature.acon.common.compose.getTextSizeDp
+import com.acon.feature.common.compose.getTextSizeDp
 
 @Composable
 internal fun SpotItemV2(
