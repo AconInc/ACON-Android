@@ -9,7 +9,6 @@ projectVersionName = "1.0.0"
 #######################################
 
 composeCompilerVersion = "1.5.1"
-accompanistPermissions = "0.37.0"
 agp = "8.6.0"
 androidTools = "31.9.1"
 coilCompose = "3.0.4"
@@ -42,6 +41,7 @@ hilt = "2.52"
 hiltCompose = "1.2.0"
 javaxInject = "1"
 orbit = "9.0.0"
+coroutine = "1.7.3"
 
 amplitudeVersion="1.20.1"
 
@@ -61,6 +61,9 @@ kotlinxImmutable = "0.3.7"
 
 # Timber
 timberVersion = "5.0.1"
+
+# Permission
+accompanistPermissions = "0.37.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -90,6 +93,7 @@ androidx-security-crypto-ktx = { module = "androidx.security:security-crypto-ktx
 
 googleid = { module = "com.google.android.libraries.identity.googleid:googleid", version.ref = "googleid" }
 
+# Permission
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }
 
 # Testing
@@ -137,7 +141,7 @@ lottie-compose = { group = "com.airbnb.android", name = "lottie-compose", versio
 
 kotlinx-immutable = { group = "org.jetbrains.kotlinx", name = "kotlinx-collections-immutable", version.ref = "kotlinxImmutable" }
 
-kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version = "1.7.3" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutine" }
 
 # Timber
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timberVersion" }
@@ -149,6 +153,7 @@ naver-map-sdk = { module = "com.naver.maps:map-sdk", version.ref = "mapSdk" }
 
 # Google Play Services
 play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocation" }
+play-services-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services", version.ref = "coroutine" }
 
 # Firebase
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
