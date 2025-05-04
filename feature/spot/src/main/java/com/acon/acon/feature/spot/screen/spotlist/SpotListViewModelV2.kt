@@ -51,7 +51,7 @@ class SpotListViewModelV2 @Inject constructor(
         }
     }
 
-    fun onSpotTypeSelected(spotType: SpotType) = intent {
+    fun onSpotTypeChanged(spotType: SpotType) = intent {
         runOn<SpotListUiStateV2.Success> {
             reduce {
                 state.copy(selectedSpotType = spotType)
