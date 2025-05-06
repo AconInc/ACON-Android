@@ -113,129 +113,163 @@ internal fun SpotListScreenV2(
 
         when(state) {
             is SpotListUiStateV2.Success -> {
-                val pagerState = rememberPagerState { state.spotList.size }
-                VerticalPager(
-                    state = pagerState,
-                    contentPadding = PaddingValues(
-                        horizontal = 16.dp,
-                        vertical = (itemHeightPx * .18f).toDp()
-                    ),
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    flingBehavior = PagerDefaults.flingBehavior(
-                        state = pagerState,
-                        pagerSnapDistance = PagerSnapDistance.atMost(4),
-                        decayAnimationSpec = exponentialDecay(
-                            frictionMultiplier = 1.2f
+                when (state.selectedSpotType) {
+                    SpotType.RESTAURANT -> {
+                        SpotListSuccessView(
+                            state = state,
+                            onSpotClick = onSpotClick,
+                            onTryFindWay = onTryFindWay,
+                            itemHeightPx = itemHeightPx
                         )
-                    ),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    snapPosition = SnapPosition.Center,
-                    pageSize = PageSize.Fixed((itemHeightPx).toDp())
-                ) { page ->
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier
-                            .hazeSource(LocalHazeState.current)
-                            .padding(vertical = 6.dp)
-                            .fillMaxWidth(.91f)
-                            .graphicsLayer {
-                                val pageOffset =
-                                    pagerState.getOffsetDistanceInPages(page).absoluteValue
-                                val ratio = lerp(
-                                    start = 1.1f,
-                                    stop = 0.9f,
-                                    fraction = pageOffset.coerceIn(0f, 1f)
-                                )
-                                scaleX = ratio
-                                scaleY = ratio
-                            }
-
-                    ) {
-                        if (page == 0) {
-                            Text(
-                                text = "최고의 선택.",
-                                style = AconTheme.typography.Title2,
-                                fontWeight = FontWeight.SemiBold,
-                                color = AconTheme.color.White,
-                                modifier = Modifier
-                                    .padding(bottom = 6.dp)
-                                    .glowBackground(glowRadius = 100f)
-                            )
-                        }
-                        SpotItemV2(
-                            spot = state.spotList[page],
-                            onItemClick = onSpotClick,
-                            onFindWayButtonClick = onTryFindWay,
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .glowBackground()
+                    }
+                    SpotType.CAFE -> {
+                        SpotListSuccessView(
+                            state = state,
+                            onSpotClick = onSpotClick,
+                            onTryFindWay = onTryFindWay,
+                            itemHeightPx = itemHeightPx
                         )
                     }
                 }
             }
 
-            is SpotListUiStateV2.Loading -> {
-                Column(
+            is SpotListUiStateV2.Loading -> SpotListLoadingView(itemHeightPx = itemHeightPx)
+            is SpotListUiStateV2.LoadFailed -> {
+                // TODO("Error")
+            }
+        }
+    }
+}
+
+@Composable
+private fun SpotListSuccessView(
+    state: SpotListUiStateV2.Success,
+    onSpotClick: (SpotV2) -> Unit,
+    onTryFindWay: (SpotV2) -> Unit,
+    itemHeightPx: Float,
+) {
+
+    val pagerState = rememberPagerState { state.spotList.size }
+    VerticalPager(
+        state = pagerState,
+        contentPadding = PaddingValues(
+            horizontal = 16.dp,
+            vertical = (itemHeightPx * .18f).toDp()
+        ),
+        modifier = Modifier
+            .fillMaxSize(),
+        flingBehavior = PagerDefaults.flingBehavior(
+            state = pagerState,
+            pagerSnapDistance = PagerSnapDistance.atMost(4),
+            decayAnimationSpec = exponentialDecay(
+                frictionMultiplier = 1.2f
+            )
+        ),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        snapPosition = SnapPosition.Center,
+        pageSize = PageSize.Fixed((itemHeightPx).toDp())
+    ) { page ->
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .hazeSource(LocalHazeState.current)
+                .padding(vertical = 6.dp)
+                .fillMaxWidth(.91f)
+                .graphicsLayer {
+                    val pageOffset =
+                        pagerState.getOffsetDistanceInPages(page).absoluteValue
+                    val ratio = lerp(
+                        start = 1.1f,
+                        stop = 0.9f,
+                        fraction = pageOffset.coerceIn(0f, 1f)
+                    )
+                    scaleX = ratio
+                    scaleY = ratio
+                }
+
+        ) {
+            if (page == 0) {
+                Text(
+                    text = "최고의 선택.",
+                    style = AconTheme.typography.Title2,
+                    fontWeight = FontWeight.SemiBold,
+                    color = AconTheme.color.White,
                     modifier = Modifier
-                        .verticalScroll(rememberScrollState())
-                        .hazeSource(LocalHazeState.current)
-                        .fillMaxSize()
-                        .padding(
-                            horizontal = 16.dp,
-                            vertical = 30.dp
-                        ),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                        .padding(bottom = 6.dp)
+                        .glowBackground(glowRadius = 100f)
+                )
+            }
+            SpotItemV2(
+                spot = state.spotList[page],
+                onItemClick = onSpotClick,
+                onFindWayButtonClick = onTryFindWay,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .glowBackground()
+            )
+        }
+    }
+}
+
+@Composable
+private fun SpotListLoadingView(
+    itemHeightPx: Float
+) {
+    Column(
+        modifier = Modifier
+            .verticalScroll(rememberScrollState())
+            .hazeSource(LocalHazeState.current)
+            .fillMaxSize()
+            .padding(
+                horizontal = 16.dp,
+                vertical = 30.dp
+            ),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        SkeletonItem(
+            modifier = Modifier
+                .width(120.dp)
+                .height(28.dp),
+            shape = RoundedCornerShape(8.dp),
+        )
+        repeat(10) {
+            Spacer(modifier = Modifier.height(14.dp))
+            Column(
+                modifier = Modifier
+                    .height(itemHeightPx.toDp())
+                    .fillMaxWidth()
+                    .skeleton(
+                        shape = RoundedCornerShape(20.dp)
+                    )
+                    .padding(20.dp)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(26.dp)
                 ) {
                     SkeletonItem(
                         modifier = Modifier
-                            .width(120.dp)
-                            .height(28.dp),
+                            .fillMaxHeight()
+                            .weight(3.5f),
                         shape = RoundedCornerShape(8.dp),
                     )
-                    repeat(10) {
-                        Spacer(modifier = Modifier.height(14.dp))
-                        Column(
-                            modifier = Modifier
-                                .height(itemHeightPx.toDp())
-                                .fillMaxWidth()
-                                .skeleton(
-                                    shape = RoundedCornerShape(20.dp)
-                                ).padding(20.dp)
-                        ) {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(26.dp)
-                            ) {
-                                SkeletonItem(
-                                    modifier = Modifier
-                                        .fillMaxHeight()
-                                        .weight(3.5f),
-                                    shape = RoundedCornerShape(8.dp),
-                                )
-                                SkeletonItem(
-                                    modifier = Modifier
-                                        .padding(start = 10.dp)
-                                        .fillMaxHeight()
-                                        .weight(1f),
-                                    shape = RoundedCornerShape(8.dp),
-                                )
-                            }
-                            Spacer(modifier = Modifier.weight(1f))
-                            SkeletonItem(
-                                modifier = Modifier
-                                    .height(36.dp)
-                                    .width(140.dp)
-                                    .align(Alignment.End),
-                                shape = RoundedCornerShape(8.dp),
-                            )
-                        }
-                    }
+                    SkeletonItem(
+                        modifier = Modifier
+                            .padding(start = 10.dp)
+                            .fillMaxHeight()
+                            .weight(1f),
+                        shape = RoundedCornerShape(8.dp),
+                    )
                 }
-            }
-            is SpotListUiStateV2.LoadFailed -> {
-                // TODO("Error")
+                Spacer(modifier = Modifier.weight(1f))
+                SkeletonItem(
+                    modifier = Modifier
+                        .height(36.dp)
+                        .width(140.dp)
+                        .align(Alignment.End),
+                    shape = RoundedCornerShape(8.dp),
+                )
             }
         }
     }
