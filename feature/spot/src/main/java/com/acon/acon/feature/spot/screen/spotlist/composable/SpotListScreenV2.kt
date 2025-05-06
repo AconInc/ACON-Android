@@ -108,7 +108,10 @@ internal fun SpotListScreenV2(
                 val pagerState = rememberPagerState { state.spotList.size }
                 VerticalPager(
                     state = pagerState,
-                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 50.dp),
+                    contentPadding = PaddingValues(
+                        horizontal = 16.dp,
+                        vertical = (itemHeightPx * .18f).toDp()
+                    ),
                     modifier = Modifier
                         .fillMaxSize()
                         .hazeSource(LocalHazeState.current),
