@@ -114,10 +114,10 @@ fun PreferenceMapScreen(
 
     if (state.showGPSDialog){
         AconTwoButtonDialog(
-            title = stringResource(R.string.check_gps_title_2),
-            content = stringResource(R.string.check_gps_content_2),
-            leftButtonContent = stringResource(R.string.check_gps_cancel_btn),
-            rightButtonContent = stringResource(R.string.check_gps_setting_btn),
+            title = stringResource(R.string.location_check_fail_dialog_title),
+            content = stringResource(R.string.location_check_fail_dialog_content),
+            leftButtonContent = stringResource(R.string.cancel_btn),
+            rightButtonContent = stringResource(R.string.settings_btn),
             contentImage = 0,
             onDismissRequest = {},
             onClickLeft = {
@@ -132,9 +132,9 @@ fun PreferenceMapScreen(
 
     if (state.showLocationDialog){
         AconOneButtonDialog(
-            title = "위치 인증 실패",
-            content = "현재 인증이 불가능한 지역에 있어요.",
-            buttonContent = "확인",
+            title = stringResource(R.string.location_certification_failure_dialog_title),
+            content = stringResource(R.string.location_certification_failure_dialog_content),
+            buttonContent = stringResource(R.string.ok_btn),
             contentImage = com.acon.acon.core.designsystem.R.drawable.ic_error_2_120,
             onDismissRequest = {},
             onClickConfirm = { viewModel.hideLocationDialog() },

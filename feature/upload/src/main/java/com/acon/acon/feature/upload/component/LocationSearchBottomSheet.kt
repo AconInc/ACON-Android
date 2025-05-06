@@ -43,7 +43,6 @@ import com.acon.acon.core.map.ProceedWithLocation
 import com.acon.acon.domain.model.upload.SpotListItem
 import com.acon.acon.feature.upload.UploadIntent
 import com.acon.acon.feature.upload.UploadViewModel
-import com.acon.acon.feature.upload.R
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -85,7 +84,7 @@ fun LocationSearchBottomSheet(
             title = "위치 인식 실패",
             content = "현재 위치와 등록장소가 오차범위 밖에\n있습니다. 좀 더 가까이 이동해보세요.",
             buttonContent = "확인",
-            contentImage = R.drawable.and_ic_error_2_104,
+            contentImage = com.acon.acon.core.designsystem.R.drawable.and_ic_error_2_104,
             onDismissRequest = {
                 showVerificationFailDialog = false
                 viewModel.onIntent(UploadIntent.ResetVerification)
@@ -235,7 +234,7 @@ fun LocationSearchBottomSheet(
                             verticalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             Image(
-                                imageVector = ImageVector.vectorResource(id = R.drawable.ic_no_location),
+                                imageVector = ImageVector.vectorResource(id = com.acon.acon.core.designsystem.R.drawable.ic_no_location),
                                 contentDescription = null,
                             )
 

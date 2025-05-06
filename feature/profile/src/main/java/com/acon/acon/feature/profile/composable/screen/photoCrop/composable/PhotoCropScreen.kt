@@ -31,13 +31,14 @@ import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.rememberAsyncImagePainter
-import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.topbar.AconTopBar
 import com.acon.acon.core.designsystem.theme.AconTheme
+import com.acon.acon.feature.profile.R
 import com.acon.acon.feature.profile.composable.screen.photoCrop.PhotoCropState
 import com.acon.acon.feature.profile.composable.screen.photoCrop.PhotoCropViewModel
 import org.orbitmvi.orbit.compose.collectAsState
@@ -83,8 +84,8 @@ fun PhotoCropScreen(
             leadingIcon = {
                 IconButton(onClick = onCloseClicked) {
                     Image(
-                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_dissmiss_28),
-                        contentDescription = "Close",
+                        imageVector = ImageVector.vectorResource(id = com.acon.acon.core.designsystem.R.drawable.ic_dissmiss_28),
+                        contentDescription = stringResource(R.string.content_description_back),
                     )
                 }
             },
@@ -100,7 +101,7 @@ fun PhotoCropScreen(
                     onClick = { onCompleteSelected(photoId) }
                 ) {
                     Text(
-                        text = "완료",
+                        text = stringResource(R.string.confirm_btn),
                         style = AconTheme.typography.subtitle1_16_med,
                         color = AconTheme.color.White
                     )
@@ -127,7 +128,7 @@ fun PhotoCropScreen(
                 Image(
                     painter = rememberAsyncImagePainter(Uri.parse(photoId)),
                     modifier = Modifier.fillMaxSize(),
-                    contentDescription = "선택한 프로필 사진",
+                    contentDescription = stringResource(R.string.confirm_btn),
                     contentScale = ContentScale.Crop,
                     alignment = Alignment.Center
                 )
