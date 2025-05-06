@@ -9,6 +9,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
@@ -42,12 +43,12 @@ internal fun getCommonSkeletonBrush() : Brush {
     )
 
     val transition = rememberInfiniteTransition()
-    val translateAnim = transition.animateFloat(
+    val animatedOffset by transition.animateFloat(
         initialValue = -1000f,
-        targetValue = 1000f,
+        targetValue = 1400f,
         animationSpec = infiniteRepeatable(
             animation = tween(
-                durationMillis = 2000,
+                durationMillis = 1500,
                 easing = FastOutSlowInEasing
             ),
             repeatMode = RepeatMode.Restart
@@ -56,7 +57,7 @@ internal fun getCommonSkeletonBrush() : Brush {
 
     return Brush.linearGradient(
         colors = skeletonColors,
-        start = Offset(x = -translateAnim.value, y = -translateAnim.value),
-        end = Offset(x = translateAnim.value, y = translateAnim.value)
+        start = Offset(x = animatedOffset, y = animatedOffset),
+        end = Offset(x = animatedOffset + 500f, y = animatedOffset + 500f)
     )
 }

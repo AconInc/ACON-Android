@@ -8,6 +8,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -19,6 +22,9 @@ import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.PagerSnapDistance
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -38,6 +44,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
 import com.acon.acon.core.designsystem.R
+import com.acon.acon.core.designsystem.animation.skeleton
+import com.acon.acon.core.designsystem.component.loading.SkeletonItem
 import com.acon.acon.core.designsystem.glassmorphism.LocalHazeState
 import com.acon.acon.core.designsystem.glassmorphism.defaultHazeEffect
 import com.acon.acon.core.designsystem.glassmorphism.glowBackground
@@ -113,8 +121,7 @@ internal fun SpotListScreenV2(
                         vertical = (itemHeightPx * .18f).toDp()
                     ),
                     modifier = Modifier
-                        .fillMaxSize()
-                        .hazeSource(LocalHazeState.current),
+                        .fillMaxSize(),
                     flingBehavior = PagerDefaults.flingBehavior(
                         state = pagerState,
                         pagerSnapDistance = PagerSnapDistance.atMost(4),
@@ -138,7 +145,7 @@ internal fun SpotListScreenV2(
                                 val ratio = lerp(
                                     start = 1.1f,
                                     stop = 0.9f,
-                                    fraction = pageOffset
+                                    fraction = pageOffset.coerceIn(0f, 1f)
                                 )
                                 scaleX = ratio
                                 scaleY = ratio
@@ -169,7 +176,63 @@ internal fun SpotListScreenV2(
             }
 
             is SpotListUiStateV2.Loading -> {
-                // TODO("Loading")
+                Column(
+                    modifier = Modifier
+                        .verticalScroll(rememberScrollState())
+                        .hazeSource(LocalHazeState.current)
+                        .fillMaxSize()
+                        .padding(
+                            horizontal = 16.dp,
+                            vertical = 30.dp
+                        ),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    SkeletonItem(
+                        modifier = Modifier
+                            .width(120.dp)
+                            .height(28.dp),
+                        shape = RoundedCornerShape(8.dp),
+                    )
+                    repeat(10) {
+                        Spacer(modifier = Modifier.height(14.dp))
+                        Column(
+                            modifier = Modifier
+                                .height(itemHeightPx.toDp())
+                                .fillMaxWidth()
+                                .skeleton(
+                                    shape = RoundedCornerShape(20.dp)
+                                ).padding(20.dp)
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(26.dp)
+                            ) {
+                                SkeletonItem(
+                                    modifier = Modifier
+                                        .fillMaxHeight()
+                                        .weight(3.5f),
+                                    shape = RoundedCornerShape(8.dp),
+                                )
+                                SkeletonItem(
+                                    modifier = Modifier
+                                        .padding(start = 10.dp)
+                                        .fillMaxHeight()
+                                        .weight(1f),
+                                    shape = RoundedCornerShape(8.dp),
+                                )
+                            }
+                            Spacer(modifier = Modifier.weight(1f))
+                            SkeletonItem(
+                                modifier = Modifier
+                                    .height(36.dp)
+                                    .width(140.dp)
+                                    .align(Alignment.End),
+                                shape = RoundedCornerShape(8.dp),
+                            )
+                        }
+                    }
+                }
             }
             is SpotListUiStateV2.LoadFailed -> {
                 // TODO("Error")
@@ -183,6 +246,21 @@ internal fun SpotListScreenV2(
 private fun SpotListScreenV2Preview() {
     SpotListScreenV2(
         state = spotListUiStateMock,
+        onSpotTypeChanged = {},
+        onSpotClick = {},
+        onTryFindWay = {},
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(AconTheme.color.Gray900)
+            .width(400.dp)
+    )
+}
+
+@Composable
+@Preview
+private fun SpotListScreenV2LoadingPreview() {
+    SpotListScreenV2(
+        state = SpotListUiStateV2.Loading,
         onSpotTypeChanged = {},
         onSpotClick = {},
         onTryFindWay = {},
