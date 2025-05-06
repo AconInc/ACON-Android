@@ -9,4 +9,6 @@ data class SpotV2(
     val image: String,
     val dotori: String,
     val walkingTime: String,
+    val latitude: Double,
+    val longitude: Double,
 )
