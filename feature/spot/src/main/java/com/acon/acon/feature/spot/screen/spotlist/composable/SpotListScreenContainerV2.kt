@@ -1,6 +1,7 @@
 package com.acon.acon.feature.spot.screen.spotlist.composable
 
 import android.annotation.SuppressLint
+import android.location.Location
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -25,7 +26,7 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 @Composable
 fun SpotListScreenContainerV2(
     onNavigateToSpotDetailScreen: (SpotV2) -> Unit,
-    onNavigateToExternalMap: (spotId: Long) -> Unit,
+    onNavigateToExternalMap: (start: Location, destination: Location) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: SpotListViewModelV2 = hiltViewModel()
 ) {
@@ -69,7 +70,7 @@ fun SpotListScreenContainerV2(
                 onNavigateToSpotDetailScreen(it.spot)
             }
             is SpotListSideEffectV2.NavigateToExternalMap -> {
-                onNavigateToExternalMap(it.spotId)
+                onNavigateToExternalMap(it.start, it.destination)
             }
         }
     }

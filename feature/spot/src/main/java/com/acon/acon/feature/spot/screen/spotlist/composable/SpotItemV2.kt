@@ -51,7 +51,7 @@ import com.acon.feature.common.compose.getTextSizeDp
 internal fun SpotItemV2(
     spot: SpotV2,
     onItemClick: (SpotV2) -> Unit,
-    onFindWayButtonClick: (spotId: Long) -> Unit,
+    onFindWayButtonClick: (SpotV2) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Card(
@@ -87,7 +87,7 @@ internal fun SpotItemV2(
 @Composable
 private fun SpotInfo(
     spot: SpotV2,
-    onFindWayButtonClick: (spotId: Long) -> Unit,
+    onFindWayButtonClick: (SpotV2) -> Unit,
     modifier: Modifier = Modifier,
 ) {
 
@@ -129,7 +129,7 @@ private fun SpotInfo(
                 tintColor = AconTheme.color.GlassWhiteDefault
             ),
             onClick = {
-                onFindWayButtonClick(spot.id)
+                onFindWayButtonClick(spot)
             },
             contentPadding = PaddingValues(
                 horizontal = 23.dp,
@@ -214,7 +214,9 @@ private fun SpotItemV2Preview() {
             name = "장소명",
             image = "",
             dotori = "+9999",
-            walkingTime = "도보 10분"
+            walkingTime = "도보 10분",
+            latitude = 0.0,
+            longitude = 0.0,
         ),
         onItemClick = {},
         onFindWayButtonClick = {},

@@ -72,9 +72,15 @@ class SpotListViewModelV2 @Inject constructor(
         }
     }
 
-    fun onTryFindWay(spotId: Long) = intent {
+    fun onTryFindWay(spot: SpotV2) = intent {
         runOn<SpotListUiStateV2.Success> {
-            postSideEffect(SpotListSideEffectV2.NavigateToExternalMap(spotId))
+            postSideEffect(SpotListSideEffectV2.NavigateToExternalMap(
+                start = state.currentLocation,
+                destination = Location("").apply {
+                    latitude = spot.latitude
+                    longitude = spot.longitude
+                }
+            ))
         }
     }
 }
@@ -94,6 +100,6 @@ sealed interface SpotListUiStateV2 {
 
 sealed interface SpotListSideEffectV2 {
     data object ShowToastMessage : SpotListSideEffectV2
-    data class NavigateToExternalMap(val spotId: Long) : SpotListSideEffectV2
+    data class NavigateToExternalMap(val start: Location, val destination: Location) : SpotListSideEffectV2
     data class NavigateToSpotDetailScreen(val spot: SpotV2) : SpotListSideEffectV2
 }

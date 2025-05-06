@@ -56,7 +56,7 @@ internal fun SpotListScreenV2(
     state: SpotListUiStateV2,
     onSpotTypeChanged: (SpotType) -> Unit,
     onSpotClick: (SpotV2) -> Unit,
-    onTryFindWay: (spotId: Long) -> Unit,
+    onTryFindWay: (SpotV2) -> Unit,
     modifier: Modifier = Modifier,
 ) {
 
