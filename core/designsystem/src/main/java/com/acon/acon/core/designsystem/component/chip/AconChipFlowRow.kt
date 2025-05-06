@@ -15,8 +15,8 @@ fun AconChipFlowRow(
     vararg selectedChipIndexes: Int,
     onChipSelected: (index: Int) -> Unit,
     modifier: Modifier = Modifier,
-    horizontalArrangement: Arrangement.Horizontal = Arrangement.spacedBy(6.dp),
-    verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(6.dp)
+    horizontalArrangement: Arrangement.Horizontal = Arrangement.spacedBy(8.dp),
+    verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(8.dp)
 ) {
 
     FlowRow(
