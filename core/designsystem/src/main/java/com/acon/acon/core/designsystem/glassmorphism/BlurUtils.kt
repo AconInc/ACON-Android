@@ -1,4 +1,4 @@
-package com.acon.acon.core.designsystem.blur
+package com.acon.acon.core.designsystem.glassmorphism
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember

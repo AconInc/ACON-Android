@@ -27,7 +27,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -41,8 +40,8 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import coil3.size.Scale
 import com.acon.acon.core.designsystem.R
-import com.acon.acon.core.designsystem.blur.LocalHazeState
-import com.acon.acon.core.designsystem.blur.defaultHazeEffect
+import com.acon.acon.core.designsystem.glassmorphism.LocalHazeState
+import com.acon.acon.core.designsystem.glassmorphism.defaultHazeEffect
 import com.acon.acon.core.designsystem.component.button.v2.AconFilledButton
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.domain.model.spot.v2.SpotV2
@@ -118,9 +117,7 @@ private fun SpotInfo(
                 fontWeight = FontWeight.W400,
                 color = AconTheme.color.White,
                 modifier = Modifier.padding(start = 2.dp).width(
-                    with(LocalDensity.current) {
-                        getTextSizeDp("+9999", AconTheme.typography.Body1).width
-                    }
+                    getTextSizeDp("+9999", AconTheme.typography.Body1).width
                 ),
                 textAlign = TextAlign.End
             )
