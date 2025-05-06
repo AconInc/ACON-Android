@@ -11,7 +11,8 @@ import com.acon.acon.domain.repository.UserRepository
 import com.acon.acon.domain.type.SpotType
 import com.acon.acon.domain.type.UserType
 import com.acon.acon.feature.spot.BuildConfig
-import com.acon.acon.feature.spot.mock.spotListUiStateMock
+import com.acon.acon.feature.spot.mock.spotListUiStateCafeMock
+import com.acon.acon.feature.spot.mock.spotListUiStateRestaurantMock
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.collectLatest
@@ -47,7 +48,7 @@ class SpotListViewModelV2 @Inject constructor(
             // TODO("Repository Call")
             if (BuildConfig.DEBUG) {
                 reduce {
-                    spotListUiStateMock
+                    spotListUiStateRestaurantMock
                 }
             }
         }
@@ -60,6 +61,19 @@ class SpotListViewModelV2 @Inject constructor(
 
     fun onSpotTypeChanged(spotType: SpotType) = intent {
         runOn<SpotListUiStateV2.Success> {
+            if (spotType == state.selectedSpotType) return@runOn
+            // TODO("Repository Call")
+            if (BuildConfig.DEBUG) {
+                if (spotType == SpotType.RESTAURANT)
+                    reduce {
+                        spotListUiStateRestaurantMock
+                    }
+                else {
+                    reduce {
+                        spotListUiStateCafeMock
+                    }
+                }
+            }
             reduce {
                 state.copy(selectedSpotType = spotType)
             }
