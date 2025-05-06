@@ -143,7 +143,7 @@ internal val spotListUiStateCafeMock = SpotListUiStateV2.Success(
             longitude = 126.886514
         ),
     ), headTitle = "최고의 선택.",
-    selectedSpotType = SpotType.RESTAURANT,
+    selectedSpotType = SpotType.CAFE,
     currentLocation = Location(""),
     userType = UserType.GUEST
 )

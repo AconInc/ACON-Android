@@ -59,10 +59,13 @@ class SpotListViewModelV2 @Inject constructor(
         }
     }
 
-    fun onSpotTypeChanged(spotType: SpotType) = intent {
+    fun onSpotTypeClicked(spotType: SpotType) = intent {
         runOn<SpotListUiStateV2.Success> {
             if (spotType == state.selectedSpotType) return@runOn
             // TODO("Repository Call")
+            reduce {
+                state.copy(selectedSpotType = spotType)
+            }
             if (BuildConfig.DEBUG) {
                 if (spotType == SpotType.RESTAURANT)
                     reduce {
@@ -74,13 +77,10 @@ class SpotListViewModelV2 @Inject constructor(
                     }
                 }
             }
-            reduce {
-                state.copy(selectedSpotType = spotType)
-            }
         }
     }
 
-    fun onSpotClick(spot: SpotV2) = intent {
+    fun onSpotClicked(spot: SpotV2) = intent {
         runOn<SpotListUiStateV2.Success> {
             postSideEffect(SpotListSideEffectV2.NavigateToSpotDetailScreen(spot))
         }
@@ -97,6 +97,22 @@ class SpotListViewModelV2 @Inject constructor(
             ))
         }
     }
+
+    fun onFilterButtonClicked() = intent {
+        runOn<SpotListUiStateV2.Success> {
+            reduce {
+                state.copy(showFilterModal = true)
+            }
+        }
+    }
+
+    fun onFilterModalDismissed() = intent {
+        runOn<SpotListUiStateV2.Success> {
+            reduce {
+                state.copy(showFilterModal = false)
+            }
+        }
+    }
 }
 
 sealed interface SpotListUiStateV2 {
@@ -107,6 +123,7 @@ sealed interface SpotListUiStateV2 {
         val selectedSpotType: SpotType,
         val currentLocation: Location,
         val userType: UserType = UserType.GUEST,
+        val showFilterModal: Boolean = false,
     ) : SpotListUiStateV2
     data object Loading : SpotListUiStateV2
     data object LoadFailed : SpotListUiStateV2
