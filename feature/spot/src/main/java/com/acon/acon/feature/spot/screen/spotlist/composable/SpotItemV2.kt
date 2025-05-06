@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
@@ -58,7 +59,7 @@ internal fun SpotItemV2(
         modifier = modifier,
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(
-            containerColor = AconTheme.color.Gray200
+            containerColor = AconTheme.color.GlassWhiteDefault
         ),
         onClick = {
             onItemClick(spot)
@@ -71,7 +72,8 @@ internal fun SpotItemV2(
                 spot = spot,
                 modifier = Modifier.fillMaxSize()
             )
-            VerticalGradient()
+            if (spot.image.isNotBlank())
+                VerticalGradient()
             SpotInfo(
                 spot = spot,
                 onFindWayButtonClick = onFindWayButtonClick,
@@ -151,7 +153,33 @@ private fun SpotImage(
     spot: SpotV2,
     modifier: Modifier = Modifier,
 ) {
-    if (LocalInspectionMode.current) {
+    if (spot.image.isBlank()) {
+        Box(modifier = Modifier
+            .fillMaxSize()
+            .background(color = AconTheme.color.GlassWhiteDefault),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(
+                modifier = Modifier,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_acon_fill_white),
+                    contentDescription = null,
+                    tint = AconTheme.color.GlassWhiteDefault,
+                    modifier = Modifier.size(36.dp)
+                )
+                Text(
+                    text = stringResource(R.string.empty_spot_image),
+                    style = AconTheme.typography.Body1,
+                    fontWeight = FontWeight.SemiBold,
+                    color = AconTheme.color.Gray200,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(top = 12.dp)
+                )
+            }
+        }
+    } else if (LocalInspectionMode.current) {
         Image(
             modifier = modifier,
             painter = painterResource(R.drawable.preview_background_small),
@@ -168,7 +196,7 @@ private fun SpotImage(
                 .scale(Scale.FILL)
                 .build(),
             contentDescription = spot.name,
-            contentScale = ContentScale.Crop
+            contentScale = ContentScale.Crop,
         )
     }
 }
@@ -208,6 +236,25 @@ private fun BoxScope.VerticalGradient() {
 @Composable
 @Preview
 private fun SpotItemV2Preview() {
+    SpotItemV2(
+        spot = SpotV2(
+            id = 1L,
+            name = "장소명",
+            image = "ddd",
+            dotori = "+9999",
+            walkingTime = "도보 10분",
+            latitude = 0.0,
+            longitude = 0.0,
+        ),
+        onItemClick = {},
+        onFindWayButtonClick = {},
+        modifier = Modifier.height(600.dp).clipToBounds()
+    )
+}
+
+@Composable
+@Preview
+private fun SpotItemV2EmptyImagePreview() {
     SpotItemV2(
         spot = SpotV2(
             id = 1L,
