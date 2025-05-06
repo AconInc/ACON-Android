@@ -34,7 +34,6 @@ class LocalProfileRepositoryImpl @Inject constructor(
     }
 
     override suspend fun resetProfileType() {
-        _updateProfileType.value = UpdateProfileType.IDLE
         _updateProfileType.emit(UpdateProfileType.IDLE)
     }
 }
