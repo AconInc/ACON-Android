@@ -45,7 +45,7 @@ fun ProfilePhotoBox(
                     photoUri.startsWith("content://") -> {
                         Image(
                             painter = rememberAsyncImagePainter(Uri.parse(photoUri)),
-                            contentDescription = "선택한 프로필 사진",
+                            contentDescription = stringResource(R.string.content_description_settings),
                             modifier = Modifier.fillMaxSize(),
                             contentScale = ContentScale.Crop,
                             alignment = Alignment.Center
@@ -55,7 +55,7 @@ fun ProfilePhotoBox(
                     photoUri.startsWith("https://") -> {
                         AsyncImage(
                             model = photoUri,
-                            contentDescription = "선택한 프로필 사진",
+                            contentDescription = stringResource(R.string.content_description_settings),
                             modifier = Modifier.fillMaxSize(),
                             contentScale = ContentScale.Crop,
                             alignment = Alignment.Center
@@ -65,7 +65,7 @@ fun ProfilePhotoBox(
             }
         } else {
             Image(
-                imageVector = ImageVector.vectorResource(R.drawable.img_profile_basic_80),
+                imageVector = ImageVector.vectorResource(com.acon.acon.core.designsystem.R.drawable.img_profile_basic_80),
                 contentDescription = stringResource(R.string.content_description_default_profile_image),
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop,

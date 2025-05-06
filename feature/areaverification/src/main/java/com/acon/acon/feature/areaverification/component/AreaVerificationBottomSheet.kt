@@ -87,7 +87,7 @@ fun AreaVerificationBottomSheet(
                     modifier = Modifier.weight(1f)
                 ) {
                     Image(
-                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_local_acon),
+                        imageVector = ImageVector.vectorResource(id = com.acon.acon.core.designsystem.R.drawable.ic_local_acon),
                         contentDescription = stringResource(R.string.local_dottori),
                         modifier = Modifier.size(120.dp)
                     )
@@ -103,7 +103,7 @@ fun AreaVerificationBottomSheet(
                     modifier = Modifier.weight(1f)
                 ) {
                     Image(
-                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_normal_acon),
+                        imageVector = ImageVector.vectorResource(id = com.acon.acon.core.designsystem.R.drawable.ic_normal_acon),
                         contentDescription = stringResource(R.string.normal_dottori),
                         modifier = Modifier.size(120.dp)
                     )

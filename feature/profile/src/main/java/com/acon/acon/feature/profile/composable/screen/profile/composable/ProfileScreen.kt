@@ -84,7 +84,7 @@ fun ProfileScreen(
                 ) {
                     if (state.profileImage.isEmpty()) {
                         Image(
-                            imageVector = ImageVector.vectorResource(R.drawable.img_profile_basic_80),
+                            imageVector = ImageVector.vectorResource(com.acon.acon.core.designsystem.R.drawable.img_profile_basic_80),
                             contentDescription = stringResource(R.string.content_description_default_profile_image),
                             modifier = Modifier
                                 .size(60.dp)

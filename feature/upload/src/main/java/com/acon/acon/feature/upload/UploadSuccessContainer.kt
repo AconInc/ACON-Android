@@ -137,7 +137,7 @@ fun UploadSuccessScreen(
             ) {
                 LottieAnimation(
                     composition = rememberLottieComposition(
-                        spec = LottieCompositionSpec.RawRes(R.raw.upload_success)
+                        spec = LottieCompositionSpec.RawRes(com.acon.acon.core.designsystem.R.raw.upload_success)
                     ).value,
                     modifier = Modifier
                         .fillMaxSize()
