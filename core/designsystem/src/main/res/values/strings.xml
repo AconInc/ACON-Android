@@ -49,4 +49,10 @@
     <string name="after_12am">밤 12시 이후</string>
     <string name="after_10pm">밤 10시 이후</string>
     <string name="cost_effectiveness">가성비</string>
+    <string name="filter_detail">상세 조건</string>
+    <string name="type">종류</string>
+    <string name="operation_time">운영시간</string>
+    <string name="price">가격</string>
+    <string name="reset">초기화</string>
+    <string name="see_result">결과 보기</string>
 </resources>
