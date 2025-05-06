@@ -34,4 +34,5 @@
     <string name="restaurant">식당</string>
     <string name="cafe">카페</string>
     <string name="find_way">길찾기</string>
+    <string name="empty_spot_image">장소 이미지를\n 준비하고 있어요</string>
 </resources>
