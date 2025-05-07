@@ -30,14 +30,19 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -45,6 +50,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
+import androidx.compose.ui.zIndex
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.animation.skeleton
 import com.acon.acon.core.designsystem.component.bottomsheet.AconBottomSheet
@@ -54,7 +60,8 @@ import com.acon.acon.core.designsystem.component.chip.AconChipFlowRow
 import com.acon.acon.core.designsystem.component.loading.SkeletonItem
 import com.acon.acon.core.designsystem.glassmorphism.LocalHazeState
 import com.acon.acon.core.designsystem.glassmorphism.defaultHazeEffect
-import com.acon.acon.core.designsystem.glassmorphism.fogBackground
+import com.acon.acon.core.designsystem.glassmorphism.fog.fogBackground
+import com.acon.acon.core.designsystem.glassmorphism.fog.getOverlayColor
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.domain.model.spot.v2.SpotV2
 import com.acon.acon.domain.type.FilterType
@@ -169,6 +176,8 @@ private fun SpotListSuccessView(
     itemHeightPx: Float,
 ) {
 
+    val context = LocalContext.current
+
     val pagerState = rememberPagerState { state.spotList.size }
     VerticalPager(
         state = pagerState,
@@ -189,6 +198,11 @@ private fun SpotListSuccessView(
         snapPosition = SnapPosition.Center,
         pageSize = PageSize.Fixed((itemHeightPx).toDp())
     ) { page ->
+        val spot = state.spotList[page]
+        var spotFogColor by remember {
+            mutableStateOf(Color.Transparent)
+        }
+
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
@@ -206,7 +220,6 @@ private fun SpotListSuccessView(
                     scaleX = ratio
                     scaleY = ratio
                 }
-
         ) {
             if (page == 0) {
                 Text(
@@ -216,17 +229,27 @@ private fun SpotListSuccessView(
                     color = AconTheme.color.White,
                     modifier = Modifier
                         .padding(bottom = 6.dp)
-                        .fogBackground(glowRadius = 100f)
+                        .fogBackground(
+                            glowColor = AconTheme.color.White,
+                            glowRadius = 100f
+                        ).zIndex(2f)
                 )
             }
             SpotItemV2(
-                spot = state.spotList[page],
+                spot = spot,
                 onItemClick = onSpotClick,
                 onFindWayButtonClick = onTryFindWay,
                 modifier = Modifier
                     .fillMaxSize()
-                    .fogBackground()
+                    .fogBackground(
+                        glowColor = spotFogColor,
+                        glowAlpha = 1f,
+                    ).zIndex(1f)
             )
+        }
+
+        LaunchedEffect(Unit) {
+            spotFogColor = spot.image.getOverlayColor(context)
         }
     }
 }
