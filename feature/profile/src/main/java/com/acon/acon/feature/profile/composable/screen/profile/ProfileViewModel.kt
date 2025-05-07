@@ -7,7 +7,6 @@ import com.acon.acon.domain.model.profile.VerifiedArea
 import com.acon.acon.domain.repository.ProfileRepository
 import com.acon.acon.domain.repository.SocialRepository
 import com.acon.acon.domain.repository.UserRepository
-import com.acon.acon.domain.repository.local.LocalProfileRepository
 import com.acon.acon.domain.type.UserType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -20,11 +19,10 @@ import kotlin.coroutines.cancellation.CancellationException
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     private val profileRepository: ProfileRepository,
-    private val localProfileRepository: LocalProfileRepository,
     private val userRepository: UserRepository
 ) : BaseContainerHost<ProfileUiState, ProfileUiSideEffect>() {
 
-    val updateProfileState = localProfileRepository.getProfileType()
+    val updateProfileState = profileRepository.getProfileType()
 
     override val container =
         container<ProfileUiState, ProfileUiSideEffect>(ProfileUiState.Loading) {
@@ -38,7 +36,7 @@ class ProfileViewModel @Inject constructor(
 
     fun resetUpdateProfileType() {
         viewModelScope.launch {
-            localProfileRepository.resetProfileType()
+            profileRepository.resetProfileType()
         }
     }
 
