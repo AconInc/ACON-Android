@@ -1,6 +1,5 @@
 package com.acon.acon.feature.spot.screen.spotdetail.composable
 
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -22,14 +21,16 @@ fun SpotDetailScreenContainer(
     val context = LocalContext.current
     val state by viewModel.collectAsState()
 
-    SpotDetailScreen(
-        state = state,
-        modifier = modifier.fillMaxSize(),
-        onNavigateToSpotListView = viewModel::navigateToSpotListView,
-        onFindWayButtonClick = { ->
-            viewModel.fetchRecentNavigationLocation()
-        },
-    )
+//    SpotDetailScreen(
+//        state = state,
+//        modifier = modifier.fillMaxSize(),
+//        onNavigateToSpotListView = viewModel::navigateToSpotListView,
+//        onFindWayButtonClick = { ->
+//            viewModel.fetchRecentNavigationLocation()
+//        },
+//    )
+
+    SpotDetailScreenV2()
 
     viewModel.collectSideEffect { sideEffect ->
         when(sideEffect) {
