@@ -38,6 +38,7 @@ dependencies {
     implementation(projects.core.map)
     implementation(projects.domain)
     implementation(projects.data)
+    implementation(projects.feature.common)
     implementation(projects.feature.signin)
     implementation(projects.feature.spot)
     implementation(projects.feature.onboarding)

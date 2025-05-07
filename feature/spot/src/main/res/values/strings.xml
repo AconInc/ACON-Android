@@ -10,7 +10,6 @@
     <string name="spot_name">동네 이름</string>
     <string name="spot_recommendation_description">지금, 나에게 딱 맞는 공간들이에요</string>
     <string name="matching_rate">취향 일치율 %s%%</string>
-    <string name="restaurant">음식점</string>
     <string name="cafe">카페</string>
     <string name="walking_time">%s분</string>
     <string name="alert_no_spot">앗! 일치하는 도토리 맛집이 없어요</string>
