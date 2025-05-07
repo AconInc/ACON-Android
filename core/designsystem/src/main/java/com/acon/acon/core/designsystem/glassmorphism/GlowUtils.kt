@@ -9,7 +9,7 @@ import androidx.compose.ui.graphics.toArgb
 
 fun Modifier.glowBackground(
     glowColor: Color = Color.White,
-    glowAlpha: Float = .12f,
+    glowAlpha: Float = .16f,
     glowRadius: Float = 200f,
 ): Modifier {
     return this.drawBehind {
