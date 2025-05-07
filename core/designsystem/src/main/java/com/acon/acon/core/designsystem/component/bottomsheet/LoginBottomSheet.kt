@@ -27,7 +27,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.acon.acon.core.designsystem.R
-import com.acon.acon.core.designsystem.blur.defaultHazeEffect
+import com.acon.acon.core.designsystem.glassmorphism.defaultHazeEffect
 import com.acon.acon.core.designsystem.component.button.AconGoogleLoginButton
 import com.acon.acon.core.designsystem.theme.AconTheme
 import dev.chrisbanes.haze.HazeState

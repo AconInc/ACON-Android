@@ -35,9 +35,9 @@ import com.acon.acon.core.designsystem.animation.defaultEnterTransition
 import com.acon.acon.core.designsystem.animation.defaultExitTransition
 import com.acon.acon.core.designsystem.animation.defaultPopEnterTransition
 import com.acon.acon.core.designsystem.animation.defaultPopExitTransition
-import com.acon.acon.core.designsystem.blur.LocalHazeState
-import com.acon.acon.core.designsystem.blur.defaultHazeEffect
-import com.acon.acon.core.designsystem.blur.rememberHazeState
+import com.acon.acon.core.designsystem.glassmorphism.LocalHazeState
+import com.acon.acon.core.designsystem.glassmorphism.defaultHazeEffect
+import com.acon.acon.core.designsystem.glassmorphism.rememberHazeState
 import com.acon.acon.core.designsystem.component.bottomsheet.LoginBottomSheet
 import com.acon.acon.core.designsystem.component.snackbar.AconTextSnackBar
 import com.acon.acon.core.designsystem.theme.AconTheme
@@ -133,7 +133,7 @@ fun AconNavigation(
             modifier = modifier.navigationBarsPadding(),
             snackbarHost = {
                 SnackbarHost(
-                    modifier = Modifier.padding(bottom = 36.dp),
+                    modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 36.dp),
                     hostState = snackbarHostState
                 ) { snackbarData: SnackbarData ->
                     AconTextSnackBar(

@@ -1,14 +1,24 @@
 package com.acon.acon.data.repository
 
+import com.acon.acon.core.common.IODispatcher
 import com.acon.acon.data.datasource.remote.ProfileRemoteDataSource
 import com.acon.acon.data.error.runCatchingWith
 import com.acon.acon.domain.error.profile.ValidateNicknameError
 import com.acon.acon.domain.model.profile.PreSignedUrl
 import com.acon.acon.domain.model.profile.Profile
 import com.acon.acon.domain.repository.ProfileRepository
+import com.acon.acon.domain.type.UpdateProfileType
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 class ProfileRepositoryImpl @Inject constructor(
+    @IODispatcher private val scope: CoroutineScope,
     private val profileRemoteDataSource: ProfileRemoteDataSource
 ) : ProfileRepository {
     override suspend fun fetchProfile(): Result<Profile> {
@@ -33,5 +43,26 @@ class ProfileRepositoryImpl @Inject constructor(
         return runCatchingWith() {
             profileRemoteDataSource.updateProfile(fileName, nickname, birthday)
         }
+    }
+
+    private val _updateProfileType = MutableStateFlow(UpdateProfileType.IDLE)
+    private val updateProfileType = flow {
+        emitAll(_updateProfileType)
+    }.stateIn(
+        scope = scope,
+        started = SharingStarted.Lazily,
+        initialValue = UpdateProfileType.IDLE
+    )
+
+    override fun updateProfileType(type: UpdateProfileType) {
+        _updateProfileType.value = type
+    }
+
+    override fun getProfileType(): Flow<UpdateProfileType> {
+        return updateProfileType
+    }
+
+    override suspend fun resetProfileType() {
+        _updateProfileType.emit(UpdateProfileType.IDLE)
     }
 }

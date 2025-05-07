@@ -41,8 +41,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import coil3.compose.AsyncImage
-import com.acon.acon.core.designsystem.blur.LocalHazeState
-import com.acon.acon.core.designsystem.blur.defaultHazeEffect
+import com.acon.acon.core.designsystem.glassmorphism.LocalHazeState
+import com.acon.acon.core.designsystem.glassmorphism.defaultHazeEffect
 import com.acon.acon.core.designsystem.component.loading.SkeletonItem
 import com.acon.acon.core.designsystem.dropShadow
 import com.acon.acon.core.designsystem.theme.AconTheme

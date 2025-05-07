@@ -1,4 +1,4 @@
-package com.feature.acon.common
+package com.acon.acon.common
 
 import org.junit.Test
 
