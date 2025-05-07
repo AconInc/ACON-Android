@@ -1,4 +1,4 @@
-package com.feature.acon.common.location
+package com.acon.feature.common.location
 
 import android.content.Context
 import android.location.Location
