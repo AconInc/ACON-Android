@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
@@ -66,7 +67,7 @@ fun AconBottomSheet(
             )
         }
     },
-    contentWindowInsets: @Composable () -> WindowInsets = { BottomSheetDefaults.windowInsets },
+    contentWindowInsets: @Composable () -> WindowInsets = { WindowInsets(0) },
     properties: ModalBottomSheetProperties = ModalBottomSheetDefaults.properties,
     content: @Composable (ColumnScope.() -> Unit)
 ) {
@@ -89,7 +90,7 @@ fun AconBottomSheet(
                     hazeState = LocalHazeState.current,
                     tintColor = containerColor,
                     alpha = .8f
-                )
+                ).navigationBarsPadding()
         ) {
             dragHandle()
             content()
