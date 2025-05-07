@@ -48,9 +48,11 @@ fun SpotListScreenContainerV2(
 
     SpotListScreenV2(
         state = state,
-        onSpotTypeChanged = viewModel::onSpotTypeChanged,
-        onSpotClick = viewModel::onSpotClick,
+        onSpotTypeChanged = viewModel::onSpotTypeClicked,
+        onSpotClick = viewModel::onSpotClicked,
         onTryFindWay = viewModel::onTryFindWay,
+        onFilterButtonClick = viewModel::onFilterButtonClicked,
+        onFilterModalDismissRequest = viewModel::onFilterModalDismissed,
         modifier = modifier.fillMaxSize(),
     )
 

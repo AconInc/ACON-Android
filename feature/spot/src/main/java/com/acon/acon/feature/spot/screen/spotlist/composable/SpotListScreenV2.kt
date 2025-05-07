@@ -23,8 +23,10 @@ import androidx.compose.foundation.pager.PagerSnapDistance
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -45,13 +47,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.animation.skeleton
+import com.acon.acon.core.designsystem.component.bottomsheet.AconBottomSheet
+import com.acon.acon.core.designsystem.component.button.v2.AconFilledTextButton
+import com.acon.acon.core.designsystem.component.button.v2.AconOutlinedTextButton
+import com.acon.acon.core.designsystem.component.chip.AconChipFlowRow
 import com.acon.acon.core.designsystem.component.loading.SkeletonItem
 import com.acon.acon.core.designsystem.glassmorphism.LocalHazeState
 import com.acon.acon.core.designsystem.glassmorphism.defaultHazeEffect
 import com.acon.acon.core.designsystem.glassmorphism.glowBackground
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.domain.model.spot.v2.SpotV2
+import com.acon.acon.domain.type.FilterType
 import com.acon.acon.domain.type.SpotType
+import com.acon.acon.feature.spot.getNameResId
 import com.acon.acon.feature.spot.mock.spotListUiStateRestaurantMock
 import com.acon.acon.feature.spot.screen.component.SpotTypeToggle
 import com.acon.acon.feature.spot.screen.spotlist.SpotListUiStateV2
@@ -65,6 +73,8 @@ internal fun SpotListScreenV2(
     onSpotTypeChanged: (SpotType) -> Unit,
     onSpotClick: (SpotV2) -> Unit,
     onTryFindWay: (SpotV2) -> Unit,
+    onFilterButtonClick: () -> Unit,
+    onFilterModalDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
 
@@ -87,7 +97,7 @@ internal fun SpotListScreenV2(
                 .defaultHazeEffect(
                     hazeState = LocalHazeState.current,
                     tintColor = AconTheme.color.Gray900,
-                    blurRadius = 20.dp
+                    blurRadius = 20.dp,
                 )
                 .padding(bottom = 14.dp, top = 6.dp)
                 .statusBarsPadding()
@@ -106,7 +116,7 @@ internal fun SpotListScreenV2(
                     .align(Alignment.CenterEnd)
                     .padding(end = 16.dp)
                     .clickable {
-                        // TODO("Filter Clicked")
+                        onFilterButtonClick()
                     }
             )
         }
@@ -115,6 +125,11 @@ internal fun SpotListScreenV2(
             is SpotListUiStateV2.Success -> {
                 when (state.selectedSpotType) {
                     SpotType.RESTAURANT -> {
+                        if (state.showFilterModal) {
+                            RestaurantFilterBottomSheet(
+                                onDismissRequest = onFilterModalDismissRequest,
+                            )
+                        }
                         SpotListSuccessView(
                             state = state,
                             onSpotClick = onSpotClick,
@@ -123,6 +138,11 @@ internal fun SpotListScreenV2(
                         )
                     }
                     SpotType.CAFE -> {
+                        if (state.showFilterModal) {
+                            CafeFilterBottomSheet(
+                                onDismissRequest = onFilterModalDismissRequest,
+                            )
+                        }
                         SpotListSuccessView(
                             state = state,
                             onSpotClick = onSpotClick,
@@ -276,6 +296,175 @@ private fun SpotListLoadingView(
 }
 
 @Composable
+private inline fun <reified T> EachFilterSpace(
+    title: String,
+    crossinline onFilterChipClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) where T : Enum<T>, T : FilterType {
+
+    Column(
+        modifier = modifier
+    ) {
+        Text(
+            text = title,
+            style = AconTheme.typography.Title5,
+            fontWeight = FontWeight.SemiBold,
+            color = AconTheme.color.White,
+        )
+        AconChipFlowRow(
+            modifier = Modifier.padding(top = 12.dp),
+            titles = enumValues<T>().map {
+                stringResource((it as FilterType).getNameResId())
+            },
+            onChipSelected = {
+                onFilterChipClick()
+            },
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun RestaurantFilterBottomSheet(
+    onDismissRequest: () -> Unit,
+) {
+    AconBottomSheet(
+        onDismissRequest = onDismissRequest,
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+                .padding(bottom = 26.dp)
+        ) {
+            Text(
+                text = stringResource(R.string.filter_detail),
+                style = AconTheme.typography.Title3,
+                fontWeight = FontWeight.SemiBold,
+                color = AconTheme.color.White,
+                modifier = Modifier
+                    .padding(top = 20.dp)
+                    .align(Alignment.CenterHorizontally)
+            )
+
+            EachFilterSpace<FilterType.RestaurantType>(
+                title = stringResource(R.string.type),
+                onFilterChipClick = {},
+                modifier = Modifier
+            )
+            Spacer(modifier = Modifier.height(40.dp))
+
+            EachFilterSpace<FilterType.RestaurantOperationType>(
+                title = stringResource(R.string.operation_time),
+                onFilterChipClick = {},
+                modifier = Modifier
+            )
+            Spacer(modifier = Modifier.height(40.dp))
+
+            EachFilterSpace<FilterType.RestaurantPriceType>(
+                title = stringResource(R.string.price),
+                onFilterChipClick = {},
+                modifier = Modifier
+            )
+            Spacer(modifier = Modifier.height(99.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                AconOutlinedTextButton(
+                    text = stringResource(R.string.reset),
+                    textStyle = AconTheme.typography.Body1.copy(
+                        fontWeight = FontWeight.SemiBold,
+                    ),
+                    onClick = { /* TODO "Reset" */ },
+                    modifier = Modifier.weight(3f)
+                )
+                AconFilledTextButton(
+                    text = stringResource(R.string.see_result),
+                    textStyle = AconTheme.typography.Body1.copy(
+                        fontWeight = FontWeight.SemiBold,
+                    ),
+                    shape = CircleShape,
+                    onClick = { /* TODO "See Result" */ },
+                    contentPadding = PaddingValues(
+                        vertical = 12.dp,
+                    ),
+                    modifier = Modifier.padding(start = 8.dp).weight(5f)
+                )
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun CafeFilterBottomSheet(
+    onDismissRequest: () -> Unit,
+) {
+    AconBottomSheet(
+        onDismissRequest = onDismissRequest,
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+                .padding(bottom = 26.dp)
+        ) {
+            Text(
+                text = stringResource(R.string.filter_detail),
+                style = AconTheme.typography.Title3,
+                fontWeight = FontWeight.SemiBold,
+                color = AconTheme.color.White,
+                modifier = Modifier
+                    .padding(top = 20.dp)
+                    .align(Alignment.CenterHorizontally)
+            )
+
+            EachFilterSpace<FilterType.CafeType>(
+                title = stringResource(R.string.type),
+                onFilterChipClick = {},
+                modifier = Modifier
+            )
+            Spacer(modifier = Modifier.height(40.dp))
+
+            EachFilterSpace<FilterType.CafeOperationType>(
+                title = stringResource(R.string.operation_time),
+                onFilterChipClick = {},
+                modifier = Modifier
+            )
+            Spacer(modifier = Modifier.height(99.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                AconOutlinedTextButton(
+                    text = stringResource(R.string.reset),
+                    textStyle = AconTheme.typography.Body1.copy(
+                        fontWeight = FontWeight.SemiBold,
+                    ),
+                    onClick = { /* TODO "Reset" */ },
+                    modifier = Modifier.weight(3f)
+                )
+                AconFilledTextButton(
+                    text = stringResource(R.string.see_result),
+                    textStyle = AconTheme.typography.Body1.copy(
+                        fontWeight = FontWeight.SemiBold,
+                    ),
+                    shape = CircleShape,
+                    onClick = { /* TODO "See Result" */ },
+                    contentPadding = PaddingValues(
+                        vertical = 12.dp,
+                    ),
+                    modifier = Modifier.padding(start = 8.dp).weight(5f)
+                )
+            }
+        }
+    }
+}
+
+@Composable
 @Preview
 private fun SpotListScreenV2Preview() {
     SpotListScreenV2(
@@ -283,6 +472,8 @@ private fun SpotListScreenV2Preview() {
         onSpotTypeChanged = {},
         onSpotClick = {},
         onTryFindWay = {},
+        onFilterButtonClick = {},
+        onFilterModalDismissRequest = {},
         modifier = Modifier
             .fillMaxWidth()
             .background(AconTheme.color.Gray900)
@@ -298,6 +489,8 @@ private fun SpotListScreenV2LoadingPreview() {
         onSpotTypeChanged = {},
         onSpotClick = {},
         onTryFindWay = {},
+        onFilterButtonClick = {},
+        onFilterModalDismissRequest = {},
         modifier = Modifier
             .fillMaxWidth()
             .background(AconTheme.color.Gray900)
