@@ -7,7 +7,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
 
-fun Modifier.glowBackground(
+fun Modifier.fogBackground(
     glowColor: Color = Color.White,
     glowAlpha: Float = .16f,
     glowRadius: Float = 200f,

@@ -54,7 +54,7 @@ import com.acon.acon.core.designsystem.component.chip.AconChipFlowRow
 import com.acon.acon.core.designsystem.component.loading.SkeletonItem
 import com.acon.acon.core.designsystem.glassmorphism.LocalHazeState
 import com.acon.acon.core.designsystem.glassmorphism.defaultHazeEffect
-import com.acon.acon.core.designsystem.glassmorphism.glowBackground
+import com.acon.acon.core.designsystem.glassmorphism.fogBackground
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.domain.model.spot.v2.SpotV2
 import com.acon.acon.domain.type.FilterType
@@ -216,7 +216,7 @@ private fun SpotListSuccessView(
                     color = AconTheme.color.White,
                     modifier = Modifier
                         .padding(bottom = 6.dp)
-                        .glowBackground(glowRadius = 100f)
+                        .fogBackground(glowRadius = 100f)
                 )
             }
             SpotItemV2(
@@ -225,7 +225,7 @@ private fun SpotListSuccessView(
                 onFindWayButtonClick = onTryFindWay,
                 modifier = Modifier
                     .fillMaxSize()
-                    .glowBackground()
+                    .fogBackground()
             )
         }
     }
