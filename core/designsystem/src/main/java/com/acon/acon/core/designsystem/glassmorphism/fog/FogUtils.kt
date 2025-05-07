@@ -9,6 +9,8 @@ import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
 import androidx.palette.graphics.Palette
 import com.acon.acon.core.designsystem.image.toBitmap
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 fun Modifier.fogBackground(
     glowColor: Color,
@@ -54,7 +56,9 @@ suspend fun String.getOverlayColor(
 
     val bitmap = this.toBitmap(context = context) ?: return Color.Transparent
 
-    val palette = Palette.from(bitmap).generate()
+    val palette = withContext(Dispatchers.Default) {
+        Palette.from(bitmap).generate()
+    }
 
     val dominantColorInt = palette.getDominantColor(Color.Transparent.toArgb())
     val overlayColorInt = palette.getDarkMutedColor(dominantColorInt)
