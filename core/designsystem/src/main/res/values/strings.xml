@@ -62,4 +62,9 @@
     <string name="recommend_other_spots">대신 여기는 어떠세요?</string>
     <string name="no_other_spots">다음에 들어오실 땐,\n꼭 찾아서 추천드릴게요</string>
     <string name="ask_for_new_spot">장소 등록 신청하기</string>
+
+    <!-- Upload -->
+    <string name="close_upload">리뷰 그만두기</string>
+    <string name="title_upload">업로드</string>
+    <string name="next">다음</string>
 </resources>
