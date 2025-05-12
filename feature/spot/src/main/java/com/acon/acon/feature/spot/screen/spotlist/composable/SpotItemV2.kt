@@ -40,9 +40,9 @@ import coil3.request.crossfade
 import coil3.size.Scale
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.button.v2.AconFilledButton
-import com.acon.acon.core.designsystem.glassmorphism.LocalHazeState
-import com.acon.acon.core.designsystem.glassmorphism.defaultHazeEffect
-import com.acon.acon.core.designsystem.glassmorphism.imageGradientLayer
+import com.acon.acon.core.designsystem.effect.LocalHazeState
+import com.acon.acon.core.designsystem.effect.defaultHazeEffect
+import com.acon.acon.core.designsystem.effect.imageGradientLayer
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.domain.model.spot.v2.SpotV2
 import com.acon.feature.common.compose.getTextSizeDp

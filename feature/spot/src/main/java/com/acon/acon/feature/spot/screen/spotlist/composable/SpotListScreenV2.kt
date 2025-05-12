@@ -63,11 +63,10 @@ import com.acon.acon.core.designsystem.component.button.v2.AconFilledTextButton
 import com.acon.acon.core.designsystem.component.button.v2.AconOutlinedTextButton
 import com.acon.acon.core.designsystem.component.chip.AconChip
 import com.acon.acon.core.designsystem.component.loading.SkeletonItem
-import com.acon.acon.core.designsystem.glassmorphism.LocalHazeState
-import com.acon.acon.core.designsystem.glassmorphism.defaultHazeEffect
-import com.acon.acon.core.designsystem.glassmorphism.fog.fogBackground
-import com.acon.acon.core.designsystem.glassmorphism.fog.getOverlayColor
-import com.acon.acon.core.designsystem.noRippleClickable
+import com.acon.acon.core.designsystem.effect.LocalHazeState
+import com.acon.acon.core.designsystem.effect.defaultHazeEffect
+import com.acon.acon.core.designsystem.effect.fog.fogBackground
+import com.acon.acon.core.designsystem.effect.fog.getOverlayColor
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.domain.model.spot.v2.SpotV2
 import com.acon.acon.domain.type.CafeFilterType
@@ -226,6 +225,7 @@ private fun SpotListSuccessView(
     val context = LocalContext.current
 
     val pagerState = rememberPagerState { state.spotList.size }
+
     VerticalPager(
         state = pagerState,
         contentPadding = PaddingValues(
@@ -290,7 +290,7 @@ private fun SpotListSuccessView(
                             shape = RoundedCornerShape(20.dp),
                             color = AconTheme.color.GlassBlackDefault
                         )
-                        .noRippleClickable {
+                        .clickable {
                             // TODO("로그인 바텀시트")
                         }
                         .fogBackground(

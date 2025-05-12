@@ -1,4 +1,4 @@
-package com.acon.acon.core.designsystem.glassmorphism.fog
+package com.acon.acon.core.designsystem.effect.fog
 
 import androidx.collection.LruCache
 import androidx.compose.ui.graphics.Color

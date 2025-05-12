@@ -1,4 +1,4 @@
-package com.acon.acon.core.designsystem.glassmorphism
+package com.acon.acon.core.designsystem.effect
 
 import androidx.annotation.FloatRange
 import androidx.compose.runtime.Composable
