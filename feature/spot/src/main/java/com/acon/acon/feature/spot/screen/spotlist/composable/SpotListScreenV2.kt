@@ -145,7 +145,8 @@ internal fun SpotListScreenV2(
                             state = state,
                             onSpotClick = onSpotClick,
                             onTryFindWay = onTryFindWay,
-                            itemHeightPx = itemHeightPx
+                            itemHeightPx = itemHeightPx,
+                            modifier = Modifier.fillMaxSize()
                         )
                     }
                     SpotType.CAFE -> {
@@ -158,13 +159,24 @@ internal fun SpotListScreenV2(
                             state = state,
                             onSpotClick = onSpotClick,
                             onTryFindWay = onTryFindWay,
-                            itemHeightPx = itemHeightPx
+                            itemHeightPx = itemHeightPx,
+                            modifier = Modifier.fillMaxSize()
                         )
                     }
                 }
             }
 
-            is SpotListUiStateV2.Loading -> SpotListLoadingView(itemHeightPx = itemHeightPx)
+            is SpotListUiStateV2.Loading -> SpotListLoadingView(
+                itemHeightPx = itemHeightPx,
+                modifier = Modifier
+                    .verticalScroll(rememberScrollState())
+                    .hazeSource(LocalHazeState.current)
+                    .fillMaxSize()
+                    .padding(
+                        horizontal = 16.dp,
+                        vertical = 30.dp
+                    )
+            )
             is SpotListUiStateV2.LoadFailed -> {
                 // TODO("Error")
             }
@@ -178,6 +190,7 @@ private fun SpotListSuccessView(
     onSpotClick: (SpotV2) -> Unit,
     onTryFindWay: (SpotV2) -> Unit,
     itemHeightPx: Float,
+    modifier: Modifier = Modifier,
 ) {
 
     val context = LocalContext.current
@@ -189,8 +202,7 @@ private fun SpotListSuccessView(
             horizontal = 16.dp,
             vertical = (itemHeightPx * .18f).toDp()
         ),
-        modifier = Modifier
-            .fillMaxSize(),
+        modifier = modifier,
         flingBehavior = PagerDefaults.flingBehavior(
             state = pagerState,
             pagerSnapDistance = PagerSnapDistance.atMost(4),
@@ -273,17 +285,11 @@ private fun SpotListSuccessView(
 
 @Composable
 private fun SpotListLoadingView(
-    itemHeightPx: Float
+    itemHeightPx: Float,
+    modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = Modifier
-            .verticalScroll(rememberScrollState())
-            .hazeSource(LocalHazeState.current)
-            .fillMaxSize()
-            .padding(
-                horizontal = 16.dp,
-                vertical = 30.dp
-            ),
+        modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         SkeletonItem(
