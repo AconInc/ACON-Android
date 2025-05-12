@@ -65,7 +65,9 @@ import com.acon.acon.core.designsystem.glassmorphism.fog.getOverlayColor
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.domain.model.spot.v2.SpotV2
+import com.acon.acon.domain.type.CafeFilterType
 import com.acon.acon.domain.type.FilterType
+import com.acon.acon.domain.type.RestaurantFilterType
 import com.acon.acon.domain.type.SpotType
 import com.acon.acon.domain.type.UserType
 import com.acon.acon.feature.spot.getNameResId
@@ -139,7 +141,8 @@ internal fun SpotListScreenV2(
                     SpotType.RESTAURANT -> {
                         if (state.showFilterModal) {
                             RestaurantFilterBottomSheet(
-                                onDismissRequest = onFilterModalDismissRequest,
+                                selectedChipIndices = state.selectedFilters.t,
+                                onDismissRequest = onFilterModalDismissRequest
                             )
                         }
                         SpotListSuccessView(
@@ -375,6 +378,7 @@ private inline fun <reified T> EachFilterSpace(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun RestaurantFilterBottomSheet(
+    selectedChipIndices: ImmutableList<Int>,
     onDismissRequest: () -> Unit,
 ) {
     AconBottomSheet(
@@ -396,7 +400,7 @@ private fun RestaurantFilterBottomSheet(
                     .align(Alignment.CenterHorizontally)
             )
 
-            EachFilterSpace<FilterType.RestaurantType>(
+            EachFilterSpace<RestaurantFilterType.RestaurantType>(
                 title = stringResource(R.string.type),
                 onFilterChipClick = {},
                 modifier = Modifier,
@@ -404,14 +408,14 @@ private fun RestaurantFilterBottomSheet(
             )
             Spacer(modifier = Modifier.height(40.dp))
 
-            EachFilterSpace<FilterType.RestaurantOperationType>(
+            EachFilterSpace<RestaurantFilterType.RestaurantOperationType>(
                 title = stringResource(R.string.operation_time),
                 onFilterChipClick = {},
                 modifier = Modifier
             )
             Spacer(modifier = Modifier.height(40.dp))
 
-            EachFilterSpace<FilterType.RestaurantPriceType>(
+            EachFilterSpace<RestaurantFilterType.RestaurantPriceType>(
                 title = stringResource(R.string.price),
                 onFilterChipClick = {},
                 modifier = Modifier
@@ -471,14 +475,14 @@ private fun CafeFilterBottomSheet(
                     .align(Alignment.CenterHorizontally)
             )
 
-            EachFilterSpace<FilterType.CafeType>(
+            EachFilterSpace<CafeFilterType.CafeType>(
                 title = stringResource(R.string.type),
                 onFilterChipClick = {},
                 modifier = Modifier
             )
             Spacer(modifier = Modifier.height(40.dp))
 
-            EachFilterSpace<FilterType.CafeOperationType>(
+            EachFilterSpace<CafeFilterType.CafeOperationType>(
                 title = stringResource(R.string.operation_time),
                 onFilterChipClick = {},
                 modifier = Modifier

@@ -1,6 +1,8 @@
 package com.acon.acon.domain.type
 
-sealed interface FilterType {
+interface FilterType
+
+sealed interface RestaurantFilterType : FilterType {
 
     enum class RestaurantType: FilterType {
         KOREAN,
@@ -14,20 +16,23 @@ sealed interface FilterType {
         DRINK_BAR;
     }
 
+    enum class RestaurantOperationType: FilterType {
+        AFTER_12AM
+    }
+
+    enum class RestaurantPriceType: FilterType {
+        COST_EFFECTIVENESS
+    }
+}
+
+sealed interface CafeFilterType : FilterType {
+
     enum class CafeType: FilterType {
         FOR_WORK,
         EXCLUDE_FRANCHISE;
     }
 
-    enum class RestaurantOperationType: FilterType {
-        AFTER_12AM
-    }
-
     enum class CafeOperationType: FilterType {
         AFTER_10PM
-    }
-
-    enum class RestaurantPriceType: FilterType {
-        COST_EFFECTIVENESS
     }
 }
