@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
@@ -35,11 +36,11 @@ import com.acon.acon.core.designsystem.animation.defaultEnterTransition
 import com.acon.acon.core.designsystem.animation.defaultExitTransition
 import com.acon.acon.core.designsystem.animation.defaultPopEnterTransition
 import com.acon.acon.core.designsystem.animation.defaultPopExitTransition
+import com.acon.acon.core.designsystem.component.bottomsheet.LoginBottomSheet
+import com.acon.acon.core.designsystem.component.snackbar.AconTextSnackBar
 import com.acon.acon.core.designsystem.glassmorphism.LocalHazeState
 import com.acon.acon.core.designsystem.glassmorphism.defaultHazeEffect
 import com.acon.acon.core.designsystem.glassmorphism.rememberHazeState
-import com.acon.acon.core.designsystem.component.bottomsheet.LoginBottomSheet
-import com.acon.acon.core.designsystem.component.snackbar.AconTextSnackBar
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.core.utils.feature.constants.AppURL
 import com.acon.acon.domain.repository.SocialRepository
@@ -85,7 +86,7 @@ fun AconNavigation(
     )
 
     CompositionLocalProvider(LocalHazeState provides hazeState) {
-        if(showLoginBottomSheet) {
+        if (showLoginBottomSheet) {
             LoginBottomSheet(
                 hazeState = LocalHazeState.current,
                 onDismissRequest = { showLoginBottomSheet = false },
@@ -103,7 +104,11 @@ fun AconNavigation(
                                     }
                                 } else {
                                     showLoginBottomSheet = false
-                                    navController.navigate(AreaVerificationRoute.RequireAreaVerification("onboarding")) {
+                                    navController.navigate(
+                                        AreaVerificationRoute.RequireAreaVerification(
+                                            "onboarding"
+                                        )
+                                    ) {
                                         popUpTo<AreaVerificationRoute.Graph> {
                                             inclusive = true
                                         }
@@ -128,9 +133,9 @@ fun AconNavigation(
             )
         }
 
-            Scaffold(
+        Scaffold(
             containerColor = AconTheme.color.Gray9,
-            modifier = modifier.navigationBarsPadding(),
+            modifier = modifier,
             snackbarHost = {
                 SnackbarHost(
                     modifier = Modifier.padding(bottom = 36.dp),
@@ -148,12 +153,12 @@ fun AconNavigation(
                 if (backStackEntry?.destination?.shouldShowBottomNav() == true) {
                     BottomBar(
                         modifier = Modifier
-                            .background(color = AconTheme.color.Black)  // TODO Color?
+                            .background(color = AconTheme.color.Black.copy(alpha=.0f))  // TODO Color?
                             .fillMaxWidth()
                             .defaultHazeEffect(
                                 hazeState = LocalHazeState.current,
                                 tintColor = AconTheme.color.Dim_b_30
-                            ),
+                            ).navigationBarsPadding(),
                         selectedItem = selectedBottomNavItem,
                         onItemClick = { item ->
                             if (item == BottomNavType.UPLOAD) {
@@ -188,7 +193,7 @@ fun AconNavigation(
             NavHost(
                 navController = navController,
                 startDestination = SignInRoute.Graph,
-                modifier = Modifier.padding(innerPadding),
+                modifier = Modifier.padding(innerPadding).consumeWindowInsets(innerPadding),
                 enterTransition = {
                     defaultEnterTransition()
                 }, exitTransition = {
