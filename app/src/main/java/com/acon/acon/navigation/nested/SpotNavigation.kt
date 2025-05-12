@@ -12,7 +12,7 @@ import androidx.navigation.navigation
 import com.acon.acon.domain.repository.SocialRepository
 import com.acon.acon.feature.spot.SpotRoute
 import com.acon.acon.feature.spot.screen.spotdetail.composable.SpotDetailScreenContainer
-import com.acon.acon.feature.spot.screen.spotlist.composable.SpotListScreenContainerV2
+import com.acon.acon.feature.spot.screen.spotlist.composable.SpotListScreenContainer
 import com.acon.feature.common.intent.openMapNavigation
 
 internal fun NavGraphBuilder.spotNavigation(
@@ -28,7 +28,7 @@ internal fun NavGraphBuilder.spotNavigation(
             exitTransition = { ExitTransition.None }
         ) {
             val context = LocalContext.current
-            SpotListScreenContainerV2(
+            SpotListScreenContainer(
                 onNavigateToSpotDetailScreen = {
                     navController.navigate(SpotRoute.SpotDetail(it.id))
                 },

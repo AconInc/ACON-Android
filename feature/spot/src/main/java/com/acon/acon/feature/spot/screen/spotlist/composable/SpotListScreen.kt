@@ -94,7 +94,7 @@ import kotlin.math.absoluteValue
 private const val MAX_GUEST_AVAILABLE_COUNT = 5
 
 @Composable
-internal fun SpotListScreenV2(
+internal fun SpotListScreen(
     state: SpotListUiStateV2,
     modifier: Modifier = Modifier,
     userType: UserType = UserType.GUEST,
@@ -341,7 +341,7 @@ private fun SpotListSuccessView(
                         )
                 )
             } else {
-                SpotItemV2(
+                SpotItem(
                     spot = spot,
                     onItemClick = onSpotClick,
                     onFindWayButtonClick = onTryFindWay,
@@ -681,7 +681,7 @@ private fun CafeFilterBottomSheet(
 @Composable
 @Preview
 private fun SpotListScreenV2Preview() {
-    SpotListScreenV2(
+    SpotListScreen(
         state = spotListUiStateRestaurantMock,
         modifier = Modifier
             .fillMaxWidth()
@@ -693,7 +693,7 @@ private fun SpotListScreenV2Preview() {
 @Composable
 @Preview
 private fun SpotListScreenV2LoadingPreview() {
-    SpotListScreenV2(
+    SpotListScreen(
         state = SpotListUiStateV2.Loading,
         modifier = Modifier
             .fillMaxWidth()

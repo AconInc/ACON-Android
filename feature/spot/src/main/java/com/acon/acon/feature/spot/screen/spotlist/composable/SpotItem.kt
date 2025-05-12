@@ -48,7 +48,7 @@ import com.acon.acon.domain.model.spot.v2.SpotV2
 import com.acon.feature.common.compose.getTextSizeDp
 
 @Composable
-internal fun SpotItemV2(
+internal fun SpotItem(
     spot: SpotV2,
     onItemClick: (SpotV2) -> Unit,
     onFindWayButtonClick: (SpotV2) -> Unit,
@@ -245,7 +245,7 @@ fun SpotGuestItem(
 @Composable
 @Preview
 private fun SpotItemV2Preview() {
-    SpotItemV2(
+    SpotItem(
         spot = SpotV2(
             id = 1L,
             name = "장소명",
@@ -266,7 +266,7 @@ private fun SpotItemV2Preview() {
 @Composable
 @Preview
 private fun SpotItemV2EmptyImagePreview() {
-    SpotItemV2(
+    SpotItem(
         spot = SpotV2(
             id = 1L,
             name = "장소명",

@@ -18,8 +18,6 @@ import com.acon.acon.feature.spot.mock.spotListUiStateRestaurantMock
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.viewmodel.container
@@ -28,7 +26,7 @@ import kotlin.reflect.KClass
 
 @HiltViewModel
 @OptIn(OrbitExperimental::class)
-class SpotListViewModelV2 @Inject constructor(
+class SpotListViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val userRepository: UserRepository,
     private val spotRepository: SpotRepository

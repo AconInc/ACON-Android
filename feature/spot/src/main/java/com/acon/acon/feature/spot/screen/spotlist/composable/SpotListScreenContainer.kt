@@ -16,7 +16,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.acon.acon.domain.model.spot.v2.SpotV2
 import com.acon.acon.feature.spot.screen.spotlist.SpotListSideEffectV2
-import com.acon.acon.feature.spot.screen.spotlist.SpotListViewModelV2
+import com.acon.acon.feature.spot.screen.spotlist.SpotListViewModel
 import com.acon.feature.common.coroutine.collectWithLifecycle
 import com.acon.feature.common.location.locationFlow
 import com.acon.feature.common.permission.LocationPermissionRequester
@@ -25,11 +25,11 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 
 @SuppressLint("MissingPermission")  // Location permission is handled in the LocationPermissionRequester
 @Composable
-fun SpotListScreenContainerV2(
+fun SpotListScreenContainer(
     onNavigateToSpotDetailScreen: (SpotV2) -> Unit,
     onNavigateToExternalMap: (start: Location, destination: Location) -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: SpotListViewModelV2 = hiltViewModel()
+    viewModel: SpotListViewModel = hiltViewModel()
 ) {
 
     val state by viewModel.collectAsState()
@@ -48,7 +48,7 @@ fun SpotListScreenContainerV2(
         }
     )
 
-    SpotListScreenV2(
+    SpotListScreen(
         state = state,
         userType = userType,
         onSpotTypeChanged = viewModel::onSpotTypeClicked,
