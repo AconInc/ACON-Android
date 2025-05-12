@@ -1,7 +1,5 @@
 package com.acon.acon.navigation
 
-import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.consumeWindowInsets
@@ -42,7 +40,6 @@ import com.acon.acon.core.designsystem.glassmorphism.LocalHazeState
 import com.acon.acon.core.designsystem.glassmorphism.defaultHazeEffect
 import com.acon.acon.core.designsystem.glassmorphism.rememberHazeState
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.core.utils.feature.constants.AppURL
 import com.acon.acon.domain.repository.SocialRepository
 import com.acon.acon.domain.repository.UserRepository
 import com.acon.acon.domain.type.UserType
@@ -120,16 +117,6 @@ fun AconNavigation(
                             }
                     }
                 },
-                onTermOfUse = {
-                    val url = AppURL.TERM_OF_USE
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-                    context.startActivity(intent)
-                },
-                onPrivatePolicy = {
-                    val url = AppURL.PRIVATE_POLICY
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-                    context.startActivity(intent)
-                }
             )
         }
 

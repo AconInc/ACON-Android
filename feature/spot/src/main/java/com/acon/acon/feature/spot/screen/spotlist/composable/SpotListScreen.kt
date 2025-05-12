@@ -85,8 +85,6 @@ internal fun SpotListScreen(
     onLoginBottomSheetShowStateChange: (Boolean) -> Unit = {},
     onFilterBottomSheetShowStateChange: (Boolean) -> Unit = {},
     onSpotItemClick: (id: Long) -> Unit = {},
-    onTermOfUse: () -> Unit = {},
-    onPrivatePolicy: () -> Unit = {},
     onGoogleSignIn: () -> Unit = {}
 ) {
     val context = LocalContext.current
@@ -133,9 +131,7 @@ internal fun SpotListScreen(
                         onGoogleSignIn = {
                             onGoogleSignIn()
                             amplitudeSpotListSignIn()
-                        },
-                        onTermOfUse = onTermOfUse,
-                        onPrivatePolicy = onPrivatePolicy
+                        }
                     )
                 }
 

@@ -81,14 +81,6 @@ class ProfileViewModel @Inject constructor(
         postSideEffect(ProfileUiSideEffect.OnNavigateToProfileEditScreen)
     }
 
-    fun onTermOfUse() = intent {
-        postSideEffect(ProfileUiSideEffect.OnTermOfUse)
-    }
-
-    fun onPrivatePolicy() = intent {
-        postSideEffect(ProfileUiSideEffect.OnPrivatePolicy)
-    }
-
     fun onBottomSheetShowStateChange(show: Boolean) = intent {
         runOn<ProfileUiState.Guest> {
             reduce {
@@ -120,6 +112,4 @@ sealed interface ProfileUiSideEffect {
     data object OnNavigateToSettingsScreen : ProfileUiSideEffect
     data object OnNavigateToProfileEditScreen : ProfileUiSideEffect
     data object OnNavigateToAreaVerificationScreen : ProfileUiSideEffect
-    data object OnTermOfUse : ProfileUiSideEffect
-    data object OnPrivatePolicy : ProfileUiSideEffect
 }

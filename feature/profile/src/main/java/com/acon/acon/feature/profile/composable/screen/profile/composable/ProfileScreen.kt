@@ -25,9 +25,9 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
-import com.acon.acon.core.designsystem.glassmorphism.LocalHazeState
 import com.acon.acon.core.designsystem.component.bottomsheet.LoginBottomSheet
 import com.acon.acon.core.designsystem.component.topbar.AconTopBar
+import com.acon.acon.core.designsystem.glassmorphism.LocalHazeState
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.feature.profile.R
@@ -44,8 +44,6 @@ fun ProfileScreen(
     onSettings: () -> Unit = {},
     onEditProfile: () -> Unit = {},
     onGoogleSignIn: () -> Unit = {},
-    onTermOfUse: () -> Unit = {},
-    onPrivatePolicy: () -> Unit = {},
     onBottomSheetShowStateChange: (Boolean) -> Unit = {}
 ) {
     when (state) {
@@ -169,8 +167,6 @@ fun ProfileScreen(
                         onGoogleSignIn()
                         profileAmplitude()
                     },
-                    onTermOfUse = onTermOfUse,
-                    onPrivatePolicy = onPrivatePolicy
                 )
             }
 
