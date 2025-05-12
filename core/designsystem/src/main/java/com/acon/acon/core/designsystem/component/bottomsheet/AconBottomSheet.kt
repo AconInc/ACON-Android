@@ -45,7 +45,7 @@ fun AconBottomSheet(
     ),
     sheetMaxWidth: Dp = BottomSheetDefaults.SheetMaxWidth,
     shape: Shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
-    containerColor: Color = AconTheme.color.Gray800,
+    containerColor: Color = AconTheme.color.GlassWhiteDisabled,
     contentColor: Color = AconTheme.color.White,
     tonalElevation: Dp = 0.dp,
     scrimColor: Color = BottomSheetDefaults.ScrimColor,

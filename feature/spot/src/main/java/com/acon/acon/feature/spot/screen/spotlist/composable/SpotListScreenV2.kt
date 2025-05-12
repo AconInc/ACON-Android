@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.PageSize
 import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.PagerSnapDistance
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
@@ -168,6 +169,9 @@ internal fun SpotListScreenV2(
         when(state) {
             is SpotListUiStateV2.Success -> {
                 val socialRepository = rememberSocialRepository()
+                var pagerState = rememberPagerState {
+                    state.spotList.size
+                }
 
                 val scope = rememberCoroutineScope()
                 if(state.showLoginModal) {
@@ -178,6 +182,7 @@ internal fun SpotListScreenV2(
                             scope.launch {
                                 socialRepository.googleLogin().onSuccess {
                                     onGuestModalDismissRequest()
+                                    pagerState.scrollToPage(0)
                                 }
                             }
                         }
@@ -185,6 +190,9 @@ internal fun SpotListScreenV2(
                 }
                 when (state.selectedSpotType) {
                     SpotType.RESTAURANT -> {
+                        pagerState = rememberPagerState {
+                            state.spotList.size
+                        }
                         if (state.showFilterModal) {
                             RestaurantFilterBottomSheet(
                                 selectedItems = state.selectedRestaurantFilters.values.flatten().toImmutableSet(),
@@ -193,6 +201,7 @@ internal fun SpotListScreenV2(
                             )
                         }
                         SpotListSuccessView(
+                            pagerState = pagerState,
                             state = state,
                             userType = userType,
                             onSpotClick = onSpotClick,
@@ -203,6 +212,9 @@ internal fun SpotListScreenV2(
                         )
                     }
                     SpotType.CAFE -> {
+                        pagerState = rememberPagerState {
+                            state.spotList.size
+                        }
                         if (state.showFilterModal) {
                             CafeFilterBottomSheet(
                                 selectedItems = state.selectedCafeFilters.values.flatten().toImmutableSet(),
@@ -211,6 +223,7 @@ internal fun SpotListScreenV2(
                             )
                         }
                         SpotListSuccessView(
+                            pagerState = pagerState,
                             state = state,
                             userType = userType,
                             onSpotClick = onSpotClick,
@@ -243,6 +256,7 @@ internal fun SpotListScreenV2(
 
 @Composable
 private fun SpotListSuccessView(
+    pagerState: PagerState,
     state: SpotListUiStateV2.Success,
     userType: UserType,
     onSpotClick: (SpotV2) -> Unit,
@@ -253,8 +267,6 @@ private fun SpotListSuccessView(
 ) {
 
     val context = LocalContext.current
-
-    val pagerState = rememberPagerState { state.spotList.size }
 
     VerticalPager(
         state = pagerState,
