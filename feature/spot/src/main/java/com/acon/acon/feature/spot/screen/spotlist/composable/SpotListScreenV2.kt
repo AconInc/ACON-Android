@@ -2,6 +2,7 @@ package com.acon.acon.feature.spot.screen.spotlist.composable
 
 import androidx.compose.animation.core.exponentialDecay
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.snapping.SnapPosition
 import androidx.compose.foundation.layout.Arrangement
@@ -140,6 +141,20 @@ internal fun SpotListScreenV2(
                     .clickable {
                         onFilterButtonClick()
                     }
+                    .then(
+                        if (state is SpotListUiStateV2.Success) {
+                            if (state.selectedRestaurantFilters.values.flatten().isNotEmpty() ||
+                                state.selectedCafeFilters.values.flatten().isNotEmpty()
+                            ) Modifier.border(
+                                width = 1.dp,
+                                color = AconTheme.color.GlassWhiteSelected,
+                                shape = CircleShape
+                            ).background(
+                                color = AconTheme.color.GlassWhiteSelected,
+                                shape = CircleShape
+                            ) else Modifier
+                        } else Modifier
+                    ).padding(6.dp)
             )
         }
 
@@ -263,19 +278,24 @@ private fun SpotListSuccessView(
                         .fogBackground(
                             glowColor = AconTheme.color.White,
                             glowRadius = 100f
-                        ).zIndex(2f)
+                        )
+                        .zIndex(2f)
                 )
             }
             if (page >= MAX_GUEST_AVAILABLE_COUNT && state.userType == UserType.GUEST) {
                 SpotGuestItem(
-                    modifier = Modifier.fillMaxSize().background(
-                        shape = RoundedCornerShape(20.dp),
-                        color = AconTheme.color.GlassBlackDefault
-                    ).noRippleClickable {
-                        // TODO("로그인 바텀시트")
-                    }.fogBackground(
-                        glowColor = AconTheme.color.White,
-                    )
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(
+                            shape = RoundedCornerShape(20.dp),
+                            color = AconTheme.color.GlassBlackDefault
+                        )
+                        .noRippleClickable {
+                            // TODO("로그인 바텀시트")
+                        }
+                        .fogBackground(
+                            glowColor = AconTheme.color.White,
+                        )
                 )
             } else {
                 SpotItemV2(
@@ -287,7 +307,8 @@ private fun SpotListSuccessView(
                         .fogBackground(
                             glowColor = spotFogColor,
                             glowAlpha = 1f,
-                        ).zIndex(1f)
+                        )
+                        .zIndex(1f)
                 )
             }
         }
@@ -502,7 +523,9 @@ private fun RestaurantFilterBottomSheet(
                     contentPadding = PaddingValues(
                         vertical = 12.dp,
                     ),
-                    modifier = Modifier.padding(start = 8.dp).weight(5f)
+                    modifier = Modifier
+                        .padding(start = 8.dp)
+                        .weight(5f)
                 )
             }
         }
@@ -603,7 +626,9 @@ private fun CafeFilterBottomSheet(
                     contentPadding = PaddingValues(
                         vertical = 12.dp,
                     ),
-                    modifier = Modifier.padding(start = 8.dp).weight(5f)
+                    modifier = Modifier
+                        .padding(start = 8.dp)
+                        .weight(5f)
                 )
             }
         }
