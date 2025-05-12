@@ -3,12 +3,10 @@ package com.acon.acon.feature.spot.screen.spotlist.composable
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -24,7 +22,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -41,9 +38,10 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import coil3.size.Scale
 import com.acon.acon.core.designsystem.R
+import com.acon.acon.core.designsystem.component.button.v2.AconFilledButton
 import com.acon.acon.core.designsystem.glassmorphism.LocalHazeState
 import com.acon.acon.core.designsystem.glassmorphism.defaultHazeEffect
-import com.acon.acon.core.designsystem.component.button.v2.AconFilledButton
+import com.acon.acon.core.designsystem.glassmorphism.imageGradientLayer
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.domain.model.spot.v2.SpotV2
 import com.acon.feature.common.compose.getTextSizeDp
@@ -70,10 +68,17 @@ internal fun SpotItemV2(
         ) {
             SpotImage(
                 spot = spot,
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier
+                    .fillMaxSize()
+                    .then(
+                        if (spot.image.isNotBlank()) {
+                            Modifier.imageGradientLayer()
+                        } else {
+                            Modifier
+                        }
+                    )
             )
-            if (spot.image.isNotBlank())
-                VerticalGradient()
+
             SpotInfo(
                 spot = spot,
                 onFindWayButtonClick = onFindWayButtonClick,
@@ -118,18 +123,22 @@ private fun SpotInfo(
                 style = AconTheme.typography.Body1,
                 fontWeight = FontWeight.W400,
                 color = AconTheme.color.White,
-                modifier = Modifier.padding(start = 2.dp).width(
-                    getTextSizeDp("+9999", AconTheme.typography.Body1).width
-                ),
+                modifier = Modifier
+                    .padding(start = 2.dp)
+                    .width(
+                        getTextSizeDp("+9999", AconTheme.typography.Body1).width
+                    ),
                 textAlign = TextAlign.End
             )
         }
         Spacer(modifier = Modifier.weight(1f))
         AconFilledButton(
-            modifier = Modifier.align(Alignment.End).defaultHazeEffect(
-                hazeState = LocalHazeState.current,
-                tintColor = AconTheme.color.GlassWhiteDefault
-            ),
+            modifier = Modifier
+                .align(Alignment.End)
+                .defaultHazeEffect(
+                    hazeState = LocalHazeState.current,
+                    tintColor = AconTheme.color.GlassWhiteDefault
+                ),
             onClick = {
                 onFindWayButtonClick(spot)
             },
@@ -202,38 +211,6 @@ private fun SpotImage(
 }
 
 @Composable
-private fun BoxScope.VerticalGradient() {
-    Box(
-        modifier = Modifier
-            .align(Alignment.TopCenter)
-            .fillMaxWidth()
-            .fillMaxHeight(.25f)
-            .background(
-                brush = Brush.verticalGradient(
-                    listOf(
-                        AconTheme.color.Gray900,
-                        AconTheme.color.Gray900.copy(alpha = .0f),
-                    )
-                )
-            )
-    )
-    Box(
-        modifier = Modifier
-            .align(Alignment.BottomCenter)
-            .fillMaxWidth()
-            .fillMaxHeight(.25f)
-            .background(
-                brush = Brush.verticalGradient(
-                    listOf(
-                        AconTheme.color.Gray900.copy(alpha = .0f),
-                        AconTheme.color.Gray900
-                    )
-                )
-            )
-    )
-}
-
-@Composable
 @Preview
 private fun SpotItemV2Preview() {
     SpotItemV2(
@@ -248,7 +225,9 @@ private fun SpotItemV2Preview() {
         ),
         onItemClick = {},
         onFindWayButtonClick = {},
-        modifier = Modifier.height(600.dp).clipToBounds()
+        modifier = Modifier
+            .height(600.dp)
+            .clipToBounds()
     )
 }
 
@@ -267,6 +246,8 @@ private fun SpotItemV2EmptyImagePreview() {
         ),
         onItemClick = {},
         onFindWayButtonClick = {},
-        modifier = Modifier.height(600.dp).clipToBounds()
+        modifier = Modifier
+            .height(600.dp)
+            .clipToBounds()
     )
 }
