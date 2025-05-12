@@ -20,7 +20,6 @@ import androidx.compose.ui.unit.dp
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.domain.model.upload.SpotListItem
-import com.acon.acon.feature.upload.R
 
 @Composable
 fun LocationSelectionButton(
@@ -42,7 +41,7 @@ fun LocationSelectionButton(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Image(
-                imageVector = ImageVector.vectorResource(id = R.drawable.and_ic_location_gray_28),
+                imageVector = ImageVector.vectorResource(id = com.acon.acon.core.designsystem.R.drawable.and_ic_location_gray_28),
                 contentDescription = null,
                 modifier = Modifier.size(16.dp)
             )
@@ -67,7 +66,7 @@ fun LocationSelectionButton(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Image(
-                imageVector = ImageVector.vectorResource(id = R.drawable.and_ic_location_gray_28),
+                imageVector = ImageVector.vectorResource(id = com.acon.acon.core.designsystem.R.drawable.and_ic_location_gray_28),
                 contentDescription = null,
                 modifier = Modifier.size(16.dp)
             )

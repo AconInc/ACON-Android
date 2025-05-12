@@ -6,6 +6,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.acon.acon.domain.error.profile.ValidateNicknameError
 import com.acon.acon.domain.repository.ProfileRepository
+import com.acon.acon.domain.type.UpdateProfileType
 import com.acon.acon.feature.profile.composable.component.TextFieldStatus
 import com.acon.acon.feature.profile.composable.type.FocusType
 import com.acon.acon.feature.profile.composable.utils.isAllowedChar
@@ -395,17 +396,14 @@ class ProfileModViewModel @Inject constructor(
     private fun updateProfile(fileName: String, nickname: String, birthday: String?) = intent {
         profileRepository.updateProfile(fileName, nickname, birthday)
             .onSuccess {
-                intent {
-                    postSideEffect(ProfileModSideEffect.NavigateToProfile)
-                }
+                profileRepository.updateProfileType(UpdateProfileType.SUCCESS)
+                postSideEffect(ProfileModSideEffect.NavigateToProfile)
             }
             .onFailure {
-                intent {
-                    postSideEffect(ProfileModSideEffect.NavigateToProfile)
-                }
+                profileRepository.updateProfileType(UpdateProfileType.FAILURE)
+                postSideEffect(ProfileModSideEffect.NavigateToProfile)
             }
     }
-
 }
 
 data class ProfileModState(

@@ -93,7 +93,7 @@ fun AconSearchTextField(
 
             if (value.isNotEmpty()) {
                 Image(
-                    imageVector = ImageVector.vectorResource(id = R.drawable.ic_dissmiss_circle_gray),
+                    imageVector = ImageVector.vectorResource(id = com.acon.acon.core.designsystem.R.drawable.ic_dissmiss_circle_gray),
                     contentDescription = "Clear",
                     modifier = Modifier
                         .clickable { onValueChange("") }

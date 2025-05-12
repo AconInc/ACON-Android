@@ -21,6 +21,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -28,6 +29,7 @@ import coil3.compose.rememberAsyncImagePainter
 import com.acon.acon.core.designsystem.component.topbar.AconTopBar
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
+import com.acon.acon.feature.profile.R
 import com.acon.acon.feature.profile.composable.screen.galleryGrid.GalleryGridSideEffect
 import com.acon.acon.feature.profile.composable.screen.galleryGrid.GalleryGridState
 import com.acon.acon.feature.profile.composable.screen.galleryGrid.GalleryGridViewModel
@@ -91,7 +93,7 @@ fun GalleryGridScreen(
                 IconButton(onClick = onBackClicked) {
                     Image(
                         imageVector = ImageVector.vectorResource(id = com.acon.acon.core.designsystem.R.drawable.ic_arrow_left_28),
-                        contentDescription = "Back",
+                        contentDescription = stringResource(R.string.content_description_back),
                     )
                 }
             },
@@ -107,7 +109,7 @@ fun GalleryGridScreen(
                     onClick = { state.selectedPhotoUri?.let { onConfirmSelected(it.toString()) } }
                 ) {
                     Text(
-                        text = "선택",
+                        text = stringResource(R.string.select_btn),
                         style = AconTheme.typography.subtitle1_16_med,
                         color = if (state.selectedPhotoUri != null) AconTheme.color.White else AconTheme.color.Gray5
                     )
@@ -141,7 +143,7 @@ fun PhotoItem(
     ) {
         Image(
             painter = rememberAsyncImagePainter(uri),
-            contentDescription = "사진",
+            contentDescription = stringResource(R.string.content_description_photo),
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop
         )

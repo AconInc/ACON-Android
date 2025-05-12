@@ -195,7 +195,7 @@ fun UploadSearchScreen(
                     ) {
                         Image(
                             imageVector = ImageVector.vectorResource(
-                                id = R.drawable.and_ic_dissmiss_28
+                                id = com.acon.acon.core.designsystem.R.drawable.ic_dissmiss_28
                             ),
                             contentDescription = "Close",
                         )
@@ -404,11 +404,11 @@ fun UploadReviewScreen(
                     composition = rememberLottieComposition(
                         spec = LottieCompositionSpec.RawRes(
                             when (state.animatingIndex) {
-                                0 -> R.raw.dotori1
-                                1 -> R.raw.dotori2
-                                2 -> R.raw.dotori3
-                                3 -> R.raw.dotori4
-                                else -> R.raw.dotori5
+                                0 -> com.acon.acon.core.designsystem.R.raw.dotori1
+                                1 -> com.acon.acon.core.designsystem.R.raw.dotori2
+                                2 -> com.acon.acon.core.designsystem.R.raw.dotori3
+                                3 -> com.acon.acon.core.designsystem.R.raw.dotori4
+                                else -> com.acon.acon.core.designsystem.R.raw.dotori5
                             }
                         )
                     ).value,

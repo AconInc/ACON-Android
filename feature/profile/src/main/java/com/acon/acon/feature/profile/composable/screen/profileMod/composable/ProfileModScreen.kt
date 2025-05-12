@@ -235,13 +235,13 @@ fun ProfileModScreen(
                 IconButton(onClick = onBackClicked) {
                     Image(
                         imageVector = ImageVector.vectorResource(id = com.acon.acon.core.designsystem.R.drawable.ic_arrow_left_28),
-                        contentDescription = "Back",
+                        contentDescription = stringResource(R.string.content_description_back),
                     )
                 }
             },
             content = {
                 Text(
-                    text = "프로필 편집",
+                    text = stringResource(R.string.profile_edit_topbar),
                     style = AconTheme.typography.head5_22_sb,
                     color = AconTheme.color.White
                 )
@@ -278,8 +278,8 @@ fun ProfileModScreen(
                             photoUri = state.selectedPhotoUri
                         )
                         Icon(
-                            imageVector = ImageVector.vectorResource(R.drawable.and_ic_profile_img_edit),
-                            contentDescription = "Profile edit icon",
+                            imageVector = ImageVector.vectorResource(com.acon.acon.core.designsystem.R.drawable.and_ic_profile_img_edit),
+                            contentDescription = stringResource(R.string.content_description_edit_profile_icon),
                             tint = Color.Unspecified,
                             modifier = Modifier
                                 .align(alignment = Alignment.BottomEnd)
@@ -297,13 +297,13 @@ fun ProfileModScreen(
                         horizontalArrangement = Arrangement.Start
                     ) {
                         Text(
-                            text = "닉네임",
+                            text = stringResource(R.string.nickname_textfield_title),
                             style = AconTheme.typography.head8_16_sb,
                             color = AconTheme.color.White
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
-                            text = "*",
+                            text = stringResource(R.string.star),
                             style = AconTheme.typography.head8_16_sb,
                             color = AconTheme.color.Main_org1
                         )
@@ -315,7 +315,7 @@ fun ProfileModScreen(
                         focusType = FocusType.Nickname,
                         focusRequester = nickNameFocusRequester,
                         value = nicknameText,
-                        placeholder = "16자 이내 영문, 한글, 숫자, ., _만 사용 가능",
+                        placeholder = stringResource(R.string.nickname_textfield_placeholder),
                         isTyping = (state.nicknameStatus == NicknameStatus.Typing),
                         onTextChanged = { fieldValue ->
                             val inputText = fieldValue.text
@@ -359,8 +359,8 @@ fun ProfileModScreen(
                                 is NicknameStatus.Empty -> {
                                     NicknameErrMessageRow(
                                         modifier = modifier,
-                                        iconRes = ImageVector.vectorResource(R.drawable.and_ic_error_20),
-                                        errMessage = "닉네임을 입력해 주세요",
+                                        iconRes = ImageVector.vectorResource(com.acon.acon.core.designsystem.R.drawable.and_ic_error_20),
+                                        errMessage = stringResource(R.string.nickname_error_msg_input_nickname),
                                         textColor = AconTheme.color.Error_red1
                                     )
                                 }
@@ -369,7 +369,7 @@ fun ProfileModScreen(
                                     status.errorTypes.forEach { error ->
                                         NicknameErrMessageRow(
                                             modifier = modifier,
-                                            iconRes = ImageVector.vectorResource(R.drawable.and_ic_error_20),
+                                            iconRes = ImageVector.vectorResource(com.acon.acon.core.designsystem.R.drawable.and_ic_error_20),
                                             errMessage = error.message,
                                             textColor = AconTheme.color.Error_red1
                                         )
@@ -379,8 +379,8 @@ fun ProfileModScreen(
                                 is NicknameStatus.Valid -> {
                                     NicknameErrMessageRow(
                                         modifier = modifier,
-                                        iconRes = ImageVector.vectorResource(R.drawable.and_ic_local_check_mark_20),
-                                        errMessage = "사용할 수 있는 닉네임이에요",
+                                        iconRes = ImageVector.vectorResource(com.acon.acon.core.designsystem.R.drawable.and_ic_local_check_mark_20),
+                                        errMessage = stringResource(R.string.nickname_vaild_msg_available_nickname),
                                         textColor = AconTheme.color.Success_blue1
                                     )
                                 }
@@ -398,7 +398,7 @@ fun ProfileModScreen(
                                 color = AconTheme.color.White
                             )
                             Text(
-                                text = "/16",
+                                text = stringResource(R.string.nickname_max_nickname_length),
                                 style = AconTheme.typography.subtitle2_14_med,
                                 color = AconTheme.color.Gray5
                             )
@@ -414,7 +414,7 @@ fun ProfileModScreen(
                         horizontalArrangement = Arrangement.Start
                     ) {
                         Text(
-                            text = "생년월일",
+                            text = stringResource(R.string.nickname_birthday_title),
                             style = AconTheme.typography.head8_16_sb,
                             color = AconTheme.color.White
                         )
@@ -426,7 +426,7 @@ fun ProfileModScreen(
                         focusType = FocusType.Birthday,
                         focusRequester = birthDayFocusRequester,
                         value = birthdayText,
-                        placeholder = "YYYY.MM.DD",
+                        placeholder = stringResource(R.string.birthday_textfield_placeholder),
                         onTextChanged = { fieldValue ->
                             val digitsOnly = fieldValue.text.filter { it.isDigit() }.take(8)
                             val cursorPos = minOf(digitsOnly.length, fieldValue.selection.start)
@@ -453,7 +453,7 @@ fun ProfileModScreen(
                         is BirthdayStatus.Invalid -> {
                             NicknameErrMessageRow(
                                 modifier = modifier,
-                                iconRes = ImageVector.vectorResource(R.drawable.and_ic_error_20),
+                                iconRes = ImageVector.vectorResource(com.acon.acon.core.designsystem.R.drawable.and_ic_error_20),
                                 errMessage = status.errorMsg ?: "",
                                 textColor = AconTheme.color.Error_red1
                             )
@@ -470,7 +470,7 @@ fun ProfileModScreen(
             modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 10.dp)
         ) {
             AconFilledLargeButton(
-                text = "저장",
+                text = stringResource(R.string.save_btn),
                 textStyle = AconTheme.typography.head8_16_sb,
                 modifier = Modifier
                     .fillMaxWidth()
