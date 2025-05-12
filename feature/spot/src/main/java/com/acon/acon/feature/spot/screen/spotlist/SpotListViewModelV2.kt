@@ -29,19 +29,16 @@ class SpotListViewModelV2 @Inject constructor(
     private val spotRepository: SpotRepository
 ) : BaseContainerHost<SpotListUiStateV2, SpotListSideEffectV2>() {
 
-    override val container = container<SpotListUiStateV2, SpotListSideEffectV2>(SpotListUiStateV2.Loading) {
-        runOn<SpotListUiStateV2.Success> {
-            with(viewModelScope) {
-                launch {
-                    userRepository.getUserType().collectLatest {
-                        reduce {
-                            state.copy(userType = it)
-                        }
+    override val container =
+        container<SpotListUiStateV2, SpotListSideEffectV2>(SpotListUiStateV2.Loading) {
+            runOn<SpotListUiStateV2.Success> {
+                userRepository.getUserType().collectLatest {
+                    reduce {
+                        state.copy(userType = it)
                     }
                 }
             }
         }
-    }
 
     fun onNewLocationEmitted(location: Location) = intent {
         runOn<SpotListUiStateV2.Loading> {
