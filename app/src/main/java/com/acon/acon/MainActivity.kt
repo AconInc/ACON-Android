@@ -41,7 +41,6 @@ class MainActivity : ComponentActivity() {
                 AconNavigation(
                     modifier = Modifier.fillMaxSize(),
                     navController = rememberNavController(),
-                    socialRepository = socialRepository,
                     userRepository = userRepository
                 )
             }

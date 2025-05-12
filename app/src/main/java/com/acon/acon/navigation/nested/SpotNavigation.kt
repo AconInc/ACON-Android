@@ -9,15 +9,13 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.acon.acon.domain.repository.SocialRepository
 import com.acon.acon.feature.spot.SpotRoute
 import com.acon.acon.feature.spot.screen.spotdetail.composable.SpotDetailScreenContainer
 import com.acon.acon.feature.spot.screen.spotlist.composable.SpotListScreenContainer
 import com.acon.feature.common.intent.openMapNavigation
 
 internal fun NavGraphBuilder.spotNavigation(
-    navController: NavHostController,
-    socialRepository: SocialRepository
+    navController: NavHostController
 ) {
 
     navigation<SpotRoute.Graph>(
