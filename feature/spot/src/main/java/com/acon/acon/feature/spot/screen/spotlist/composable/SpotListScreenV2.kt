@@ -74,6 +74,7 @@ import com.acon.acon.feature.spot.screen.component.SpotTypeToggle
 import com.acon.acon.feature.spot.screen.spotlist.SpotListUiStateV2
 import com.acon.feature.common.compose.toDp
 import dev.chrisbanes.haze.hazeSource
+import kotlinx.collections.immutable.ImmutableList
 import kotlin.math.absoluteValue
 
 private const val MAX_GUEST_AVAILABLE_COUNT = 5
@@ -345,6 +346,7 @@ private fun SpotListLoadingView(
 private inline fun <reified T> EachFilterSpace(
     title: String,
     crossinline onFilterChipClick: () -> Unit,
+    selectedChipIndices: ImmutableList<Int>,
     modifier: Modifier = Modifier,
 ) where T : Enum<T>, T : FilterType {
 
@@ -362,6 +364,7 @@ private inline fun <reified T> EachFilterSpace(
             titles = enumValues<T>().map {
                 stringResource((it as FilterType).getNameResId())
             },
+            selectedChipIndices = selectedChipIndices,
             onChipSelected = {
                 onFilterChipClick()
             },
@@ -396,7 +399,8 @@ private fun RestaurantFilterBottomSheet(
             EachFilterSpace<FilterType.RestaurantType>(
                 title = stringResource(R.string.type),
                 onFilterChipClick = {},
-                modifier = Modifier
+                modifier = Modifier,
+                selectedChipIndices =
             )
             Spacer(modifier = Modifier.height(40.dp))
 

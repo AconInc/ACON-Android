@@ -15,6 +15,7 @@ import com.acon.acon.feature.spot.getNameResId
 import com.acon.acon.feature.spot.type.AvailableWalkingTimeType
 import com.acon.acon.feature.spot.type.CafePriceRangeType
 import com.acon.acon.feature.spot.R
+import kotlinx.collections.immutable.toImmutableList
 
 @Composable
 fun ColumnScope.CafeBottomSheetContent(
@@ -34,7 +35,7 @@ fun ColumnScope.CafeBottomSheetContent(
         titles = OptionType.CafeFeatureOptionType.entries.map {
             stringResource(it.getNameResId())
         },
-        selectedChipIndexes = selectedCafeFeatures.map { it.ordinal }.toIntArray(),
+        selectedChipIndices = selectedCafeFeatures.map { it.ordinal }.toImmutableList(),
         onChipSelected = {
             onCafeFeatureChipSelected(OptionType.CafeFeatureOptionType.entries[it])
         }
@@ -51,7 +52,7 @@ fun ColumnScope.CafeBottomSheetContent(
         titles = OptionType.VisitPurposeOptionType.entries.map {
             stringResource(it.getNameResId())
         },
-        selectedChipIndexes = selectedVisitPurposes.map { it.ordinal }.toIntArray(),
+        selectedChipIndices = selectedVisitPurposes.map { it.ordinal }.toImmutableList(),
         onChipSelected = {
             onVisitPurposeChipSelected(OptionType.VisitPurposeOptionType.entries[it])
         }
