@@ -28,10 +28,31 @@
     <string name="no_permission_content">설정에서 정확한 위치 권한을 허용해주세요</string>
     <string name="go_to_setting">설정으로 이동</string>
 
-    <!-- SpotList -->
+    <!-- Spot -->
     <string name="dotori_count_content_description">도토리 개수</string>
     <string name="filter_content_description">필터</string>
     <string name="restaurant">식당</string>
     <string name="cafe">카페</string>
     <string name="find_way">길찾기</string>
+    <string name="empty_spot_image">장소 이미지를\n 준비하고 있어요</string>
+    <string name="korean">한식</string>
+    <string name="chinese">중식</string>
+    <string name="japanese">일식</string>
+    <string name="western">양식</string>
+    <string name="korean_street">분식</string>
+    <string name="asian">아시안</string>
+    <string name="fusion">퓨전</string>
+    <string name="buffet">뷔페</string>
+    <string name="drink_bar">술/Bar</string>
+    <string name="for_work">작업하기 좋은 곳</string>
+    <string name="exclude_franchise">프랜차이즈 제외</string>
+    <string name="after_12am">밤 12시 이후</string>
+    <string name="after_10pm">밤 10시 이후</string>
+    <string name="cost_effectiveness">가성비</string>
+    <string name="filter_detail">상세 조건</string>
+    <string name="type">종류</string>
+    <string name="operation_time">운영시간</string>
+    <string name="price">가격</string>
+    <string name="reset">초기화</string>
+    <string name="see_result">결과 보기</string>
 </resources>

@@ -47,6 +47,7 @@ fun Context.locationFlow(
     intervalMillis: Long = 3_000L
 ) = callbackFlow<Location> {
     val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this@locationFlow)
+    getLocation()?.let { trySend(it) }
 
     val locationRequest = LocationRequest.Builder(intervalMillis).setPriority(
         Priority.PRIORITY_HIGH_ACCURACY

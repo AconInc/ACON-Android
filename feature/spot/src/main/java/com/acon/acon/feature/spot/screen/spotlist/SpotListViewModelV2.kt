@@ -11,7 +11,8 @@ import com.acon.acon.domain.repository.UserRepository
 import com.acon.acon.domain.type.SpotType
 import com.acon.acon.domain.type.UserType
 import com.acon.acon.feature.spot.BuildConfig
-import com.acon.acon.feature.spot.mock.spotListUiStateMock
+import com.acon.acon.feature.spot.mock.spotListUiStateCafeMock
+import com.acon.acon.feature.spot.mock.spotListUiStateRestaurantMock
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.collectLatest
@@ -47,7 +48,7 @@ class SpotListViewModelV2 @Inject constructor(
             // TODO("Repository Call")
             if (BuildConfig.DEBUG) {
                 reduce {
-                    spotListUiStateMock
+                    spotListUiStateRestaurantMock
                 }
             }
         }
@@ -58,15 +59,28 @@ class SpotListViewModelV2 @Inject constructor(
         }
     }
 
-    fun onSpotTypeChanged(spotType: SpotType) = intent {
+    fun onSpotTypeClicked(spotType: SpotType) = intent {
         runOn<SpotListUiStateV2.Success> {
+            if (spotType == state.selectedSpotType) return@runOn
+            // TODO("Repository Call")
             reduce {
                 state.copy(selectedSpotType = spotType)
+            }
+            if (BuildConfig.DEBUG) {
+                if (spotType == SpotType.RESTAURANT)
+                    reduce {
+                        spotListUiStateRestaurantMock
+                    }
+                else {
+                    reduce {
+                        spotListUiStateCafeMock
+                    }
+                }
             }
         }
     }
 
-    fun onSpotClick(spot: SpotV2) = intent {
+    fun onSpotClicked(spot: SpotV2) = intent {
         runOn<SpotListUiStateV2.Success> {
             postSideEffect(SpotListSideEffectV2.NavigateToSpotDetailScreen(spot))
         }
@@ -83,6 +97,22 @@ class SpotListViewModelV2 @Inject constructor(
             ))
         }
     }
+
+    fun onFilterButtonClicked() = intent {
+        runOn<SpotListUiStateV2.Success> {
+            reduce {
+                state.copy(showFilterModal = true)
+            }
+        }
+    }
+
+    fun onFilterModalDismissed() = intent {
+        runOn<SpotListUiStateV2.Success> {
+            reduce {
+                state.copy(showFilterModal = false)
+            }
+        }
+    }
 }
 
 sealed interface SpotListUiStateV2 {
@@ -93,6 +123,7 @@ sealed interface SpotListUiStateV2 {
         val selectedSpotType: SpotType,
         val currentLocation: Location,
         val userType: UserType = UserType.GUEST,
+        val showFilterModal: Boolean = false,
     ) : SpotListUiStateV2
     data object Loading : SpotListUiStateV2
     data object LoadFailed : SpotListUiStateV2
