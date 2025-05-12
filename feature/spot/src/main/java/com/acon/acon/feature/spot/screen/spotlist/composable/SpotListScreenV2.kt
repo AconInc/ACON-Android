@@ -62,10 +62,12 @@ import com.acon.acon.core.designsystem.glassmorphism.LocalHazeState
 import com.acon.acon.core.designsystem.glassmorphism.defaultHazeEffect
 import com.acon.acon.core.designsystem.glassmorphism.fog.fogBackground
 import com.acon.acon.core.designsystem.glassmorphism.fog.getOverlayColor
+import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.domain.model.spot.v2.SpotV2
 import com.acon.acon.domain.type.FilterType
 import com.acon.acon.domain.type.SpotType
+import com.acon.acon.domain.type.UserType
 import com.acon.acon.feature.spot.getNameResId
 import com.acon.acon.feature.spot.mock.spotListUiStateRestaurantMock
 import com.acon.acon.feature.spot.screen.component.SpotTypeToggle
@@ -73,6 +75,8 @@ import com.acon.acon.feature.spot.screen.spotlist.SpotListUiStateV2
 import com.acon.feature.common.compose.toDp
 import dev.chrisbanes.haze.hazeSource
 import kotlin.math.absoluteValue
+
+private const val MAX_GUEST_AVAILABLE_COUNT = 5
 
 @Composable
 internal fun SpotListScreenV2(
@@ -235,17 +239,30 @@ private fun SpotListSuccessView(
                         ).zIndex(2f)
                 )
             }
-            SpotItemV2(
-                spot = spot,
-                onItemClick = onSpotClick,
-                onFindWayButtonClick = onTryFindWay,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .fogBackground(
-                        glowColor = spotFogColor,
-                        glowAlpha = 1f,
-                    ).zIndex(1f)
-            )
+            if (page >= MAX_GUEST_AVAILABLE_COUNT && state.userType == UserType.GUEST) {
+                SpotGuestItem(
+                    modifier = Modifier.fillMaxSize().background(
+                        shape = RoundedCornerShape(20.dp),
+                        color = AconTheme.color.GlassBlackDefault
+                    ).noRippleClickable {
+                        // TODO("로그인 바텀시트")
+                    }.fogBackground(
+                        glowColor = AconTheme.color.White,
+                    )
+                )
+            } else {
+                SpotItemV2(
+                    spot = spot,
+                    onItemClick = onSpotClick,
+                    onFindWayButtonClick = onTryFindWay,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .fogBackground(
+                            glowColor = spotFogColor,
+                            glowAlpha = 1f,
+                        ).zIndex(1f)
+                )
+            }
         }
 
         LaunchedEffect(Unit) {

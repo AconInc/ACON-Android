@@ -2,6 +2,7 @@ package com.acon.acon.feature.spot.screen.spotlist.composable
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -211,6 +212,37 @@ private fun SpotImage(
 }
 
 @Composable
+fun SpotGuestItem(
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Icon(
+            imageVector = ImageVector.vectorResource(R.drawable.ic_lock),
+            contentDescription = null,
+            tint = AconTheme.color.GlassWhiteSelected
+        )
+        Text(
+            text = stringResource(R.string.require_login_for_more),
+            style = AconTheme.typography.Body1,
+            fontWeight = FontWeight.W400,
+            color = AconTheme.color.White,
+            modifier = Modifier.padding(top = 10.dp),
+        )
+        Text(
+            text = stringResource(R.string.go_to_login),
+            style = AconTheme.typography.Body1,
+            fontWeight = FontWeight.SemiBold,
+            color = AconTheme.color.Action,
+            modifier = Modifier.padding(top = 20.dp),
+        )
+    }
+}
+
+@Composable
 @Preview
 private fun SpotItemV2Preview() {
     SpotItemV2(
@@ -249,5 +281,13 @@ private fun SpotItemV2EmptyImagePreview() {
         modifier = Modifier
             .height(600.dp)
             .clipToBounds()
+    )
+}
+
+@Composable
+@Preview
+private fun SpotGuestItemPreview() {
+    SpotGuestItem(
+        modifier = Modifier.fillMaxWidth().height(600.dp)
     )
 }
