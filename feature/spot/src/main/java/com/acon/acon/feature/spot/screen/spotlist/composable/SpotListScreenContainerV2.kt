@@ -53,6 +53,8 @@ fun SpotListScreenContainerV2(
         onTryFindWay = viewModel::onTryFindWay,
         onFilterButtonClick = viewModel::onFilterButtonClicked,
         onFilterModalDismissRequest = viewModel::onFilterModalDismissed,
+        onRestaurantFilterSaved = viewModel::onRestaurantFilterSaved,
+        onCafeFilterSaved = viewModel::onCafeFilterSaved,
         modifier = modifier.fillMaxSize(),
     )
 

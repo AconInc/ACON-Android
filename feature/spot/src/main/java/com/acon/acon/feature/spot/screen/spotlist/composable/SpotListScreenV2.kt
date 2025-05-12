@@ -4,8 +4,11 @@ import androidx.compose.animation.core.exponentialDecay
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.snapping.SnapPosition
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -34,6 +37,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableStateSetOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -56,7 +60,7 @@ import com.acon.acon.core.designsystem.animation.skeleton
 import com.acon.acon.core.designsystem.component.bottomsheet.AconBottomSheet
 import com.acon.acon.core.designsystem.component.button.v2.AconFilledTextButton
 import com.acon.acon.core.designsystem.component.button.v2.AconOutlinedTextButton
-import com.acon.acon.core.designsystem.component.chip.AconChipFlowRow
+import com.acon.acon.core.designsystem.component.chip.AconChip
 import com.acon.acon.core.designsystem.component.loading.SkeletonItem
 import com.acon.acon.core.designsystem.glassmorphism.LocalHazeState
 import com.acon.acon.core.designsystem.glassmorphism.defaultHazeEffect
@@ -73,10 +77,12 @@ import com.acon.acon.domain.type.UserType
 import com.acon.acon.feature.spot.getNameResId
 import com.acon.acon.feature.spot.mock.spotListUiStateRestaurantMock
 import com.acon.acon.feature.spot.screen.component.SpotTypeToggle
+import com.acon.acon.feature.spot.screen.spotlist.FilterDetailKey
 import com.acon.acon.feature.spot.screen.spotlist.SpotListUiStateV2
 import com.acon.feature.common.compose.toDp
 import dev.chrisbanes.haze.hazeSource
-import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.ImmutableSet
+import kotlinx.collections.immutable.toImmutableSet
 import kotlin.math.absoluteValue
 
 private const val MAX_GUEST_AVAILABLE_COUNT = 5
@@ -89,6 +95,8 @@ internal fun SpotListScreenV2(
     onTryFindWay: (SpotV2) -> Unit,
     onFilterButtonClick: () -> Unit,
     onFilterModalDismissRequest: () -> Unit,
+    onRestaurantFilterSaved: (Map<FilterDetailKey, Set<RestaurantFilterType>>) -> Unit,
+    onCafeFilterSaved: (Map<FilterDetailKey, Set<CafeFilterType>>) -> Unit,
     modifier: Modifier = Modifier,
 ) {
 
@@ -141,7 +149,8 @@ internal fun SpotListScreenV2(
                     SpotType.RESTAURANT -> {
                         if (state.showFilterModal) {
                             RestaurantFilterBottomSheet(
-                                selectedChipIndices = state.selectedFilters.t,
+                                selectedItems = state.selectedRestaurantFilters.values.flatten().toImmutableSet(),
+                                onComplete = onRestaurantFilterSaved,
                                 onDismissRequest = onFilterModalDismissRequest
                             )
                         }
@@ -156,7 +165,9 @@ internal fun SpotListScreenV2(
                     SpotType.CAFE -> {
                         if (state.showFilterModal) {
                             CafeFilterBottomSheet(
-                                onDismissRequest = onFilterModalDismissRequest,
+                                selectedItems = state.selectedCafeFilters.values.flatten().toImmutableSet(),
+                                onComplete = onCafeFilterSaved,
+                                onDismissRequest = onFilterModalDismissRequest
                             )
                         }
                         SpotListSuccessView(
@@ -345,11 +356,12 @@ private fun SpotListLoadingView(
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private inline fun <reified T> EachFilterSpace(
     title: String,
-    crossinline onFilterChipClick: () -> Unit,
-    selectedChipIndices: ImmutableList<Int>,
+    crossinline onFilterItemClick: (T) -> Unit,
+    selectedItems: ImmutableSet<T>,
     modifier: Modifier = Modifier,
 ) where T : Enum<T>, T : FilterType {
 
@@ -362,25 +374,45 @@ private inline fun <reified T> EachFilterSpace(
             fontWeight = FontWeight.SemiBold,
             color = AconTheme.color.White,
         )
-        AconChipFlowRow(
+        FlowRow(
             modifier = Modifier.padding(top = 12.dp),
-            titles = enumValues<T>().map {
-                stringResource((it as FilterType).getNameResId())
-            },
-            selectedChipIndices = selectedChipIndices,
-            onChipSelected = {
-                onFilterChipClick()
-            },
-        )
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            enumValues<T>().forEach {
+                AconChip(
+                    title = stringResource((it as FilterType).getNameResId()),
+                    isSelected = selectedItems.contains(it),
+                    onClick = { onFilterItemClick(it) }
+                )
+            }
+        }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun RestaurantFilterBottomSheet(
-    selectedChipIndices: ImmutableList<Int>,
+    selectedItems: ImmutableSet<RestaurantFilterType>,
+    onComplete: (Map<FilterDetailKey, Set<RestaurantFilterType>>) -> Unit,
     onDismissRequest: () -> Unit,
 ) {
+    val selectedRestaurantTypes = remember {
+        mutableStateSetOf<RestaurantFilterType.RestaurantType>(
+            *selectedItems.filterIsInstance<RestaurantFilterType.RestaurantType>().toTypedArray()
+        )
+    }
+    val selectedRestaurantOperationTypes = remember {
+        mutableStateSetOf<RestaurantFilterType.RestaurantOperationType>(
+            *selectedItems.filterIsInstance<RestaurantFilterType.RestaurantOperationType>().toTypedArray()
+        )
+    }
+    val selectedRestaurantPriceTypes = remember {
+        mutableStateSetOf<RestaurantFilterType.RestaurantPriceType>(
+            *selectedItems.filterIsInstance<RestaurantFilterType.RestaurantPriceType>().toTypedArray()
+        )
+    }
+
     AconBottomSheet(
         onDismissRequest = onDismissRequest,
     ) {
@@ -402,23 +434,43 @@ private fun RestaurantFilterBottomSheet(
 
             EachFilterSpace<RestaurantFilterType.RestaurantType>(
                 title = stringResource(R.string.type),
-                onFilterChipClick = {},
+                onFilterItemClick = {
+                    if (selectedRestaurantTypes.contains(it)) {
+                        selectedRestaurantTypes.remove(it)
+                    } else {
+                        selectedRestaurantTypes.add(it)
+                    }
+                },
                 modifier = Modifier,
-                selectedChipIndices =
+                selectedItems = selectedRestaurantTypes.toImmutableSet()
             )
             Spacer(modifier = Modifier.height(40.dp))
 
             EachFilterSpace<RestaurantFilterType.RestaurantOperationType>(
                 title = stringResource(R.string.operation_time),
-                onFilterChipClick = {},
-                modifier = Modifier
+                onFilterItemClick = {
+                    if (selectedRestaurantOperationTypes.contains(it)) {
+                        selectedRestaurantOperationTypes.remove(it)
+                    } else {
+                        selectedRestaurantOperationTypes.add(it)
+                    }
+                },
+                modifier = Modifier,
+                selectedItems = selectedRestaurantOperationTypes.toImmutableSet()
             )
             Spacer(modifier = Modifier.height(40.dp))
 
             EachFilterSpace<RestaurantFilterType.RestaurantPriceType>(
                 title = stringResource(R.string.price),
-                onFilterChipClick = {},
-                modifier = Modifier
+                onFilterItemClick = {
+                    if (selectedRestaurantPriceTypes.contains(it)) {
+                        selectedRestaurantPriceTypes.remove(it)
+                    } else {
+                        selectedRestaurantPriceTypes.add(it)
+                    }
+                },
+                modifier = Modifier,
+                selectedItems = selectedRestaurantPriceTypes.toImmutableSet()
             )
             Spacer(modifier = Modifier.height(99.dp))
 
@@ -440,7 +492,13 @@ private fun RestaurantFilterBottomSheet(
                         fontWeight = FontWeight.SemiBold,
                     ),
                     shape = CircleShape,
-                    onClick = { /* TODO "See Result" */ },
+                    onClick = { onComplete(
+                        mapOf(
+                            RestaurantFilterType.RestaurantType::class to (selectedRestaurantTypes.toSet() as Set<RestaurantFilterType>),
+                            RestaurantFilterType.RestaurantOperationType::class to (selectedRestaurantOperationTypes.toSet() as Set<RestaurantFilterType>),
+                            RestaurantFilterType.RestaurantPriceType::class to (selectedRestaurantPriceTypes.toSet() as Set<RestaurantFilterType>)
+                        )
+                    ) },
                     contentPadding = PaddingValues(
                         vertical = 12.dp,
                     ),
@@ -454,8 +512,21 @@ private fun RestaurantFilterBottomSheet(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun CafeFilterBottomSheet(
+    selectedItems: ImmutableSet<CafeFilterType>,
+    onComplete: (Map<FilterDetailKey, Set<CafeFilterType>>) -> Unit,
     onDismissRequest: () -> Unit,
 ) {
+    val selectedCafeTypes = remember {
+        mutableStateSetOf<CafeFilterType.CafeType>(
+            *selectedItems.filterIsInstance<CafeFilterType.CafeType>().toTypedArray()
+        )
+    }
+    val selectedCafeOperationTypes = remember {
+        mutableStateSetOf<CafeFilterType.CafeOperationType>(
+            *selectedItems.filterIsInstance<CafeFilterType.CafeOperationType>().toTypedArray()
+        )
+    }
+
     AconBottomSheet(
         onDismissRequest = onDismissRequest,
     ) {
@@ -477,15 +548,29 @@ private fun CafeFilterBottomSheet(
 
             EachFilterSpace<CafeFilterType.CafeType>(
                 title = stringResource(R.string.type),
-                onFilterChipClick = {},
-                modifier = Modifier
+                onFilterItemClick = {
+                    if (selectedCafeTypes.contains(it)) {
+                        selectedCafeTypes.remove(it)
+                    } else {
+                        selectedCafeTypes.add(it)
+                    }
+                },
+                modifier = Modifier,
+                selectedItems = selectedCafeTypes.toImmutableSet()
             )
             Spacer(modifier = Modifier.height(40.dp))
 
             EachFilterSpace<CafeFilterType.CafeOperationType>(
                 title = stringResource(R.string.operation_time),
-                onFilterChipClick = {},
-                modifier = Modifier
+                onFilterItemClick = {
+                    if (selectedCafeOperationTypes.contains(it)) {
+                        selectedCafeOperationTypes.remove(it)
+                    } else {
+                        selectedCafeOperationTypes.add(it)
+                    }
+                },
+                modifier = Modifier,
+                selectedItems = selectedCafeOperationTypes.toImmutableSet()
             )
             Spacer(modifier = Modifier.height(99.dp))
 
@@ -507,7 +592,14 @@ private fun CafeFilterBottomSheet(
                         fontWeight = FontWeight.SemiBold,
                     ),
                     shape = CircleShape,
-                    onClick = { /* TODO "See Result" */ },
+                    onClick = {
+                        onComplete(
+                            mapOf(
+                                CafeFilterType.CafeType::class to (selectedCafeTypes.toSet() as Set<CafeFilterType>),
+                                CafeFilterType.CafeOperationType::class to (selectedCafeOperationTypes.toSet() as Set<CafeFilterType>)
+                            )
+                        )
+                    },
                     contentPadding = PaddingValues(
                         vertical = 12.dp,
                     ),
@@ -528,6 +620,8 @@ private fun SpotListScreenV2Preview() {
         onTryFindWay = {},
         onFilterButtonClick = {},
         onFilterModalDismissRequest = {},
+        onRestaurantFilterSaved = {},
+        onCafeFilterSaved = {},
         modifier = Modifier
             .fillMaxWidth()
             .background(AconTheme.color.Gray900)
@@ -545,6 +639,8 @@ private fun SpotListScreenV2LoadingPreview() {
         onTryFindWay = {},
         onFilterButtonClick = {},
         onFilterModalDismissRequest = {},
+        onRestaurantFilterSaved = {},
+        onCafeFilterSaved = {},
         modifier = Modifier
             .fillMaxWidth()
             .background(AconTheme.color.Gray900)
