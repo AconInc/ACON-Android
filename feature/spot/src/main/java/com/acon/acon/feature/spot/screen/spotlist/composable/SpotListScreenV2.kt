@@ -40,9 +40,11 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.mutableStateSetOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -59,6 +61,7 @@ import androidx.compose.ui.zIndex
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.animation.skeleton
 import com.acon.acon.core.designsystem.component.bottomsheet.AconBottomSheet
+import com.acon.acon.core.designsystem.component.bottomsheet.LoginBottomSheet
 import com.acon.acon.core.designsystem.component.button.v2.AconFilledTextButton
 import com.acon.acon.core.designsystem.component.button.v2.AconOutlinedTextButton
 import com.acon.acon.core.designsystem.component.chip.AconChip
@@ -80,9 +83,11 @@ import com.acon.acon.feature.spot.screen.component.SpotTypeToggle
 import com.acon.acon.feature.spot.screen.spotlist.FilterDetailKey
 import com.acon.acon.feature.spot.screen.spotlist.SpotListUiStateV2
 import com.acon.feature.common.compose.toDp
+import com.acon.feature.common.remember.rememberSocialRepository
 import dev.chrisbanes.haze.hazeSource
 import kotlinx.collections.immutable.ImmutableSet
 import kotlinx.collections.immutable.toImmutableSet
+import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
 
 private const val MAX_GUEST_AVAILABLE_COUNT = 5
@@ -90,14 +95,17 @@ private const val MAX_GUEST_AVAILABLE_COUNT = 5
 @Composable
 internal fun SpotListScreenV2(
     state: SpotListUiStateV2,
-    onSpotTypeChanged: (SpotType) -> Unit,
-    onSpotClick: (SpotV2) -> Unit,
-    onTryFindWay: (SpotV2) -> Unit,
-    onFilterButtonClick: () -> Unit,
-    onFilterModalDismissRequest: () -> Unit,
-    onRestaurantFilterSaved: (Map<FilterDetailKey, Set<RestaurantFilterType>>) -> Unit,
-    onCafeFilterSaved: (Map<FilterDetailKey, Set<CafeFilterType>>) -> Unit,
     modifier: Modifier = Modifier,
+    userType: UserType = UserType.GUEST,
+    onSpotTypeChanged: (SpotType) -> Unit = {},
+    onSpotClick: (SpotV2) -> Unit = {},
+    onTryFindWay: (SpotV2) -> Unit = {},
+    onFilterButtonClick: () -> Unit = {},
+    onFilterModalDismissRequest: () -> Unit = {},
+    onRestaurantFilterSaved: (Map<FilterDetailKey, Set<RestaurantFilterType>>) -> Unit = {},
+    onCafeFilterSaved: (Map<FilterDetailKey, Set<CafeFilterType>>) -> Unit = {},
+    onGuestItemClick: () -> Unit = {},
+    onGuestModalDismissRequest: () -> Unit = {},
 ) {
 
     val screenHeightDp = LocalConfiguration.current.screenHeightDp.dp
@@ -159,6 +167,22 @@ internal fun SpotListScreenV2(
 
         when(state) {
             is SpotListUiStateV2.Success -> {
+                val socialRepository = rememberSocialRepository()
+
+                val scope = rememberCoroutineScope()
+                if(state.showLoginModal) {
+                    LoginBottomSheet(
+                        hazeState = LocalHazeState.current,
+                        onDismissRequest = onGuestModalDismissRequest,
+                        onGoogleSignIn = {
+                            scope.launch {
+                                socialRepository.googleLogin().onSuccess {
+                                    onGuestModalDismissRequest()
+                                }
+                            }
+                        }
+                    )
+                }
                 when (state.selectedSpotType) {
                     SpotType.RESTAURANT -> {
                         if (state.showFilterModal) {
@@ -170,10 +194,12 @@ internal fun SpotListScreenV2(
                         }
                         SpotListSuccessView(
                             state = state,
+                            userType = userType,
                             onSpotClick = onSpotClick,
                             onTryFindWay = onTryFindWay,
                             itemHeightPx = itemHeightPx,
-                            modifier = Modifier.fillMaxSize()
+                            modifier = Modifier.fillMaxSize(),
+                            onGuestItemClick = onGuestItemClick
                         )
                     }
                     SpotType.CAFE -> {
@@ -186,10 +212,12 @@ internal fun SpotListScreenV2(
                         }
                         SpotListSuccessView(
                             state = state,
+                            userType = userType,
                             onSpotClick = onSpotClick,
                             onTryFindWay = onTryFindWay,
                             itemHeightPx = itemHeightPx,
-                            modifier = Modifier.fillMaxSize()
+                            modifier = Modifier.fillMaxSize(),
+                            onGuestItemClick = onGuestItemClick
                         )
                     }
                 }
@@ -216,7 +244,9 @@ internal fun SpotListScreenV2(
 @Composable
 private fun SpotListSuccessView(
     state: SpotListUiStateV2.Success,
+    userType: UserType,
     onSpotClick: (SpotV2) -> Unit,
+    onGuestItemClick: () -> Unit,
     onTryFindWay: (SpotV2) -> Unit,
     itemHeightPx: Float,
     modifier: Modifier = Modifier,
@@ -282,16 +312,17 @@ private fun SpotListSuccessView(
                         .zIndex(2f)
                 )
             }
-            if (page >= MAX_GUEST_AVAILABLE_COUNT && state.userType == UserType.GUEST) {
+            if (page >= MAX_GUEST_AVAILABLE_COUNT && userType == UserType.GUEST) {
                 SpotGuestItem(
                     modifier = Modifier
                         .fillMaxSize()
+                        .clip(RoundedCornerShape(20.dp))
                         .background(
                             shape = RoundedCornerShape(20.dp),
                             color = AconTheme.color.GlassBlackDefault
                         )
                         .clickable {
-                            // TODO("로그인 바텀시트")
+                            onGuestItemClick()
                         }
                         .fogBackground(
                             glowColor = AconTheme.color.White,
@@ -640,13 +671,6 @@ private fun CafeFilterBottomSheet(
 private fun SpotListScreenV2Preview() {
     SpotListScreenV2(
         state = spotListUiStateRestaurantMock,
-        onSpotTypeChanged = {},
-        onSpotClick = {},
-        onTryFindWay = {},
-        onFilterButtonClick = {},
-        onFilterModalDismissRequest = {},
-        onRestaurantFilterSaved = {},
-        onCafeFilterSaved = {},
         modifier = Modifier
             .fillMaxWidth()
             .background(AconTheme.color.Gray900)
@@ -659,13 +683,6 @@ private fun SpotListScreenV2Preview() {
 private fun SpotListScreenV2LoadingPreview() {
     SpotListScreenV2(
         state = SpotListUiStateV2.Loading,
-        onSpotTypeChanged = {},
-        onSpotClick = {},
-        onTryFindWay = {},
-        onFilterButtonClick = {},
-        onFilterModalDismissRequest = {},
-        onRestaurantFilterSaved = {},
-        onCafeFilterSaved = {},
         modifier = Modifier
             .fillMaxWidth()
             .background(AconTheme.color.Gray900)
