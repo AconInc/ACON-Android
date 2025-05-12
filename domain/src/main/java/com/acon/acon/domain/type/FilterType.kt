@@ -13,7 +13,8 @@ sealed interface RestaurantFilterType : FilterType {
         FUSION,
         KOREAN_STREET,
         BUFFET,
-        DRINK_BAR;
+        DRINK_BAR,
+        EXCLUDE_FRANCHISE;
     }
 
     enum class RestaurantOperationType: FilterType {

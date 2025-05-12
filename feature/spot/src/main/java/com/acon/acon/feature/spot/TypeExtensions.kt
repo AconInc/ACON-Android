@@ -66,6 +66,7 @@ internal fun FilterType.getNameResId(): Int {
                 RestaurantFilterType.RestaurantType.KOREAN_STREET -> com.acon.acon.core.designsystem.R.string.korean_street
                 RestaurantFilterType.RestaurantType.BUFFET -> com.acon.acon.core.designsystem.R.string.buffet
                 RestaurantFilterType.RestaurantType.DRINK_BAR -> com.acon.acon.core.designsystem.R.string.drink_bar
+                RestaurantFilterType.RestaurantType.EXCLUDE_FRANCHISE -> com.acon.acon.core.designsystem.R.string.exclude_franchise
             }
         }
         is CafeFilterType.CafeType -> {
