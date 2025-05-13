@@ -1,0 +1,38 @@
+package com.acon.acon.feature.upload.v2.composable.search
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.acon.acon.feature.upload.v2.UploadSearchSideEffect
+import com.acon.acon.feature.upload.v2.UploadSearchViewModel
+import org.orbitmvi.orbit.compose.collectAsState
+import org.orbitmvi.orbit.compose.collectSideEffect
+
+@Composable
+fun UploadSearchScreenContainer(
+    modifier: Modifier = Modifier,
+    viewModel: UploadSearchViewModel = hiltViewModel()
+) {
+
+    val state by viewModel.collectAsState()
+
+    UploadSearchScreen(
+        state = state,
+        onSearchQueryChanged = viewModel::onSearchQueryChanged,
+        onBackAction = viewModel::onBackAction,
+        onNextAction = viewModel::onNextAction,
+        modifier = modifier
+    )
+
+    viewModel.collectSideEffect { sideEffect ->
+        when (sideEffect) {
+            is UploadSearchSideEffect.NavigateToReviewScreen -> {
+                // TODO
+            }
+            is UploadSearchSideEffect.NavigateBack -> {
+                // TODO
+            }
+        }
+    }
+}
