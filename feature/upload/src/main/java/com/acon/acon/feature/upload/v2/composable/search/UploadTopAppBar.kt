@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
@@ -24,11 +25,13 @@ internal fun UploadTopAppBar(
 
     Row(
         modifier = modifier,
-        horizontalArrangement = Arrangement.SpaceBetween
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
             imageVector = ImageVector.vectorResource(R.drawable.ic_x_mark),
             contentDescription = stringResource(R.string.close_upload),
+            tint = AconTheme.color.Gray50,
             modifier = Modifier
                 .noRippleClickable { onLeftAction() }
         )
