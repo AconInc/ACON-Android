@@ -89,7 +89,7 @@ internal fun UploadSearchScreen(
                             horizontalArrangement = Arrangement.spacedBy(8.dp),
                             verticalArrangement = Arrangement.spacedBy(8.dp),
                         ) {
-                            state.recommends.fastForEach {
+                            state.suggestions.fastForEach {
                                 AconChip(
                                     title = it,
                                     onClick = { onSearchQueryChanged(it) },

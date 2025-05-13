@@ -39,7 +39,7 @@ class UploadSearchViewModel @Inject constructor(
 sealed interface UploadSearchUiState {
     @Immutable
     data class Success(
-        val recommends: List<String> = listOf(),
+        val suggestions: List<String> = listOf(),
         val query: String = "",
         val searchedSpots: List<SearchedSpot> = listOf(),
     ) : UploadSearchUiState
