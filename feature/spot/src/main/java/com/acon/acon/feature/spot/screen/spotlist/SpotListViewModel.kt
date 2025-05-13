@@ -163,6 +163,7 @@ sealed interface SpotListUiStateV2 {
     @Immutable
     data class Success(
         val spotList: List<SpotV2>,
+        val bicycleSpotList: List<SpotV2>,
         val headTitle: String,
         val selectedSpotType: SpotType,
         val currentLocation: Location,

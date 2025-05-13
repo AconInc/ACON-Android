@@ -41,6 +41,7 @@ import com.acon.acon.domain.type.UserType
 import com.acon.acon.feature.spot.screen.spotlist.SpotListUiStateV2
 import com.acon.feature.common.compose.toDp
 import dev.chrisbanes.haze.hazeSource
+import kotlinx.collections.immutable.toImmutableList
 import kotlin.math.absoluteValue
 
 private const val MAX_GUEST_AVAILABLE_COUNT = 5
@@ -59,96 +60,105 @@ internal fun SpotListSuccessView(
 
     val context = LocalContext.current
 
-    VerticalPager(
-        state = pagerState,
-        contentPadding = PaddingValues(
-            horizontal = 16.dp,
-            vertical = (itemHeightPx * .18f).toDp()
-        ),
-        modifier = modifier,
-        flingBehavior = PagerDefaults.flingBehavior(
+    if (state.spotList.isEmpty()) {
+        SpotEmptyView(
+            otherSpots = state.bicycleSpotList.toImmutableList(),
+            onSpotClick = onSpotClick,
+            onTryFindWay = onTryFindWay,
+            modifier = modifier
+        )
+    } else {
+        VerticalPager(
             state = pagerState,
-            pagerSnapDistance = PagerSnapDistance.atMost(4),
-            decayAnimationSpec = exponentialDecay(
-                frictionMultiplier = 1.2f
-            )
-        ),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        snapPosition = SnapPosition.Center,
-        pageSize = PageSize.Fixed((itemHeightPx).toDp())
-    ) { page ->
-        val spot = state.spotList[page]
-        var spotFogColor by remember {
-            mutableStateOf(Color.Transparent)
-        }
-
-        Column(
+            contentPadding = PaddingValues(
+                horizontal = 16.dp,
+                vertical = (itemHeightPx * .18f).toDp()
+            ),
+            modifier = modifier,
+            flingBehavior = PagerDefaults.flingBehavior(
+                state = pagerState,
+                pagerSnapDistance = PagerSnapDistance.atMost(4),
+                decayAnimationSpec = exponentialDecay(
+                    frictionMultiplier = 1.2f
+                )
+            ),
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .hazeSource(LocalHazeState.current)
-                .padding(vertical = 6.dp)
-                .fillMaxWidth(.91f)
-                .graphicsLayer {
-                    val pageOffset =
-                        pagerState.getOffsetDistanceInPages(page).absoluteValue
-                    val ratio = lerp(
-                        start = 1.1f,
-                        stop = 0.9f,
-                        fraction = pageOffset.coerceIn(0f, 1f)
-                    )
-                    scaleX = ratio
-                    scaleY = ratio
-                }
-        ) {
-            if (page == 0) {
-                Text(
-                    text = "최고의 선택.",
-                    style = AconTheme.typography.Title2,
-                    fontWeight = FontWeight.SemiBold,
-                    color = AconTheme.color.White,
-                    modifier = Modifier
-                        .padding(bottom = 6.dp)
-                        .fogBackground(
-                            glowColor = AconTheme.color.White,
-                            glowRadius = 100f
-                        )
-                        .zIndex(2f)
-                )
+            snapPosition = SnapPosition.Center,
+            pageSize = PageSize.Fixed((itemHeightPx).toDp())
+        ) { page ->
+            val spot = state.spotList[page]
+            var spotFogColor by remember {
+                mutableStateOf(Color.Transparent)
             }
-            if (page >= MAX_GUEST_AVAILABLE_COUNT && userType == UserType.GUEST) {
-                SpotGuestItem(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .clip(RoundedCornerShape(20.dp))
-                        .background(
-                            shape = RoundedCornerShape(20.dp),
-                            color = AconTheme.color.GlassBlackDefault
-                        )
-                        .clickable {
-                            onGuestItemClick()
-                        }
-                        .fogBackground(
-                            glowColor = AconTheme.color.White,
-                        )
-                )
-            } else {
-                SpotItem(
-                    spot = spot,
-                    onItemClick = onSpotClick,
-                    onFindWayButtonClick = onTryFindWay,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .fogBackground(
-                            glowColor = spotFogColor,
-                            glowAlpha = 1f,
-                        )
-                        .zIndex(1f)
-                )
-            }
-        }
 
-        LaunchedEffect(Unit) {
-            spotFogColor = spot.image.getOverlayColor(context)
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .hazeSource(LocalHazeState.current)
+                    .padding(vertical = 6.dp)
+                    .fillMaxWidth(.91f)
+                    .graphicsLayer {
+                        val pageOffset =
+                            pagerState.getOffsetDistanceInPages(page).absoluteValue
+                        val ratio = lerp(
+                            start = 1.1f,
+                            stop = 0.9f,
+                            fraction = pageOffset.coerceIn(0f, 1f)
+                        )
+                        scaleX = ratio
+                        scaleY = ratio
+                    }
+            ) {
+                if (page == 0) {
+                    Text(
+                        text = "최고의 선택.",
+                        style = AconTheme.typography.Title2,
+                        fontWeight = FontWeight.SemiBold,
+                        color = AconTheme.color.White,
+                        modifier = Modifier
+                            .padding(bottom = 6.dp)
+                            .fogBackground(
+                                glowColor = AconTheme.color.White,
+                                glowRadius = 100f
+                            )
+                            .zIndex(2f)
+                    )
+                }
+                if (page >= MAX_GUEST_AVAILABLE_COUNT && userType == UserType.GUEST) {
+                    SpotGuestItem(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .clip(RoundedCornerShape(20.dp))
+                            .background(
+                                shape = RoundedCornerShape(20.dp),
+                                color = AconTheme.color.GlassBlackDefault
+                            )
+                            .clickable {
+                                onGuestItemClick()
+                            }
+                            .fogBackground(
+                                glowColor = AconTheme.color.White,
+                            )
+                    )
+                } else {
+                    SpotItem(
+                        spot = spot,
+                        onItemClick = onSpotClick,
+                        onFindWayButtonClick = onTryFindWay,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .fogBackground(
+                                glowColor = spotFogColor,
+                                glowAlpha = 1f,
+                            )
+                            .zIndex(1f)
+                    )
+                }
+            }
+
+            LaunchedEffect(Unit) {
+                spotFogColor = spot.image.getOverlayColor(context)
+            }
         }
     }
 }
