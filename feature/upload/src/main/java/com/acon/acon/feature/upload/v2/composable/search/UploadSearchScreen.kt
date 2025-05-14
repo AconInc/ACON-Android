@@ -1,6 +1,5 @@
 package com.acon.acon.feature.upload.v2.composable.search
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,6 +19,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -29,13 +29,15 @@ import androidx.compose.ui.zIndex
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.chip.AconChip
 import com.acon.acon.core.designsystem.component.textfield.v2.AconSearchTextField
-import com.acon.acon.core.designsystem.glassmorphism.LocalHazeState
 import com.acon.acon.core.designsystem.glassmorphism.defaultHazeEffect
+import com.acon.acon.core.designsystem.glassmorphism.rememberHazeState
+import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.domain.model.upload.v2.SearchedSpot
 import com.acon.acon.feature.upload.mock.uploadSearchUiStateMock
 import com.acon.acon.feature.upload.v2.UploadSearchUiState
 import com.acon.feature.common.type.getNameResId
+import dev.chrisbanes.haze.hazeSource
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
@@ -49,6 +51,8 @@ internal fun UploadSearchScreen(
     modifier: Modifier = Modifier,
 ) {
 
+    val hazeState = rememberHazeState()
+    
     val isRightActionEnabled by remember(state) {
         derivedStateOf {
             when (state) {
@@ -79,13 +83,14 @@ internal fun UploadSearchScreen(
                         value = state.query,
                         onValueChange = onSearchQueryChanged,
                         placeholder = stringResource(R.string.search_spot_placeholder),
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth().zIndex(1f)
                     )
-
                     Box {
                         // TODO FlowRow
                         FlowRow(
-                            modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 16.dp),
                             horizontalArrangement = Arrangement.spacedBy(8.dp),
                             verticalArrangement = Arrangement.spacedBy(8.dp),
                         ) {
@@ -93,26 +98,27 @@ internal fun UploadSearchScreen(
                                 AconChip(
                                     title = it,
                                     onClick = { onSearchQueryChanged(it) },
-                                    isSelected = false
+                                    isSelected = false,
+                                    modifier = Modifier.hazeSource(state = hazeState)
                                 )
                             }
                         }
+
                         if (state.query.isNotEmpty()) {
                             SearchedSpots(
                                 searchedSpots = state.searchedSpots.toImmutableList(),
+                                onItemClick = {
+                                    onSearchQueryChanged(it.name)
+                                },
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(top = 10.dp)
                                     .height(300.dp)
-                                    .background(
-                                        color = AconTheme.color.GlassWhiteDefault,
-                                        shape = RoundedCornerShape(10.dp)
-                                    )
+                                    .clip(RoundedCornerShape(16.dp))
                                     .defaultHazeEffect(
-                                        hazeState = LocalHazeState.current,
-                                        tintColor = AconTheme.color.GlassWhiteDefault,
+                                        hazeState = hazeState,
+                                        tintColor = AconTheme.color.Gray700
                                     )
-                                    .zIndex(2f)
                             )
                         }
                     }
@@ -127,57 +133,63 @@ internal fun UploadSearchScreen(
 
 @Composable
 private fun SearchedSpots(
-    modifier: Modifier = Modifier,
     searchedSpots: ImmutableList<SearchedSpot>,
+    onItemClick: (SearchedSpot) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-    LazyColumn(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        if (searchedSpots.isEmpty()) {
-            item {
-                Text(
-                    text = stringResource(R.string.no_search_result),
-                    style = AconTheme.typography.Body1,
-                    color = AconTheme.color.White,
-                    fontWeight = FontWeight.SemiBold,
-                    modifier = Modifier.padding(top = 20.dp)
-                )
+    Column(modifier = modifier) {
+        LazyColumn(
+            modifier = Modifier,
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            if (searchedSpots.isEmpty()) {
+                item {
+                    Text(
+                        text = stringResource(R.string.no_search_result),
+                        style = AconTheme.typography.Body1,
+                        color = AconTheme.color.White,
+                        fontWeight = FontWeight.SemiBold,
+                        modifier = Modifier.padding(top = 20.dp)
+                    )
 
-                Text(
-                    text = stringResource(R.string.request_new_spot_description1),
-                    style = AconTheme.typography.Body1,
-                    color = AconTheme.color.White,
-                    fontWeight = FontWeight.SemiBold,
-                    modifier = Modifier.padding(top = 60.dp)
-                )
-                Text(
-                    text = stringResource(R.string.request_new_spot_description2),
-                    style = AconTheme.typography.Body1,
-                    color = AconTheme.color.Gray500,
-                    fontWeight = FontWeight.W400,
-                    modifier = Modifier.padding(top = 4.dp)
-                )
-                Text(
-                    text = stringResource(R.string.go_to_register_spot),
-                    style = AconTheme.typography.Body1,
-                    color = AconTheme.color.Action,
-                    fontWeight = FontWeight.SemiBold,
-                    modifier = Modifier.padding(top = 20.dp)
+                    Text(
+                        text = stringResource(R.string.request_new_spot_description1),
+                        style = AconTheme.typography.Body1,
+                        color = AconTheme.color.White,
+                        fontWeight = FontWeight.SemiBold,
+                        modifier = Modifier.padding(top = 60.dp)
+                    )
+                    Text(
+                        text = stringResource(R.string.request_new_spot_description2),
+                        style = AconTheme.typography.Body1,
+                        color = AconTheme.color.Gray500,
+                        fontWeight = FontWeight.W400,
+                        modifier = Modifier.padding(top = 4.dp)
+                    )
+                    Text(
+                        text = stringResource(R.string.go_to_register_spot),
+                        style = AconTheme.typography.Body1,
+                        color = AconTheme.color.Action,
+                        fontWeight = FontWeight.SemiBold,
+                        modifier = Modifier.padding(top = 20.dp)
+                    )
+                }
+            }
+
+            items(
+                items = searchedSpots,
+                key = { it.spotId },
+            ) {
+                SearchedSpotItem(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 12.dp)
+                        .noRippleClickable {
+                            onItemClick(it)
+                        },
+                    searchedSpot = it,
                 )
             }
-        }
-
-        items(
-            items = searchedSpots,
-            key = { it.spotId },
-        ) {
-            SearchedSpotItem(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 12.dp),
-                searchedSpot = it,
-            )
         }
     }
 }
