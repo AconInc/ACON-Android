@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.acon.acon.domain.model.upload.v2.SearchedSpot
 import com.acon.acon.feature.upload.v2.UploadSearchSideEffect
 import com.acon.acon.feature.upload.v2.UploadSearchViewModel
 import org.orbitmvi.orbit.compose.collectAsState
@@ -12,7 +13,7 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 @Composable
 fun UploadSearchScreenContainer(
     onNavigateBack: () -> Unit,
-    onNavigateToReview: () -> Unit,
+    onNavigateToReview: (spot: SearchedSpot) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: UploadSearchViewModel = hiltViewModel()
 ) {
@@ -29,7 +30,7 @@ fun UploadSearchScreenContainer(
 
     viewModel.collectSideEffect { sideEffect ->
         when (sideEffect) {
-            is UploadSearchSideEffect.NavigateToReviewScreen -> onNavigateToReview()
+            is UploadSearchSideEffect.NavigateToReviewScreen -> onNavigateToReview(sideEffect.spot)
             is UploadSearchSideEffect.NavigateBack -> onNavigateBack()
         }
     }

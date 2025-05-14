@@ -83,7 +83,10 @@ class UploadSearchViewModel @Inject constructor(
     }
 
     fun onNextAction() = intent {
-        postSideEffect(UploadSearchSideEffect.NavigateToReviewScreen)
+        // TODO : Searched Spot 선택
+        runOn<UploadSearchUiState.Success> {
+            postSideEffect(UploadSearchSideEffect.NavigateToReviewScreen(state.searchedSpots[0]))
+        }
     }
 }
 
@@ -98,6 +101,6 @@ sealed interface UploadSearchUiState {
 }
 
 sealed interface UploadSearchSideEffect {
-    data object NavigateToReviewScreen : UploadSearchSideEffect
+    data class NavigateToReviewScreen(val spot: SearchedSpot) : UploadSearchSideEffect
     data object NavigateBack : UploadSearchSideEffect
 }
