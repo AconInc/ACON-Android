@@ -7,6 +7,8 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 
 private const val TRANSITION_DURATION = 400
 private const val FADE_RATIO = .55f
@@ -45,4 +47,14 @@ fun<S> AnimatedContentTransitionScope<S>.defaultPopEnterTransition() = fadeIn(
 fun<S> AnimatedContentTransitionScope<S>.defaultPopExitTransition() = slideOutOfContainer(
     towards = AnimatedContentTransitionScope.SlideDirection.Right,
     animationSpec = tween(TRANSITION_DURATION),
+)
+
+fun<S> AnimatedContentTransitionScope<S>.bottomUpEnterTransition() = slideInVertically(
+    animationSpec = tween(TRANSITION_DURATION),
+    initialOffsetY = { (it * .7).toInt() }
+)
+
+fun<S> AnimatedContentTransitionScope<S>.topDownExitTransition() = slideOutVertically(
+    animationSpec = tween(TRANSITION_DURATION),
+    targetOffsetY = { it }
 )
