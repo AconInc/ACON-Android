@@ -2,12 +2,17 @@ package com.acon.acon.feature.upload.v2.composable.review
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,6 +28,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.button.v2.AconFilledTextButton
+import com.acon.acon.core.designsystem.glassmorphism.fog.fogBackground
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.feature.upload.component.DotoriIndicator
@@ -129,14 +135,32 @@ internal fun UploadReviewScreen(
             }
         }
 
-        AconFilledTextButton(
-            text = stringResource(R.string.complete_drop_dotori),
-            onClick = onCompleteAction,
-            enabled = isCompleteButtonEnabled,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-        )
+        Box(
+            modifier = Modifier.height(IntrinsicSize.Min),
+            contentAlignment = Alignment.Center
+        ) {
+            Spacer(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .width(150.dp)
+                    .then(
+                        if (state.selectedDotoriCount > 0) Modifier.fogBackground(
+                            glowColor = AconTheme.color.PrimaryDefault,
+                            glowAlpha = .4f,
+                            glowRadius = 300f
+                        ) else Modifier
+                    )
+            )
+
+            AconFilledTextButton(
+                text = stringResource(R.string.complete_drop_dotori),
+                onClick = onCompleteAction,
+                enabled = isCompleteButtonEnabled,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            )
+        }
     }
 }
 
