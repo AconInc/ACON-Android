@@ -41,8 +41,8 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEachIndexed
-import com.acon.acon.core.designsystem.glassmorphism.LocalHazeState
-import com.acon.acon.core.designsystem.glassmorphism.defaultHazeEffect
+import com.acon.acon.core.designsystem.effect.LocalHazeState
+import com.acon.acon.core.designsystem.effect.defaultHazeEffect
 import com.acon.acon.core.designsystem.component.bottomsheet.LoginBottomSheet
 import com.acon.acon.core.designsystem.component.loading.SkeletonItem
 import com.acon.acon.core.designsystem.theme.AconTheme
@@ -85,8 +85,6 @@ internal fun SpotListScreen(
     onLoginBottomSheetShowStateChange: (Boolean) -> Unit = {},
     onFilterBottomSheetShowStateChange: (Boolean) -> Unit = {},
     onSpotItemClick: (id: Long) -> Unit = {},
-    onTermOfUse: () -> Unit = {},
-    onPrivatePolicy: () -> Unit = {},
     onGoogleSignIn: () -> Unit = {}
 ) {
     val context = LocalContext.current
@@ -133,9 +131,7 @@ internal fun SpotListScreen(
                         onGoogleSignIn = {
                             onGoogleSignIn()
                             amplitudeSpotListSignIn()
-                        },
-                        onTermOfUse = onTermOfUse,
-                        onPrivatePolicy = onPrivatePolicy
+                        }
                     )
                 }
 

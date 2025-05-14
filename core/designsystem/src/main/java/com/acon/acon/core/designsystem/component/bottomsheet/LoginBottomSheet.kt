@@ -1,5 +1,7 @@
 package com.acon.acon.core.designsystem.component.bottomsheet
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -21,13 +23,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.acon.acon.core.designsystem.R
-import com.acon.acon.core.designsystem.glassmorphism.defaultHazeEffect
+import com.acon.acon.core.designsystem.effect.defaultHazeEffect
 import com.acon.acon.core.designsystem.component.button.AconGoogleLoginButton
 import com.acon.acon.core.designsystem.theme.AconTheme
 import dev.chrisbanes.haze.HazeState
@@ -39,9 +42,8 @@ fun LoginBottomSheet(
     modifier: Modifier = Modifier,
     onDismissRequest: () -> Unit = {},
     onGoogleSignIn: () -> Unit = {},
-    onTermOfUse: () -> Unit = {},
-    onPrivatePolicy: () -> Unit = {},
 ) {
+    val context = LocalContext.current
     ModalBottomSheet(
         sheetState = rememberModalBottomSheetState(
             skipPartiallyExpanded = true
@@ -116,7 +118,11 @@ fun LoginBottomSheet(
                             style = AconTheme.typography.body2_14_reg,
                             color = AconTheme.color.Gray5,
                             textDecoration = TextDecoration.Underline,
-                            modifier = Modifier.clickable { onTermOfUse() }
+                            modifier = Modifier.clickable {
+                                val url = "https://stripe-shoemaker-907.notion.site/180856d5371b806692f7dcf2bf7088af?pvs=4"
+                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                                context.startActivity(intent)
+                            }
                         )
 
                         Text(
@@ -124,7 +130,11 @@ fun LoginBottomSheet(
                             style = AconTheme.typography.body2_14_reg,
                             color = AconTheme.color.Gray5,
                             textDecoration = TextDecoration.Underline,
-                            modifier = Modifier.clickable { onPrivatePolicy() }
+                            modifier = Modifier.clickable {
+                                val url = "https://stripe-shoemaker-907.notion.site/180856d5371b80f2b8caf09c3eb69a06?pvs=4"
+                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                                context.startActivity(intent)
+                            }
                         )
                     }
                 }
@@ -141,8 +151,6 @@ fun LoginBottomSheetPreview() {
             hazeState = HazeState(),
             onDismissRequest = {},
             onGoogleSignIn = {},
-            onTermOfUse = {},
-            onPrivatePolicy = {}
         )
     }
 }

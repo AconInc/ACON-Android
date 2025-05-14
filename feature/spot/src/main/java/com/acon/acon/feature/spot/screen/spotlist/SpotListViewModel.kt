@@ -171,13 +171,6 @@ class SpotListViewModel @Inject constructor(
         postSideEffect(SpotListSideEffect.NavigateToSpotDetail(id))
     }
 
-    fun onTermOfUse() = intent {
-        postSideEffect(SpotListSideEffect.OnTermOfUse)
-    }
-
-    fun onPrivatePolicy() = intent {
-        postSideEffect(SpotListSideEffect.OnPrivatePolicy)
-    }
 }
 
 sealed interface SpotListUiState {
@@ -203,6 +196,4 @@ sealed interface SpotListSideEffect {
     data object ShowToastMessage : SpotListSideEffect
     data object NavigateToAreaVerification : SpotListSideEffect
     data class NavigateToSpotDetail(val id: Long) : SpotListSideEffect
-    data object OnTermOfUse : SpotListSideEffect
-    data object OnPrivatePolicy : SpotListSideEffect
 }

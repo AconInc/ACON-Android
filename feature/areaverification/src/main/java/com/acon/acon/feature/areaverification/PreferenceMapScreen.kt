@@ -32,7 +32,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.acon.acon.core.designsystem.glassmorphism.LocalHazeState
+import com.acon.acon.core.designsystem.effect.LocalHazeState
 import com.acon.acon.core.designsystem.component.button.AconFilledLargeButton
 import com.acon.acon.core.designsystem.component.dialog.AconOneButtonDialog
 import com.acon.acon.core.designsystem.component.dialog.AconTwoButtonDialog

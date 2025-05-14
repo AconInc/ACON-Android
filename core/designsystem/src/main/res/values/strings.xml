@@ -55,4 +55,6 @@
     <string name="price">가격</string>
     <string name="reset">초기화</string>
     <string name="see_result">결과 보기</string>
+    <string name="require_login_for_more">더 많은 장소를 보기 위해 로그인이 필요해요</string>
+    <string name="go_to_login">3초만에 로그인 하러 가기</string>
 </resources>

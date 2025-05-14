@@ -31,8 +31,8 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.acon.acon.core.designsystem.glassmorphism.LocalHazeState
-import com.acon.acon.core.designsystem.glassmorphism.defaultHazeEffect
+import com.acon.acon.core.designsystem.effect.LocalHazeState
+import com.acon.acon.core.designsystem.effect.defaultHazeEffect
 import com.acon.acon.core.designsystem.theme.AconTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -45,7 +45,7 @@ fun AconBottomSheet(
     ),
     sheetMaxWidth: Dp = BottomSheetDefaults.SheetMaxWidth,
     shape: Shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
-    containerColor: Color = AconTheme.color.Gray800,
+    containerColor: Color = AconTheme.color.GlassWhiteDisabled,
     contentColor: Color = AconTheme.color.White,
     tonalElevation: Dp = 0.dp,
     scrimColor: Color = BottomSheetDefaults.ScrimColor,

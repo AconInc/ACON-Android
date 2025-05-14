@@ -2,10 +2,14 @@ package com.acon.acon.feature.spot.screen.spotlist.composable
 
 import androidx.compose.animation.core.exponentialDecay
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.snapping.SnapPosition
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -20,6 +24,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.PageSize
 import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.PagerSnapDistance
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
@@ -34,10 +39,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableStateSetOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -54,35 +62,51 @@ import androidx.compose.ui.zIndex
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.animation.skeleton
 import com.acon.acon.core.designsystem.component.bottomsheet.AconBottomSheet
+import com.acon.acon.core.designsystem.component.bottomsheet.LoginBottomSheet
 import com.acon.acon.core.designsystem.component.button.v2.AconFilledTextButton
 import com.acon.acon.core.designsystem.component.button.v2.AconOutlinedTextButton
-import com.acon.acon.core.designsystem.component.chip.AconChipFlowRow
+import com.acon.acon.core.designsystem.component.chip.AconChip
 import com.acon.acon.core.designsystem.component.loading.SkeletonItem
-import com.acon.acon.core.designsystem.glassmorphism.LocalHazeState
-import com.acon.acon.core.designsystem.glassmorphism.defaultHazeEffect
-import com.acon.acon.core.designsystem.glassmorphism.fog.fogBackground
-import com.acon.acon.core.designsystem.glassmorphism.fog.getOverlayColor
+import com.acon.acon.core.designsystem.effect.LocalHazeState
+import com.acon.acon.core.designsystem.effect.defaultHazeEffect
+import com.acon.acon.core.designsystem.effect.fog.fogBackground
+import com.acon.acon.core.designsystem.effect.fog.getOverlayColor
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.domain.model.spot.v2.SpotV2
+import com.acon.acon.domain.type.CafeFilterType
 import com.acon.acon.domain.type.FilterType
+import com.acon.acon.domain.type.RestaurantFilterType
 import com.acon.acon.domain.type.SpotType
+import com.acon.acon.domain.type.UserType
 import com.acon.acon.feature.spot.getNameResId
 import com.acon.acon.feature.spot.mock.spotListUiStateRestaurantMock
 import com.acon.acon.feature.spot.screen.component.SpotTypeToggle
+import com.acon.acon.feature.spot.screen.spotlist.FilterDetailKey
 import com.acon.acon.feature.spot.screen.spotlist.SpotListUiStateV2
 import com.acon.feature.common.compose.toDp
+import com.acon.feature.common.remember.rememberSocialRepository
 import dev.chrisbanes.haze.hazeSource
+import kotlinx.collections.immutable.ImmutableSet
+import kotlinx.collections.immutable.toImmutableSet
+import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
+
+private const val MAX_GUEST_AVAILABLE_COUNT = 5
 
 @Composable
 internal fun SpotListScreenV2(
     state: SpotListUiStateV2,
-    onSpotTypeChanged: (SpotType) -> Unit,
-    onSpotClick: (SpotV2) -> Unit,
-    onTryFindWay: (SpotV2) -> Unit,
-    onFilterButtonClick: () -> Unit,
-    onFilterModalDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
+    userType: UserType = UserType.GUEST,
+    onSpotTypeChanged: (SpotType) -> Unit = {},
+    onSpotClick: (SpotV2) -> Unit = {},
+    onTryFindWay: (SpotV2) -> Unit = {},
+    onFilterButtonClick: () -> Unit = {},
+    onFilterModalDismissRequest: () -> Unit = {},
+    onRestaurantFilterSaved: (Map<FilterDetailKey, Set<RestaurantFilterType>>) -> Unit = {},
+    onCafeFilterSaved: (Map<FilterDetailKey, Set<CafeFilterType>>) -> Unit = {},
+    onGuestItemClick: () -> Unit = {},
+    onGuestModalDismissRequest: () -> Unit = {},
 ) {
 
     val screenHeightDp = LocalConfiguration.current.screenHeightDp.dp
@@ -125,42 +149,104 @@ internal fun SpotListScreenV2(
                     .clickable {
                         onFilterButtonClick()
                     }
+                    .then(
+                        if (state is SpotListUiStateV2.Success) {
+                            if (state.selectedRestaurantFilters.values.flatten().isNotEmpty() ||
+                                state.selectedCafeFilters.values.flatten().isNotEmpty()
+                            ) Modifier.border(
+                                width = 1.dp,
+                                color = AconTheme.color.GlassWhiteSelected,
+                                shape = CircleShape
+                            ).background(
+                                color = AconTheme.color.GlassWhiteSelected,
+                                shape = CircleShape
+                            ) else Modifier
+                        } else Modifier
+                    ).padding(6.dp)
             )
         }
 
         when(state) {
             is SpotListUiStateV2.Success -> {
+                val socialRepository = rememberSocialRepository()
+                var pagerState = rememberPagerState {
+                    state.spotList.size
+                }
+
+                val scope = rememberCoroutineScope()
+                if(state.showLoginModal) {
+                    LoginBottomSheet(
+                        hazeState = LocalHazeState.current,
+                        onDismissRequest = onGuestModalDismissRequest,
+                        onGoogleSignIn = {
+                            scope.launch {
+                                socialRepository.googleLogin().onSuccess {
+                                    onGuestModalDismissRequest()
+                                    pagerState.scrollToPage(0)
+                                }
+                            }
+                        }
+                    )
+                }
                 when (state.selectedSpotType) {
                     SpotType.RESTAURANT -> {
+                        pagerState = rememberPagerState {
+                            state.spotList.size
+                        }
                         if (state.showFilterModal) {
                             RestaurantFilterBottomSheet(
-                                onDismissRequest = onFilterModalDismissRequest,
+                                selectedItems = state.selectedRestaurantFilters.values.flatten().toImmutableSet(),
+                                onComplete = onRestaurantFilterSaved,
+                                onDismissRequest = onFilterModalDismissRequest
                             )
                         }
                         SpotListSuccessView(
+                            pagerState = pagerState,
                             state = state,
+                            userType = userType,
                             onSpotClick = onSpotClick,
                             onTryFindWay = onTryFindWay,
-                            itemHeightPx = itemHeightPx
+                            itemHeightPx = itemHeightPx,
+                            modifier = Modifier.fillMaxSize(),
+                            onGuestItemClick = onGuestItemClick
                         )
                     }
                     SpotType.CAFE -> {
+                        pagerState = rememberPagerState {
+                            state.spotList.size
+                        }
                         if (state.showFilterModal) {
                             CafeFilterBottomSheet(
-                                onDismissRequest = onFilterModalDismissRequest,
+                                selectedItems = state.selectedCafeFilters.values.flatten().toImmutableSet(),
+                                onComplete = onCafeFilterSaved,
+                                onDismissRequest = onFilterModalDismissRequest
                             )
                         }
                         SpotListSuccessView(
+                            pagerState = pagerState,
                             state = state,
+                            userType = userType,
                             onSpotClick = onSpotClick,
                             onTryFindWay = onTryFindWay,
-                            itemHeightPx = itemHeightPx
+                            itemHeightPx = itemHeightPx,
+                            modifier = Modifier.fillMaxSize(),
+                            onGuestItemClick = onGuestItemClick
                         )
                     }
                 }
             }
 
-            is SpotListUiStateV2.Loading -> SpotListLoadingView(itemHeightPx = itemHeightPx)
+            is SpotListUiStateV2.Loading -> SpotListLoadingView(
+                itemHeightPx = itemHeightPx,
+                modifier = Modifier
+                    .verticalScroll(rememberScrollState())
+                    .hazeSource(LocalHazeState.current)
+                    .fillMaxSize()
+                    .padding(
+                        horizontal = 16.dp,
+                        vertical = 30.dp
+                    )
+            )
             is SpotListUiStateV2.LoadFailed -> {
                 // TODO("Error")
             }
@@ -170,23 +256,25 @@ internal fun SpotListScreenV2(
 
 @Composable
 private fun SpotListSuccessView(
+    pagerState: PagerState,
     state: SpotListUiStateV2.Success,
+    userType: UserType,
     onSpotClick: (SpotV2) -> Unit,
+    onGuestItemClick: () -> Unit,
     onTryFindWay: (SpotV2) -> Unit,
     itemHeightPx: Float,
+    modifier: Modifier = Modifier,
 ) {
 
     val context = LocalContext.current
 
-    val pagerState = rememberPagerState { state.spotList.size }
     VerticalPager(
         state = pagerState,
         contentPadding = PaddingValues(
             horizontal = 16.dp,
             vertical = (itemHeightPx * .18f).toDp()
         ),
-        modifier = Modifier
-            .fillMaxSize(),
+        modifier = modifier,
         flingBehavior = PagerDefaults.flingBehavior(
             state = pagerState,
             pagerSnapDistance = PagerSnapDistance.atMost(4),
@@ -232,20 +320,40 @@ private fun SpotListSuccessView(
                         .fogBackground(
                             glowColor = AconTheme.color.White,
                             glowRadius = 100f
-                        ).zIndex(2f)
+                        )
+                        .zIndex(2f)
                 )
             }
-            SpotItemV2(
-                spot = spot,
-                onItemClick = onSpotClick,
-                onFindWayButtonClick = onTryFindWay,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .fogBackground(
-                        glowColor = spotFogColor,
-                        glowAlpha = 1f,
-                    ).zIndex(1f)
-            )
+            if (page >= MAX_GUEST_AVAILABLE_COUNT && userType == UserType.GUEST) {
+                SpotGuestItem(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clip(RoundedCornerShape(20.dp))
+                        .background(
+                            shape = RoundedCornerShape(20.dp),
+                            color = AconTheme.color.GlassBlackDefault
+                        )
+                        .clickable {
+                            onGuestItemClick()
+                        }
+                        .fogBackground(
+                            glowColor = AconTheme.color.White,
+                        )
+                )
+            } else {
+                SpotItemV2(
+                    spot = spot,
+                    onItemClick = onSpotClick,
+                    onFindWayButtonClick = onTryFindWay,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .fogBackground(
+                            glowColor = spotFogColor,
+                            glowAlpha = 1f,
+                        )
+                        .zIndex(1f)
+                )
+            }
         }
 
         LaunchedEffect(Unit) {
@@ -256,17 +364,11 @@ private fun SpotListSuccessView(
 
 @Composable
 private fun SpotListLoadingView(
-    itemHeightPx: Float
+    itemHeightPx: Float,
+    modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = Modifier
-            .verticalScroll(rememberScrollState())
-            .hazeSource(LocalHazeState.current)
-            .fillMaxSize()
-            .padding(
-                horizontal = 16.dp,
-                vertical = 30.dp
-            ),
+        modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         SkeletonItem(
@@ -318,10 +420,12 @@ private fun SpotListLoadingView(
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private inline fun <reified T> EachFilterSpace(
     title: String,
-    crossinline onFilterChipClick: () -> Unit,
+    crossinline onFilterItemClick: (T) -> Unit,
+    selectedItems: ImmutableSet<T>,
     modifier: Modifier = Modifier,
 ) where T : Enum<T>, T : FilterType {
 
@@ -334,23 +438,45 @@ private inline fun <reified T> EachFilterSpace(
             fontWeight = FontWeight.SemiBold,
             color = AconTheme.color.White,
         )
-        AconChipFlowRow(
+        FlowRow(
             modifier = Modifier.padding(top = 12.dp),
-            titles = enumValues<T>().map {
-                stringResource((it as FilterType).getNameResId())
-            },
-            onChipSelected = {
-                onFilterChipClick()
-            },
-        )
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            enumValues<T>().forEach {
+                AconChip(
+                    title = stringResource((it as FilterType).getNameResId()),
+                    isSelected = selectedItems.contains(it),
+                    onClick = { onFilterItemClick(it) }
+                )
+            }
+        }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun RestaurantFilterBottomSheet(
+    selectedItems: ImmutableSet<RestaurantFilterType>,
+    onComplete: (Map<FilterDetailKey, Set<RestaurantFilterType>>) -> Unit,
     onDismissRequest: () -> Unit,
 ) {
+    val selectedRestaurantTypes = remember {
+        mutableStateSetOf<RestaurantFilterType.RestaurantType>(
+            *selectedItems.filterIsInstance<RestaurantFilterType.RestaurantType>().toTypedArray()
+        )
+    }
+    val selectedRestaurantOperationTypes = remember {
+        mutableStateSetOf<RestaurantFilterType.RestaurantOperationType>(
+            *selectedItems.filterIsInstance<RestaurantFilterType.RestaurantOperationType>().toTypedArray()
+        )
+    }
+    val selectedRestaurantPriceTypes = remember {
+        mutableStateSetOf<RestaurantFilterType.RestaurantPriceType>(
+            *selectedItems.filterIsInstance<RestaurantFilterType.RestaurantPriceType>().toTypedArray()
+        )
+    }
+
     AconBottomSheet(
         onDismissRequest = onDismissRequest,
     ) {
@@ -370,24 +496,45 @@ private fun RestaurantFilterBottomSheet(
                     .align(Alignment.CenterHorizontally)
             )
 
-            EachFilterSpace<FilterType.RestaurantType>(
+            EachFilterSpace<RestaurantFilterType.RestaurantType>(
                 title = stringResource(R.string.type),
-                onFilterChipClick = {},
-                modifier = Modifier
+                onFilterItemClick = {
+                    if (selectedRestaurantTypes.contains(it)) {
+                        selectedRestaurantTypes.remove(it)
+                    } else {
+                        selectedRestaurantTypes.add(it)
+                    }
+                },
+                modifier = Modifier,
+                selectedItems = selectedRestaurantTypes.toImmutableSet()
             )
             Spacer(modifier = Modifier.height(40.dp))
 
-            EachFilterSpace<FilterType.RestaurantOperationType>(
+            EachFilterSpace<RestaurantFilterType.RestaurantOperationType>(
                 title = stringResource(R.string.operation_time),
-                onFilterChipClick = {},
-                modifier = Modifier
+                onFilterItemClick = {
+                    if (selectedRestaurantOperationTypes.contains(it)) {
+                        selectedRestaurantOperationTypes.remove(it)
+                    } else {
+                        selectedRestaurantOperationTypes.add(it)
+                    }
+                },
+                modifier = Modifier,
+                selectedItems = selectedRestaurantOperationTypes.toImmutableSet()
             )
             Spacer(modifier = Modifier.height(40.dp))
 
-            EachFilterSpace<FilterType.RestaurantPriceType>(
+            EachFilterSpace<RestaurantFilterType.RestaurantPriceType>(
                 title = stringResource(R.string.price),
-                onFilterChipClick = {},
-                modifier = Modifier
+                onFilterItemClick = {
+                    if (selectedRestaurantPriceTypes.contains(it)) {
+                        selectedRestaurantPriceTypes.remove(it)
+                    } else {
+                        selectedRestaurantPriceTypes.add(it)
+                    }
+                },
+                modifier = Modifier,
+                selectedItems = selectedRestaurantPriceTypes.toImmutableSet()
             )
             Spacer(modifier = Modifier.height(99.dp))
 
@@ -409,11 +556,19 @@ private fun RestaurantFilterBottomSheet(
                         fontWeight = FontWeight.SemiBold,
                     ),
                     shape = CircleShape,
-                    onClick = { /* TODO "See Result" */ },
+                    onClick = { onComplete(
+                        mapOf(
+                            RestaurantFilterType.RestaurantType::class to (selectedRestaurantTypes.toSet() as Set<RestaurantFilterType>),
+                            RestaurantFilterType.RestaurantOperationType::class to (selectedRestaurantOperationTypes.toSet() as Set<RestaurantFilterType>),
+                            RestaurantFilterType.RestaurantPriceType::class to (selectedRestaurantPriceTypes.toSet() as Set<RestaurantFilterType>)
+                        )
+                    ) },
                     contentPadding = PaddingValues(
                         vertical = 12.dp,
                     ),
-                    modifier = Modifier.padding(start = 8.dp).weight(5f)
+                    modifier = Modifier
+                        .padding(start = 8.dp)
+                        .weight(5f)
                 )
             }
         }
@@ -423,8 +578,21 @@ private fun RestaurantFilterBottomSheet(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun CafeFilterBottomSheet(
+    selectedItems: ImmutableSet<CafeFilterType>,
+    onComplete: (Map<FilterDetailKey, Set<CafeFilterType>>) -> Unit,
     onDismissRequest: () -> Unit,
 ) {
+    val selectedCafeTypes = remember {
+        mutableStateSetOf<CafeFilterType.CafeType>(
+            *selectedItems.filterIsInstance<CafeFilterType.CafeType>().toTypedArray()
+        )
+    }
+    val selectedCafeOperationTypes = remember {
+        mutableStateSetOf<CafeFilterType.CafeOperationType>(
+            *selectedItems.filterIsInstance<CafeFilterType.CafeOperationType>().toTypedArray()
+        )
+    }
+
     AconBottomSheet(
         onDismissRequest = onDismissRequest,
     ) {
@@ -444,17 +612,31 @@ private fun CafeFilterBottomSheet(
                     .align(Alignment.CenterHorizontally)
             )
 
-            EachFilterSpace<FilterType.CafeType>(
+            EachFilterSpace<CafeFilterType.CafeType>(
                 title = stringResource(R.string.type),
-                onFilterChipClick = {},
-                modifier = Modifier
+                onFilterItemClick = {
+                    if (selectedCafeTypes.contains(it)) {
+                        selectedCafeTypes.remove(it)
+                    } else {
+                        selectedCafeTypes.add(it)
+                    }
+                },
+                modifier = Modifier,
+                selectedItems = selectedCafeTypes.toImmutableSet()
             )
             Spacer(modifier = Modifier.height(40.dp))
 
-            EachFilterSpace<FilterType.CafeOperationType>(
+            EachFilterSpace<CafeFilterType.CafeOperationType>(
                 title = stringResource(R.string.operation_time),
-                onFilterChipClick = {},
-                modifier = Modifier
+                onFilterItemClick = {
+                    if (selectedCafeOperationTypes.contains(it)) {
+                        selectedCafeOperationTypes.remove(it)
+                    } else {
+                        selectedCafeOperationTypes.add(it)
+                    }
+                },
+                modifier = Modifier,
+                selectedItems = selectedCafeOperationTypes.toImmutableSet()
             )
             Spacer(modifier = Modifier.height(99.dp))
 
@@ -476,11 +658,20 @@ private fun CafeFilterBottomSheet(
                         fontWeight = FontWeight.SemiBold,
                     ),
                     shape = CircleShape,
-                    onClick = { /* TODO "See Result" */ },
+                    onClick = {
+                        onComplete(
+                            mapOf(
+                                CafeFilterType.CafeType::class to (selectedCafeTypes.toSet() as Set<CafeFilterType>),
+                                CafeFilterType.CafeOperationType::class to (selectedCafeOperationTypes.toSet() as Set<CafeFilterType>)
+                            )
+                        )
+                    },
                     contentPadding = PaddingValues(
                         vertical = 12.dp,
                     ),
-                    modifier = Modifier.padding(start = 8.dp).weight(5f)
+                    modifier = Modifier
+                        .padding(start = 8.dp)
+                        .weight(5f)
                 )
             }
         }
@@ -492,11 +683,6 @@ private fun CafeFilterBottomSheet(
 private fun SpotListScreenV2Preview() {
     SpotListScreenV2(
         state = spotListUiStateRestaurantMock,
-        onSpotTypeChanged = {},
-        onSpotClick = {},
-        onTryFindWay = {},
-        onFilterButtonClick = {},
-        onFilterModalDismissRequest = {},
         modifier = Modifier
             .fillMaxWidth()
             .background(AconTheme.color.Gray900)
@@ -509,11 +695,6 @@ private fun SpotListScreenV2Preview() {
 private fun SpotListScreenV2LoadingPreview() {
     SpotListScreenV2(
         state = SpotListUiStateV2.Loading,
-        onSpotTypeChanged = {},
-        onSpotClick = {},
-        onTryFindWay = {},
-        onFilterButtonClick = {},
-        onFilterModalDismissRequest = {},
         modifier = Modifier
             .fillMaxWidth()
             .background(AconTheme.color.Gray900)

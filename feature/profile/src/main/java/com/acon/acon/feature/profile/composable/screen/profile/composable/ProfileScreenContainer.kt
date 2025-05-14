@@ -1,7 +1,5 @@
 package com.acon.acon.feature.profile.composable.screen.profile.composable
 
-import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
@@ -10,10 +8,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.acon.acon.core.utils.feature.constants.AppURL
 import com.acon.acon.domain.repository.SocialRepository
 import com.acon.acon.domain.type.UpdateProfileType
 import com.acon.acon.feature.profile.composable.screen.profile.ProfileUiSideEffect
@@ -34,7 +30,6 @@ fun ProfileScreenContainer(
     onNavigateToAreaVerificationScreen: () -> Unit = {},
     viewModel: ProfileViewModel = hiltViewModel()
 ) {
-    val context = LocalContext.current
     val state by viewModel.collectAsState()
 
     val coroutineScope = rememberCoroutineScope()
@@ -65,8 +60,6 @@ fun ProfileScreenContainer(
         onSettings = viewModel::onSettings,
         onEditProfile = viewModel::onEditProfile,
         onGoogleSignIn = { viewModel.googleLogin(socialRepository) },
-        onTermOfUse = viewModel::onTermOfUse,
-        onPrivatePolicy = viewModel::onPrivatePolicy,
         onBottomSheetShowStateChange = viewModel::onBottomSheetShowStateChange,
     )
 
@@ -76,16 +69,6 @@ fun ProfileScreenContainer(
             is ProfileUiSideEffect.OnNavigateToSettingsScreen -> { onNavigateToSettingsScreen() }
             is ProfileUiSideEffect.OnNavigateToProfileEditScreen -> { onNavigateToProfileEditScreen() }
             is ProfileUiSideEffect.OnNavigateToAreaVerificationScreen -> { onNavigateToAreaVerificationScreen() }
-            is ProfileUiSideEffect.OnPrivatePolicy -> {
-                val url = AppURL.TERM_OF_USE
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-                context.startActivity(intent)
-            }
-            is ProfileUiSideEffect.OnTermOfUse -> {
-                val url = AppURL.PRIVATE_POLICY
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-                context.startActivity(intent)
-            }
         }
     }
 }
