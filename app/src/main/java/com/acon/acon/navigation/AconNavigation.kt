@@ -151,7 +151,7 @@ fun AconNavigation(
                                 coroutineScope.launch {
                                     if (userType != UserType.GUEST) {
                                         bottomAmplitudeUpload()
-                                        navController.navigate(UploadRoute.Upload)
+                                        navController.navigate(UploadRoute.Search)
                                     } else {
                                         showLoginBottomSheet = true
                                     }

@@ -11,6 +11,8 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
 fun UploadSearchScreenContainer(
+    onNavigateBack: () -> Unit,
+    onNavigateToReview: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: UploadSearchViewModel = hiltViewModel()
 ) {
@@ -27,12 +29,8 @@ fun UploadSearchScreenContainer(
 
     viewModel.collectSideEffect { sideEffect ->
         when (sideEffect) {
-            is UploadSearchSideEffect.NavigateToReviewScreen -> {
-                // TODO
-            }
-            is UploadSearchSideEffect.NavigateBack -> {
-                // TODO
-            }
+            is UploadSearchSideEffect.NavigateToReviewScreen -> onNavigateToReview()
+            is UploadSearchSideEffect.NavigateBack -> onNavigateBack()
         }
     }
 }

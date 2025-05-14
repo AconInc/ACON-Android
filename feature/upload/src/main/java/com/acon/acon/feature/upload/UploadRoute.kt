@@ -8,8 +8,8 @@ sealed interface UploadRoute {
     data object Graph : UploadRoute
 
     @Serializable
-    data object Upload : UploadRoute
+    data object Search : UploadRoute
 
     @Serializable
-    data object Success : UploadRoute
+    data object Review : UploadRoute
 }
