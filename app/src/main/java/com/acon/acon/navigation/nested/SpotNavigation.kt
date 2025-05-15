@@ -11,7 +11,7 @@ import androidx.navigation.navigation
 import com.acon.acon.domain.repository.SocialRepository
 import com.acon.acon.feature.areaverification.AreaVerificationRoute
 import com.acon.acon.feature.spot.SpotRoute
-import com.acon.acon.feature.spot.screen.spotdetail.composable.SpotDetailScreenContainer
+import com.acon.acon.feature.spot.screen.spotdetail.composable.SpotDetailScreenContainerV2
 import com.acon.acon.feature.spot.screen.spotlist.composable.SpotListScreenContainer
 
 internal fun NavGraphBuilder.spotNavigation(
@@ -43,8 +43,9 @@ internal fun NavGraphBuilder.spotNavigation(
         }
 
         composable<SpotRoute.SpotDetail> {
-            SpotDetailScreenContainer(
-                onNavigateToSpotListView = {
+            SpotDetailScreenContainerV2(
+                modifier = Modifier.fillMaxSize(),
+                onNavigateToBack = {
                     navController.popBackStack()
                 },
             )
