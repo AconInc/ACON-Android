@@ -30,7 +30,7 @@ fun SpotDetailScreenContainer(
 //        },
 //    )
 
-    SpotDetailScreenV2()
+    //SpotDetailScreenV2()
 
     viewModel.collectSideEffect { sideEffect ->
         when(sideEffect) {
