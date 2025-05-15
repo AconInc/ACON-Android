@@ -65,6 +65,8 @@ timberVersion = "5.0.1"
 # Permission
 accompanistPermissions = "0.37.0"
 
+paletteVersion = "1.0.0"
+
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
@@ -159,6 +161,9 @@ play-services-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
 firebase-analytics-sdk = { group = "com.google.firebase", name = "firebase-analytics" }
 firebase-crashlytics-sdk = { group = "com.google.firebase", name = "firebase-crashlytics" }
+
+# Palette
+palette = { module = "androidx.palette:palette", version.ref = "paletteVersion" }
 
 # Gradle
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }

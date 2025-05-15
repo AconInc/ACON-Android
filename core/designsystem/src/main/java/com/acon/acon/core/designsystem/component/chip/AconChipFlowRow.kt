@@ -7,16 +7,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEachIndexed
+import kotlinx.collections.immutable.ImmutableList
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun AconChipFlowRow(
     titles: List<String>,
-    vararg selectedChipIndexes: Int,
+    selectedChipIndices: ImmutableList<Int>,
     onChipSelected: (index: Int) -> Unit,
     modifier: Modifier = Modifier,
-    horizontalArrangement: Arrangement.Horizontal = Arrangement.spacedBy(6.dp),
-    verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(6.dp)
+    horizontalArrangement: Arrangement.Horizontal = Arrangement.spacedBy(8.dp),
+    verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(8.dp)
 ) {
 
     FlowRow(
@@ -27,7 +28,7 @@ fun AconChipFlowRow(
         titles.fastForEachIndexed { index, title ->
             AconChip(
                 title = title,
-                isSelected = selectedChipIndexes.contains(index),
+                isSelected = selectedChipIndices.contains(index),
                 onClick = { onChipSelected(index) }
             )
         }

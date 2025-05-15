@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.acon.acon.domain.model.spot.v2.SpotV2
 import com.acon.acon.feature.spot.screen.spotlist.SpotListSideEffectV2
 import com.acon.acon.feature.spot.screen.spotlist.SpotListViewModelV2
@@ -32,6 +33,7 @@ fun SpotListScreenContainerV2(
 ) {
 
     val state by viewModel.collectAsState()
+    val userType by viewModel.userType.collectAsStateWithLifecycle()
 
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -48,9 +50,16 @@ fun SpotListScreenContainerV2(
 
     SpotListScreenV2(
         state = state,
-        onSpotTypeChanged = viewModel::onSpotTypeChanged,
-        onSpotClick = viewModel::onSpotClick,
+        userType = userType,
+        onSpotTypeChanged = viewModel::onSpotTypeClicked,
+        onSpotClick = viewModel::onSpotClicked,
         onTryFindWay = viewModel::onTryFindWay,
+        onFilterButtonClick = viewModel::onFilterButtonClicked,
+        onFilterModalDismissRequest = viewModel::onFilterModalDismissed,
+        onRestaurantFilterSaved = viewModel::onRestaurantFilterSaved,
+        onCafeFilterSaved = viewModel::onCafeFilterSaved,
+        onGuestItemClick = viewModel::onRequestLogin,
+        onGuestModalDismissRequest = viewModel::onDismissLoginModal,
         modifier = modifier.fillMaxSize(),
     )
 

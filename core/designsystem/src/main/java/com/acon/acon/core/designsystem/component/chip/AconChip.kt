@@ -11,7 +11,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.acon.acon.core.designsystem.noRippleClickable
@@ -23,20 +25,12 @@ fun AconChip(
     isSelected: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    textStyle: TextStyle = AconTheme.typography.subtitle1_16_med.copy(
-        color = AconTheme.color.White
+    contentColor: Color = AconTheme.color.White,
+    containerColor: Color = AconTheme.color.GlassWhiteDefault,
+    textStyle: TextStyle = AconTheme.typography.Body1.copy(
+        fontWeight = FontWeight.W400
     )
 ) {
-
-    val borderColor =
-        if (isSelected)
-            AconTheme.color.Main_org1
-        else AconTheme.color.Gray6
-
-    val containerColor =
-        if (isSelected)
-            AconTheme.color.Main_org35
-        else AconTheme.color.Gray8
 
     Row(
         modifier = modifier
@@ -44,7 +38,7 @@ fun AconChip(
             .border(
                 shape = CircleShape,
                 width = 1.dp,
-                color = borderColor
+                color = if (isSelected) contentColor else Color.Transparent
             ).background(containerColor).noRippleClickable {
                 onClick()
             },
@@ -53,9 +47,10 @@ fun AconChip(
     ) {
         Text(
             modifier = Modifier
-                .padding(vertical = 10.dp, horizontal = 18.dp),
+                .padding(vertical = 9.dp, horizontal = 12.dp),
             text = title,
-            style = textStyle
+            style = textStyle,
+            color = contentColor
         )
     }
 }

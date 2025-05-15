@@ -42,7 +42,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.acon.acon.core.designsystem.glassmorphism.LocalHazeState
+import com.acon.acon.core.designsystem.effect.LocalHazeState
 import com.acon.acon.core.designsystem.component.button.AconOutlinedLargeButton
 import com.acon.acon.core.designsystem.component.radiobutton.AconRadioButton
 import com.acon.acon.core.designsystem.component.topbar.AconTopBar

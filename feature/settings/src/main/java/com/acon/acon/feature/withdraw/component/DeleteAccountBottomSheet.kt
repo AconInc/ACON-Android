@@ -26,7 +26,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.acon.acon.core.designsystem.glassmorphism.defaultHazeEffect
+import com.acon.acon.core.designsystem.effect.defaultHazeEffect
 import com.acon.acon.core.designsystem.component.button.AconFilledLargeButton
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.feature.settings.R
