@@ -91,7 +91,10 @@ internal val AconColors = AconColor(
 
     Light = Color(0x33E1E1E1),
 
-    New = Color(0xFFFF4646)
+    New = Color(0xFFFF4646),
+
+    DimDefault = Color(0xCC111111),
+    DimThin = Color(0x99111111)
 )
 
 @Immutable
@@ -166,7 +169,10 @@ data class AconColor(
 
     val Light: Color,
 
-    val New: Color
+    val New: Color,
+
+    val DimDefault: Color,
+    val DimThin: Color
 )
 
 internal val LocalAconColor = staticCompositionLocalOf {
