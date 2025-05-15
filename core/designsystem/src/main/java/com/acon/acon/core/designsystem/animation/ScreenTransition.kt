@@ -51,7 +51,7 @@ fun<S> AnimatedContentTransitionScope<S>.defaultPopExitTransition() = slideOutOf
 
 fun<S> AnimatedContentTransitionScope<S>.bottomUpEnterTransition() = slideInVertically(
     animationSpec = tween(TRANSITION_DURATION),
-    initialOffsetY = { (it * .7).toInt() }
+    initialOffsetY = { it }
 )
 
 fun<S> AnimatedContentTransitionScope<S>.topDownExitTransition() = slideOutVertically(
