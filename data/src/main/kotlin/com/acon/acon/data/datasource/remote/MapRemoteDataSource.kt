@@ -10,14 +10,4 @@ class MapRemoteDataSource @Inject constructor(
         latitude: Double,
         longitude: Double
     ) = mapApi.fetchReverseGeocoding("$longitude,$latitude")
-
-    suspend fun fetchDirections(
-        startLatitude: Double,
-        startLongitude: Double,
-        goalLatitude: Double,
-        goalLongitude: Double
-    ) = mapApi.fetchDirections(
-        start = "$startLatitude,$startLongitude",
-        goal = "$goalLatitude,$goalLongitude",
-    )
 }

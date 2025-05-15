@@ -294,7 +294,7 @@ internal fun SpotDetailScreenV2(
                             .padding(start = 16.dp, end = 16.dp, bottom = 20.dp)
                     ) {
                         Text(
-                            text = "도보 ${state.eta}분 길찾기", // TODO - 예상 도착 시간 (도보)
+                            text = "도보 0분 길찾기", // TODO - 예상 도착 시간 (도보)
                             color = AconTheme.color.White,
                             style = AconTheme.typography.Title4
                         )

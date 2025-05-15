@@ -36,7 +36,6 @@ fun SpotDetailScreenContainerV2(
             is SpotDetailSideEffectV2.RecentLocationFetched -> {
                 context.onLocationReady { location ->
                     viewModel.onFindWay(location)
-                    viewModel.fetchDirections(location) // TODO - 동작 확인을 위한 임시 위치, 나중에 위치 옮겨야 함
                 }
             }
             is SpotDetailSideEffectV2.RecentLocationFetchFailed -> {

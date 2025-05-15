@@ -7,7 +7,6 @@ import androidx.navigation.toRoute
 import com.acon.acon.core.utils.feature.base.BaseContainerHost
 import com.acon.acon.domain.model.spot.SpotDetailInfo
 import com.acon.acon.domain.model.spot.SpotDetailMenu
-import com.acon.acon.domain.repository.MapRepository
 import com.acon.acon.domain.repository.SpotRepository
 import com.acon.acon.feature.spot.SpotRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,7 +20,6 @@ import javax.inject.Inject
 @HiltViewModel
 class SpotDetailViewModelV2 @Inject constructor(
     private val spotRepository: SpotRepository,
-    private val mapRepository: MapRepository,
     savedStateHandle: SavedStateHandle
 ) : BaseContainerHost<SpotDetailUiStateV2, SpotDetailSideEffectV2>() {
 
@@ -67,28 +65,6 @@ class SpotDetailViewModelV2 @Inject constructor(
         }
     }
 
-    fun fetchDirections(startLocation: Location) = intent {
-        runOn<SpotDetailUiStateV2.Success> {
-            mapRepository.fetchDirections(
-                startLatitude = startLocation.latitude,
-                startLongitude = startLocation.longitude,
-                goalLatitude = state.spotDetailInfo.latitude,
-                goalLongitude = state.spotDetailInfo.longitude
-            ).fold(
-                onSuccess = { eta ->
-                    reduce {
-                        state.copy(
-                            eta = (eta / 1000 / 60).toString() + "분"
-                        )
-                    }
-                },
-                onFailure = {
-                    // TODO - fetchDirections 실패 처리
-                }
-            )
-        }
-    }
-
     fun navigateToBack() = intent {
         postSideEffect(
             SpotDetailSideEffectV2.NavigateToBack
@@ -113,7 +89,6 @@ class SpotDetailViewModelV2 @Inject constructor(
 sealed interface SpotDetailUiStateV2 {
     @Immutable
     data class Success(
-        val eta: String ="",
         val spotDetailInfo: SpotDetailInfo,
         val spotDetailMenuList: List<SpotDetailMenu>,
     ) : SpotDetailUiStateV2
