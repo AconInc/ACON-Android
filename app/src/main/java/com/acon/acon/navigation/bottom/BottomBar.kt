@@ -3,9 +3,7 @@ package com.acon.acon.navigation.bottom
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -28,24 +26,21 @@ fun BottomBar(
     onItemClick: (BottomNavType) -> Unit = {}
 ) {
 
-    Column(
+    Row(
         modifier = modifier
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-        ) {
-            BottomNavType.entries.fastForEach {
-                BottomBarItem(
-                    type = it,
-                    isSelected = selectedItem == it,
-                    modifier = Modifier.weight(1f).noRippleClickable {
+        BottomNavType.entries.fastForEach {
+            BottomBarItem(
+                type = it,
+                isSelected = selectedItem == it,
+                modifier = Modifier
+                    .weight(1f)
+                    .noRippleClickable {
                         onItemClick(it)
                     }
-                )
-            }
+                    .padding(bottom = 24.dp)
+            )
         }
-        Spacer(modifier = Modifier.height(24.dp))
     }
 }
 
