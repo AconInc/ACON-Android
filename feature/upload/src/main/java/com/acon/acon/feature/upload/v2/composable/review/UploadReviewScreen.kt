@@ -28,7 +28,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.button.v2.AconFilledTextButton
-import com.acon.acon.core.designsystem.glassmorphism.fog.fogBackground
+import com.acon.acon.core.designsystem.effect.fog.fogBackground
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.feature.upload.component.DotoriIndicator

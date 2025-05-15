@@ -25,12 +25,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
-import androidx.compose.ui.zIndex
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.chip.AconChip
 import com.acon.acon.core.designsystem.component.textfield.v2.AconSearchTextField
-import com.acon.acon.core.designsystem.glassmorphism.defaultHazeEffect
-import com.acon.acon.core.designsystem.glassmorphism.rememberHazeState
+import com.acon.acon.core.designsystem.effect.defaultHazeEffect
+import com.acon.acon.core.designsystem.effect.rememberHazeState
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.domain.model.upload.v2.SearchedSpot
@@ -83,7 +82,7 @@ internal fun UploadSearchScreen(
                         value = state.query,
                         onValueChange = onSearchQueryChanged,
                         placeholder = stringResource(R.string.search_spot_placeholder),
-                        modifier = Modifier.fillMaxWidth().zIndex(1f)
+                        modifier = Modifier.fillMaxWidth()
                     )
                     Box {
                         // TODO FlowRow

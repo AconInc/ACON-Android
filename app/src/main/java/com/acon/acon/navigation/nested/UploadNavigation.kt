@@ -1,7 +1,10 @@
 package com.acon.acon.navigation.nested
 
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -25,15 +28,23 @@ internal fun NavGraphBuilder.uploadNavigation(
             enterTransition = {
                 bottomUpEnterTransition()
             }, exitTransition = {
+                ExitTransition.None
+            }, popEnterTransition = {
+                EnterTransition.None
+            }, popExitTransition = {
                 topDownExitTransition()
             }
         ) {
+
             UploadSearchScreenContainer(
                 onNavigateBack = navController::popBackStack,
                 onNavigateToReview = { spot ->
                     navController.navigate(UploadRoute.Review(spot))
                 },
-                modifier = Modifier.fillMaxSize().background(AconTheme.color.Gray900)
+                modifier = Modifier
+                    .background(AconTheme.color.Gray900)
+                    .statusBarsPadding()
+                    .fillMaxSize()
             )
         }
 
@@ -45,7 +56,10 @@ internal fun NavGraphBuilder.uploadNavigation(
                 onComplete = {
                     // TODO("업로드 완료 화면으로 이동")
                 },
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .background(AconTheme.color.Gray9)
+                    .statusBarsPadding()
+                    .fillMaxSize(),
             )
         }
     }

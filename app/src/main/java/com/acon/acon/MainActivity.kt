@@ -40,7 +40,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         val windowInsetsController = WindowCompat.getInsetsController(window, window.decorView)
         windowInsetsController.isAppearanceLightStatusBars = false
-        
+
         setContent {
             AconTheme {
                 AconNavigation(
