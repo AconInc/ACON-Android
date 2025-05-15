@@ -19,4 +19,18 @@ class MapRepositoryImpl @Inject constructor(
             }.firstOrNull()?.region?.area3?.name ?: ""
         }
     }
+
+    override suspend fun fetchDirections(
+        startLatitude: Double,
+        startLongitude: Double,
+        goalLatitude: Double,
+        goalLongitude: Double
+    ): Result<Int> {
+        return runCatchingWith {
+            mapRemoteDataSource.fetchDirections(startLatitude, startLongitude, goalLatitude, goalLongitude)
+                .route
+                .trafast
+                .firstOrNull()?.summary?.duration ?: 0
+        }
+    }
 }

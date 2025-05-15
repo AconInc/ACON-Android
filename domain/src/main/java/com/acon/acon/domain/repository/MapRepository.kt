@@ -6,4 +6,11 @@ interface MapRepository {
         latitude: Double,
         longitude: Double
     ): Result<String>
+
+    suspend fun fetchDirections(
+        startLatitude: Double,
+        startLongitude: Double,
+        goalLatitude: Double,
+        goalLongitude: Double
+    ): Result<Int>
 }
