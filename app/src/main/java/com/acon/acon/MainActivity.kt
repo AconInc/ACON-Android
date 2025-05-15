@@ -5,9 +5,11 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.core.view.WindowCompat
 import androidx.navigation.compose.rememberNavController
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.domain.repository.SocialRepository
@@ -36,10 +38,13 @@ class MainActivity : ComponentActivity() {
         }
 
         enableEdgeToEdge()
+        val windowInsetsController = WindowCompat.getInsetsController(window, window.decorView)
+        windowInsetsController.isAppearanceLightStatusBars = false
+        
         setContent {
             AconTheme {
                 AconNavigation(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier.fillMaxSize().background(AconTheme.color.Gray900),
                     navController = rememberNavController(),
                     userRepository = userRepository
                 )
