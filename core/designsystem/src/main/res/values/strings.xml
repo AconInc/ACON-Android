@@ -57,4 +57,9 @@
     <string name="see_result">결과 보기</string>
     <string name="require_login_for_more">더 많은 장소를 보기 위해 로그인이 필요해요</string>
     <string name="go_to_login">3초만에 로그인 하러 가기</string>
+    <string name="no_available_spots">이런…\n딱 맞는 장소가 없어요</string>
+    <string name="apologize_for_no_spots">원하시는 결과를 보여드리지 못해 죄송해요</string>
+    <string name="recommend_other_spots">대신 여기는 어떠세요?</string>
+    <string name="no_other_spots">다음에 들어오실 땐,\n꼭 찾아서 추천드릴게요</string>
+    <string name="ask_for_new_spot">장소 등록 신청하기</string>
 </resources>

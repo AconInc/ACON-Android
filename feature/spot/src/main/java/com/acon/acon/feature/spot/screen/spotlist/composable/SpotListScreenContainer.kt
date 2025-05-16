@@ -1,71 +1,86 @@
 package com.acon.acon.feature.spot.screen.spotlist.composable
 
+import android.annotation.SuppressLint
+import android.location.Location
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.acon.acon.core.map.onLocationReady
-import com.acon.acon.core.utils.feature.permission.CheckAndRequestLocationPermission
-import com.acon.acon.core.utils.feature.toast.showToast
-import com.acon.acon.domain.repository.SocialRepository
-import com.acon.acon.feature.spot.R
-import com.acon.acon.feature.spot.screen.spotlist.SpotListSideEffect
-import com.acon.acon.feature.spot.screen.spotlist.SpotListUiState
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.acon.acon.domain.model.spot.v2.SpotV2
+import com.acon.acon.feature.spot.screen.spotlist.SpotListSideEffectV2
 import com.acon.acon.feature.spot.screen.spotlist.SpotListViewModel
+import com.acon.feature.common.coroutine.collectWithLifecycle
+import com.acon.feature.common.location.locationFlow
+import com.acon.feature.common.permission.LocationPermissionRequester
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
+@SuppressLint("MissingPermission")  // Location permission is handled in the LocationPermissionRequester
 @Composable
 fun SpotListScreenContainer(
-    socialRepository: SocialRepository,
+    onNavigateToSpotDetailScreen: (SpotV2) -> Unit,
+    onNavigateToExternalMap: (start: Location, destination: Location) -> Unit,
     modifier: Modifier = Modifier,
-    onNavigateToAreaVerification: () -> Unit = {},
-    onNavigateToSpotDetailScreen: (id: Long) -> Unit = {},
-    viewModel: SpotListViewModel = hiltViewModel(),
+    viewModel: SpotListViewModel = hiltViewModel()
 ) {
 
-    val context = LocalContext.current
     val state by viewModel.collectAsState()
+    val userType by viewModel.userType.collectAsStateWithLifecycle()
 
-    CheckAndRequestLocationPermission(
+    val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    var isPermissionGranted by remember {
+        mutableStateOf(false)
+    }
+
+    LocationPermissionRequester(
         onPermissionGranted = {
-            if (state !is SpotListUiState.Success) {
-                context.onLocationReady(viewModel::fetchSpots)
-            }
+            isPermissionGranted = true
         }
     )
 
     SpotListScreen(
         state = state,
+        userType = userType,
+        onSpotTypeChanged = viewModel::onSpotTypeClicked,
+        onSpotClick = viewModel::onSpotClicked,
+        onTryFindWay = viewModel::onTryFindWay,
+        onFilterButtonClick = viewModel::onFilterButtonClicked,
+        onFilterModalDismissRequest = viewModel::onFilterModalDismissed,
+        onRestaurantFilterSaved = viewModel::onRestaurantFilterSaved,
+        onCafeFilterSaved = viewModel::onCafeFilterSaved,
+        onGuestItemClick = viewModel::onRequestLogin,
+        onGuestModalDismissRequest = viewModel::onDismissLoginModal,
         modifier = modifier.fillMaxSize(),
-        onRefresh = {
-            context.onLocationReady(viewModel::onRefresh)
-        },
-        onLoginBottomSheetShowStateChange = viewModel::onLoginBottomSheetShowStateChange,
-        onFilterBottomSheetShowStateChange = viewModel::onFilterBottomSheetStateChange,
-        onResetFilter = {
-            context.onLocationReady(viewModel::onResetFilter)
-        },
-        onCompleteFilter = { condition, proceed ->
-            context.onLocationReady {
-                viewModel.onCompleteFilter(it, condition, proceed)
-            }
-        },
-        onSpotItemClick = viewModel::onSpotItemClick,
-        onGoogleSignIn = {
-            context.onLocationReady {
-                viewModel.googleLogin(socialRepository, it)
-            }
-        },
     )
+
+    LaunchedEffect(isPermissionGranted) {
+        if (isPermissionGranted) {
+            context.locationFlow()
+                .collectWithLifecycle(lifecycleOwner.lifecycle, viewModel::onNewLocationEmitted)
+        }
+    }
 
     viewModel.collectSideEffect {
         when (it) {
-            is SpotListSideEffect.ShowToastMessage -> { context.showToast(R.string.signin_login_failed_toast) }
-            is SpotListSideEffect.NavigateToAreaVerification -> { onNavigateToAreaVerification() }
-            is SpotListSideEffect.NavigateToSpotDetail -> { onNavigateToSpotDetailScreen(it.id) }
+            is SpotListSideEffectV2.ShowToastMessage -> {
+                // Handle the side effect here
+            }
+            is SpotListSideEffectV2.NavigateToSpotDetailScreen -> {
+                onNavigateToSpotDetailScreen(it.spot)
+            }
+            is SpotListSideEffectV2.NavigateToExternalMap -> {
+                onNavigateToExternalMap(it.start, it.destination)
+            }
         }
     }
 }

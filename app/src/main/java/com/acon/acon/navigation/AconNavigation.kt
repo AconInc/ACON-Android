@@ -21,7 +21,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavDestination
@@ -40,7 +39,6 @@ import com.acon.acon.core.designsystem.effect.LocalHazeState
 import com.acon.acon.core.designsystem.effect.defaultHazeEffect
 import com.acon.acon.core.designsystem.effect.rememberHazeState
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.domain.repository.SocialRepository
 import com.acon.acon.domain.repository.UserRepository
 import com.acon.acon.domain.type.UserType
 import com.acon.acon.feature.areaverification.AreaVerificationRoute
@@ -58,15 +56,17 @@ import com.acon.acon.navigation.nested.signInNavigationNavigation
 import com.acon.acon.navigation.nested.splashNavigationNavigation
 import com.acon.acon.navigation.nested.spotNavigation
 import com.acon.acon.navigation.nested.uploadNavigation
+import com.acon.feature.common.remember.rememberSocialRepository
 import kotlinx.coroutines.launch
 
 @Composable
 fun AconNavigation(
     modifier: Modifier = Modifier,
     navController: NavHostController,
-    socialRepository: SocialRepository,
     userRepository: UserRepository
 ) {
+    val socialRepository = rememberSocialRepository()
+
     val snackbarHostState = remember { SnackbarHostState() }
     val backStackEntry by navController.currentBackStackEntryAsState()
     var selectedBottomNavItem by rememberSaveable { mutableStateOf(BottomNavType.SPOT) }
@@ -74,7 +74,6 @@ fun AconNavigation(
 
     val hazeState = rememberHazeState()
 
-    val context = LocalContext.current
     var showLoginBottomSheet by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
 
@@ -199,7 +198,7 @@ fun AconNavigation(
 
                 onboardingNavigationNavigation(navController)
 
-                spotNavigation(navController, socialRepository)
+                spotNavigation(navController)
 
                 uploadNavigation(navController)
 

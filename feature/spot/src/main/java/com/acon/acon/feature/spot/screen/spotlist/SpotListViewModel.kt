@@ -1,199 +1,185 @@
 package com.acon.acon.feature.spot.screen.spotlist
 
+import android.content.Context
 import android.location.Location
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.viewModelScope
 import com.acon.acon.core.utils.feature.base.BaseContainerHost
-import com.acon.acon.domain.error.area.GetLegalDongError
-import com.acon.acon.domain.error.spot.FetchSpotListError
-import com.acon.acon.domain.model.spot.Condition
-import com.acon.acon.domain.model.spot.Spot
-import com.acon.acon.domain.repository.SocialRepository
+import com.acon.acon.domain.model.spot.v2.SpotV2
 import com.acon.acon.domain.repository.SpotRepository
 import com.acon.acon.domain.repository.UserRepository
+import com.acon.acon.domain.type.CafeFilterType
+import com.acon.acon.domain.type.RestaurantFilterType
+import com.acon.acon.domain.type.SpotType
 import com.acon.acon.domain.type.UserType
-import com.acon.acon.feature.spot.amplitudeClickFilter
-import com.acon.acon.feature.spot.state.ConditionState
+import com.acon.acon.feature.spot.BuildConfig
+import com.acon.acon.feature.spot.mock.spotListUiStateCafeMock
+import com.acon.acon.feature.spot.mock.spotListUiStateRestaurantMock
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.async
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.stateIn
 import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.viewmodel.container
 import javax.inject.Inject
+import kotlin.reflect.KClass
 
-@OptIn(OrbitExperimental::class)
 @HiltViewModel
+@OptIn(OrbitExperimental::class)
 class SpotListViewModel @Inject constructor(
-    private val spotRepository: SpotRepository,
-    private val userRepository: UserRepository
-) : BaseContainerHost<SpotListUiState, SpotListSideEffect>() {
+    @ApplicationContext private val context: Context,
+    private val userRepository: UserRepository,
+    private val spotRepository: SpotRepository
+) : BaseContainerHost<SpotListUiStateV2, SpotListSideEffectV2>() {
 
     override val container =
-        container<SpotListUiState, SpotListSideEffect>(SpotListUiState.Loading) {
-            userType.collectLatest {
-                runOn<SpotListUiState.Success> {
-                    reduce {
-                        state.copy(userType = it)
-                    }
-                }
-            }
-        }
+        container<SpotListUiStateV2, SpotListSideEffectV2>(SpotListUiStateV2.Loading)
 
-    private val userType = userRepository.getUserType().stateIn(
+    val userType = userRepository.getUserType().stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = UserType.GUEST
     )
 
-    fun googleLogin(socialRepository: SocialRepository, location: Location) = intent {
-        socialRepository.googleLogin()
-            .onSuccess {
-                if (it.hasVerifiedArea) {
-                    fetchSpots(location)
-                } else {
-                    postSideEffect(SpotListSideEffect.NavigateToAreaVerification)
+    fun onNewLocationEmitted(location: Location) = intent {
+        runOn<SpotListUiStateV2.Loading> {
+            // TODO("Repository Call")
+            if (BuildConfig.DEBUG) {
+                reduce {
+                    spotListUiStateRestaurantMock
                 }
-            }.onFailure {
-                postSideEffect(SpotListSideEffect.ShowToastMessage)
             }
+        }
+        runOn<SpotListUiStateV2.Success> {
+            reduce {
+                state.copy(currentLocation = location)
+            }
+        }
     }
 
-    fun fetchSpots(location: Location) = intent {
-        val legalAddressNameDeferred = viewModelScope.async {
-            spotRepository.getLegalDong(
-                latitude = location.latitude,
-                longitude = location.longitude
-            )
-        }
-
-        val spotListResultDeferred = viewModelScope.async {
-            spotRepository.fetchSpotList(
-                latitude = location.latitude,
-                longitude = location.longitude,
-                condition = (state as? SpotListUiState.Success)?.currentCondition?.toCondition()
-                    ?: Condition.Default,
-            )
-        }
-
-        val legalAddressNameResult = legalAddressNameDeferred.await()
-        val spotListResult = spotListResultDeferred.await()
-
-        val legalArea = legalAddressNameResult.getOrElse {
+    fun onSpotTypeClicked(spotType: SpotType) = intent {
+        runOn<SpotListUiStateV2.Success> {
+            if (spotType == state.selectedSpotType) return@runOn
+            // TODO("Repository Call")
             reduce {
-                when (it) {
-                    is GetLegalDongError.OutOfServiceArea -> SpotListUiState.OutOfServiceArea
-                    else -> SpotListUiState.LoadFailed
-                }
-            }
-            return@intent
-        }
-
-        spotListResult.reduceResult(
-            syntax = this,
-            onSuccess = {
-                (state as? SpotListUiState.Success)?.copy(
-                    spotList = it,
-                    isRefreshing = false,
-                    userType = userType.value,
-                    legalAddressName = legalArea.area,
-                    isFilteredResultFetching = it.isEmpty()
-                ) ?: SpotListUiState.Success(
-                    spotList = it,
-                    isRefreshing = false,
-                    userType = userType.value,
-                    legalAddressName = legalArea.area,
-                    isFilteredResultFetching = it.isEmpty()
+                state.copy(
+                    selectedSpotType = spotType,
+                    selectedRestaurantFilters = emptyMap(),
+                    selectedCafeFilters = emptyMap()
                 )
-            }, onFailure = {
-                when (it) {
-                    is FetchSpotListError.OutOfServiceAreaError -> SpotListUiState.OutOfServiceArea
-                    else -> SpotListUiState.LoadFailed
-                }
             }
-        )
-    }
-
-    fun onRefresh(location: Location) = intent {
-        reduce {
-            when (state) {
-                is SpotListUiState.Success -> (state as SpotListUiState.Success).copy(isRefreshing = true)
-                else -> SpotListUiState.Loading
-            }
-        }
-        fetchSpots(location)
-    }
-
-    fun onLoginBottomSheetShowStateChange(show: Boolean) = intent {
-        runOn<SpotListUiState.Success> {
-            reduce {
-                state.copy(showLoginBottomSheet = show)
-            }
-        }
-    }
-
-    fun onFilterBottomSheetStateChange(show: Boolean) = intent {
-        runOn<SpotListUiState.Success> {
-            reduce {
-                state.copy(showFilterBottomSheet = show)
-            }
-        }
-        amplitudeClickFilter()
-    }
-
-    fun onResetFilter(location: Location) = intent {
-        runOn<SpotListUiState.Success> {
-            reduce {
-                SpotListUiState.Loading
-            }
-            fetchSpots(location)
-        }
-    }
-
-    fun onCompleteFilter(location: Location, condition: ConditionState, proceed: () -> Unit) =
-        intent {
-            runOn<SpotListUiState.Success> {
-                reduce {
-                    state.copy(isFilteredResultFetching = true, currentCondition = condition)
-                }
-                fetchSpots(location)
-                reduce {
-                    state.copy(isFilteredResultFetching = false, showFilterBottomSheet = false)
-                        .also {
-                            proceed()
-                        }
+            if (BuildConfig.DEBUG) {
+                if (spotType == SpotType.RESTAURANT)
+                    reduce {
+                        spotListUiStateRestaurantMock
+                    }
+                else {
+                    reduce {
+                        spotListUiStateCafeMock
+                    }
                 }
             }
         }
-
-    fun onSpotItemClick(id: Long) = intent {
-        postSideEffect(SpotListSideEffect.NavigateToSpotDetail(id))
     }
 
+    fun onSpotClicked(spot: SpotV2) = intent {
+        runOn<SpotListUiStateV2.Success> {
+            postSideEffect(SpotListSideEffectV2.NavigateToSpotDetailScreen(spot))
+        }
+    }
+
+    fun onTryFindWay(spot: SpotV2) = intent {
+        runOn<SpotListUiStateV2.Success> {
+            postSideEffect(SpotListSideEffectV2.NavigateToExternalMap(
+                start = state.currentLocation,
+                destination = Location("").apply {
+                    latitude = spot.latitude
+                    longitude = spot.longitude
+                }
+            ))
+        }
+    }
+
+    fun onFilterButtonClicked() = intent {
+        runOn<SpotListUiStateV2.Success> {
+            reduce {
+                state.copy(showFilterModal = true)
+            }
+        }
+    }
+
+    fun onFilterModalDismissed() = intent {
+        runOn<SpotListUiStateV2.Success> {
+            reduce {
+                state.copy(showFilterModal = false)
+            }
+        }
+    }
+
+    fun onRestaurantFilterSaved(
+        selectedRestaurantFilters: Map<FilterDetailKey, Set<RestaurantFilterType>>,
+    ) = intent {
+        runOn<SpotListUiStateV2.Success> {
+            reduce {
+                state.copy(
+                    selectedRestaurantFilters = selectedRestaurantFilters,
+                    showFilterModal = false
+                )
+            }
+        }
+    }
+
+    fun onCafeFilterSaved(
+        selectedCafeFilters: Map<FilterDetailKey, Set<CafeFilterType>>,
+    ) = intent {
+        runOn<SpotListUiStateV2.Success> {
+            reduce {
+                state.copy(
+                    selectedCafeFilters = selectedCafeFilters,
+                    showFilterModal = false
+                )
+            }
+        }
+    }
+
+    fun onRequestLogin() = intent {
+        runOn<SpotListUiStateV2.Success> {
+            reduce {
+                state.copy(showLoginModal = true)
+            }
+        }
+    }
+
+    fun onDismissLoginModal() = intent {
+        runOn<SpotListUiStateV2.Success> {
+            reduce {
+                state.copy(showLoginModal = false)
+            }
+        }
+    }
 }
 
-sealed interface SpotListUiState {
+sealed interface SpotListUiStateV2 {
     @Immutable
     data class Success(
-        val spotList: List<Spot>,
-        val legalAddressName: String,
-        val userType: UserType = UserType.GUEST,
-        val isRefreshing: Boolean = false,
-        val isFilteredListEmpty: Boolean = false,
-        val currentCondition: ConditionState? = null,
-        val showFilterBottomSheet: Boolean = false,
-        val showLoginBottomSheet: Boolean = false,
-        val isFilteredResultFetching: Boolean = false
-    ) : SpotListUiState
-
-    data object Loading : SpotListUiState
-    data object LoadFailed : SpotListUiState
-    data object OutOfServiceArea : SpotListUiState
+        val spotList: List<SpotV2>,
+        val bicycleSpotList: List<SpotV2>,
+        val headTitle: String,
+        val selectedSpotType: SpotType,
+        val currentLocation: Location,
+        val selectedRestaurantFilters: Map<FilterDetailKey, Set<RestaurantFilterType>> = emptyMap(),
+        val selectedCafeFilters: Map<FilterDetailKey, Set<CafeFilterType>> = emptyMap(),
+        val showFilterModal: Boolean = false,
+        val showLoginModal: Boolean = false,
+    ) : SpotListUiStateV2
+    data object Loading : SpotListUiStateV2
+    data object LoadFailed : SpotListUiStateV2
 }
 
-sealed interface SpotListSideEffect {
-    data object ShowToastMessage : SpotListSideEffect
-    data object NavigateToAreaVerification : SpotListSideEffect
-    data class NavigateToSpotDetail(val id: Long) : SpotListSideEffect
+sealed interface SpotListSideEffectV2 {
+    data object ShowToastMessage : SpotListSideEffectV2
+    data class NavigateToExternalMap(val start: Location, val destination: Location) : SpotListSideEffectV2
+    data class NavigateToSpotDetailScreen(val spot: SpotV2) : SpotListSideEffectV2
 }
+
+internal typealias FilterDetailKey = KClass<out Enum<*>>
