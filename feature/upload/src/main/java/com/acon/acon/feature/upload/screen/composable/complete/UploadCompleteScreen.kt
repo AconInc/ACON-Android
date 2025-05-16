@@ -1,4 +1,4 @@
-package com.acon.acon.feature.upload.v2.composable.complete
+package com.acon.acon.feature.upload.screen.composable.complete
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box

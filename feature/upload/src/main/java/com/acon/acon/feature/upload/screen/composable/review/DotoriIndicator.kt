@@ -1,4 +1,4 @@
-package com.acon.acon.feature.upload.component
+package com.acon.acon.feature.upload.screen.composable.review
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row

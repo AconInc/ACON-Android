@@ -1,4 +1,4 @@
-package com.acon.acon.feature.upload.v2.composable.review
+package com.acon.acon.feature.upload.screen.composable.review
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,7 +30,7 @@ import com.acon.acon.core.designsystem.component.button.v2.AconFilledTextButton
 import com.acon.acon.core.designsystem.effect.fog.fogBackground
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.feature.upload.component.DotoriIndicator
+import com.acon.acon.feature.upload.screen.UploadReviewUiState
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.rememberLottieComposition

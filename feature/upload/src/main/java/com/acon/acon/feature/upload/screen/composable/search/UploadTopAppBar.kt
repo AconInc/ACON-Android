@@ -1,4 +1,4 @@
-package com.acon.acon.feature.upload.v2.composable.search
+package com.acon.acon.feature.upload.screen.composable.search
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row

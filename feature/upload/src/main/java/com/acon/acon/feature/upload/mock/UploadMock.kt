@@ -2,7 +2,7 @@ package com.acon.acon.feature.upload.mock
 
 import com.acon.acon.domain.model.upload.v2.SearchedSpot
 import com.acon.acon.domain.type.SpotType
-import com.acon.acon.feature.upload.v2.UploadSearchUiState
+import com.acon.acon.feature.upload.screen.UploadSearchUiState
 
 internal val uploadSearchUiStateMock = UploadSearchUiState.Success(
     suggestions = listOf(

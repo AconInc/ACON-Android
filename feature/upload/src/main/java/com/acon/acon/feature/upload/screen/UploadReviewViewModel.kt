@@ -1,4 +1,4 @@
-package com.acon.acon.feature.upload.v2.composable.review
+package com.acon.acon.feature.upload.screen
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.toRoute

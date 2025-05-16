@@ -1,4 +1,4 @@
-package com.acon.acon.feature.upload.v2
+package com.acon.acon.feature.upload.screen
 
 import android.annotation.SuppressLint
 import android.content.Context

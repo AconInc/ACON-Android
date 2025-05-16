@@ -1,4 +1,4 @@
-package com.acon.acon.feature.upload.v2.composable.search
+package com.acon.acon.feature.upload.screen.composable.search
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -36,7 +36,7 @@ import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.domain.model.upload.v2.SearchedSpot
 import com.acon.acon.feature.upload.mock.uploadSearchUiStateMock
-import com.acon.acon.feature.upload.v2.UploadSearchUiState
+import com.acon.acon.feature.upload.screen.UploadSearchUiState
 import com.acon.feature.common.type.getNameResId
 import dev.chrisbanes.haze.hazeSource
 import kotlinx.collections.immutable.ImmutableList

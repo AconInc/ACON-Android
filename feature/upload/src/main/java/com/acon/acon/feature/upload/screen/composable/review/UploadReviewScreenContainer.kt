@@ -1,9 +1,11 @@
-package com.acon.acon.feature.upload.v2.composable.review
+package com.acon.acon.feature.upload.screen.composable.review
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.acon.acon.feature.upload.screen.UploadReviewSideEffect
+import com.acon.acon.feature.upload.screen.UploadReviewViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
