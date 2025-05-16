@@ -15,4 +15,9 @@ sealed interface UploadRoute {
     data class Review(
         val searchedSpot: SearchedSpot
     ) : UploadRoute
+
+    @Serializable
+    data class Complete(
+        val spotName: String
+    ) : UploadRoute
 }
