@@ -3,6 +3,9 @@
 
     <!-- Common -->
     <string name="back">뒤로가기</string>
+    <string name="cancel">취소</string>
+    <string name="ok">확인</string>
+    <string name="done">완료</string>
 
     <!-- Button component -->
     <string name="login_btn_preview_content">button</string>
@@ -78,4 +81,7 @@
     <string name="introduce_drop_dotori">도토리를 떨어트려\n리뷰를 남겨 볼까요?</string>
     <string name="introduce_click_dotori">도토리를 선택해보세요</string>
     <string name="complete_drop_dotori">도토리로 리뷰 남기기</string>
+    <string name="review_complete">%s의\n리뷰 작성을 완료했어요!</string>
+    <string name="wish_was_your_spot">당신의 취향이 가득 담긴 장소였길 바래요</string>
+    <string name="tab_closed_in_seconds">%s초 후 탭이 자동으로 닫힙니다</string>
 </resources>
