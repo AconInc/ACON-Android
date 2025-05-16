@@ -86,6 +86,7 @@ internal val AconColors = AconColor(
     GlassWhitePressed = Color(0X99FFFFFF),
     GlassWhiteSelected = Color(0X4DFFFFFF),
     GlassWhiteDisabled = Color(0X1AFFFFFF),
+    GlassWhiteLight = Color(0X1AFFFFFF),
 
     GlassBlackDefault = Color(0X33000000),
 
@@ -164,6 +165,7 @@ data class AconColor(
     val GlassWhitePressed: Color,
     val GlassWhiteSelected: Color,
     val GlassWhiteDisabled: Color,
+    val GlassWhiteLight: Color,
 
     val GlassBlackDefault: Color,
 
