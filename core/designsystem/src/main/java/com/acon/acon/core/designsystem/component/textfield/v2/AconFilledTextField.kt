@@ -13,6 +13,7 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -22,8 +23,8 @@ import com.acon.acon.core.designsystem.theme.AconTheme
 
 @Composable
 fun AconFilledTextField(
-    value: String,
-    onValueChange: (String) -> Unit,
+    value: TextFieldValue,
+    onValueChange: (TextFieldValue) -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     readOnly: Boolean = false,
@@ -69,7 +70,7 @@ fun AconFilledTextField(
 private fun AconDefaultTextFieldPreview(
 ) {
     AconFilledTextField(
-        value = "Search Text",
+        value = TextFieldValue("Search Text"),
         onValueChange = { },
         modifier = Modifier.fillMaxWidth(),
     ) { innerTextField ->

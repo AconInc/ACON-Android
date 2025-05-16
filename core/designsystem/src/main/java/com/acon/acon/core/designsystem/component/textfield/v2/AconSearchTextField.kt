@@ -22,6 +22,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.tooling.preview.Preview
@@ -33,8 +34,8 @@ import com.acon.acon.core.designsystem.theme.AconTheme
 
 @Composable
 fun AconSearchTextField(
-    value: String,
-    onValueChange: (String) -> Unit,
+    value: TextFieldValue,
+    onValueChange: (TextFieldValue) -> Unit,
     placeholder: String,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
@@ -83,7 +84,7 @@ fun AconSearchTextField(
                     modifier = Modifier.height(height),
                     contentAlignment = Alignment.CenterStart
                 ) {
-                    if (value.isEmpty()) {
+                    if (value.text.isEmpty()) {
                         Text(
                             text = placeholder,
                             style = textStyle.copy(color = AconTheme.color.Gray500),
@@ -92,7 +93,7 @@ fun AconSearchTextField(
                     innerTextField()
                 }
             }
-            if (value.isNotEmpty()) {
+            if (value.text.isNotEmpty()) {
                 Spacer(modifier = Modifier.width(8.dp))
                 Icon(
                     imageVector = ImageVector.vectorResource(id = R.drawable.ic_clear),
@@ -100,7 +101,7 @@ fun AconSearchTextField(
                     tint = AconTheme.color.Gray50,
                     modifier = Modifier
                         .width(18.dp)
-                        .noRippleClickable { onValueChange("") }
+                        .noRippleClickable { onValueChange(TextFieldValue("")) }
                 )
             }
         }
@@ -112,7 +113,7 @@ fun AconSearchTextField(
 private fun AconSearchTextFieldPlaceholderPreview() {
     AconTheme {
         AconSearchTextField(
-            value = "",
+            value = TextFieldValue(""),
             onValueChange = { },
             placeholder = "장소를 입력해주세요",
             modifier = Modifier.fillMaxWidth(),
@@ -125,7 +126,7 @@ private fun AconSearchTextFieldPlaceholderPreview() {
 private fun AconSearchTextFieldPreview() {
     AconTheme {
         AconSearchTextField(
-            value = "버거킹",
+            value = TextFieldValue("버거킹"),
             onValueChange = { },
             placeholder = "장소를 입력해주세요",
             modifier = Modifier.fillMaxWidth(),
