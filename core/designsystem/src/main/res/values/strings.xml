@@ -84,4 +84,25 @@
     <string name="review_complete">%s의\n리뷰 작성을 완료했어요!</string>
     <string name="wish_was_your_spot">당신의 취향이 가득 담긴 장소였길 바래요</string>
     <string name="tab_closed_in_seconds">%s초 후 탭이 자동으로 닫힙니다</string>
+
+    <!-- Onboarding -->
+    <string name="request_dislike_food_title">싫어하는 음식을 알려줄 수 있나요?</string>
+    <string name="request_dislike_food_description">싫어하는 음식은 설정에서 다시 수정할 수 있어요</string>
+    <string name="no_dislike_food">없음</string>
+    <string name="shrimp">새우</string>
+    <string name="crab">게</string>
+    <string name="clam">조개</string>
+    <string name="oyster">굴</string>
+    <string name="raw_fish">회</string>
+    <string name="fish">생선</string>
+    <string name="seafood">해산물</string>
+    <string name="yukhoe">육회</string>
+    <string name="blood_curd">선지</string>
+    <string name="sundae">순대</string>
+    <string name="beef_tripe">곱창/대창/막창</string>
+    <string name="chicken_feet">닭발</string>
+    <string name="chicken_gizzard">닭똥집</string>
+    <string name="lamb">양고기</string>
+    <string name="pork_beef_offal">돼지/소 특수부위</string>
+    <string name="vegetables">채소</string>
 </resources>
