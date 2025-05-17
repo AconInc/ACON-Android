@@ -76,7 +76,7 @@ internal fun SpotDetailScreen(
 
     when (state) {
         SpotDetailUiState.LoadFailed -> {}
-        SpotDetailUiState.Loading -> {}
+        SpotDetailUiState.Loading -> { }
         is SpotDetailUiState.Success -> {
             val storeName = state.spotDetailInfo.name
             val storeImageList = state.spotDetailInfo.imageList
@@ -120,8 +120,8 @@ internal fun SpotDetailScreen(
                         AsyncImage(
                             model = storeImageList[page],
                             contentDescription = stringResource(R.string.store_background_image_content_description),
-                            modifier = Modifier.fillMaxSize(),
-                            contentScale = ContentScale.Crop
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.fillMaxSize()
                         )
                     }
                 } else {
