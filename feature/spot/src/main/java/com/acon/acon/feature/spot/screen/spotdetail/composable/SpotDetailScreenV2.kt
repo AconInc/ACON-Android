@@ -51,6 +51,7 @@ import com.acon.acon.feature.spot.screen.spotdetail.composable.component.v2.Stor
 import com.acon.acon.feature.spot.screen.spotdetail.composable.component.v2.bottomsheet.FindWayBottomSheet
 import com.acon.acon.feature.spot.screen.spotdetail.composable.component.v2.bottomsheet.ReportErrorBottomSheet
 import com.acon.feature.common.compose.getTextSizeDp
+import dev.chrisbanes.haze.hazeSource
 
 @Composable
 internal fun SpotDetailScreenV2(
@@ -92,23 +93,19 @@ internal fun SpotDetailScreenV2(
             ) {
                 if (showReportErrorBottomSheet) {
                     ReportErrorBottomSheet(
-                        hazeState = LocalHazeState.current,
                         onDismissRequest = { showReportErrorBottomSheet = false },
                         onClickReportError = {
                             val url = "https://walla.my/survey/ekYLYwpJv2d0Eznnijla" // TODO - 구글폼 (주소 나중에 따로 저장하여 불러와야 함)
                             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
                             context.startActivity(intent)
-                        },
-                        modifier = Modifier.fillMaxWidth()
+                        }
                     )
                 }
 
                 if (showFindWayBottomSheet) {
                     FindWayBottomSheet(
-                        hazeState = LocalHazeState.current,
-                        onDismissRequest = { showFindWayBottomSheet = false },
                         onFindWay = { onFindWayButtonClick() },
-                        modifier = Modifier.fillMaxWidth()
+                        onDismissRequest = { showFindWayBottomSheet = false }
                     )
                 }
 
@@ -162,6 +159,7 @@ internal fun SpotDetailScreenV2(
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
+                        .hazeSource(LocalHazeState.current),
                 ) {
                     Spacer(Modifier.height(20.dp))
                     AconTopBar(
