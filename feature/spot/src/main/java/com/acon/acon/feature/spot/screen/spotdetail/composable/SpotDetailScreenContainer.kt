@@ -11,15 +11,15 @@ import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
-fun SpotDetailScreenContainerV2(
+fun SpotDetailScreenContainer(
     modifier: Modifier = Modifier,
     onNavigateToBack: () -> Unit = {},
-    viewModel: SpotDetailViewModelV2 = hiltViewModel()
+    viewModel: SpotDetailViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
     val state by viewModel.collectAsState()
 
-    SpotDetailScreenV2(
+    SpotDetailScreen(
         state = state,
         modifier = modifier,
         onNavigateToBack = viewModel::navigateToBack,
@@ -30,18 +30,18 @@ fun SpotDetailScreenContainerV2(
 
     viewModel.collectSideEffect { sideEffect ->
         when(sideEffect) {
-            is SpotDetailSideEffectV2.NavigateToBack -> {
+            is SpotDetailSideEffect.NavigateToBack -> {
                 onNavigateToBack()
             }
-            is SpotDetailSideEffectV2.RecentLocationFetched -> {
+            is SpotDetailSideEffect.RecentLocationFetched -> {
                 context.onLocationReady { location ->
                     viewModel.onFindWay(location)
                 }
             }
-            is SpotDetailSideEffectV2.RecentLocationFetchFailed -> {
+            is SpotDetailSideEffect.RecentLocationFetchFailed -> {
                 // TODO -> 최근 길 안내 장소 저장 (실패)
             }
-            is SpotDetailSideEffectV2.OnFindWayButtonClick -> {
+            is SpotDetailSideEffect.OnFindWayButtonClick -> {
                 openNaverMap(
                     context = context,
                     location = sideEffect.startLocation,

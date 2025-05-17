@@ -49,8 +49,8 @@ import dev.chrisbanes.haze.hazeSource
 import okhttp3.internal.immutableListOf
 
 @Composable
-internal fun SpotDetailScreenV2(
-    state: SpotDetailUiStateV2,
+internal fun SpotDetailScreen(
+    state: SpotDetailUiState,
     onFindWayButtonClick: () -> Unit,
     modifier: Modifier = Modifier,
     onNavigateToBack: () -> Unit = {},
@@ -78,9 +78,9 @@ internal fun SpotDetailScreenV2(
     var showFindWayBottomSheet by remember { mutableStateOf(false) }
 
     when (state) {
-        SpotDetailUiStateV2.LoadFailed -> {}
-        SpotDetailUiStateV2.Loading -> {}
-        is SpotDetailUiStateV2.Success -> {
+        SpotDetailUiState.LoadFailed -> {}
+        SpotDetailUiState.Loading -> {}
+        is SpotDetailUiState.Success -> {
             val storeName = state.spotDetailInfo.name
             val storeImageList = state.spotDetailInfo.imageList
             val bottomPadding = if (storeImageList.size <= 1) { 34.dp } else { 0.dp }
@@ -313,8 +313,8 @@ private fun SpotDetailScreenV2Preview() {
         Box(
             modifier = Modifier.background(AconTheme.color.Black)
         ) {
-            SpotDetailScreenV2(
-                state = SpotDetailUiStateV2.Loading,
+            SpotDetailScreen(
+                state = SpotDetailUiState.Loading,
                 onNavigateToBack = {},
                 onFindWayButtonClick = {}
             )

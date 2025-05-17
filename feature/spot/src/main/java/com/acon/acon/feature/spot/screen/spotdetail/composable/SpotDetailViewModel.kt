@@ -18,15 +18,15 @@ import javax.inject.Inject
 
 @OptIn(OrbitExperimental::class)
 @HiltViewModel
-class SpotDetailViewModelV2 @Inject constructor(
+class SpotDetailViewModel @Inject constructor(
     private val spotRepository: SpotRepository,
     savedStateHandle: SavedStateHandle
-) : BaseContainerHost<SpotDetailUiStateV2, SpotDetailSideEffectV2>() {
+) : BaseContainerHost<SpotDetailUiState, SpotDetailSideEffect>() {
 
     private val spotId = savedStateHandle.toRoute<SpotRoute.SpotDetail>().id
 
     override val container =
-        container<SpotDetailUiStateV2, SpotDetailSideEffectV2>(SpotDetailUiStateV2.Loading) {
+        container<SpotDetailUiState, SpotDetailSideEffect>(SpotDetailUiState.Loading) {
             val spotDetailInfoDeferred = viewModelScope.async {
                 spotRepository.getSpotDetailInfo(spotId)
             }
@@ -39,13 +39,13 @@ class SpotDetailViewModelV2 @Inject constructor(
 
             reduce {
                 if (spotDetailInfoResult.getOrNull() == null) {
-                    SpotDetailUiStateV2.LoadFailed
+                    SpotDetailUiState.LoadFailed
                 }
                 else if (spotDetailMenuResult.getOrNull() == null) {
-                    SpotDetailUiStateV2.LoadFailed
+                    SpotDetailUiState.LoadFailed
                 }
                 else {
-                    SpotDetailUiStateV2.Success(
+                    SpotDetailUiState.Success(
                         spotDetailInfo = spotDetailInfoResult.getOrNull()!!,
                         spotDetailMenuList = spotDetailMenuResult.getOrNull()!!
                     )
@@ -56,26 +56,26 @@ class SpotDetailViewModelV2 @Inject constructor(
     fun fetchRecentNavigationLocation() = intent {
         spotRepository.fetchRecentNavigationLocation(1).onSuccess {
             postSideEffect(
-                SpotDetailSideEffectV2.RecentLocationFetched
+                SpotDetailSideEffect.RecentLocationFetched
             )
         }.onFailure {
             postSideEffect(
-                SpotDetailSideEffectV2.RecentLocationFetchFailed(it)
+                SpotDetailSideEffect.RecentLocationFetchFailed(it)
             )
         }
     }
 
     fun navigateToBack() = intent {
         postSideEffect(
-            SpotDetailSideEffectV2.NavigateToBack
+            SpotDetailSideEffect.NavigateToBack
         )
     }
 
     @OptIn(OrbitExperimental::class)
     fun onFindWay(location: Location) = intent {
-        runOn<SpotDetailUiStateV2.Success> {
+        runOn<SpotDetailUiState.Success> {
             postSideEffect(
-                SpotDetailSideEffectV2.OnFindWayButtonClick(
+                SpotDetailSideEffect.OnFindWayButtonClick(
                     goalDestinationLat = state.spotDetailInfo.latitude,
                     goalDestinationLng = state.spotDetailInfo.longitude,
                     goalDestinationName = state.spotDetailInfo.name,
@@ -86,25 +86,25 @@ class SpotDetailViewModelV2 @Inject constructor(
     }
 }
 
-sealed interface SpotDetailUiStateV2 {
+sealed interface SpotDetailUiState {
     @Immutable
     data class Success(
         val spotDetailInfo: SpotDetailInfo,
         val spotDetailMenuList: List<SpotDetailMenu>,
-    ) : SpotDetailUiStateV2
+    ) : SpotDetailUiState
 
-    data object Loading : SpotDetailUiStateV2
-    data object LoadFailed : SpotDetailUiStateV2
+    data object Loading : SpotDetailUiState
+    data object LoadFailed : SpotDetailUiState
 }
 
-sealed interface SpotDetailSideEffectV2 {
-    data object NavigateToBack : SpotDetailSideEffectV2
-    data object RecentLocationFetched : SpotDetailSideEffectV2
-    data class RecentLocationFetchFailed(val error: Throwable) : SpotDetailSideEffectV2
+sealed interface SpotDetailSideEffect {
+    data object NavigateToBack : SpotDetailSideEffect
+    data object RecentLocationFetched : SpotDetailSideEffect
+    data class RecentLocationFetchFailed(val error: Throwable) : SpotDetailSideEffect
     data class OnFindWayButtonClick(
         val goalDestinationLat: Double,
         val goalDestinationLng: Double,
         val goalDestinationName: String,
         val startLocation: Location
-    ) : SpotDetailSideEffectV2
+    ) : SpotDetailSideEffect
 }
