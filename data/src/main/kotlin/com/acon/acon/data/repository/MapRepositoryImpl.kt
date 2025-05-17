@@ -8,7 +8,6 @@ import javax.inject.Inject
 class MapRepositoryImpl @Inject constructor(
     private val mapRemoteDataSource: MapRemoteDataSource
 ) : MapRepository {
-
     override suspend fun fetchLegalAddressName(
         latitude: Double,
         longitude: Double

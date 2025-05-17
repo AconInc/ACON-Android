@@ -5,7 +5,6 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface MapApi {
-
     @GET("/map-reversegeocode/v2/gc")
     suspend fun fetchReverseGeocoding(
         @Query("coords") query: String,

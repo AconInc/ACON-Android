@@ -25,7 +25,7 @@ inline fun Modifier.noRippleClickable(enabled: Boolean = true, crossinline onCli
 
 fun Modifier.dropShadow(
     shape: Shape,
-    color: Color = Color.Black.copy(0.25f),
+    color: Color = Color.Black.copy(0.16f),
     blur: Dp = 4.dp,
     offsetY: Dp = 4.dp,
     offsetX: Dp = 0.dp,
@@ -49,5 +49,19 @@ fun Modifier.dropShadow(
         canvas.translate(offsetX.toPx(), offsetY.toPx())
         canvas.drawOutline(shadowOutline, paint)
         canvas.restore()
+    }
+}
+
+fun Modifier.throttleClick(
+    throttleTime: Long = 1000L,
+    onClick: () -> Unit
+): Modifier {
+    var lastClickTime = 3000L
+    return this.clickable {
+        val currentTime = System.currentTimeMillis()
+        if (currentTime - lastClickTime >= throttleTime) {
+            onClick()
+            lastClickTime = currentTime
+        }
     }
 }
