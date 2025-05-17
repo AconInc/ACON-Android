@@ -1,4 +1,4 @@
-package com.acon.acon.feature.spot.screen.spotdetail.composable.component.v2
+package com.acon.acon.feature.spot.screen.spotdetail.composable
 
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background

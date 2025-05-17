@@ -1,4 +1,4 @@
-package com.acon.acon.feature.spot.screen.spotdetail.composable.component.v2.bottomsheet
+package com.acon.acon.feature.spot.screen.spotdetail.composable
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column

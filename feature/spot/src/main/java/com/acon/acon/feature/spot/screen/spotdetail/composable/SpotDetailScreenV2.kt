@@ -44,13 +44,6 @@ import com.acon.acon.core.designsystem.component.button.v2.AconFilledButton
 import com.acon.acon.core.designsystem.component.topbar.AconTopBar
 import com.acon.acon.core.designsystem.effect.LocalHazeState
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.feature.spot.screen.spotdetail.composable.component.v2.MenuBoardOverlay
-import com.acon.acon.feature.spot.screen.spotdetail.composable.component.v2.SignatureMenu
-import com.acon.acon.feature.spot.screen.spotdetail.composable.component.v2.StoreFloatingButtonSet
-import com.acon.acon.feature.spot.screen.spotdetail.composable.component.v2.StoreImageIndicator
-import com.acon.acon.feature.spot.screen.spotdetail.composable.component.v2.StoreTagRow
-import com.acon.acon.feature.spot.screen.spotdetail.composable.component.v2.bottomsheet.FindWayBottomSheet
-import com.acon.acon.feature.spot.screen.spotdetail.composable.component.v2.bottomsheet.ReportErrorBottomSheet
 import com.acon.feature.common.compose.getTextSizeDp
 import dev.chrisbanes.haze.hazeSource
 import okhttp3.internal.immutableListOf
