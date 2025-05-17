@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -33,9 +34,9 @@ import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
 
 @Composable
-fun MenuBoardOverlay(
+internal fun MenuBoardOverlay(
     imageList: List<Int>,
-    onDismiss: () -> Unit = {}
+    onDismiss: () -> Unit
 ) {
     var currentIndex by rememberSaveable { mutableIntStateOf(0) }
     val zoomState = remember { PinchZoomState() }
@@ -78,7 +79,7 @@ fun MenuBoardOverlay(
                     if (imageList.size > 1 && currentIndex > 0) {
                         Icon(
                             imageVector = ImageVector.vectorResource(R.drawable.ic_menu_arrow_back),
-                            contentDescription = "이전 이미지",
+                            contentDescription = stringResource(R.string.btn_previous_background_image_content_description),
                             modifier = Modifier
                                 .size(36.dp)
                                 .noRippleClickable(enabled = !zoomState.isZooming) {
@@ -95,7 +96,7 @@ fun MenuBoardOverlay(
                     if (imageList.size > 1 && currentIndex < imageList.lastIndex) {
                         Icon(
                             imageVector = ImageVector.vectorResource(R.drawable.ic_menu_arrow_forward),
-                            contentDescription = "다음 이미지",
+                            contentDescription = stringResource(R.string.btn_next_image_content_description),
                             modifier = Modifier
                                 .size(36.dp)
                                 .noRippleClickable(enabled = !zoomState.isZooming) {
@@ -113,7 +114,7 @@ fun MenuBoardOverlay(
 }
 
 @Composable
-fun PinchToZoomImage(
+internal fun PinchToZoomImage(
     zoomState: PinchZoomState,
     @DrawableRes imageResId: Int,
 ) {
@@ -129,7 +130,7 @@ fun PinchToZoomImage(
         ) {
             Image(
                 painter = painterResource(imageResId),
-                contentDescription = "메뉴판 이미지",
+                contentDescription = stringResource(R.string.menu_board_content_description),
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop
             )
@@ -147,6 +148,7 @@ private fun MenuBoardOverlayPreview() {
     AconTheme {
         MenuBoardOverlay(
             imageList = imageList,
+            onDismiss = {}
         )
     }
 }

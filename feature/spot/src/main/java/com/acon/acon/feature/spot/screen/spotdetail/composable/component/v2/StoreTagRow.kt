@@ -5,13 +5,15 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.tag.AconTag
 import com.acon.acon.core.designsystem.theme.AconTheme
 
 @Composable
-fun StoreTagRow(
+internal fun StoreTagRow(
     isNew: Boolean,
     isLocal: Boolean,
     isRanking: Boolean,
@@ -25,19 +27,19 @@ fun StoreTagRow(
     ) {
         if (isNew) {
             AconTag(
-                text = "NEW",
+                text = stringResource(R.string.store_tag_new),
                 backgroundColor = AconTheme.color.TagNew
             )
         }
         if (isLocal) {
             AconTag(
-                text = "HOT",
+                text = stringResource(R.string.store_tag_local),
                 backgroundColor = AconTheme.color.TagLocal
             )
         }
         if (isRanking) {
             AconTag(
-                text = "TOP $rankingNumber",
+                text = stringResource(R.string.store_tag_ranking, rankingNumber),
                 backgroundColor = AconTheme.color.Gray900
             )
         }

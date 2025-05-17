@@ -53,6 +53,7 @@ import com.acon.acon.feature.spot.screen.spotdetail.composable.component.v2.bott
 import com.acon.acon.feature.spot.screen.spotdetail.composable.component.v2.bottomsheet.ReportErrorBottomSheet
 import com.acon.feature.common.compose.getTextSizeDp
 import dev.chrisbanes.haze.hazeSource
+import okhttp3.internal.immutableListOf
 
 @Composable
 internal fun SpotDetailScreenV2(
@@ -64,7 +65,7 @@ internal fun SpotDetailScreenV2(
     val context = LocalContext.current
     val indicatorScrollState = rememberLazyListState()
 
-    // TODO - 임시 리스트
+    // TODO - 임시 메뉴판 이미지 리스트
     val imageList = listOf(
         R.drawable.ic_launcher_background,
         R.drawable.ic_error_1_120,
@@ -72,10 +73,10 @@ internal fun SpotDetailScreenV2(
         R.drawable.ic_error_1_120
     )
 
-    val noStoreText = listOf(
-        "등록된 사진은 없지만\n맛집임을 아콘이 보장해요",
-        "쉿! 비밀스러운 곳인가 봐요\n아직 등록된 사진이 없어요",
-        "직접 가봐야 알 수 있는 장소네요\n설레임을 안고 떠나볼까요?"
+    val noStoreText = immutableListOf(
+        stringResource(R.string.no_store_image_verified),
+        stringResource(R.string.no_store_image_secret),
+        stringResource(R.string.no_store_image_mystery),
     )
 
     // 임시 show 변수
@@ -87,7 +88,6 @@ internal fun SpotDetailScreenV2(
         SpotDetailUiStateV2.LoadFailed -> {}
         SpotDetailUiStateV2.Loading -> {}
         is SpotDetailUiStateV2.Success -> {
-
             val storeName = state.spotDetailInfo.name
             val storeImageList = state.spotDetailInfo.imageList
             val bottomPadding = if (storeImageList.size <= 1) { 34.dp } else { 0.dp }
@@ -129,7 +129,7 @@ internal fun SpotDetailScreenV2(
                     ) { page ->
                         AsyncImage(
                             model = storeImageList[page],
-                            contentDescription = "가게 이미지",
+                            contentDescription = stringResource(R.string.store_background_image_content_description),
                             modifier = Modifier.fillMaxSize(),
                             contentScale = ContentScale.Crop
                         )
@@ -141,7 +141,7 @@ internal fun SpotDetailScreenV2(
                     ) {
                         Image(
                             painter = painterResource(id = R.drawable.ic_background_no_store),
-                            contentDescription = null,
+                            contentDescription = stringResource(R.string.no_store_background_image_content_description),
                             modifier = Modifier.fillMaxSize(),
                             contentScale = ContentScale.Crop
                         )
@@ -150,7 +150,7 @@ internal fun SpotDetailScreenV2(
                         ) {
                             Image(
                                 imageVector = ImageVector.vectorResource(R.drawable.acon_line),
-                                contentDescription = null,
+                                contentDescription = stringResource(R.string.dotori_count_content_description),
                                 modifier = Modifier.size(36.dp)
                             )
 
@@ -180,7 +180,7 @@ internal fun SpotDetailScreenV2(
                             ) {
                                 Icon(
                                     imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_left_28),
-                                    contentDescription = "뒤로가기",
+                                    contentDescription = stringResource(R.string.back_btn_content_description),
                                     tint = AconTheme.color.White
                                 )
                             }
@@ -238,7 +238,7 @@ internal fun SpotDetailScreenV2(
                     ) {
                         Column {
                             Text(
-                                text = "대표메뉴",
+                                text = stringResource(R.string.signature_menu),
                                 color = AconTheme.color.White,
                                 style = AconTheme.typography.Title4,
                                 modifier = Modifier.align(Alignment.Start)
@@ -302,7 +302,7 @@ internal fun SpotDetailScreenV2(
                             .padding(start = 16.dp, end = 16.dp, bottom = 20.dp)
                     ) {
                         Text(
-                            text = "도보 0분 길찾기", // TODO - 예상 도착 시간 (도보)
+                            text = stringResource(R.string.btn_find_way_walking_time, 11), // TODO - 예상 도착 시간 (도보)
                             color = AconTheme.color.White,
                             style = AconTheme.typography.Title4
                         )

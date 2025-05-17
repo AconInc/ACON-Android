@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.dp
 import com.acon.acon.core.designsystem.theme.AconTheme
 
 @Composable
-fun StoreImageIndicator(
+internal fun StoreImageIndicator(
     pageCount: Int,
     pagerState: PagerState,
     indicatorScrollState: LazyListState,

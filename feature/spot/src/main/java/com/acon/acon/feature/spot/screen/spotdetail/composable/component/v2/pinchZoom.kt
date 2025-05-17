@@ -23,7 +23,7 @@ import kotlinx.coroutines.launch
 private const val minZoomScope = 0.5f
 private const val maxZoomScope = 3f
 
-fun Modifier.pinchZoomOverlay(
+internal fun Modifier.pinchZoomOverlay(
     zoomState: PinchZoomState
 ): Modifier {
     return this
@@ -57,7 +57,7 @@ fun Modifier.pinchZoomOverlay(
         }
 }
 
-suspend fun animateZoomReset(zoomState: PinchZoomState) {
+internal suspend fun animateZoomReset(zoomState: PinchZoomState) {
     val animZoom = Animatable(zoomState.accumulateZoom.value)
     val animOffsetX = Animatable(zoomState.offset.value.x)
     val animOffsetY = Animatable(zoomState.offset.value.y)
@@ -91,7 +91,7 @@ suspend fun animateZoomReset(zoomState: PinchZoomState) {
 }
 
 @Composable
-fun Modifier.transFormByZoomState(zoomState: PinchZoomState): Modifier {
+internal fun Modifier.transFormByZoomState(zoomState: PinchZoomState): Modifier {
     return this.graphicsLayer {
         scaleX = zoomState.accumulateZoom.value
         scaleY = zoomState.accumulateZoom.value
@@ -101,7 +101,7 @@ fun Modifier.transFormByZoomState(zoomState: PinchZoomState): Modifier {
 }
 
 @Composable
-fun Modifier.pinchZoomAndTransform(zoomState: PinchZoomState): Modifier {
+internal fun Modifier.pinchZoomAndTransform(zoomState: PinchZoomState): Modifier {
     return this
         .pinchZoomOverlay(zoomState)
         .transFormByZoomState(zoomState)
@@ -123,4 +123,4 @@ data class PinchZoomState(
     val originHeight: Float = 0f
 )
 
-val PinchZoomState.isZooming: Boolean get() = accumulateZoom.value != 1f
+internal val PinchZoomState.isZooming: Boolean get() = accumulateZoom.value != 1f
