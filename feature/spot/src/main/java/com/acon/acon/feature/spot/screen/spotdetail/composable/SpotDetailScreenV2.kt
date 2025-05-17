@@ -45,9 +45,9 @@ import com.acon.acon.core.designsystem.effect.LocalHazeState
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.feature.spot.screen.spotdetail.composable.component.v2.MenuBoardOverlay
 import com.acon.acon.feature.spot.screen.spotdetail.composable.component.v2.SignatureMenu
-import com.acon.acon.feature.spot.screen.spotdetail.composable.component.v2.StoreChip
 import com.acon.acon.feature.spot.screen.spotdetail.composable.component.v2.StoreFloatingButtonSet
 import com.acon.acon.feature.spot.screen.spotdetail.composable.component.v2.StoreImageIndicator
+import com.acon.acon.feature.spot.screen.spotdetail.composable.component.v2.StoreTagRow
 import com.acon.acon.feature.spot.screen.spotdetail.composable.component.v2.bottomsheet.FindWayBottomSheet
 import com.acon.acon.feature.spot.screen.spotdetail.composable.component.v2.bottomsheet.ReportErrorBottomSheet
 import com.acon.feature.common.compose.getTextSizeDp
@@ -213,7 +213,11 @@ internal fun SpotDetailScreenV2(
                     }
 
                     Spacer(Modifier.height(8.dp))
-                    StoreChip(
+                    StoreTagRow(
+                        isNew = true,
+                        isLocal = true,
+                        isRanking = true,
+                        rankingNumber = 1, // TODO - api 나오면 수정 (임시 값들)
                         modifier = Modifier.padding(start = 20.dp)
                     )
 
