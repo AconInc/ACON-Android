@@ -113,7 +113,7 @@ fun PinchToZoomImage(
                 painter = painterResource(imageResId),
                 contentDescription = "메뉴판 이미지",
                 modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.FillBounds
+                contentScale = ContentScale.Crop
             )
         }
     }
@@ -124,7 +124,6 @@ fun MenuBoardDialog(
     imageList: List<Int>,
     onDismiss: () -> Unit
 ) {
-    if (imageList.isEmpty()) return
     Dialog(
         onDismissRequest = onDismiss,
         properties = DialogProperties(

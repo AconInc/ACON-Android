@@ -20,8 +20,8 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
-const val minZoomScope = 0.5f
-const val maxZoomScope = 3f
+private const val minZoomScope = 0.5f
+private const val maxZoomScope = 3f
 
 fun Modifier.pinchZoomOverlay(
     zoomState: PinchZoomState

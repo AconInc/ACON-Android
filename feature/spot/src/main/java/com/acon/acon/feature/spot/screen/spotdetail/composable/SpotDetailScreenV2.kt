@@ -55,9 +55,9 @@ import com.acon.feature.common.compose.getTextSizeDp
 @Composable
 internal fun SpotDetailScreenV2(
     state: SpotDetailUiStateV2,
+    onFindWayButtonClick: () -> Unit,
     modifier: Modifier = Modifier,
     onNavigateToBack: () -> Unit = {},
-    onFindWayButtonClick: () -> Unit,
 ) {
     val context = LocalContext.current
     val indicatorScrollState = rememberLazyListState()
@@ -81,11 +81,7 @@ internal fun SpotDetailScreenV2(
         is SpotDetailUiStateV2.Success -> {
 
             val storeImageList = state.spotDetailInfo.imageList
-            val bottomPadding = if (storeImageList.isEmpty() || storeImageList.size == 1) {
-                34.dp
-            } else {
-                0.dp
-            }
+            val bottomPadding = if (storeImageList.size <= 1) { 34.dp } else { 0.dp }
 
             val pageCount = state.spotDetailInfo.imageList.size
             val pagerState = rememberPagerState(initialPage = 0, pageCount = { pageCount })
@@ -130,7 +126,7 @@ internal fun SpotDetailScreenV2(
                             model = storeImageList[page],
                             contentDescription = "가게 이미지",
                             modifier = Modifier.fillMaxSize(),
-                            contentScale = ContentScale.FillBounds
+                            contentScale = ContentScale.Crop
                         )
                     }
                 } else {
@@ -155,7 +151,7 @@ internal fun SpotDetailScreenV2(
                             Text(
                                 text = "장소 이미지를\n준비하고 있어요",
                                 color = AconTheme.color.Gray200,
-                                style = AconTheme.typography.body1_15_reg,
+                                style = AconTheme.typography.Body1,
                                 textAlign = TextAlign.Center
                             )
                         }
@@ -246,8 +242,7 @@ internal fun SpotDetailScreenV2(
                                 showMenuDialog = true
                             },
                             onClickShare = {
-                                val image =
-                                    if (storeImageList.isNotEmpty()) storeImageList.get(0) else ""
+                                val image = storeImageList.getOrElse(0) { "" }
                                 val shareIntent = Intent.createChooser(
                                     Intent().apply {
                                         action = Intent.ACTION_SEND
@@ -270,7 +265,7 @@ internal fun SpotDetailScreenV2(
                         )
                     }
 
-                    if (storeImageList.isNotEmpty() && storeImageList.size >= 2) {
+                    if (storeImageList.size >= 2) {
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth(),
