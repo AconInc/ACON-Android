@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,58 +35,77 @@ import com.acon.acon.core.designsystem.theme.AconTheme
 @Composable
 fun MenuBoardOverlay(
     imageList: List<Int>,
+    onDismiss: () -> Unit = {}
 ) {
-    var currentIndex by remember { mutableIntStateOf(0) }
+    var currentIndex by rememberSaveable { mutableIntStateOf(0) }
     val zoomState = remember { PinchZoomState() }
 
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        PinchToZoomImage(
-            zoomState = zoomState,
-            imageResId = imageList[currentIndex],
-            modifier = Modifier
-                .align(Alignment.Center)
+    Dialog(
+        onDismissRequest = onDismiss,
+        properties = DialogProperties(
+            dismissOnClickOutside = false,
+            usePlatformDefaultWidth = false
         )
-
-        if (!zoomState.isZooming) {
-            Row(
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(horizontal = 16.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                if (imageList.size > 1 && currentIndex > 0) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(R.drawable.ic_menu_arrow_back),
-                        contentDescription = "이전 이미지",
-                        modifier = Modifier
-                            .size(36.dp)
-                            .noRippleClickable(enabled = !zoomState.isZooming) {
-                                currentIndex--
-                            },
-                        tint = AconTheme.color.Gray50
-                    )
-                } else {
-                    Spacer(modifier = Modifier.size(36.dp))
-                }
+                    .noRippleClickable {
+                        if (!zoomState.isZooming) {
+                            onDismiss()
+                        }
+                    }
+            )
 
-                Spacer(modifier = Modifier.weight(1f))
+            PinchToZoomImage(
+                zoomState = zoomState,
+                imageResId = imageList[currentIndex]
+            )
 
-                if (imageList.size > 1 && currentIndex < imageList.lastIndex) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(R.drawable.ic_menu_arrow_forward),
-                        contentDescription = "다음 이미지",
-                        modifier = Modifier
-                            .size(36.dp)
-                            .noRippleClickable(enabled = !zoomState.isZooming) {
-                                currentIndex++
-                            },
-                        tint = AconTheme.color.Gray50
-                    )
-                } else {
-                    Spacer(modifier = Modifier.size(36.dp))
+            if (!zoomState.isZooming) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    if (imageList.size > 1 && currentIndex > 0) {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(R.drawable.ic_menu_arrow_back),
+                            contentDescription = "이전 이미지",
+                            modifier = Modifier
+                                .size(36.dp)
+                                .noRippleClickable(enabled = !zoomState.isZooming) {
+                                    currentIndex--
+                                },
+                            tint = AconTheme.color.Gray50
+                        )
+                    } else {
+                        Spacer(modifier = Modifier.size(36.dp))
+                    }
+
+                    Spacer(modifier = Modifier.weight(1f))
+
+                    if (imageList.size > 1 && currentIndex < imageList.lastIndex) {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(R.drawable.ic_menu_arrow_forward),
+                            contentDescription = "다음 이미지",
+                            modifier = Modifier
+                                .size(36.dp)
+                                .noRippleClickable(enabled = !zoomState.isZooming) {
+                                    currentIndex++
+                                },
+                            tint = AconTheme.color.Gray50
+                        )
+                    } else {
+                        Spacer(modifier = Modifier.size(36.dp))
+                    }
                 }
             }
         }
@@ -96,14 +116,12 @@ fun MenuBoardOverlay(
 fun PinchToZoomImage(
     zoomState: PinchZoomState,
     @DrawableRes imageResId: Int,
-    modifier: Modifier = Modifier
 ) {
     Box(
-        modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
         Box(
-            modifier = modifier
+            modifier = Modifier
                 .widthIn(max = 230.dp)
                 .aspectRatio(230f / 325f)
                 .pinchZoomAndTransform(zoomState),
@@ -116,21 +134,6 @@ fun PinchToZoomImage(
                 contentScale = ContentScale.Crop
             )
         }
-    }
-}
-
-@Composable
-fun MenuBoardDialog(
-    imageList: List<Int>,
-    onDismiss: () -> Unit
-) {
-    Dialog(
-        onDismissRequest = onDismiss,
-        properties = DialogProperties(
-            usePlatformDefaultWidth = false
-        )
-    ) {
-        MenuBoardOverlay(imageList = imageList)
     }
 }
 

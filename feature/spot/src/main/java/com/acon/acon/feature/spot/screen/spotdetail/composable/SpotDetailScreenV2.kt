@@ -43,7 +43,7 @@ import com.acon.acon.core.designsystem.component.button.v2.AconFilledButton
 import com.acon.acon.core.designsystem.component.topbar.AconTopBar
 import com.acon.acon.core.designsystem.effect.LocalHazeState
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.feature.spot.screen.spotdetail.composable.component.v2.MenuBoardDialog
+import com.acon.acon.feature.spot.screen.spotdetail.composable.component.v2.MenuBoardOverlay
 import com.acon.acon.feature.spot.screen.spotdetail.composable.component.v2.SignatureMenu
 import com.acon.acon.feature.spot.screen.spotdetail.composable.component.v2.StoreChip
 import com.acon.acon.feature.spot.screen.spotdetail.composable.component.v2.StoreFloatingButtonSet
@@ -112,7 +112,7 @@ internal fun SpotDetailScreenV2(
                 }
 
                 if (showMenuDialog) {
-                    MenuBoardDialog(
+                    MenuBoardOverlay(
                         imageList = imageList,
                         onDismiss = { showMenuDialog = false }
                     )
