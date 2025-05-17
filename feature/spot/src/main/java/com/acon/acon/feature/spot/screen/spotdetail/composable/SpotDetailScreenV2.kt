@@ -80,6 +80,7 @@ internal fun SpotDetailScreenV2(
         SpotDetailUiStateV2.Loading -> {}
         is SpotDetailUiStateV2.Success -> {
 
+            val storeName = state.spotDetailInfo.name
             val storeImageList = state.spotDetailInfo.imageList
             val bottomPadding = if (storeImageList.size <= 1) { 34.dp } else { 0.dp }
 
@@ -186,7 +187,7 @@ internal fun SpotDetailScreenV2(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = state.spotDetailInfo.name,
+                            text = if (storeName.length > 9) storeName.take(9) + "…" else storeName,
                             style = AconTheme.typography.Title4,
                             color = AconTheme.color.White,
                         )
@@ -261,7 +262,7 @@ internal fun SpotDetailScreenV2(
                             onClickMoreOptions = {
                                 showReportErrorBottomSheet = true
                             },
-                            isMenuBoarEnabled = false
+                            isMenuBoarEnabled = state.spotDetailMenuList.isEmpty() //TODO - 메뉴 이미지가 없을 때
                         )
                     }
 
