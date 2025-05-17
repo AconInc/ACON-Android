@@ -23,6 +23,12 @@ fun SpotDetailScreenContainer(
         state = state,
         modifier = modifier,
         onNavigateToBack = viewModel::navigateToBack,
+        onClickMenuBoard = viewModel::onRequestMenuBoard,
+        onDismissMenuBoard = viewModel::onDismissMenuBoard,
+        onRequestErrorReportModal = viewModel::onRequestReportErrorModal,
+        onDismissErrorReportModal = viewModel::onDismissReportErrorModal,
+        onRequestFindWayModal = viewModel::onRequestFindWayModal,
+        onDismissFindWayModal = viewModel::onDismissFindWayModal,
         onFindWayButtonClick = {
             viewModel.fetchRecentNavigationLocation()
         },

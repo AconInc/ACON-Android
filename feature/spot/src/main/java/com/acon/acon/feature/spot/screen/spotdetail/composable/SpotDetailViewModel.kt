@@ -84,6 +84,54 @@ class SpotDetailViewModel @Inject constructor(
             )
         }
     }
+
+    fun onRequestMenuBoard() = intent {
+        runOn<SpotDetailUiState.Success> {
+            reduce {
+                state.copy(showMenuBoardDialog = true)
+            }
+        }
+    }
+
+    fun onDismissMenuBoard() = intent {
+        runOn<SpotDetailUiState.Success> {
+            reduce {
+                state.copy(showMenuBoardDialog = false)
+            }
+        }
+    }
+
+    fun onRequestReportErrorModal() = intent {
+        runOn<SpotDetailUiState.Success> {
+            reduce {
+                state.copy(showReportErrorModal = true)
+            }
+        }
+    }
+
+    fun onDismissReportErrorModal() = intent {
+        runOn<SpotDetailUiState.Success> {
+            reduce {
+                state.copy(showReportErrorModal = false)
+            }
+        }
+    }
+
+    fun onRequestFindWayModal() = intent {
+        runOn<SpotDetailUiState.Success> {
+            reduce {
+                state.copy(showFindWayModal = true)
+            }
+        }
+    }
+
+    fun onDismissFindWayModal() = intent {
+        runOn<SpotDetailUiState.Success> {
+            reduce {
+                state.copy(showFindWayModal = false)
+            }
+        }
+    }
 }
 
 sealed interface SpotDetailUiState {
@@ -91,6 +139,9 @@ sealed interface SpotDetailUiState {
     data class Success(
         val spotDetailInfo: SpotDetailInfo,
         val spotDetailMenuList: List<SpotDetailMenu>,
+        val showMenuBoardDialog: Boolean = false,
+        val showReportErrorModal: Boolean = false,
+        val showFindWayModal: Boolean = false
     ) : SpotDetailUiState
 
     data object Loading : SpotDetailUiState

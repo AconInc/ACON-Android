@@ -22,10 +22,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -53,6 +49,12 @@ internal fun SpotDetailScreen(
     state: SpotDetailUiState,
     onFindWayButtonClick: () -> Unit,
     modifier: Modifier = Modifier,
+    onClickMenuBoard: () -> Unit = {},
+    onDismissMenuBoard: () -> Unit = {},
+    onRequestErrorReportModal: () -> Unit = {},
+    onDismissErrorReportModal: () -> Unit = {},
+    onRequestFindWayModal: () -> Unit = {},
+    onDismissFindWayModal: () -> Unit = {},
     onNavigateToBack: () -> Unit = {},
 ) {
     val context = LocalContext.current
@@ -72,11 +74,6 @@ internal fun SpotDetailScreen(
         stringResource(R.string.no_store_image_mystery),
     )
 
-    // 임시 show 변수
-    var showMenuDialog by remember { mutableStateOf(false) }
-    var showReportErrorBottomSheet by remember { mutableStateOf(false) }
-    var showFindWayBottomSheet by remember { mutableStateOf(false) }
-
     when (state) {
         SpotDetailUiState.LoadFailed -> {}
         SpotDetailUiState.Loading -> {}
@@ -91,9 +88,9 @@ internal fun SpotDetailScreen(
             Box(
                 modifier = modifier
             ) {
-                if (showReportErrorBottomSheet) {
+                if (state.showReportErrorModal) {
                     ReportErrorBottomSheet(
-                        onDismissRequest = { showReportErrorBottomSheet = false },
+                        onDismissRequest = { onDismissErrorReportModal() },
                         onClickReportError = {
                             val url = "https://walla.my/survey/ekYLYwpJv2d0Eznnijla" // TODO - 구글폼 (주소 나중에 따로 저장하여 불러와야 함)
                             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
@@ -102,17 +99,17 @@ internal fun SpotDetailScreen(
                     )
                 }
 
-                if (showFindWayBottomSheet) {
+                if (state.showFindWayModal) {
                     FindWayBottomSheet(
                         onFindWay = { onFindWayButtonClick() },
-                        onDismissRequest = { showFindWayBottomSheet = false }
+                        onDismissRequest = { onDismissFindWayModal() }
                     )
                 }
 
-                if (showMenuDialog) {
+                if (state.showMenuBoardDialog) {
                     MenuBoardOverlay(
                         imageList = imageList,
-                        onDismiss = { showMenuDialog = false }
+                        onDismiss = { onDismissMenuBoard() }
                     )
                 }
 
@@ -245,9 +242,7 @@ internal fun SpotDetailScreen(
 
                         Spacer(modifier = Modifier.weight(1f))
                         StoreFloatingButtonSet(
-                            onClickMenuBoard = {
-                                showMenuDialog = true
-                            },
+                            onClickMenuBoard = { onClickMenuBoard() },
                             onClickShare = {
                                 val image = storeImageList.getOrElse(0) { "" }
                                 val shareIntent = Intent.createChooser(
@@ -266,7 +261,7 @@ internal fun SpotDetailScreen(
                                 context.startActivity(shareIntent)
                             },
                             onClickMoreOptions = {
-                                showReportErrorBottomSheet = true
+                                onRequestErrorReportModal()
                             },
                             isMenuBoarEnabled = state.spotDetailMenuList.isEmpty()
                         )
@@ -289,7 +284,7 @@ internal fun SpotDetailScreen(
                     }
 
                     AconFilledButton(
-                        onClick = { showFindWayBottomSheet = true },
+                        onClick = { onRequestFindWayModal() },
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(start = 16.dp, end = 16.dp, bottom = 20.dp)
