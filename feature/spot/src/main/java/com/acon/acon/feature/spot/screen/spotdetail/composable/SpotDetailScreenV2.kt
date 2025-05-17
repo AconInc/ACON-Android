@@ -31,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -69,6 +70,12 @@ internal fun SpotDetailScreenV2(
         R.drawable.ic_error_1_120,
         R.drawable.ic_launcher_background,
         R.drawable.ic_error_1_120
+    )
+
+    val noStoreText = listOf(
+        "등록된 사진은 없지만\n맛집임을 아콘이 보장해요",
+        "쉿! 비밀스러운 곳인가 봐요\n아직 등록된 사진이 없어요",
+        "직접 가봐야 알 수 있는 장소네요\n설레임을 안고 떠나볼까요?"
     )
 
     // 임시 show 변수
@@ -129,13 +136,15 @@ internal fun SpotDetailScreenV2(
                     }
                 } else {
                     Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(
-                                color = AconTheme.color.GlassWhiteDefault
-                            ),
+                        modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.ic_background_no_store),
+                            contentDescription = null,
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop
+                        )
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
@@ -147,7 +156,7 @@ internal fun SpotDetailScreenV2(
 
                             Spacer(Modifier.height(12.dp))
                             Text(
-                                text = "장소 이미지를\n준비하고 있어요",
+                                text = noStoreText.random(),
                                 color = AconTheme.color.Gray200,
                                 style = AconTheme.typography.Body1,
                                 textAlign = TextAlign.Center
@@ -196,6 +205,7 @@ internal fun SpotDetailScreenV2(
                             contentDescription = stringResource(R.string.dotori_count_content_description),
                             tint = AconTheme.color.Gray50
                         )
+
                         Text(
                             text = "+8888", // TODO - spot.dotori
                             style = AconTheme.typography.Body1,
@@ -233,6 +243,7 @@ internal fun SpotDetailScreenV2(
                                 style = AconTheme.typography.Title4,
                                 modifier = Modifier.align(Alignment.Start)
                             )
+
                             Spacer(Modifier.height(12.dp))
                             SignatureMenu(
                                 signatureMenuList = state.spotDetailMenuList
@@ -264,14 +275,13 @@ internal fun SpotDetailScreenV2(
                             onClickMoreOptions = {
                                 showReportErrorBottomSheet = true
                             },
-                            isMenuBoarEnabled = state.spotDetailMenuList.isEmpty() //TODO - 메뉴 이미지가 없을 때
+                            isMenuBoarEnabled = state.spotDetailMenuList.isEmpty()
                         )
                     }
 
                     if (storeImageList.size >= 2) {
                         Box(
-                            modifier = Modifier
-                                .fillMaxWidth(),
+                            modifier = Modifier.fillMaxWidth(),
                             contentAlignment = Alignment.Center
                         ) {
                             StoreImageIndicator(
