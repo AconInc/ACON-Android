@@ -7,7 +7,7 @@
     <string name="google_login_btn_content">Google로 계속하기</string>
 
     <!-- Content Description -->
-    <string name="back_btn_content_description">뒤로가기 버튼</string>
+    <string name="back_btn_content_description">뒤로가기</string>
     <string name="location_content_description">위치</string>
     <string name="map_content_description">지도</string>
     <string name="dismiss_content_description">닫기</string>
@@ -16,10 +16,10 @@
     <string name="search_content_description">검색</string>
     <string name="clear_search_content_description">검색어 초기화</string>
     <string name="menu_board_content_description">메뉴판 이미지</string>
-    <string name="store_background_image_content_description">가게 이미지</string>
-    <string name="no_store_background_image_content_description">가게 이미지가 없습니다</string>
-    <string name="btn_next_image_content_description">다음 이미지 버튼</string>
-    <string name="btn_previous_background_image_content_description">이전 이미지 버튼</string>
+    <string name="store_background_image_content_description">가게 사진</string>
+    <string name="no_store_background_image_content_description">가게 사진 없음</string>
+    <string name="btn_next_image_content_description">다음 메뉴판 사진</string>
+    <string name="btn_previous_background_image_content_description">이전 메뉴판 사진</string>
 
     <!-- login BottomSheet -->
     <string name="login_bottom_sheet_title">acon에 로그인</string>
