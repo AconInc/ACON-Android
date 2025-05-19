@@ -23,7 +23,7 @@ internal fun NavGraphBuilder.onboardingNavigationNavigation(
     ) {
         composable<OnboardingRoute.ChooseDislikes> {
             ChooseDislikesScreenContainer(
-                onComplete = {
+                onNavigateToHome = {
                     navController.navigate(SpotRoute.Graph) {
                         popUpTo(OnboardingRoute.Graph) {
                             inclusive = true
