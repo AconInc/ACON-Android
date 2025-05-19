@@ -34,7 +34,9 @@ fun AconChip(
 ) {
 
     val displayTextStyle = if (enabled) {
-        textStyle
+        textStyle.copy(
+            color = AconTheme.color.White
+        )
     } else {
         textStyle.copy(
             color = AconTheme.color.Gray300
@@ -55,7 +57,7 @@ fun AconChip(
                 width = 1.dp,
                 color = if (isSelected) contentColor else Color.Transparent
             ).background(displayContainerColor).noRippleClickable {
-                onClick()
+                if (enabled) onClick()
             },
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
@@ -65,7 +67,6 @@ fun AconChip(
                 .padding(vertical = 9.dp, horizontal = 12.dp),
             text = title,
             style = displayTextStyle,
-            color = contentColor
         )
     }
 }
