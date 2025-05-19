@@ -170,7 +170,7 @@ internal fun SpotDetailScreen(
                             ) {
                                 Icon(
                                     imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_left_28),
-                                    contentDescription = stringResource(R.string.back_btn_content_description),
+                                    contentDescription = stringResource(R.string.back),
                                     tint = AconTheme.color.White
                                 )
                             }
