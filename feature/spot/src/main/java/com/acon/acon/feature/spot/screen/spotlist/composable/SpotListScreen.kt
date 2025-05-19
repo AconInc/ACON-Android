@@ -36,7 +36,7 @@ import com.acon.acon.core.designsystem.component.bottomsheet.LoginBottomSheet
 import com.acon.acon.core.designsystem.effect.LocalHazeState
 import com.acon.acon.core.designsystem.effect.defaultHazeEffect
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.domain.model.spot.v2.SpotV2
+import com.acon.acon.domain.model.spot.v2.Spot
 import com.acon.acon.domain.type.CafeFilterType
 import com.acon.acon.domain.type.RestaurantFilterType
 import com.acon.acon.domain.type.SpotType
@@ -56,8 +56,8 @@ internal fun SpotListScreen(
     modifier: Modifier = Modifier,
     userType: UserType = UserType.GUEST,
     onSpotTypeChanged: (SpotType) -> Unit = {},
-    onSpotClick: (SpotV2) -> Unit = {},
-    onTryFindWay: (SpotV2) -> Unit = {},
+    onSpotClick: (Spot) -> Unit = {},
+    onTryFindWay: (Spot) -> Unit = {},
     onFilterButtonClick: () -> Unit = {},
     onFilterModalDismissRequest: () -> Unit = {},
     onRestaurantFilterSaved: (Map<FilterDetailKey, Set<RestaurantFilterType>>) -> Unit = {},

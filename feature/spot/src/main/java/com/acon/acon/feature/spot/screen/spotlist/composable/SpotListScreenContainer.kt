@@ -14,7 +14,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.acon.acon.domain.model.spot.v2.SpotV2
+import com.acon.acon.domain.model.spot.v2.Spot
 import com.acon.acon.feature.spot.screen.spotlist.SpotListSideEffectV2
 import com.acon.acon.feature.spot.screen.spotlist.SpotListViewModel
 import com.acon.feature.common.coroutine.collectWithLifecycle
@@ -26,7 +26,7 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 @SuppressLint("MissingPermission")  // Location permission is handled in the LocationPermissionRequester
 @Composable
 fun SpotListScreenContainer(
-    onNavigateToSpotDetailScreen: (SpotV2) -> Unit,
+    onNavigateToSpotDetailScreen: (Spot) -> Unit,
     onNavigateToExternalMap: (start: Location, destination: Location) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: SpotListViewModel = hiltViewModel()

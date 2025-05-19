@@ -5,12 +5,13 @@ import android.location.Location
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.viewModelScope
 import com.acon.acon.core.utils.feature.base.BaseContainerHost
-import com.acon.acon.domain.model.spot.v2.SpotV2
+import com.acon.acon.domain.model.spot.v2.Spot
 import com.acon.acon.domain.repository.SpotRepository
 import com.acon.acon.domain.repository.UserRepository
 import com.acon.acon.domain.type.CafeFilterType
 import com.acon.acon.domain.type.RestaurantFilterType
 import com.acon.acon.domain.type.SpotType
+import com.acon.acon.domain.type.TransportMode
 import com.acon.acon.domain.type.UserType
 import com.acon.acon.feature.spot.BuildConfig
 import com.acon.acon.feature.spot.mock.spotListUiStateCafeMock
@@ -82,13 +83,13 @@ class SpotListViewModel @Inject constructor(
         }
     }
 
-    fun onSpotClicked(spot: SpotV2) = intent {
+    fun onSpotClicked(spot: Spot) = intent {
         runOn<SpotListUiStateV2.Success> {
             postSideEffect(SpotListSideEffectV2.NavigateToSpotDetailScreen(spot))
         }
     }
 
-    fun onTryFindWay(spot: SpotV2) = intent {
+    fun onTryFindWay(spot: Spot) = intent {
         runOn<SpotListUiStateV2.Success> {
             postSideEffect(SpotListSideEffectV2.NavigateToExternalMap(
                 start = state.currentLocation,
@@ -162,8 +163,9 @@ class SpotListViewModel @Inject constructor(
 sealed interface SpotListUiStateV2 {
     @Immutable
     data class Success(
-        val spotList: List<SpotV2>,
-        val bicycleSpotList: List<SpotV2>,
+        val transportMode: TransportMode,
+        val spotList: List<Spot>,
+        val bicycleSpotList: List<Spot>,
         val headTitle: String,
         val selectedSpotType: SpotType,
         val currentLocation: Location,
@@ -179,7 +181,7 @@ sealed interface SpotListUiStateV2 {
 sealed interface SpotListSideEffectV2 {
     data object ShowToastMessage : SpotListSideEffectV2
     data class NavigateToExternalMap(val start: Location, val destination: Location) : SpotListSideEffectV2
-    data class NavigateToSpotDetailScreen(val spot: SpotV2) : SpotListSideEffectV2
+    data class NavigateToSpotDetailScreen(val spot: Spot) : SpotListSideEffectV2
 }
 
 internal typealias FilterDetailKey = KClass<out Enum<*>>

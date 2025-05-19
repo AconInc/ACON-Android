@@ -36,7 +36,7 @@ import com.acon.acon.core.designsystem.effect.LocalHazeState
 import com.acon.acon.core.designsystem.effect.fog.fogBackground
 import com.acon.acon.core.designsystem.effect.fog.getOverlayColor
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.domain.model.spot.v2.SpotV2
+import com.acon.acon.domain.model.spot.v2.Spot
 import com.acon.acon.domain.type.UserType
 import com.acon.acon.feature.spot.screen.spotlist.SpotListUiStateV2
 import com.acon.feature.common.compose.toDp
@@ -51,9 +51,9 @@ internal fun SpotListSuccessView(
     pagerState: PagerState,
     state: SpotListUiStateV2.Success,
     userType: UserType,
-    onSpotClick: (SpotV2) -> Unit,
+    onSpotClick: (Spot) -> Unit,
     onGuestItemClick: () -> Unit,
-    onTryFindWay: (SpotV2) -> Unit,
+    onTryFindWay: (Spot) -> Unit,
     itemHeightPx: Float,
     modifier: Modifier = Modifier,
 ) {

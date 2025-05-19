@@ -23,7 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.domain.model.spot.v2.SpotV2
+import com.acon.acon.domain.model.spot.v2.Spot
 import com.acon.acon.feature.spot.mock.spotListUiStateRestaurantMock
 import com.acon.feature.common.compose.toDp
 import kotlinx.collections.immutable.ImmutableList
@@ -31,9 +31,9 @@ import kotlinx.collections.immutable.toImmutableList
 
 @Composable
 internal fun SpotEmptyView(
-    otherSpots: ImmutableList<SpotV2>,
-    onSpotClick: (SpotV2) -> Unit,
-    onTryFindWay: (SpotV2) -> Unit,
+    otherSpots: ImmutableList<Spot>,
+    onSpotClick: (Spot) -> Unit,
+    onTryFindWay: (Spot) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val screenHeightDp = LocalConfiguration.current.screenHeightDp.dp
@@ -128,7 +128,7 @@ private fun SpotListEmptyView1Preview() {
 @Composable
 private fun SpotListEmptyView2Preview() {
     SpotEmptyView(
-        otherSpots = listOf<SpotV2>().toImmutableList(),
+        otherSpots = listOf<Spot>().toImmutableList(),
         onSpotClick = {},
         onTryFindWay = {},
         modifier = Modifier.fillMaxSize()

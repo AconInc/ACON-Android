@@ -44,14 +44,14 @@ import com.acon.acon.core.designsystem.effect.LocalHazeState
 import com.acon.acon.core.designsystem.effect.defaultHazeEffect
 import com.acon.acon.core.designsystem.effect.imageGradientLayer
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.domain.model.spot.v2.SpotV2
+import com.acon.acon.domain.model.spot.v2.Spot
 import com.acon.feature.common.compose.getTextSizeDp
 
 @Composable
 internal fun SpotItem(
-    spot: SpotV2,
-    onItemClick: (SpotV2) -> Unit,
-    onFindWayButtonClick: (SpotV2) -> Unit,
+    spot: Spot,
+    onItemClick: (Spot) -> Unit,
+    onFindWayButtonClick: (Spot) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Card(
@@ -94,8 +94,8 @@ internal fun SpotItem(
 
 @Composable
 private fun SpotInfo(
-    spot: SpotV2,
-    onFindWayButtonClick: (SpotV2) -> Unit,
+    spot: Spot,
+    onFindWayButtonClick: (Spot) -> Unit,
     modifier: Modifier = Modifier,
 ) {
 
@@ -149,7 +149,7 @@ private fun SpotInfo(
             ),
         ) {
             Text(
-                text = "${spot.walkingTime} ${stringResource(R.string.find_way)}",
+                text = "${spot.eta} ${stringResource(R.string.find_way)}",
                 style = AconTheme.typography.Body1,
                 fontWeight = FontWeight.SemiBold,
                 color = AconTheme.color.White,
@@ -160,7 +160,7 @@ private fun SpotInfo(
 
 @Composable
 private fun SpotImage(
-    spot: SpotV2,
+    spot: Spot,
     modifier: Modifier = Modifier,
 ) {
     if (spot.image.isBlank()) {
@@ -246,12 +246,12 @@ fun SpotGuestItem(
 @Preview
 private fun SpotItemV2Preview() {
     SpotItem(
-        spot = SpotV2(
+        spot = Spot(
             id = 1L,
             name = "장소명",
             image = "ddd",
             dotori = "+9999",
-            walkingTime = "도보 10분",
+            eta = "도보 10분",
             latitude = 0.0,
             longitude = 0.0,
         ),
@@ -267,12 +267,12 @@ private fun SpotItemV2Preview() {
 @Preview
 private fun SpotItemV2EmptyImagePreview() {
     SpotItem(
-        spot = SpotV2(
+        spot = Spot(
             id = 1L,
             name = "장소명",
             image = "",
             dotori = "+9999",
-            walkingTime = "도보 10분",
+            eta = "도보 10분",
             latitude = 0.0,
             longitude = 0.0,
         ),
