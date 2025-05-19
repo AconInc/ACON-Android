@@ -34,13 +34,13 @@ class SpotRepositoryImpl @Inject constructor(
                     latitude = latitude,
                     longitude = longitude,
                     condition = ConditionRequest(
-                        spotType = condition.spotType?.name,
+                        spotType = condition.spotType.name,
                         filterList = condition.filterList?.map { filter ->
                             FilterListRequest(
                                 category = filter.category.name,
                                 optionList = filter.optionList.map { optionTypes -> optionTypes.getName() }
                             )
-                        }, walkingTime = condition.walkingTime, priceRange = condition.priceRange
+                        }
                     ),
                 )
             ).spotList.map { it.toSpot() }
