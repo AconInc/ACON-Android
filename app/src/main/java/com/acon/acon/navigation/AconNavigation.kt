@@ -81,6 +81,12 @@ fun AconNavigation(
         initialValue = UserType.GUEST
     )
 
+    val shouldShowBottomBar by remember {
+        derivedStateOf {
+            backStackEntry?.destination?.shouldShowBottomNav() == true
+        }
+    }
+
     CompositionLocalProvider(LocalHazeState provides hazeState) {
         if (showLoginBottomSheet) {
             LoginBottomSheet(
@@ -136,7 +142,7 @@ fun AconNavigation(
                 Spacer(modifier = Modifier.padding(0.dp))
             },
             bottomBar = {
-                if (backStackEntry?.destination?.shouldShowBottomNav() == true) {
+                if (shouldShowBottomBar) {
                     BottomBar(
                         modifier = Modifier
                             .background(color = AconTheme.color.Black.copy(alpha=.0f))  // TODO Color?
@@ -151,7 +157,7 @@ fun AconNavigation(
                                 coroutineScope.launch {
                                     if (userType != UserType.GUEST) {
                                         bottomAmplitudeUpload()
-                                        navController.navigate(UploadRoute.Upload)
+                                        navController.navigate(UploadRoute.Search)
                                     } else {
                                         showLoginBottomSheet = true
                                     }
@@ -173,7 +179,7 @@ fun AconNavigation(
                             }
                         }
                     )
-                }
+                } else Spacer(modifier = Modifier.padding(0.dp))
             }
         ) { innerPadding ->
             NavHost(

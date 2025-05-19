@@ -368,19 +368,6 @@ fun UploadReviewScreen(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Center
         ) {
-            repeat(state.maxCount) { index ->
-                DotoriIndicator(
-                    index = index,
-                    isSelected = index < state.selectedCount,
-                    onClick = {
-                        if (index < state.selectedCount) {
-                            onIntent(UploadIntent.DeselectDotori(index))
-                        } else {
-                            onIntent(UploadIntent.SelectDotori(index))
-                        }
-                    }
-                )
-            }
         }
 
         Spacer(modifier = Modifier.padding(top = 12.dp))

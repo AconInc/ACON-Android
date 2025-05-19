@@ -1,40 +1,89 @@
 package com.acon.acon.navigation.nested
 
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.acon.acon.feature.spot.SpotRoute
-import com.acon.acon.feature.upload.UploadContainer
+import androidx.navigation.toRoute
+import com.acon.acon.core.designsystem.animation.bottomUpEnterTransition
+import com.acon.acon.core.designsystem.animation.topDownExitTransition
+import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.feature.upload.UploadRoute
-import com.acon.acon.feature.upload.UploadSuccessContainer
+import com.acon.acon.feature.upload.v2.composable.complete.UploadCompleteScreenContainer
+import com.acon.acon.feature.upload.v2.composable.review.UploadReviewScreenContainer
+import com.acon.acon.feature.upload.v2.composable.search.UploadSearchScreenContainer
+import com.acon.feature.common.navigation.searchedSpotNavType
 
 internal fun NavGraphBuilder.uploadNavigation(
     navController: NavHostController
 ) {
     navigation<UploadRoute.Graph>(
-        startDestination = UploadRoute.Upload
+        startDestination = UploadRoute.Search
     ) {
-        composable<UploadRoute.Upload> {
-            UploadContainer(
-                onNavigateBack = {
-                    navController.popBackStack()
+        composable<UploadRoute.Search>(
+            enterTransition = {
+                bottomUpEnterTransition()
+            }, exitTransition = {
+                ExitTransition.None
+            }, popEnterTransition = {
+                EnterTransition.None
+            }, popExitTransition = {
+                topDownExitTransition()
+            }
+        ) {
+
+            UploadSearchScreenContainer(
+                onNavigateBack = navController::popBackStack,
+                onNavigateToReview = { spot ->
+                    navController.navigate(UploadRoute.Review(spot))
                 },
-                onNavigateToSuccess = {
-                    navController.navigate(UploadRoute.Success)
-                }
+                modifier = Modifier
+                    .background(AconTheme.color.Gray900)
+                    .systemBarsPadding()
+                    .fillMaxSize()
             )
         }
 
-        composable<UploadRoute.Success> {
-            UploadSuccessContainer(
-                onNavigateToSpotList = {
-                    navController.navigate(SpotRoute.SpotList) {
-                        popUpTo(UploadRoute.Graph) {
-                            inclusive = true
+        composable<UploadRoute.Review>(
+            typeMap = mapOf(searchedSpotNavType)
+        ) {
+            UploadReviewScreenContainer(
+                onNavigateBack = navController::popBackStack,
+                onComplete = {
+                    navController.navigate(UploadRoute.Complete(it)) {
+                        popUpTo(UploadRoute.Search) {
+                            inclusive = false
                         }
                     }
-                }
+                },
+                modifier = Modifier
+                    .background(AconTheme.color.Gray9)
+                    .systemBarsPadding()
+                    .fillMaxSize(),
+            )
+        }
+
+        composable<UploadRoute.Complete>(
+            exitTransition = {
+                ExitTransition.None
+            }
+        ) {
+            UploadCompleteScreenContainer(
+                spotName = it.toRoute<UploadRoute.Complete>().spotName,
+                onNavigateToHome = {
+                    navController.popBackStack(UploadRoute.Search, true)
+                },
+                modifier = Modifier
+                    .background(AconTheme.color.Gray9)
+                    .systemBarsPadding()
+                    .fillMaxSize()
             )
         }
     }
