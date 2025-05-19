@@ -116,25 +116,21 @@ internal fun MenuBoardOverlay(
 @Composable
 internal fun PinchToZoomImage(
     zoomState: PinchZoomState,
-    @DrawableRes imageResId: Int,
+    @DrawableRes imageResId: Int
 ) {
     Box(
+        modifier = Modifier
+            .widthIn(max = 230.dp)
+            .aspectRatio(230f / 325f)
+            .pinchZoomAndTransform(zoomState),
         contentAlignment = Alignment.Center
     ) {
-        Box(
-            modifier = Modifier
-                .widthIn(max = 230.dp)
-                .aspectRatio(230f / 325f)
-                .pinchZoomAndTransform(zoomState),
-            contentAlignment = Alignment.Center
-        ) {
-            Image(
-                painter = painterResource(imageResId),
-                contentDescription = stringResource(R.string.menu_board_content_description),
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop
-            )
-        }
+        Image(
+            painter = painterResource(imageResId),
+            contentDescription = stringResource(R.string.menu_board_content_description),
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop
+        )
     }
 }
 
