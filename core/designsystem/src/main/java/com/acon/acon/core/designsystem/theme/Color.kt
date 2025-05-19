@@ -93,7 +93,7 @@ internal val AconColors = AconColor(
 
     New = Color(0xFFFF4646),
 
-    DimDefault = Color(0x33111111),
+    DimDefault = Color(0xCC111111),
     DimThin = Color(0x99111111)
 )
 
