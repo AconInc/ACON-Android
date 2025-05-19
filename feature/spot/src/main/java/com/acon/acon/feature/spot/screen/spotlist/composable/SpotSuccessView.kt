@@ -37,6 +37,7 @@ import com.acon.acon.core.designsystem.effect.fog.fogBackground
 import com.acon.acon.core.designsystem.effect.fog.getOverlayColor
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.domain.model.spot.v2.Spot
+import com.acon.acon.domain.type.TransportMode
 import com.acon.acon.domain.type.UserType
 import com.acon.acon.feature.spot.screen.spotlist.SpotListUiStateV2
 import com.acon.feature.common.compose.toDp
@@ -60,9 +61,9 @@ internal fun SpotListSuccessView(
 
     val context = LocalContext.current
 
-    if (state.spotList.isEmpty()) {
+    if (state.transportMode == TransportMode.BIKING) {
         SpotEmptyView(
-            otherSpots = state.bicycleSpotList.toImmutableList(),
+            otherSpots = state.spotList.toImmutableList(),
             onSpotClick = onSpotClick,
             onTryFindWay = onTryFindWay,
             modifier = modifier
@@ -142,6 +143,7 @@ internal fun SpotListSuccessView(
                     )
                 } else {
                     SpotItem(
+                        transportMode = state.transportMode,
                         spot = spot,
                         onItemClick = onSpotClick,
                         onFindWayButtonClick = onTryFindWay,

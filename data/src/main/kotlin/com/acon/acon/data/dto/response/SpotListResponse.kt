@@ -48,5 +48,7 @@ data class SpotResponse(
             }
         } ?: emptyList(),
         eta = walkingTime ?: 0,
+        latitude = latitude ?: 0.0,
+        longitude = longitude ?: 0.0,
     )
 }

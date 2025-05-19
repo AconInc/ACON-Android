@@ -45,11 +45,13 @@ import com.acon.acon.core.designsystem.effect.defaultHazeEffect
 import com.acon.acon.core.designsystem.effect.imageGradientLayer
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.domain.model.spot.v2.Spot
+import com.acon.acon.domain.type.TransportMode
 import com.acon.feature.common.compose.getTextSizeDp
 
 @Composable
 internal fun SpotItem(
     spot: Spot,
+    transportMode: TransportMode,
     onItemClick: (Spot) -> Unit,
     onFindWayButtonClick: (Spot) -> Unit,
     modifier: Modifier = Modifier,
@@ -82,6 +84,7 @@ internal fun SpotItem(
 
             SpotInfo(
                 spot = spot,
+                transportMode = transportMode,
                 onFindWayButtonClick = onFindWayButtonClick,
                 modifier = Modifier
                     .fillMaxSize()
@@ -95,6 +98,7 @@ internal fun SpotItem(
 @Composable
 private fun SpotInfo(
     spot: Spot,
+    transportMode: TransportMode,
     onFindWayButtonClick: (Spot) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -120,7 +124,10 @@ private fun SpotInfo(
                 tint = AconTheme.color.Gray50
             )
             Text(
-                text = spot.dotori,
+                text = stringResource(
+                    if (transportMode == TransportMode.WALKING) R.string.walking_eta else R.string.biking_eta,
+                    spot.dotori
+                ),
                 style = AconTheme.typography.Body1,
                 fontWeight = FontWeight.W400,
                 color = AconTheme.color.White,
@@ -250,11 +257,13 @@ private fun SpotItemV2Preview() {
             id = 1L,
             name = "장소명",
             image = "ddd",
-            dotori = "+9999",
-            eta = "도보 10분",
+            dotori = 9999,
+            eta = 10,
             latitude = 0.0,
             longitude = 0.0,
+            tags = emptyList(),
         ),
+        transportMode = TransportMode.WALKING,
         onItemClick = {},
         onFindWayButtonClick = {},
         modifier = Modifier
@@ -271,11 +280,13 @@ private fun SpotItemV2EmptyImagePreview() {
             id = 1L,
             name = "장소명",
             image = "",
-            dotori = "+9999",
-            eta = "도보 10분",
+            dotori = 9999,
+            eta = 10,
             latitude = 0.0,
             longitude = 0.0,
+            tags = emptyList(),
         ),
+        transportMode = TransportMode.WALKING,
         onItemClick = {},
         onFindWayButtonClick = {},
         modifier = Modifier
@@ -288,6 +299,8 @@ private fun SpotItemV2EmptyImagePreview() {
 @Preview
 private fun SpotGuestItemPreview() {
     SpotGuestItem(
-        modifier = Modifier.fillMaxWidth().height(600.dp)
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(600.dp)
     )
 }

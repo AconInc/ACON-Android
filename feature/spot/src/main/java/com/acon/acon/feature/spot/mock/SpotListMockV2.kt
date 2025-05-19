@@ -113,7 +113,6 @@ internal val spotListUiStateRestaurantMock = SpotListUiStateV2.Success(
     ), headTitle = "최고의 선택.",
     selectedSpotType = SpotType.RESTAURANT,
     currentLocation = Location(""),
-    bicycleSpotList = emptyList()
 )
 
 internal val spotListUiStateCafeMock = SpotListUiStateV2.Success(
@@ -202,5 +201,4 @@ internal val spotListUiStateCafeMock = SpotListUiStateV2.Success(
     ), headTitle = "최고의 선택.",
     selectedSpotType = SpotType.CAFE,
     currentLocation = Location(""),
-    bicycleSpotList = emptyList()
 )

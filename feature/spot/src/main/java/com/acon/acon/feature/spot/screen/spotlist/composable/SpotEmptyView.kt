@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.domain.model.spot.v2.Spot
+import com.acon.acon.domain.type.TransportMode
 import com.acon.acon.feature.spot.mock.spotListUiStateRestaurantMock
 import com.acon.feature.common.compose.toDp
 import kotlinx.collections.immutable.ImmutableList
@@ -84,6 +85,7 @@ internal fun SpotEmptyView(
                     )
                 SpotItem(
                     spot = spot,
+                    transportMode = TransportMode.BIKING,
                     onItemClick = onSpotClick,
                     onFindWayButtonClick = onTryFindWay,
                     modifier = Modifier
