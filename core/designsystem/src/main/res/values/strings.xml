@@ -105,4 +105,7 @@
     <string name="lamb">양고기</string>
     <string name="pork_beef_offal">돼지/소 특수부위</string>
     <string name="vegetables">채소</string>
+    <string name="user_choose_none">모든 음식을 잘 드시는 분이군요!</string>
+    <string name="user_choose_dislike_food">확인했어요! 센스있게 추천해드릴게요</string>
+    <string name="start">시작하기</string>
 </resources>

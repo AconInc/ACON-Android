@@ -32,14 +32,34 @@ class ChooseDislikesViewModel @Inject constructor(
 
     fun onDislikeFoodClicked(foodType: FoodType) = intent {
         runOn<ChooseDislikesUiState.Success> {
-            reduce {
-                state.copy(
-                    selectedDislikes = if (state.selectedDislikes.contains(foodType)) {
-                        state.selectedDislikes - foodType
-                    } else {
-                        state.selectedDislikes + foodType
-                    }
-                )
+            if (foodType == FoodType.Seafood) {
+                reduce {
+                    state.copy(
+                        selectedDislikes = if (state.selectedDislikes.contains(FoodType.Seafood)) {
+                            state.selectedDislikes - FoodType.Seafood
+                        } else {
+                            state.selectedDislikes + setOf(
+                                FoodType.Seafood,
+                                FoodType.Shrimp,
+                                FoodType.Crab,
+                                FoodType.Clam,
+                                FoodType.Oyster,
+                                FoodType.RawFish,
+                                FoodType.Fish
+                            )
+                        },
+                    )
+                }
+            } else {
+                reduce {
+                    state.copy(
+                        selectedDislikes = if (state.selectedDislikes.contains(foodType)) {
+                            state.selectedDislikes - foodType
+                        } else {
+                            state.selectedDislikes + foodType
+                        }
+                    )
+                }
             }
         }
     }
