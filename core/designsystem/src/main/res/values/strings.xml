@@ -20,6 +20,11 @@
     <string name="content_description_dismiss_bottom_sheet">로그인 창 닫기</string>
     <string name="search_content_description">검색</string>
     <string name="clear_search_content_description">검색어 초기화</string>
+    <string name="menu_board_content_description">메뉴판 이미지</string>
+    <string name="store_background_image_content_description">가게 사진</string>
+    <string name="no_store_background_image_content_description">가게 사진 없음</string>
+    <string name="btn_next_image_content_description">다음 메뉴판 사진</string>
+    <string name="btn_previous_background_image_content_description">이전 메뉴판 사진</string>
 
     <!-- login BottomSheet -->
     <string name="login_bottom_sheet_title">acon에 로그인</string>
@@ -34,7 +39,7 @@
     <string name="no_permission_content">설정에서 정확한 위치 권한을 허용해주세요</string>
     <string name="go_to_setting">설정으로 이동</string>
 
-    <!-- Spot -->
+    <!-- SpotList -->
     <string name="dotori_count_content_description">도토리 개수</string>
     <string name="filter_content_description">필터</string>
     <string name="restaurant">식당</string>
@@ -68,6 +73,19 @@
     <string name="recommend_other_spots">대신 여기는 어떠세요?</string>
     <string name="no_other_spots">다음에 들어오실 땐,\n꼭 찾아서 추천드릴게요</string>
     <string name="ask_for_new_spot">장소 등록 신청하기</string>
+
+    <!-- SpotDetail -->
+    <string name="no_store_image_verified">등록된 사진은 없지만\n맛집임을 아콘이 보장해요</string>
+    <string name="no_store_image_secret">쉿! 비밀스러운 곳인가 봐요\n아직 등록된 사진이 없어요</string>
+    <string name="no_store_image_mystery">직접 가봐야 알 수 있는 장소네요\n설레임을 안고 떠나볼까요?</string>
+    <string name="signature_menu">대표메뉴</string>
+    <string name="btn_find_way_walking_time">도보 %d분 길찾기</string>
+    <string name="floating_btn_menu_board">메뉴판</string>
+    <string name="floating_btn_share">공유</string>
+    <string name="floating_btn_more_option">더보기</string>
+    <string name="store_tag_new">NEW</string>
+    <string name="store_tag_local">LOCAL</string>
+    <string name="store_tag_ranking">TOP %d</string>
 
     <!-- Upload -->
     <string name="close_upload">리뷰 그만두기</string>

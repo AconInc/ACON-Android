@@ -1,4 +1,4 @@
-package com.acon.acon.feature.spot.screen.spotdetail.composable.component.v2
+package com.acon.acon.feature.spot.screen.spotdetail.composable
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
@@ -24,6 +24,7 @@ import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -31,7 +32,7 @@ import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.theme.AconTheme
 
 @Composable
-fun StoreFloatingButtonSet(
+internal fun StoreFloatingButtonSet(
     onClickMenuBoard: () -> Unit,
     onClickShare: () -> Unit,
     onClickMoreOptions: () -> Unit,
@@ -56,7 +57,7 @@ fun StoreFloatingButtonSet(
         modifier = modifier
     ) {
         StoreDetailButton(
-            name = "메뉴판",
+            name = stringResource(R.string.floating_btn_menu_board),
             imageRes = menuBoardImage,
             onClickButton = onClickMenuBoard,
             onLongClickButton = { isMenuBoardLongPressed = true },
@@ -68,7 +69,7 @@ fun StoreFloatingButtonSet(
 
         Spacer(Modifier.height(36.dp))
         StoreDetailButton(
-            name = "공유",
+            name = stringResource(R.string.floating_btn_share),
             imageRes = shareImage,
             onClickButton = onClickShare,
             onLongClickButton = { isShareLongPressed = true },
@@ -80,7 +81,7 @@ fun StoreFloatingButtonSet(
 
         Spacer(Modifier.height(36.dp))
         StoreDetailButton(
-            name = "더보기",
+            name = stringResource(R.string.floating_btn_more_option),
             imageRes = moreOptionsImage,
             onClickButton = onClickMoreOptions,
             onLongClickButton = { isMoreOptionsLongPressed = true },
@@ -93,8 +94,7 @@ fun StoreFloatingButtonSet(
 }
 
 @Composable
-fun StoreDetailButton(
-    //@StringRes name: Int, // TODO - 추후 적용
+internal fun StoreDetailButton(
     name: String,
     @DrawableRes imageRes: Int,
     onClickButton: () -> Unit,
@@ -122,7 +122,7 @@ fun StoreDetailButton(
             )
             Image(
                 imageVector = ImageVector.vectorResource(imageRes),
-                contentDescription = null,
+                contentDescription = name,
                 modifier = Modifier
                     .pointerInput(Unit) {
                         detectTapGestures(

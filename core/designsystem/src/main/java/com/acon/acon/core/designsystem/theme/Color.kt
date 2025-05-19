@@ -91,7 +91,8 @@ internal val AconColors = AconColor(
 
     Light = Color(0x33E1E1E1),
 
-    New = Color(0xFFFF4646),
+    TagNew = Color(0xFFFF4646),
+    TagLocal = Color(0xFF00D157),
 
     DimDefault = Color(0xCC111111),
     DimThin = Color(0x99111111)
@@ -169,7 +170,8 @@ data class AconColor(
 
     val Light: Color,
 
-    val New: Color,
+    val TagNew: Color,
+    val TagLocal: Color,
 
     val DimDefault: Color,
     val DimThin: Color

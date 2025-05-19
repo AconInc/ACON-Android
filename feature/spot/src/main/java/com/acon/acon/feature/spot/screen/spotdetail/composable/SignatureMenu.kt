@@ -1,4 +1,4 @@
-package com.acon.acon.feature.spot.screen.spotdetail.composable.component.v2
+package com.acon.acon.feature.spot.screen.spotdetail.composable
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -18,7 +18,7 @@ import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.domain.model.spot.SpotDetailMenu
 
 @Composable
-fun SignatureMenu(
+internal fun SignatureMenu(
     signatureMenuList: List<SpotDetailMenu>
 ) {
     Column(
@@ -34,7 +34,7 @@ fun SignatureMenu(
 }
 
 @Composable
-fun SignatureMenuItem(
+internal fun SignatureMenuItem(
     menuName: String,
     menuPrice: String
 ) {

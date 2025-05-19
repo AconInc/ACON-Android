@@ -45,6 +45,6 @@ fun AconTag(
 private fun AconTagPreview() {
     AconTag(
         text = "Tag",
-        backgroundColor = AconTheme.color.New,
+        backgroundColor = AconTheme.color.TagNew,
     )
 }
