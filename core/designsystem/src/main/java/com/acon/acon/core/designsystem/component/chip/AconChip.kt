@@ -25,12 +25,29 @@ fun AconChip(
     isSelected: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     contentColor: Color = AconTheme.color.White,
     containerColor: Color = AconTheme.color.GlassWhiteDefault,
     textStyle: TextStyle = AconTheme.typography.Body1.copy(
         fontWeight = FontWeight.W400
     )
 ) {
+
+    val displayTextStyle = if (enabled) {
+        textStyle.copy(
+            color = AconTheme.color.White
+        )
+    } else {
+        textStyle.copy(
+            color = AconTheme.color.Gray300
+        )
+    }
+
+    val displayContainerColor = if (enabled) {
+        containerColor
+    } else {
+        AconTheme.color.GlassWhiteLight
+    }
 
     Row(
         modifier = modifier
@@ -39,8 +56,8 @@ fun AconChip(
                 shape = CircleShape,
                 width = 1.dp,
                 color = if (isSelected) contentColor else Color.Transparent
-            ).background(containerColor).noRippleClickable {
-                onClick()
+            ).background(displayContainerColor).noRippleClickable {
+                if (enabled) onClick()
             },
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
@@ -49,8 +66,7 @@ fun AconChip(
             modifier = Modifier
                 .padding(vertical = 9.dp, horizontal = 12.dp),
             text = title,
-            style = textStyle,
-            color = contentColor
+            style = displayTextStyle,
         )
     }
 }

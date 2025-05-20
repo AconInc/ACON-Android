@@ -4,7 +4,6 @@ import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraphBuilder
@@ -16,9 +15,9 @@ import com.acon.acon.core.designsystem.animation.bottomUpEnterTransition
 import com.acon.acon.core.designsystem.animation.topDownExitTransition
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.feature.upload.UploadRoute
-import com.acon.acon.feature.upload.v2.composable.complete.UploadCompleteScreenContainer
-import com.acon.acon.feature.upload.v2.composable.review.UploadReviewScreenContainer
-import com.acon.acon.feature.upload.v2.composable.search.UploadSearchScreenContainer
+import com.acon.acon.feature.upload.screen.composable.complete.UploadCompleteScreenContainer
+import com.acon.acon.feature.upload.screen.composable.review.UploadReviewScreenContainer
+import com.acon.acon.feature.upload.screen.composable.search.UploadSearchScreenContainer
 import com.acon.feature.common.navigation.searchedSpotNavType
 
 internal fun NavGraphBuilder.uploadNavigation(
