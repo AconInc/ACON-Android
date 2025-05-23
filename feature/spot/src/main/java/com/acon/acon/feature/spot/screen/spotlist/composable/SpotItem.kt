@@ -124,10 +124,7 @@ private fun SpotInfo(
                 tint = AconTheme.color.Gray50
             )
             Text(
-                text = stringResource(
-                    if (transportMode == TransportMode.WALKING) R.string.walking_eta else R.string.biking_eta,
-                    spot.dotori
-                ),
+                text = (if(spot.dotori >= 9999) "+" else "") + spot.dotori.coerceAtMost(9999),
                 style = AconTheme.typography.Body1,
                 fontWeight = FontWeight.W400,
                 color = AconTheme.color.White,
@@ -156,7 +153,7 @@ private fun SpotInfo(
             ),
         ) {
             Text(
-                text = "${spot.eta} ${stringResource(R.string.find_way)}",
+                text = stringResource(if (transportMode == TransportMode.WALKING) R.string.walking_eta else R.string.biking_eta, spot.eta),
                 style = AconTheme.typography.Body1,
                 fontWeight = FontWeight.SemiBold,
                 color = AconTheme.color.White,

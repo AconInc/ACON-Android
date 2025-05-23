@@ -73,8 +73,8 @@
     <string name="recommend_other_spots">대신 여기는 어떠세요?</string>
     <string name="no_other_spots">다음에 들어오실 땐,\n꼭 찾아서 추천드릴게요</string>
     <string name="ask_for_new_spot">장소 등록 신청하기</string>
-    <string name="walking_eta">도보 %d분</string>
-    <string name="biking_eta">자전거로 %d분</string>
+    <string name="walking_eta">도보 %d분 길찾기</string>
+    <string name="biking_eta">자전거로 %d분 길찾기</string>
 
     <!-- SpotDetail -->
     <string name="no_store_image_verified">등록된 사진은 없지만\n맛집임을 아콘이 보장해요</string>
