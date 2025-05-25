@@ -39,6 +39,7 @@ import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.button.v2.AconFilledButton
 import com.acon.acon.core.designsystem.component.topbar.AconTopBar
 import com.acon.acon.core.designsystem.effect.LocalHazeState
+import com.acon.acon.core.designsystem.effect.imageGradientLayer
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.feature.common.compose.getTextSizeDp
 import dev.chrisbanes.haze.hazeSource
@@ -121,7 +122,11 @@ internal fun SpotDetailScreen(
                             model = storeImageList[page],
                             contentDescription = stringResource(R.string.store_background_image_content_description),
                             contentScale = ContentScale.Crop,
-                            modifier = Modifier.fillMaxSize()
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .imageGradientLayer(
+                                    startColor = AconTheme.color.Gray900.copy(alpha = 0.8f),
+                                )
                         )
                     }
                 } else {
@@ -132,7 +137,11 @@ internal fun SpotDetailScreen(
                         Image(
                             painter = painterResource(id = R.drawable.ic_background_no_store),
                             contentDescription = stringResource(R.string.no_store_background_image_content_description),
-                            modifier = Modifier.fillMaxSize(),
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .imageGradientLayer(
+                                    startColor = AconTheme.color.Gray900.copy(alpha = 0.8f),
+                                ),
                             contentScale = ContentScale.Crop
                         )
                         Column(
