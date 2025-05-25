@@ -1,4 +1,4 @@
-package com.acon.acon.feature.profile.composable.screen.profileMod
+package com.acon.acon.feature.profile.composable.screen.profileMod.composable
 
 import android.content.Intent
 import android.net.Uri
@@ -9,6 +9,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.acon.acon.feature.profile.composable.screen.profileMod.ProfileModSideEffect
+import com.acon.acon.feature.profile.composable.screen.profileMod.ProfileModViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 

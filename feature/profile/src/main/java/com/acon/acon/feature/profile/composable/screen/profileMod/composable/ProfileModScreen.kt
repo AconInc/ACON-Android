@@ -1,4 +1,4 @@
-package com.acon.acon.feature.profile.composable.screen.profileMod
+package com.acon.acon.feature.profile.composable.screen.profileMod.composable
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
@@ -51,6 +51,7 @@ import com.acon.acon.feature.profile.composable.component.NicknameErrMessageRow
 import com.acon.acon.feature.profile.composable.component.ProfilePhotoBox
 import com.acon.acon.feature.profile.composable.component.ProfileTextField
 import com.acon.acon.feature.profile.composable.component.addFocusCleaner
+import com.acon.acon.feature.profile.composable.screen.profileMod.ProfileModState
 import com.acon.acon.feature.profile.composable.type.BirthdayValidationStatus
 import com.acon.acon.feature.profile.composable.type.FocusType
 import com.acon.acon.feature.profile.composable.type.NicknameValidationStatus
