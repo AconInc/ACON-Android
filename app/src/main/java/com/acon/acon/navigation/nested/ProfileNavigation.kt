@@ -20,7 +20,7 @@ import com.acon.acon.feature.profile.composable.screen.galleryGrid.composable.Ga
 import com.acon.acon.feature.profile.composable.screen.galleryList.composable.GalleryListContainer
 import com.acon.acon.feature.profile.composable.screen.photoCrop.composable.PhotoCropContainer
 import com.acon.acon.feature.profile.composable.screen.profile.composable.ProfileScreenContainer
-import com.acon.acon.feature.profile.composable.screen.profileMod.composable.ProfileModScreenContainer
+import com.acon.acon.feature.profile.composable.screen.profileMod.ProfileModScreenContainerV2
 import com.acon.acon.feature.spot.SpotRoute
 
 internal fun NavGraphBuilder.profileNavigation(
@@ -64,10 +64,10 @@ internal fun NavGraphBuilder.profileNavigation(
                 .getStateFlow<String?>("selectedPhotoId", null)
                 .collectAsState()
 
-            ProfileModScreenContainer(
+            ProfileModScreenContainerV2(
                 modifier = Modifier.fillMaxSize(),
                 selectedPhotoId = selectedPhotoId,
-                backToProfile = {
+                onNavigateToBack = {
                     navController.popBackStack()
                 },
                 onClickComplete = {
