@@ -13,9 +13,9 @@ import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
-fun ProfileModScreenContainerV2(
+fun ProfileModScreenContainer(
     modifier: Modifier = Modifier,
-    viewModel: ProfileModViewModelV2 = hiltViewModel(),
+    viewModel: ProfileModViewModel = hiltViewModel(),
     selectedPhotoId: String? = null,
     onNavigateToBack: () -> Unit = {},
     onClickComplete: () -> Unit = {},
@@ -32,34 +32,34 @@ fun ProfileModScreenContainerV2(
 
     viewModel.collectSideEffect { effect ->
         when (effect) {
-            is ProfileModSideEffectV2.NavigateToSettings -> {
+            is ProfileModSideEffect.NavigateToSettings -> {
                 val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
                     data = Uri.fromParts("package", effect.packageName, null)
                 }
                 context.startActivity(intent)
             }
 
-            is ProfileModSideEffectV2.NavigateBack -> {
+            is ProfileModSideEffect.NavigateBack -> {
                 onNavigateToBack()
             }
 
-            is ProfileModSideEffectV2.NavigateToCustomGallery -> {
+            is ProfileModSideEffect.NavigateToCustomGallery -> {
                 onNavigateToCustomGallery()
             }
 
-            is ProfileModSideEffectV2.UpdateProfileImage -> {
+            is ProfileModSideEffect.UpdateProfileImage -> {
                 selectedPhotoId.let {
                     viewModel.updateProfileImage(selectedPhotoId ?: "")
                 }
             }
 
-            is ProfileModSideEffectV2.NavigateToProfile -> {
+            is ProfileModSideEffect.NavigateToProfile -> {
                 onClickComplete()
             }
         }
     }
 
-    ProfileModScreenV2(
+    ProfileModScreen(
         modifier = modifier,
         state = state,
         navigateToBack = viewModel::navigateToBack,

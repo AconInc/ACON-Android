@@ -58,9 +58,9 @@ import com.acon.acon.feature.profile.composable.utils.BirthdayTransformation
 import com.acon.acon.feature.profile.composable.utils.limitedNicknameTextFieldValue
 
 @Composable
-internal fun ProfileModScreenV2(
+internal fun ProfileModScreen(
     modifier: Modifier = Modifier,
-    state: ProfileModStateV2,
+    state: ProfileModState,
     navigateToBack: () -> Unit,
     navigateToCustomGallery: () -> Unit,
     onNicknameChanged: (String) -> Unit = {},
@@ -90,9 +90,9 @@ internal fun ProfileModScreenV2(
     }
 
     when (state) {
-        ProfileModStateV2.LoadFailed -> {}
-        ProfileModStateV2.Loading -> {}
-        is ProfileModStateV2.Success -> {
+        ProfileModState.LoadFailed -> {}
+        ProfileModState.Loading -> {}
+        is ProfileModState.Success -> {
             var nicknameTextFieldValue by rememberSaveable(
                 state.fetchedNickname,
                 stateSaver = TextFieldValue.Saver
@@ -425,9 +425,9 @@ internal fun ProfileModScreenV2(
 @Composable
 private fun ProfileModScreenPreview() {
     AconTheme {
-        ProfileModScreenV2(
+        ProfileModScreen(
             modifier = Modifier,
-            state = ProfileModStateV2.Success(),
+            state = ProfileModState.Success(),
             navigateToBack = {},
             navigateToCustomGallery = {},
             onNicknameChanged = {},

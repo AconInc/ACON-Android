@@ -31,19 +31,19 @@ import javax.inject.Inject
 
 @OptIn(OrbitExperimental::class)
 @HiltViewModel
-class ProfileModViewModelV2 @Inject constructor(
+class ProfileModViewModel @Inject constructor(
     private val profileRepository: ProfileRepository,
     application: Application
-) : AndroidViewModel(application), ContainerHost<ProfileModStateV2, ProfileModSideEffectV2> {
+) : AndroidViewModel(application), ContainerHost<ProfileModState, ProfileModSideEffect> {
 
     private var nicknameValidationJob: Job? = null
 
-    override val container = container<ProfileModStateV2, ProfileModSideEffectV2>(ProfileModStateV2.Loading) {
+    override val container = container<ProfileModState, ProfileModSideEffect>(ProfileModState.Loading) {
         fetchUserProfileInfo()
     }
 
     fun onFocusChanged(isFocused: Boolean, field: FocusType) = intent {
-        runOn<ProfileModStateV2.Success> {
+        runOn<ProfileModState.Success> {
             reduce {
                 when (field) {
                     FocusType.Nickname -> state.copy(
@@ -62,7 +62,7 @@ class ProfileModViewModelV2 @Inject constructor(
         profileRepository.fetchProfile().onSuccess { profile ->
             val cleanedBirthday = profile.birthDate?.filter { it.isDigit() } ?: ""
             reduce {
-                ProfileModStateV2.Success(
+                ProfileModState.Success(
                     fetchedNickname = profile.nickname,
                     fetchedBirthday = cleanedBirthday,
                     birthdayTextFieldValue = TextFieldValue(cleanedBirthday),
@@ -101,7 +101,7 @@ class ProfileModViewModelV2 @Inject constructor(
     }
 
     fun onNicknameChanged(text: String, delayValidation: Boolean = false) = intent {
-        runOn<ProfileModStateV2.Success> {
+        runOn<ProfileModState.Success> {
             val (limitedText, count) = text.limitedNickname()
 
             val invalidCharRegex = Regex("""[!@#$%^&*()\-=+\[\]{};:'",<>/?\\|`~]""")
@@ -144,7 +144,7 @@ class ProfileModViewModelV2 @Inject constructor(
     }
 
     fun onBirthdayChanged(fieldValue: TextFieldValue) = intent {
-        runOn<ProfileModStateV2.Success> {
+        runOn<ProfileModState.Success> {
             val digitsOnly = fieldValue.text.filter { it.isDigit() }
 
             val limitedDigits = digitsOnly.take(8)
@@ -212,15 +212,15 @@ class ProfileModViewModelV2 @Inject constructor(
     }
 
     fun navigateToCustomGallery() = intent {
-        postSideEffect(ProfileModSideEffectV2.NavigateToCustomGallery)
+        postSideEffect(ProfileModSideEffect.NavigateToCustomGallery)
     }
 
     fun navigateToBack() = intent {
-        postSideEffect(ProfileModSideEffectV2.NavigateBack)
+        postSideEffect(ProfileModSideEffect.NavigateBack)
     }
 
     fun onRequestExitDialog() = intent {
-        runOn<ProfileModStateV2.Success> {
+        runOn<ProfileModState.Success> {
             reduce {
                 state.copy(showExitDialog = true)
             }
@@ -228,7 +228,7 @@ class ProfileModViewModelV2 @Inject constructor(
     }
 
     fun onDisMissExitDialog() = intent {
-        runOn<ProfileModStateV2.Success> {
+        runOn<ProfileModState.Success> {
             reduce {
                 state.copy(showExitDialog = false)
             }
@@ -236,7 +236,7 @@ class ProfileModViewModelV2 @Inject constructor(
     }
 
     fun onRequestPhotoPermission() = intent {
-        runOn<ProfileModStateV2.Success> {
+        runOn<ProfileModState.Success> {
             reduce {
                 state.copy(requestPhotoPermission = true)
             }
@@ -244,7 +244,7 @@ class ProfileModViewModelV2 @Inject constructor(
     }
 
     fun onDisMissPhotoPermission() = intent {
-        runOn<ProfileModStateV2.Success> {
+        runOn<ProfileModState.Success> {
             reduce {
                 state.copy(requestPhotoPermission = false)
             }
@@ -252,7 +252,7 @@ class ProfileModViewModelV2 @Inject constructor(
     }
 
     fun onRequestPermissionDialog() = intent {
-        runOn<ProfileModStateV2.Success> {
+        runOn<ProfileModState.Success> {
             reduce {
                 state.copy(showPermissionDialog = true)
             }
@@ -260,7 +260,7 @@ class ProfileModViewModelV2 @Inject constructor(
     }
 
     fun onDisMissPermissionDialog() = intent {
-        runOn<ProfileModStateV2.Success> {
+        runOn<ProfileModState.Success> {
             reduce {
                 state.copy(showPermissionDialog = false)
             }
@@ -268,8 +268,8 @@ class ProfileModViewModelV2 @Inject constructor(
     }
 
     fun onPermissionSettingClick(packageName: String) = intent {
-        runOn<ProfileModStateV2.Success> {
-            postSideEffect(ProfileModSideEffectV2.NavigateToSettings(packageName))
+        runOn<ProfileModState.Success> {
+            postSideEffect(ProfileModSideEffect.NavigateToSettings(packageName))
             reduce {
                 state.copy(showPermissionDialog = false)
             }
@@ -277,7 +277,7 @@ class ProfileModViewModelV2 @Inject constructor(
     }
 
     fun updateProfileImage(selectedPhotoUri: String) = intent {
-        runOn<ProfileModStateV2.Success> {
+        runOn<ProfileModState.Success> {
             reduce {
                 state.copy(selectedPhotoUri = selectedPhotoUri)
             }
@@ -285,7 +285,7 @@ class ProfileModViewModelV2 @Inject constructor(
     }
 
     fun onRequestProfileEditModal() = intent {
-        runOn<ProfileModStateV2.Success> {
+        runOn<ProfileModState.Success> {
             reduce {
                 state.copy(showPhotoEditModal = true)
             }
@@ -293,7 +293,7 @@ class ProfileModViewModelV2 @Inject constructor(
     }
 
     fun onDisMissProfileEditModal() = intent {
-        runOn<ProfileModStateV2.Success> {
+        runOn<ProfileModState.Success> {
             reduce {
                 state.copy(showPhotoEditModal = false)
             }
@@ -301,7 +301,7 @@ class ProfileModViewModelV2 @Inject constructor(
     }
 
     fun getPreSignedUrl(nickname: String) = intent {
-        runOn<ProfileModStateV2.Success> {
+        runOn<ProfileModState.Success> {
             if (state.selectedPhotoUri == "basic_profile_image") {
                 if (state.birthdayValidationStatus == BirthdayValidationStatus.Valid) {
                     updateProfile(
@@ -338,7 +338,7 @@ class ProfileModViewModelV2 @Inject constructor(
     }
 
     private fun putPhotoToPreSignedUrl(nickname: String, imageUri: Uri, preSignedUrl: String) = intent {
-        runOn<ProfileModStateV2.Success> {
+        runOn<ProfileModState.Success> {
             val context = getApplication<Application>().applicationContext
             val client = OkHttpClient()
 
@@ -406,20 +406,19 @@ class ProfileModViewModelV2 @Inject constructor(
         profileRepository.updateProfile(fileName, nickname, birthday)
             .onSuccess {
                 profileRepository.updateProfileType(UpdateProfileType.SUCCESS)
-                postSideEffect(ProfileModSideEffectV2.NavigateToProfile)
+                postSideEffect(ProfileModSideEffect.NavigateToProfile)
             }
             .onFailure {
                 profileRepository.updateProfileType(UpdateProfileType.FAILURE)
-                postSideEffect(ProfileModSideEffectV2.NavigateToProfile)
+                postSideEffect(ProfileModSideEffect.NavigateToProfile)
             }
     }
 }
 
-sealed interface ProfileModStateV2 {
+sealed interface ProfileModState {
     @Immutable
     data class Success(
         val fetchedNickname: String = "",
-        //val nicknameTextFieldValue: TextFieldValue = TextFieldValue(),
         val nicknameFieldStatus: TextFieldStatus = TextFieldStatus.Inactive,
         val nicknameValidationStatus: NicknameValidationStatus = NicknameValidationStatus.Empty,
         val nicknameCount: Int = 0,
@@ -438,16 +437,16 @@ sealed interface ProfileModStateV2 {
         val requestPhotoPermission: Boolean = false,
         val showPermissionDialog: Boolean = false,
         val showPhotoEditModal: Boolean = false,
-    ): ProfileModStateV2
+    ): ProfileModState
 
-    data object Loading : ProfileModStateV2
-    data object LoadFailed : ProfileModStateV2
+    data object Loading : ProfileModState
+    data object LoadFailed : ProfileModState
 }
 
-sealed interface ProfileModSideEffectV2 {
-    data object NavigateBack : ProfileModSideEffectV2
-    data class NavigateToSettings(val packageName: String) : ProfileModSideEffectV2
-    data object NavigateToCustomGallery : ProfileModSideEffectV2
-    data class UpdateProfileImage(val imageUri: String?) : ProfileModSideEffectV2
-    data object NavigateToProfile : ProfileModSideEffectV2
+sealed interface ProfileModSideEffect {
+    data object NavigateBack : ProfileModSideEffect
+    data class NavigateToSettings(val packageName: String) : ProfileModSideEffect
+    data object NavigateToCustomGallery : ProfileModSideEffect
+    data class UpdateProfileImage(val imageUri: String?) : ProfileModSideEffect
+    data object NavigateToProfile : ProfileModSideEffect
 }
