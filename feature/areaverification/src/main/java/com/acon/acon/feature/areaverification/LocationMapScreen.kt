@@ -10,6 +10,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
+import com.acon.acon.core.map.BuildConfig
 import com.acon.acon.core.map.ProceedWithLocation
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraUpdate
@@ -52,7 +53,8 @@ fun LocationMapScreen(
             currentLocation = location
             onLocationObtained(location.latitude, location.longitude)
             naverMap?.let { map ->
-                val cameraUpdate = CameraUpdate.scrollTo(LatLng(location.latitude, location.longitude))
+                val cameraUpdate =
+                    CameraUpdate.scrollTo(LatLng(location.latitude, location.longitude))
                 map.moveCamera(cameraUpdate)
                 createCustomMarker(map, location.latitude, location.longitude)
             }
@@ -65,18 +67,25 @@ fun LocationMapScreen(
                 MapView(context).apply {
                     getMapAsync { map ->
                         naverMap = map
+                        map.customStyleId = BuildConfig.NAVER_NCP_KEY_ID
                         map.uiSettings.apply {
                             isZoomControlEnabled = false
                             isCompassEnabled = true
                         }
 
                         if (initialLatitude != 0.0 && initialLongitude != 0.0) {
-                            val cameraUpdate = CameraUpdate.scrollTo(LatLng(initialLatitude, initialLongitude))
+                            val cameraUpdate =
+                                CameraUpdate.scrollTo(LatLng(initialLatitude, initialLongitude))
                             map.moveCamera(cameraUpdate)
                             createCustomMarker(map, initialLatitude, initialLongitude)
                         } else {
                             currentLocation?.let { location ->
-                                val cameraUpdate = CameraUpdate.scrollTo(LatLng(location.latitude, location.longitude))
+                                val cameraUpdate = CameraUpdate.scrollTo(
+                                    LatLng(
+                                        location.latitude,
+                                        location.longitude
+                                    )
+                                )
                                 map.moveCamera(cameraUpdate)
                                 createCustomMarker(map, location.latitude, location.longitude)
                             }
