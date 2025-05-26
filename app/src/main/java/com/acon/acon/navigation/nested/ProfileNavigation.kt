@@ -47,9 +47,15 @@ internal fun NavGraphBuilder.profileNavigation(
                     }
                 },
                 onNavigateToSettingsScreen = { navController.navigate(SettingsRoute.Settings) },
-                onNavigateToProfileEditScreen = { navController.navigate(ProfileRoute.ProfileMod(null)) },
+                onNavigateToProfileEditScreen = {
+                    navController.navigate(
+                        ProfileRoute.ProfileMod(
+                            null
+                        )
+                    )
+                },
                 onNavigateToAreaVerificationScreen = {
-                    navController.navigate(AreaVerificationRoute.RequireAreaVerification("onboarding")) {
+                    navController.navigate(AreaVerificationRoute.AreaVerificationHome("onboarding")) {
                         popUpTo(ProfileRoute.Graph) {
                             inclusive = true
                         }
