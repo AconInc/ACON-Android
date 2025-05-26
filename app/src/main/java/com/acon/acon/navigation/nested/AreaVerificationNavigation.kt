@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.toRoute
 import com.acon.acon.feature.SettingsRoute
+import com.acon.acon.feature.areaverification.AreaVerificationHomeScreenContainer
 import com.acon.acon.feature.areaverification.AreaVerificationRoute
 import com.acon.acon.feature.areaverification.AreaVerificationScreenContainer
 import com.acon.acon.feature.areaverification.PreferenceMapScreen
@@ -17,12 +18,37 @@ fun NavGraphBuilder.areaVerificationNavigation(
     navController: NavHostController
 ) {
     navigation<AreaVerificationRoute.Graph>(
-        startDestination = AreaVerificationRoute.RequireAreaVerification()
+        startDestination = AreaVerificationRoute.AreaVerificationHome()
     ) {
+        composable<AreaVerificationRoute.AreaVerificationHome> { backStackEntry ->
+            val routeData = backStackEntry.arguments?.let {
+                AreaVerificationRoute.AreaVerificationHome(
+                    route = it.getString("route"),
+                    isEdit = it.getBoolean("isEdit", false)
+                )
+            }
+
+            AreaVerificationHomeScreenContainer(
+                modifier = Modifier.fillMaxSize(),
+                route = routeData?.route ?: "onboarding",
+                onNextScreen = { latitude, longitude ->
+                    navController.navigate(
+                        AreaVerificationRoute.CheckInMap(
+                            latitude = latitude,
+                            longitude = longitude,
+                            route = routeData?.route,
+                            isEdit = routeData?.isEdit ?: false
+                        )
+                    )
+                },
+            )
+
+        }
+
         composable<AreaVerificationRoute.RequireAreaVerification> { backStackEntry ->
 
             val routeData = backStackEntry.arguments?.let {
-                AreaVerificationRoute.RequireAreaVerification(
+                AreaVerificationRoute.AreaVerificationHome(
                     route = it.getString("route"),
                     isEdit = it.getBoolean("isEdit", false)
                 )

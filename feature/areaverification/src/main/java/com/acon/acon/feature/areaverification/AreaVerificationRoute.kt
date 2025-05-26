@@ -9,7 +9,10 @@ sealed interface AreaVerificationRoute {
     data object Graph : AreaVerificationRoute
 
     @Serializable
-    data object AreaVerificationHome : AreaVerificationRoute
+    data class AreaVerificationHome(
+        val route: String? = null,
+        val isEdit: Boolean = false
+    ) : AreaVerificationRoute
 
     @Serializable
     data class RequireAreaVerification(
