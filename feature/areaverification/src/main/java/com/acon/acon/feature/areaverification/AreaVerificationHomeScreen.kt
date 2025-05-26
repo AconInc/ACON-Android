@@ -26,6 +26,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.acon.acon.core.designsystem.R
@@ -34,69 +35,77 @@ import com.acon.acon.core.designsystem.innerShadow
 import com.acon.acon.core.designsystem.theme.AconTheme
 
 @Composable
-fun AreaVerificationHomeScreen() {
+internal fun AreaVerificationHomeScreen(
+    state: AreaVerificationHomeUiState,
+    route: String,
+    modifier: Modifier = Modifier,
+    onNavigateToBack: () -> Unit = {}
+) {
     val configuration = LocalConfiguration.current
     val screenHeightDp = configuration.screenHeightDp
     val offsetY = (screenHeightDp * 0.65f).dp
     val offsetBackGroundY = (screenHeightDp * 0.2f).dp
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(AconTheme.color.Gray900)
-    ) {
-        AreaVerificationHomeBackGround(
-            screenHeightDp = screenHeightDp,
-            modifier = Modifier
-                .fillMaxSize()
-                .offset {
-                    IntOffset(
-                        x = 0,
-                        y = offsetBackGroundY.roundToPx()
-                    )
-                }
-        )
-
-        Column(
-            modifier = Modifier
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Spacer(modifier = Modifier.height(offsetY))
-            Text(
-                text = "믿을 수 있는 리뷰를 위해\n 지역인증이 필요해요",
-                color = AconTheme.color.White,
-                style = AconTheme.typography.Title1,
-                textAlign = TextAlign.Center
-            )
-
-            Spacer(Modifier.height(12.dp))
-            Text(
-                text = "더 정확한 로컬맛집을 추천해드릴 수 있어요",
-                color = AconTheme.color.Gray50,
-                style = AconTheme.typography.Body1
-            )
-
-            Spacer(Modifier.weight(1f))
-            Text(
-                text = "1초만에 인증하기",
-                color = AconTheme.color.Gray500,
-                style = AconTheme.typography.Body1,
-            )
-
-            AconFilledButton(
-                onClick = {},
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 16.dp, bottom = 36.dp)
-                    .padding(horizontal = 16.dp)
+    when (state) {
+        AreaVerificationHomeUiState.Success -> {
+            Box(
+                modifier = modifier
+                    .background(AconTheme.color.Gray900)
             ) {
-                Text(
-                    text = "다음",
-                    color = AconTheme.color.White,
-                    style = AconTheme.typography.Title4,
-                    fontWeight = FontWeight.SemiBold
+                AreaVerificationHomeBackGround(
+                    screenHeightDp = screenHeightDp,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .offset {
+                            IntOffset(
+                                x = 0,
+                                y = offsetBackGroundY.roundToPx()
+                            )
+                        }
                 )
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Spacer(modifier = Modifier.height(offsetY))
+                    Text(
+                        text = "믿을 수 있는 리뷰를 위해\n 지역인증이 필요해요",
+                        color = AconTheme.color.White,
+                        style = AconTheme.typography.Title1,
+                        textAlign = TextAlign.Center
+                    )
+
+                    Spacer(Modifier.height(12.dp))
+                    Text(
+                        text = "더 정확한 로컬맛집을 추천해드릴 수 있어요",
+                        color = AconTheme.color.Gray50,
+                        style = AconTheme.typography.Body1
+                    )
+
+                    Spacer(Modifier.weight(1f))
+                    Text(
+                        text = "1초만에 인증하기",
+                        color = AconTheme.color.Gray500,
+                        style = AconTheme.typography.Body1,
+                    )
+
+                    AconFilledButton(
+                        onClick = {},
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 16.dp, bottom = 36.dp)
+                            .padding(horizontal = 16.dp)
+                    ) {
+                        Text(
+                            text = "다음",
+                            color = AconTheme.color.White,
+                            style = AconTheme.typography.Title4,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                }
             }
         }
     }
@@ -169,5 +178,16 @@ fun AreaVerificationHomeBackGround(
                 }
             }
         }
+    }
+}
+
+@Preview
+@Composable
+private fun AreaVerificationHomeScreenPreview() {
+    AconTheme {
+        AreaVerificationHomeScreen(
+            state = AreaVerificationHomeUiState.Success,
+            route = ""
+        )
     }
 }
