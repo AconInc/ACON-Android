@@ -47,7 +47,13 @@ internal fun NavGraphBuilder.profileNavigation(
                     }
                 },
                 onNavigateToSettingsScreen = { navController.navigate(SettingsRoute.Settings) },
-                onNavigateToProfileEditScreen = { navController.navigate(ProfileRoute.ProfileMod(null)) },
+                onNavigateToProfileEditScreen = {
+                    navController.navigate(
+                        ProfileRoute.ProfileMod(
+                            null
+                        )
+                    )
+                },
                 onNavigateToAreaVerificationScreen = {
                     navController.navigate(AreaVerificationRoute.RequireAreaVerification("onboarding")) {
                         popUpTo(ProfileRoute.Graph) {
@@ -67,7 +73,7 @@ internal fun NavGraphBuilder.profileNavigation(
             ProfileModScreenContainer(
                 modifier = Modifier.fillMaxSize(),
                 selectedPhotoId = selectedPhotoId,
-                backToProfile = {
+                onNavigateToBack = {
                     navController.popBackStack()
                 },
                 onClickComplete = {
