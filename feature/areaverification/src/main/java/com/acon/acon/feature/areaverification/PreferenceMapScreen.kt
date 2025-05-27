@@ -1,5 +1,6 @@
 package com.acon.acon.feature.areaverification
 
+import android.app.Activity
 import android.content.Intent
 import android.provider.Settings
 import androidx.compose.foundation.Image
@@ -7,24 +8,18 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -32,121 +27,91 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.acon.acon.core.designsystem.effect.LocalHazeState
-import com.acon.acon.core.designsystem.component.button.AconFilledLargeButton
-import com.acon.acon.core.designsystem.component.dialog.AconOneButtonDialog
-import com.acon.acon.core.designsystem.component.dialog.AconTwoButtonDialog
+import com.acon.acon.core.designsystem.component.dialog.v2.AconDefaultDialog
 import com.acon.acon.core.designsystem.component.topbar.AconTopBar
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.feature.areaverification.component.AreaVerificationBottomSheet
-import dev.chrisbanes.haze.hazeSource
-import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PreferenceMapScreen(
+internal fun PreferenceMapScreen(
     latitude: Double,
     longitude: Double,
     isEdit: Boolean,
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit = {},
-    onConfirmClick: () -> Unit = {},
     onNavigateToNext: () -> Unit = {},
-    viewModel: AreaVerificationViewModel = hiltViewModel()
+    viewModel: AreaVerificationHomeViewModel = hiltViewModel()
 ) {
     var currentLatitude by remember { mutableDoubleStateOf(latitude) }
     var currentLongitude by remember { mutableDoubleStateOf(longitude) }
 
     val context = LocalContext.current
     val state by viewModel.container.stateFlow.collectAsStateWithLifecycle()
-    val scope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
         viewModel.fetchVerifiedArea()
-        viewModel.checkGPSStatus()
+        viewModel.checkDeviceGPSStatus()
         viewModel.checkSupportLocation(context)
 
         viewModel.container.sideEffectFlow.collect { effect ->
             when (effect) {
-                is AreaVerificationSideEffect.NavigateToGPSSettings -> {
+                is AreaVerificationHomeSideEffect.NavigateToSystemLocationSettings -> {
                     val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
                     context.startActivity(intent)
                 }
-                else -> {
 
-                }
+                else -> {}
             }
         }
     }
 
-    LaunchedEffect(state.isGPSEnabled){
-        viewModel.checkGPSStatus()
+    LaunchedEffect(state.isGPSEnabled) {
+        viewModel.checkDeviceGPSStatus()
         viewModel.checkSupportLocation(context)
     }
 
-    if (state.verifiedArea != null) {
-        val sheetState = rememberModalBottomSheetState(
-            skipPartiallyExpanded = true,
-            confirmValueChange = { false }
-        )
-
-        ModalBottomSheet(
-            onDismissRequest = { },
-            containerColor = Color.Transparent,
-            dragHandle = null,
-            sheetState = sheetState,
-        ) {
-            AreaVerificationBottomSheet(
-                areaName = state.areaName,
-                onDismiss = { viewModel.resetVerifiedArea() },
-                onNavigateToNext = {
-                    amplitudeClickGoHome()
-                    scope.launch {
-                        sheetState.hide()
-                        viewModel.resetVerifiedArea()
-                        onNavigateToNext()
-                    }
-                },
-                sheetState = sheetState
-            )
-        }
-    }
-
-    if (state.showGPSDialog){
-        AconTwoButtonDialog(
+    if (state.showDeviceGPSDialog) {
+        AconDefaultDialog(
             title = stringResource(R.string.location_check_fail_dialog_title),
-            content = stringResource(R.string.location_check_fail_dialog_content),
-            leftButtonContent = stringResource(R.string.cancel_btn),
-            rightButtonContent = stringResource(R.string.settings_btn),
-            contentImage = 0,
+            action = "확인",
+            onAction = {
+                viewModel.onDeviceGPSSettingClick(context.packageName)
+            },
             onDismissRequest = {},
-            onClickLeft = {
-                viewModel.hideGPSDialog()
-            },
-            onClickRight = {
-                viewModel.onGPSSettingClick(context.packageName)
-            },
-            isImageEnabled = false
+            content = {
+                Text(
+                    text = "'Acon'에 대한 위치접근 권한이 없습니다.",
+                    style = AconTheme.typography.Title4,
+                    color = AconTheme.color.White,
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        .padding(bottom = 20.dp)
+                )
+            }
         )
     }
 
-    if (state.showLocationDialog){
-        AconOneButtonDialog(
+    if (state.showLocationDialog) {
+        AconDefaultDialog(
             title = stringResource(R.string.location_certification_failure_dialog_title),
-            content = stringResource(R.string.location_certification_failure_dialog_content),
-            buttonContent = stringResource(R.string.ok_btn),
-            contentImage = com.acon.acon.core.designsystem.R.drawable.ic_error_2_120,
+            action = "확인",
             onDismissRequest = {},
-            onClickConfirm = { viewModel.hideLocationDialog() },
-            imageSize = 104.dp,
-            isImageEnabled = true
+            onAction = { (context as? Activity)?.finishAffinity() },
+            content = {
+                Text(
+                    text = "문제가 발생했습니다.\n나중에 다시 시도해주세요.",
+                    style = AconTheme.typography.Title4,
+                    color = AconTheme.color.White,
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        .padding(bottom = 20.dp)
+                )
+            }
         )
     }
 
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(AconTheme.color.Gray9)
             .statusBarsPadding()
             .navigationBarsPadding()
     ) {
@@ -155,26 +120,29 @@ fun PreferenceMapScreen(
                 IconButton(onClick = onBackClick) {
                     Image(
                         imageVector = ImageVector.vectorResource(
-                            id = com.acon.acon.core.designsystem.R.drawable.ic_arrow_left_28
+                            id = com.acon.acon.core.designsystem.R.drawable.ic_left
                         ),
-                        contentDescription = "Back",
+                        contentDescription = "Back"
                     )
                 }
             },
             content = {
                 Text(
-                    text = stringResource(R.string.check_location_on_map),
-                    style = AconTheme.typography.head5_22_sb,
+                    text = "지역인증",
+                    style = AconTheme.typography.Title4,
                     color = AconTheme.color.White
                 )
             },
+            modifier = Modifier
+                .background(
+                    color = AconTheme.color.DimDefault.copy(alpha = 0.8f)
+                )
         )
 
         Box(
             modifier = Modifier
                 .weight(1f)
-                .hazeSource(LocalHazeState.current)
-                .fillMaxWidth()
+                .fillMaxSize()
         ) {
             LocationMapScreen(
                 onLocationObtained = { lat, lng ->
@@ -183,31 +151,21 @@ fun PreferenceMapScreen(
                 },
                 initialLatitude = latitude,
                 initialLongitude = longitude,
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
+                onClickConfirm = {
+                    if (isEdit) {
+                        viewModel.editVerifiedArea(
+                            verifiedAreaId = state.verifiedAreaList[0].verifiedAreaId,
+                            latitude = currentLatitude,
+                            longitude = currentLongitude
+                        )
+                        onNavigateToNext()
+                    } else {
+                        viewModel.verifyArea(currentLatitude, currentLongitude)
+                        onNavigateToNext()
+                    }
+                }
             )
         }
-
-        AconFilledLargeButton(
-            text = stringResource(R.string.do_verify),
-            textStyle = AconTheme.typography.head8_16_sb,
-            enabledBackgroundColor = AconTheme.color.Gray5,
-            disabledBackgroundColor = AconTheme.color.Gray8,
-            enabledTextColor = AconTheme.color.White,
-            onClick = {
-                if (isEdit) {
-                    viewModel.editVerifiedArea(
-                        verifiedAreaId = state.verifiedAreaList[0].verifiedAreaId,
-                        latitude = currentLatitude,
-                        longitude = currentLongitude
-                    )
-                } else {
-                    viewModel.verifyArea(currentLatitude, currentLongitude)
-                }
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-                .padding(top = 24.dp, bottom = 40.dp)
-        )
     }
 }
