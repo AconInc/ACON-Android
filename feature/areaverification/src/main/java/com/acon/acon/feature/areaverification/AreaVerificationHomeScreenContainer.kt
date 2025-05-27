@@ -7,7 +7,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.acon.acon.core.utils.feature.permission.checkLocationPermission
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
@@ -16,7 +17,7 @@ fun AreaVerificationHomeScreenContainer(
     route: String,
     onNextScreen: (Double, Double) -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: AreaVerificationHomeViewModel = viewModel()
+    viewModel: AreaVerificationHomeViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
     val state by viewModel.collectAsState()
@@ -24,16 +25,19 @@ fun AreaVerificationHomeScreenContainer(
     AreaVerificationHomeScreen(
         state = state,
         route = route,
-        modifier = modifier,
-        onNavigateToBack = {}
+        onPermissionSettingClick = { viewModel.onPermissionSettingClick(context.packageName) },
+        onNextButtonClick = {
+            val hasPermission = context.checkLocationPermission()
+            viewModel.updateLocationPermissionStatus(hasPermission)
+
+            if (hasPermission) { viewModel.onNextButtonClick() }
+            else { viewModel.showPermissionDialog() }
+        },
+        modifier = modifier
     )
 
     viewModel.collectSideEffect {
         when (it) {
-            is AreaVerificationHomeSideEffect.NavigateToBack -> {
-
-            }
-
             is AreaVerificationHomeSideEffect.NavigateToAppLocationSettings -> {
                 val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
                     data = Uri.fromParts("package", it.packageName, null)
