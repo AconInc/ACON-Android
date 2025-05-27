@@ -15,6 +15,7 @@
     <string name="login_btn_preview_content">button</string>
     <string name="google_login_btn_description">구글 로그인 버튼</string>
     <string name="google_login_btn_content">Google로 계속하기</string>
+    <string name="area_verification_btn_content">인증완료</string>
 
     <!-- Content Description -->
     <string name="location_content_description">위치</string>
@@ -57,6 +58,17 @@
     <string name="no_permission_title">Acon을 이용하기 위해\n 위치 권한이 필요해요</string>
     <string name="no_permission_content">설정에서 정확한 위치 권한을 허용해주세요</string>
     <string name="go_to_setting">설정으로 이동</string>
+    <string name="location_unsupported_area_title">위치 인식 실패</string>
+    <string name="location_unsupported_area_content">문제가 발생했습니다.\n나중에 다시 시도해주세요.</string>
+    <string name="location_permission_denied_title">\'Acon\'에 대한 위치접근\n권한이 없습니다.</string>
+    <string name="location_permission_denied_content">설정에서 위치접근 권한을 허용해주세요.</string>
+
+    <!-- AreaVerification -->
+    <string name="area_verification_topbar">지역인증</string>
+    <string name="area_verification_main_title">믿을 수 있는 리뷰를 위해\n지역인증이 필요해요</string>
+    <string name="area_verification_main_subtitle">더 정확한 로컬맛집을 추천해드릴 수 있어요</string>
+    <string name="area_verification_one_second_verify">1초만에 인증하기</string>
+    <string name="area_verification_popup">인증 지역은 프로필에서 수정 가능합니다.</string>
     <string name="photo_permission_title">\'Acon\'에 대해 라이브러리\n읽기\/쓰기 권한이 없습니다.</string>
     <string name="photo_permission_content">설정에서 권한을 켤 수 있습니다.</string>
     <string name="photo_permission_alert_left_btn">취소</string>

@@ -68,7 +68,7 @@ internal fun AreaVerificationHomeScreen(
                 ) {
                     Spacer(modifier = Modifier.height(offsetY))
                     Text(
-                        text = "믿을 수 있는 리뷰를 위해\n 지역인증이 필요해요",
+                        text = stringResource(R.string.area_verification_main_title),
                         color = AconTheme.color.White,
                         style = AconTheme.typography.Title1,
                         textAlign = TextAlign.Center
@@ -76,14 +76,14 @@ internal fun AreaVerificationHomeScreen(
 
                     Spacer(Modifier.height(12.dp))
                     Text(
-                        text = "더 정확한 로컬맛집을 추천해드릴 수 있어요",
+                        text = stringResource(R.string.area_verification_main_subtitle),
                         color = AconTheme.color.Gray50,
                         style = AconTheme.typography.Body1
                     )
 
                     Spacer(Modifier.weight(1f))
                     Text(
-                        text = "1초만에 인증하기",
+                        text = stringResource(R.string.area_verification_one_second_verify),
                         color = AconTheme.color.Gray500,
                         style = AconTheme.typography.Body1,
                     )
@@ -96,7 +96,7 @@ internal fun AreaVerificationHomeScreen(
                             .padding(horizontal = 16.dp)
                     ) {
                         Text(
-                            text = "다음",
+                            text = stringResource(R.string.next),
                             color = AconTheme.color.White,
                             style = AconTheme.typography.Title4,
                             fontWeight = FontWeight.SemiBold
