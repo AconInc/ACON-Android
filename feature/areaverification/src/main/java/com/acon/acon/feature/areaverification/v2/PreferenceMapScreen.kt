@@ -33,7 +33,7 @@ import com.acon.acon.core.designsystem.component.topbar.AconTopBar
 import com.acon.acon.core.designsystem.theme.AconTheme
 
 @Composable
-internal fun PreferenceMapScreen(
+fun PreferenceMapScreen(
     latitude: Double,
     longitude: Double,
     isEdit: Boolean,
