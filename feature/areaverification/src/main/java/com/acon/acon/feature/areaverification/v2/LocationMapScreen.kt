@@ -15,10 +15,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.button.v2.AconFilledButton
 import com.acon.acon.core.designsystem.component.toast.AconToastPopup
 import com.acon.acon.core.designsystem.theme.AconTheme
@@ -54,7 +56,7 @@ internal fun LocationMapScreen(
             position = LatLng(latitude, longitude)
             width = MARKER_WIDTH
             height = MARKER_HEIGHT
-            icon = OverlayImage.fromResource(com.acon.acon.core.designsystem.R.drawable.ic_mark)
+            icon = OverlayImage.fromResource(R.drawable.ic_mark)
             this.map = map
         }
     }
@@ -134,7 +136,7 @@ internal fun LocationMapScreen(
             ),
             content = {
                 Text(
-                    text = "인증 지역은 프로필에서 수정 가능합니다.",
+                    text = stringResource(R.string.area_verification_popup),
                     color = AconTheme.color.White,
                     style = AconTheme.typography.Body1,
                     textAlign = TextAlign.Center,
@@ -158,7 +160,7 @@ internal fun LocationMapScreen(
             ),
             content = {
                 Text(
-                    text = "인증완료",
+                    text = stringResource(R.string.area_verification_btn_content),
                     style = AconTheme.typography.Title4,
                     fontWeight = FontWeight.SemiBold
                 )

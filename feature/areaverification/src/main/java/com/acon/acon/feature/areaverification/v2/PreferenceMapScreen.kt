@@ -27,10 +27,10 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.dialog.v2.AconDefaultDialog
 import com.acon.acon.core.designsystem.component.topbar.AconTopBar
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.feature.areaverification.R
 
 @Composable
 internal fun PreferenceMapScreen(
@@ -72,15 +72,15 @@ internal fun PreferenceMapScreen(
 
     if (state.showDeviceGPSDialog) {
         AconDefaultDialog(
-            title = stringResource(R.string.location_check_fail_dialog_title),
-            action = "확인",
+            title = stringResource(R.string.location_permission_denied_title),
+            action = stringResource(R.string.go_to_setting),
             onAction = {
                 viewModel.onDeviceGPSSettingClick(context.packageName)
             },
             onDismissRequest = {},
             content = {
                 Text(
-                    text = "'Acon'에 대한 위치접근 권한이 없습니다.",
+                    text = stringResource(R.string.location_permission_denied_content),
                     style = AconTheme.typography.Title4,
                     color = AconTheme.color.White,
                     modifier = Modifier
@@ -93,13 +93,13 @@ internal fun PreferenceMapScreen(
 
     if (state.showLocationDialog) {
         AconDefaultDialog(
-            title = stringResource(R.string.location_certification_failure_dialog_title),
-            action = "확인",
+            title = stringResource(R.string.location_unsupported_area_title),
+            action = stringResource(R.string.ok),
             onDismissRequest = {},
             onAction = { (context as? Activity)?.finishAffinity() },
             content = {
                 Text(
-                    text = "문제가 발생했습니다.\n나중에 다시 시도해주세요.",
+                    text = stringResource(R.string.location_unsupported_area_content),
                     style = AconTheme.typography.Title4,
                     color = AconTheme.color.White,
                     modifier = Modifier
@@ -121,15 +121,15 @@ internal fun PreferenceMapScreen(
                 IconButton(onClick = onBackClick) {
                     Image(
                         imageVector = ImageVector.vectorResource(
-                            id = com.acon.acon.core.designsystem.R.drawable.ic_left
+                            id = R.drawable.ic_left
                         ),
-                        contentDescription = "Back"
+                        contentDescription = stringResource(R.string.back)
                     )
                 }
             },
             content = {
                 Text(
-                    text = "지역인증",
+                    text = stringResource(R.string.area_verification_topbar),
                     style = AconTheme.typography.Title4,
                     color = AconTheme.color.White
                 )
