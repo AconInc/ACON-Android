@@ -8,9 +8,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.toRoute
 import com.acon.acon.feature.SettingsRoute
-import com.acon.acon.feature.areaverification.AreaVerificationHomeScreenContainer
 import com.acon.acon.feature.areaverification.AreaVerificationRoute
-import com.acon.acon.feature.areaverification.PreferenceMapScreen
+import com.acon.acon.feature.areaverification.v2.AreaVerificationHomeScreenContainer
+import com.acon.acon.feature.areaverification.v2.PreferenceMapScreen
 import com.acon.acon.feature.onboarding.OnboardingRoute
 
 fun NavGraphBuilder.areaVerificationNavigation(

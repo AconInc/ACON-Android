@@ -1,4 +1,4 @@
-package com.acon.acon.feature.areaverification
+package com.acon.acon.feature.areaverification.v2
 
 import android.location.Location
 import android.view.Gravity

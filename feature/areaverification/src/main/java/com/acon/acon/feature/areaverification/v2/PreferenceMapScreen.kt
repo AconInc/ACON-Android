@@ -1,4 +1,4 @@
-package com.acon.acon.feature.areaverification
+package com.acon.acon.feature.areaverification.v2
 
 import android.app.Activity
 import android.content.Intent
@@ -30,6 +30,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.acon.acon.core.designsystem.component.dialog.v2.AconDefaultDialog
 import com.acon.acon.core.designsystem.component.topbar.AconTopBar
 import com.acon.acon.core.designsystem.theme.AconTheme
+import com.acon.acon.feature.areaverification.R
 
 @Composable
 internal fun PreferenceMapScreen(
