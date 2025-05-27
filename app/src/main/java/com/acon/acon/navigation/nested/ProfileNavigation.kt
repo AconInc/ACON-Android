@@ -73,7 +73,7 @@ internal fun NavGraphBuilder.profileNavigation(
             ProfileModScreenContainer(
                 modifier = Modifier.fillMaxSize(),
                 selectedPhotoId = selectedPhotoId,
-                backToProfile = {
+                onNavigateToBack = {
                     navController.popBackStack()
                 },
                 onClickComplete = {

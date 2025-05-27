@@ -39,6 +39,7 @@ import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.core.designsystem.theme.AconTheme.color
 import com.acon.acon.feature.profile.composable.type.FocusType
+import com.acon.acon.feature.profile.composable.type.TextFieldStatus
 
 @Composable
 fun ProfileTextField(
@@ -146,15 +147,6 @@ fun ProfileTextField(
             }
         }
     }
-}
-
-sealed interface TextFieldStatus {
-    data object Empty : TextFieldStatus
-    data object Inactive : TextFieldStatus
-    data object Focused : TextFieldStatus
-    data object Active : TextFieldStatus
-    data object Error : TextFieldStatus
-    data object Disabled : TextFieldStatus
 }
 
 fun Modifier.addFocusCleaner(focusManager: FocusManager, doOnClear: () -> Unit = {}): Modifier {
