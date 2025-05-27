@@ -44,7 +44,9 @@ fun AconChip(
     }
 
     val displayContainerColor = if (enabled) {
-        containerColor
+        if (isSelected)
+            AconTheme.color.GlassWhiteSelected
+        else containerColor
     } else {
         AconTheme.color.GlassWhiteLight
     }
