@@ -1,4 +1,4 @@
-package com.acon.acon.feature.areaverification
+package com.acon.acon.feature.areaverification.v2
 
 import android.Manifest
 import android.app.Application
@@ -10,6 +10,8 @@ import com.acon.acon.core.utils.feature.base.BaseContainerHost
 import com.acon.acon.domain.model.area.Area
 import com.acon.acon.domain.repository.AreaVerificationRepository
 import com.acon.acon.domain.repository.TokenRepository
+import com.acon.acon.feature.areaverification.amplitudeClickNext
+import com.acon.acon.feature.areaverification.amplitudeCompleteArea
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import dagger.hilt.android.lifecycle.HiltViewModel
