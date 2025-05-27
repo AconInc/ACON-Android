@@ -10,7 +10,6 @@ import androidx.navigation.toRoute
 import com.acon.acon.feature.SettingsRoute
 import com.acon.acon.feature.areaverification.AreaVerificationHomeScreenContainer
 import com.acon.acon.feature.areaverification.AreaVerificationRoute
-import com.acon.acon.feature.areaverification.AreaVerificationScreenContainer
 import com.acon.acon.feature.areaverification.PreferenceMapScreen
 import com.acon.acon.feature.onboarding.OnboardingRoute
 
@@ -42,45 +41,6 @@ fun NavGraphBuilder.areaVerificationNavigation(
                     )
                 },
             )
-
-        }
-
-        composable<AreaVerificationRoute.RequireAreaVerification> { backStackEntry ->
-
-            val routeData = backStackEntry.arguments?.let {
-                AreaVerificationRoute.AreaVerificationHome(
-                    route = it.getString("route"),
-                    isEdit = it.getBoolean("isEdit", false)
-                )
-            }
-
-            AreaVerificationScreenContainer(
-                modifier = Modifier.fillMaxSize(),
-                route = routeData?.route ?: "onboarding",
-                onNewAreaClick = { latitude, longitude ->
-                    navController.navigate(
-                        AreaVerificationRoute.CheckInMap(
-                            latitude = latitude,
-                            longitude = longitude,
-                            route = routeData?.route,
-                            isEdit = routeData?.isEdit ?: false
-                        )
-                    )
-                },
-                onNextScreen = { latitude, longitude ->
-                    navController.navigate(
-                        AreaVerificationRoute.CheckInMap(
-                            latitude = latitude,
-                            longitude = longitude,
-                            route = routeData?.route,
-                            isEdit = routeData?.isEdit ?: false
-                        )
-                    )
-                },
-                onNavigateBack = {
-                    navController.popBackStack()
-                }
-            )
         }
 
         composable<AreaVerificationRoute.CheckInMap> { backStackEntry ->
@@ -90,9 +50,6 @@ fun NavGraphBuilder.areaVerificationNavigation(
                 latitude = route.latitude,
                 longitude = route.longitude,
                 isEdit = route.isEdit,
-                onConfirmClick = {
-                    navController.navigate(AreaVerificationRoute.Complete)
-                },
                 onNavigateToNext = {
                     if (route.route == "settings") {
                         navController.navigate(SettingsRoute.LocalVerification) {
