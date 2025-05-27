@@ -8,7 +8,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.IconButton
@@ -33,7 +32,7 @@ import com.acon.acon.core.designsystem.component.topbar.AconTopBar
 import com.acon.acon.core.designsystem.theme.AconTheme
 
 @Composable
-internal fun PreferenceMapScreen(
+fun PreferenceMapScreen(
     latitude: Double,
     longitude: Double,
     isEdit: Boolean,
@@ -114,7 +113,6 @@ internal fun PreferenceMapScreen(
         modifier = modifier
             .fillMaxSize()
             .statusBarsPadding()
-            .navigationBarsPadding()
     ) {
         AconTopBar(
             leadingIcon = {
