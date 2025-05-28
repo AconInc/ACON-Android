@@ -113,6 +113,7 @@ class AreaVerificationHomeViewModel @Inject constructor(
                         }
                         .onFailure { deleteError ->
                             reduce { state.copy(error = deleteError.message) }
+                            // TODO - 네트워크에러
                         }
                 } else {
                     reduce {
@@ -130,6 +131,7 @@ class AreaVerificationHomeViewModel @Inject constructor(
                         error = throwable.message
                     )
                 }
+                // TODO - 네트워크에러
             }
     }
 
@@ -191,6 +193,7 @@ class AreaVerificationHomeViewModel @Inject constructor(
                         error = throwable.message,
                     )
                 }
+                // TODO - 네트워크에러
             }
     }
 
