@@ -90,7 +90,6 @@ fun AconNavigation(
     CompositionLocalProvider(LocalHazeState provides hazeState) {
         if (showLoginBottomSheet) {
             LoginBottomSheet(
-                hazeState = LocalHazeState.current,
                 onDismissRequest = { showLoginBottomSheet = false },
                 onGoogleSignIn = {
                     coroutineScope.launch {
