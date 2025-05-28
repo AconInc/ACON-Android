@@ -1,4 +1,4 @@
-package com.acon.acon.feature.areaverification.v2
+package com.acon.acon.feature.areaverification.composable
 
 import android.Manifest
 import android.app.Application
@@ -9,8 +9,8 @@ import androidx.core.app.ActivityCompat
 import com.acon.acon.core.utils.feature.base.BaseContainerHost
 import com.acon.acon.domain.model.area.Area
 import com.acon.acon.domain.repository.AreaVerificationRepository
-import com.acon.acon.feature.areaverification.amplitudeClickNext
-import com.acon.acon.feature.areaverification.amplitudeCompleteArea
+import com.acon.acon.feature.areaverification.amplitude.amplitudeClickNext
+import com.acon.acon.feature.areaverification.amplitude.amplitudeCompleteArea
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,7 +19,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
-class AreaVerificationHomeViewModel @Inject constructor(
+class AreaVerificationViewModel @Inject constructor(
     private val application: Application,
     private val areaVerificationRepository: AreaVerificationRepository
 ) : BaseContainerHost<AreaVerificationHomeUiState, AreaVerificationHomeSideEffect>() {

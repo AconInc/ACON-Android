@@ -1,4 +1,4 @@
-package com.acon.acon.feature.areaverification.v2
+package com.acon.acon.feature.areaverification.composable
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,7 +29,7 @@ import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.core.utils.feature.action.BackOnPressed
 
 @Composable
-internal fun AreaVerificationHomeScreen(
+internal fun AreaVerificationScreen(
     state: AreaVerificationHomeUiState,
     route: String,
     onNextButtonClick: () -> Unit,
@@ -112,7 +112,7 @@ internal fun AreaVerificationHomeScreen(
 @Composable
 private fun AreaVerificationHomeScreenPreview() {
     AconTheme {
-        AreaVerificationHomeScreen(
+        AreaVerificationScreen(
             state = AreaVerificationHomeUiState(),
             route = "",
             onPermissionSettingClick = {},
