@@ -38,9 +38,10 @@ class ProfileModViewModel @Inject constructor(
 
     private var nicknameValidationJob: Job? = null
 
-    override val container = container<ProfileModState, ProfileModSideEffect>(ProfileModState.Loading) {
-        fetchUserProfileInfo()
-    }
+    override val container =
+        container<ProfileModState, ProfileModSideEffect>(ProfileModState.Loading) {
+            fetchUserProfileInfo()
+        }
 
     fun onFocusChanged(isFocused: Boolean, field: FocusType) = intent {
         runOn<ProfileModState.Success> {
@@ -165,6 +166,7 @@ class ProfileModViewModel @Inject constructor(
                         )
                     }
                 }
+
                 limitedDigits.length < 8 -> {
                     reduce {
                         state.copy(
@@ -175,6 +177,7 @@ class ProfileModViewModel @Inject constructor(
                         )
                     }
                 }
+
                 limitedDigits.length == 8 -> {
                     val isValid = validateBirthday(limitedDigits)
                     reduce {
@@ -337,70 +340,72 @@ class ProfileModViewModel @Inject constructor(
         }
     }
 
-    private fun putPhotoToPreSignedUrl(nickname: String, imageUri: Uri, preSignedUrl: String) = intent {
-        runOn<ProfileModState.Success> {
-            val context = getApplication<Application>().applicationContext
-            val client = OkHttpClient()
+    private fun putPhotoToPreSignedUrl(nickname: String, imageUri: Uri, preSignedUrl: String) =
+        intent {
+            runOn<ProfileModState.Success> {
+                val context = getApplication<Application>().applicationContext
+                val client = OkHttpClient()
 
-            try {
-                val byteArray: ByteArray
-                val mimeType: String
+                try {
+                    val byteArray: ByteArray
+                    val mimeType: String
 
-                if (state.selectedPhotoUri.startsWith("content://")) {
-                    val inputStream = context.contentResolver.openInputStream(imageUri)
-                    byteArray = inputStream?.readBytes()
-                        ?: throw IllegalArgumentException("Failed to read image")
-                    mimeType = context.contentResolver.getType(imageUri) ?: "image/jpeg"
+                    if (state.selectedPhotoUri.startsWith("content://")) {
+                        val inputStream = context.contentResolver.openInputStream(imageUri)
+                        byteArray = inputStream?.readBytes()
+                            ?: throw IllegalArgumentException("Failed to read image")
+                        mimeType = context.contentResolver.getType(imageUri) ?: "image/jpeg"
 
-                } else if (state.selectedPhotoUri.startsWith("http://") || state.selectedPhotoUri.startsWith(
-                        "https://"
-                    )
-                ) {
-                    val getRequest = Request.Builder().url(imageUri.toString()).build()
-                    val getResponse = client.newCall(getRequest).execute()
-
-                    if (!getResponse.isSuccessful) {
-                        throw IllegalArgumentException("Failed to fetch remote image")
-                    }
-
-                    byteArray = getResponse.body?.bytes()
-                        ?: throw IllegalArgumentException("Failed to read remote image")
-                    mimeType = getResponse.header("Content-Type") ?: "image/jpeg"
-
-                } else {
-                    throw IllegalArgumentException("Unsupported URI scheme")
-                }
-
-                val fileBody = RequestBody.create(mimeType.toMediaTypeOrNull(), byteArray)
-
-                val request = Request.Builder()
-                    .url(preSignedUrl)
-                    .put(fileBody)
-                    .addHeader("Content-Type", mimeType)
-                    .build()
-
-                val response = client.newCall(request).execute()
-
-                if (response.isSuccessful) {
-                    if (state.birthdayValidationStatus == BirthdayValidationStatus.Valid) {
-                        updateProfile(
-                            fileName = state.uploadFileName,
-                            nickname = nickname,
-                            birthday = state.birthdayTextFieldValue.text
+                    } else if (state.selectedPhotoUri.startsWith("http://") || state.selectedPhotoUri.startsWith(
+                            "https://"
                         )
+                    ) {
+                        val getRequest = Request.Builder().url(imageUri.toString()).build()
+                        val getResponse = client.newCall(getRequest).execute()
+
+                        if (!getResponse.isSuccessful) {
+                            throw IllegalArgumentException("Failed to fetch remote image")
+                        }
+
+                        byteArray = getResponse.body?.bytes()
+                            ?: throw IllegalArgumentException("Failed to read remote image")
+                        mimeType = getResponse.header("Content-Type") ?: "image/jpeg"
+
                     } else {
-                        updateProfile(
-                            fileName = state.uploadFileName,
-                            nickname = nickname,
-                            birthday = null
-                        )
+                        throw IllegalArgumentException("Unsupported URI scheme")
                     }
-                } else {
-                    // PUT 실패 시 에러 처리
+
+                    val fileBody = RequestBody.create(mimeType.toMediaTypeOrNull(), byteArray)
+
+                    val request = Request.Builder()
+                        .url(preSignedUrl)
+                        .put(fileBody)
+                        .addHeader("Content-Type", mimeType)
+                        .build()
+
+                    val response = client.newCall(request).execute()
+
+                    if (response.isSuccessful) {
+                        if (state.birthdayValidationStatus == BirthdayValidationStatus.Valid) {
+                            updateProfile(
+                                fileName = state.uploadFileName,
+                                nickname = nickname,
+                                birthday = state.birthdayTextFieldValue.text
+                            )
+                        } else {
+                            updateProfile(
+                                fileName = state.uploadFileName,
+                                nickname = nickname,
+                                birthday = null
+                            )
+                        }
+                    } else {
+                        // PUT 실패 시 에러 처리
+                    }
+                } catch (e: Exception) {
                 }
-            } catch (e: Exception) { }
+            }
         }
-    }
 
     private fun updateProfile(fileName: String, nickname: String, birthday: String?) = intent {
         profileRepository.updateProfile(fileName, nickname, birthday)
@@ -437,7 +442,23 @@ sealed interface ProfileModState {
         val requestPhotoPermission: Boolean = false,
         val showPermissionDialog: Boolean = false,
         val showPhotoEditModal: Boolean = false,
-    ): ProfileModState
+    ) : ProfileModState {
+        val isEditButtonEnabled: Boolean
+            get() {
+                val isProfileImageChanged = when {
+                    selectedPhotoUri.contains("basic_profile_image") &&
+                            fetchedPhotoUri.contains("basic_profile_image") -> false
+                    selectedPhotoUri.isNotEmpty() && selectedPhotoUri != fetchedPhotoUri -> true
+                    else -> false
+                }
+                val isBirthValid = fetchedBirthday.isNotEmpty() && birthdayTextFieldValue.text.isEmpty()
+                val isContentValid = nicknameValidationStatus == NicknameValidationStatus.Valid &&
+                        (birthdayTextFieldValue.text.isEmpty() ||
+                                birthdayValidationStatus == BirthdayValidationStatus.Valid)
+
+                return isProfileImageChanged || isBirthValid || (isEdited && isContentValid)
+            }
+    }
 
     data object Loading : ProfileModState
     data object LoadFailed : ProfileModState
