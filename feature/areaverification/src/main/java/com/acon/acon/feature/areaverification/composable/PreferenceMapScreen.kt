@@ -8,6 +8,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.IconButton
@@ -121,6 +122,7 @@ fun PreferenceMapScreen(
                 color = AconTheme.color.DimDefault.copy(alpha = 0.8f)
             )
             .statusBarsPadding()
+            .navigationBarsPadding()
             .fillMaxSize()
     ) {
         AconTopBar(
