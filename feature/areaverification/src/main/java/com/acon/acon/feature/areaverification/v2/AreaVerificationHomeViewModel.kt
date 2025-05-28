@@ -9,7 +9,6 @@ import androidx.core.app.ActivityCompat
 import com.acon.acon.core.utils.feature.base.BaseContainerHost
 import com.acon.acon.domain.model.area.Area
 import com.acon.acon.domain.repository.AreaVerificationRepository
-import com.acon.acon.domain.repository.TokenRepository
 import com.acon.acon.feature.areaverification.amplitudeClickNext
 import com.acon.acon.feature.areaverification.amplitudeCompleteArea
 import com.google.android.gms.location.LocationServices
@@ -22,14 +21,12 @@ import javax.inject.Inject
 @HiltViewModel
 class AreaVerificationHomeViewModel @Inject constructor(
     private val application: Application,
-    private val tokenRepository: TokenRepository,
     private val areaVerificationRepository: AreaVerificationRepository
 ) : BaseContainerHost<AreaVerificationHomeUiState, AreaVerificationHomeSideEffect>() {
 
     override val container = container<AreaVerificationHomeUiState, AreaVerificationHomeSideEffect>(
         AreaVerificationHomeUiState()
     ) {
-        fetchVerifiedArea()
         checkDeviceGPSStatus()
     }
 
@@ -91,31 +88,28 @@ class AreaVerificationHomeViewModel @Inject constructor(
         }
     }
 
-    fun fetchVerifiedArea() = intent {
-        areaVerificationRepository.fetchVerifiedAreaList()
-            .onSuccess { verifiedAreaList ->
-                reduce {
-                    state.copy(verifiedAreaList = verifiedAreaList)
-                }
-            }
-            .onFailure {
-
-            }
-    }
-
-    fun editVerifiedArea(verifiedAreaId: Long, latitude: Double, longitude: Double) = intent {
+    fun editVerifiedArea(latitude: Double, longitude: Double) = intent {
         reduce {
             state.copy(
                 error = null
             )
         }
 
+        val verifiedAreaList =
+            areaVerificationRepository.fetchVerifiedAreaList().getOrElse { emptyList() }
+        val verifiedAreaId = verifiedAreaList[0].verifiedAreaId
+
         areaVerificationRepository.verifyArea(latitude, longitude)
             .onSuccess { newVerifiedArea ->
-                if (state.verifiedAreaList[0].verifiedAreaId != newVerifiedArea.verifiedAreaId) {
+                if (verifiedAreaId != newVerifiedArea.verifiedAreaId) {
                     areaVerificationRepository.deleteVerifiedArea(verifiedAreaId)
                         .onSuccess {
-                            reduce { state.copy(verifiedArea = newVerifiedArea) }
+                            reduce {
+                                state.copy(
+                                    verifiedArea = newVerifiedArea,
+                                    isVerifySuccess = true
+                                )
+                            }
                         }
                         .onFailure { deleteError ->
                             reduce { state.copy(error = deleteError.message) }
@@ -123,7 +117,8 @@ class AreaVerificationHomeViewModel @Inject constructor(
                 } else {
                     reduce {
                         state.copy(
-                            verifiedArea = newVerifiedArea
+                            verifiedArea = newVerifiedArea,
+                            isVerifySuccess = true
                         )
                     }
                 }
@@ -181,17 +176,16 @@ class AreaVerificationHomeViewModel @Inject constructor(
 
         areaVerificationRepository.verifyArea(latitude, longitude)
             .onSuccess { area ->
-                tokenRepository.saveAreaVerification(true)
                 reduce {
                     state.copy(
                         verifiedArea = area,
-                        areaName = area.name
+                        areaName = area.name,
+                        isVerifySuccess = true
                     )
                 }
                 amplitudeCompleteArea()
             }
             .onFailure { throwable ->
-                tokenRepository.saveAreaVerification(false)
                 reduce {
                     state.copy(
                         error = throwable.message,
@@ -213,6 +207,7 @@ data class AreaVerificationHomeUiState(
     val showLocationDialog: Boolean = false,
     val latitude: Double = 0.0,
     val longitude: Double = 0.0,
+    val isVerifySuccess: Boolean = false,
     val verifiedArea: Area? = null,
     val verifiedAreaList: List<Area> = emptyList(),
     val areaName: String = "",
