@@ -133,7 +133,6 @@ internal fun SpotListScreen(
                 val scope = rememberCoroutineScope()
                 if(state.showLoginModal) {
                     LoginBottomSheet(
-                        hazeState = LocalHazeState.current,
                         onDismissRequest = onGuestModalDismissRequest,
                         onGoogleSignIn = {
                             scope.launch {
