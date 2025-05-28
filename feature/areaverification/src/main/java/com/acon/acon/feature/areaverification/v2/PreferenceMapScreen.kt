@@ -111,8 +111,11 @@ fun PreferenceMapScreen(
 
     Column(
         modifier = modifier
-            .fillMaxSize()
+            .background(
+                color = AconTheme.color.DimDefault.copy(alpha = 0.8f)
+            )
             .statusBarsPadding()
+            .fillMaxSize()
     ) {
         AconTopBar(
             leadingIcon = {
