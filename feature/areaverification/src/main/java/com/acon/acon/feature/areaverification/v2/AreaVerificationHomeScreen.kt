@@ -47,7 +47,7 @@ internal fun AreaVerificationHomeScreen(
         )
     }
 
-    if(route != stringResource(com.acon.acon.feature.areaverification.R.string.area_verification_settings)) {
+    if (route != stringResource(R.string.area_verification_settings)) {
         BackOnPressed(context)
     }
 
