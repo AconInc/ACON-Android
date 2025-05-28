@@ -48,7 +48,7 @@ fun PreferenceMapScreen(
     val state by viewModel.container.stateFlow.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
-        viewModel.fetchVerifiedArea()
+        //viewModel.fetchVerifiedArea()
         viewModel.checkDeviceGPSStatus()
         viewModel.checkSupportLocation(context)
 
@@ -67,6 +67,12 @@ fun PreferenceMapScreen(
     LaunchedEffect(state.isGPSEnabled) {
         viewModel.checkDeviceGPSStatus()
         viewModel.checkSupportLocation(context)
+    }
+
+    LaunchedEffect(state.isVerifySuccess) {
+        if (state.isVerifySuccess) {
+            onNavigateToNext()
+        }
     }
 
     if (state.showDeviceGPSDialog) {
@@ -157,14 +163,11 @@ fun PreferenceMapScreen(
                 onClickConfirm = {
                     if (isEdit) {
                         viewModel.editVerifiedArea(
-                            verifiedAreaId = state.verifiedAreaList[0].verifiedAreaId,
                             latitude = currentLatitude,
                             longitude = currentLongitude
                         )
-                        onNavigateToNext()
                     } else {
                         viewModel.verifyArea(currentLatitude, currentLongitude)
-                        onNavigateToNext()
                     }
                 }
             )
