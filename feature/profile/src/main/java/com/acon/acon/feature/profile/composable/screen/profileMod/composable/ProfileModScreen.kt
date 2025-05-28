@@ -39,13 +39,13 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.button.AconFilledLargeButton
-import com.acon.acon.core.designsystem.component.dialog.AconTwoButtonDialog
+import com.acon.acon.core.designsystem.component.dialog.v2.AconTwoActionDialog
 import com.acon.acon.core.designsystem.component.topbar.AconTopBar
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.core.utils.feature.permission.CheckAndRequestPhotoPermission
-import com.acon.acon.feature.profile.R
 import com.acon.acon.feature.profile.composable.component.CustomModalBottomSheet
 import com.acon.acon.feature.profile.composable.component.NicknameErrMessageRow
 import com.acon.acon.feature.profile.composable.component.ProfilePhotoBox
@@ -137,37 +137,39 @@ internal fun ProfileModScreen(
             }
 
             if (state.showExitDialog) {
-                AconTwoButtonDialog(
-                    title = stringResource(R.string.profile_mod_alert_title),
-                    content = stringResource(R.string.profile_mod_alert_description),
-                    leftButtonContent = stringResource(R.string.profile_mod_alert_left_btn),
-                    rightButtonContent = stringResource(R.string.profile_mod_alert_right_btn),
-                    contentImage = 0,
+                AconTwoActionDialog(
+                    title = stringResource(R.string.profile_mod_exit_title),
+                    action1 = stringResource(R.string.continue_writing),
+                    action2 = stringResource(R.string.exit),
                     onDismissRequest = {
                         onRequestExitDialog()
                     },
-                    onClickLeft = {
-                        navigateToBack()
-                    },
-                    onClickRight = {
+                    onAction1 = {
                         onDisMissExitDialog()
                     },
-                    isImageEnabled = false
+                    onAction2 = {
+                        navigateToBack()
+                    }
                 )
             }
 
             if (state.showPermissionDialog) {
-                AconTwoButtonDialog(
-                    title = stringResource(R.string.photo_permission_alert_title),
-                    content = stringResource(R.string.photo_permission_alert_subtitle),
-                    leftButtonContent = stringResource(R.string.photo_permission_alert_left_btn),
-                    rightButtonContent = stringResource(R.string.photo_permission_alert_right_btn),
-                    contentImage = 0,
+                AconTwoActionDialog(
+                    title = stringResource(R.string.photo_permission_title),
+                    action1 = stringResource(R.string.photo_permission_alert_left_btn),
+                    action2 = stringResource(R.string.photo_permission_alert_right_btn),
                     onDismissRequest = { onDisMissPermissionDialog() },
-                    onClickLeft = { onDisMissPermissionDialog() },
-                    onClickRight = { moveToSettings(context.packageName) },
-                    isImageEnabled = false
-                )
+                    onAction1 = { onDisMissPermissionDialog() },
+                    onAction2 = { moveToSettings(context.packageName) },
+                ) {
+                    Text(
+                        text = stringResource(R.string.photo_permission_content),
+                        color = AconTheme.color.Gray200,
+                        style = AconTheme.typography.Body1,
+                        maxLines = 1,
+                        modifier = Modifier.padding(bottom = 20.dp)
+                    )
+                }
             }
 
             if (state.showPhotoEditModal) {
@@ -181,7 +183,7 @@ internal fun ProfileModScreen(
             Column(
                 modifier = modifier
                     .fillMaxSize()
-                    .background(color = AconTheme.color.Gray9)
+                    .background(color = AconTheme.color.Gray900)
                     .statusBarsPadding()
                     .navigationBarsPadding()
                     .addFocusCleaner(focusManager),
@@ -194,7 +196,7 @@ internal fun ProfileModScreen(
                         ) {
                             Image(
                                 imageVector = ImageVector.vectorResource(id = com.acon.acon.core.designsystem.R.drawable.ic_arrow_left_28),
-                                contentDescription = stringResource(R.string.content_description_back),
+                                contentDescription = stringResource(R.string.back),
                             )
                         }
                     },
@@ -403,7 +405,7 @@ internal fun ProfileModScreen(
                     modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 10.dp)
                 ) {
                     AconFilledLargeButton(
-                        text = stringResource(R.string.save_btn),
+                        text = stringResource(R.string.save),
                         textStyle = AconTheme.typography.head8_16_sb,
                         modifier = Modifier
                             .fillMaxWidth()
