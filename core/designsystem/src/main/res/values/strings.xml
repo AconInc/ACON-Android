@@ -6,6 +6,9 @@
     <string name="cancel">취소</string>
     <string name="ok">확인</string>
     <string name="done">완료</string>
+    <string name="exit">나가기</string>
+    <string name="save">저장</string>
+    <string name="continue_writing">계속 작성</string>
 
     <!-- Button component -->
     <string name="login_btn_preview_content">button</string>
@@ -25,12 +28,22 @@
     <string name="no_store_background_image_content_description">가게 사진 없음</string>
     <string name="btn_next_image_content_description">다음 메뉴판 사진</string>
     <string name="btn_previous_background_image_content_description">이전 메뉴판 사진</string>
+    <string name="content_description_your_acon_count">보유한 도토리 수</string>
+    <string name="content_description_my_verified_neighborhood">나의 인증 동네</string>
+    <string name="content_description_photo">사진</string>
+    <string name="content_description_thumbnail">앨범 대표 이미지</string>
+    <string name="content_description_profile_image">프로필 이미지</string>
+    <string name="content_description_select_profile_image">선택한 프로필 사진</string>
+    <string name="content_description_default_profile_image">기본 프로필 이미지</string>
+    <string name="content_description_edit_profile">프로필 수정</string>
+    <string name="content_description_settings">설정 화면 이동</string>
+    <string name="content_description_go_login">로그인 창으로 이동</string>
 
     <!-- login BottomSheet -->
-    <string name="login_bottom_sheet_title">acon에 로그인</string>
+    <string name="login_bottom_sheet_title">Acon에 로그인</string>
     <string name="login_bottom_sheet_content">지금 당신의 위치에서\n 최고의 맛집을 추천받아보세요</string>
     <string name="login_bottom_sheet_google_login">Google로 계속하기</string>
-    <string name="login_bottom_sheet_policy_agreement">가입을 진행할 경우,\n아래의 정책에 대해 동의한 것으로 간주합니다.</string>
+    <string name="login_bottom_sheet_policy_agreement">가입을 진행할 경우,아래의 정책에 대해 동의한 것으로 간주합니다.</string>
     <string name="login_bottom_sheet_term_of_use">이용약관</string>
     <string name="login_bottom_sheet_private_policy">개인정보처리방침</string>
 
@@ -38,6 +51,16 @@
     <string name="no_permission_title">Acon을 이용하기 위해\n 위치 권한이 필요해요</string>
     <string name="no_permission_content">설정에서 정확한 위치 권한을 허용해주세요</string>
     <string name="go_to_setting">설정으로 이동</string>
+    <string name="photo_permission_title">\'Acon\'에 대해 라이브러리\n읽기\/쓰기 권한이 없습니다.</string>
+    <string name="photo_permission_content">설정에서 권한을 켤 수 있습니다.</string>
+    <string name="photo_permission_alert_left_btn">취소</string>
+    <string name="photo_permission_alert_right_btn">설정으로 가기</string>
+    <string name="profile_mod_exit_title">변경사항이 저장되지 않았습니다.</string>
+    <string name="profile_mod_exit_content">지금 나가면 변경한 내용이 삭제돼요</string>
+
+    <string name="delete_area_alert_title">\'%s\'을 삭제할까요?</string>
+    <string name="delete_area_alert_left_btn">취소</string>
+    <string name="delete_area_alert_right_btn">삭제하기</string>
 
     <!-- SpotList -->
     <string name="dotori_count_content_description">도토리 개수</string>
@@ -126,6 +149,27 @@
     <string name="user_choose_none">모든 음식을 잘 드시는 분이군요!</string>
     <string name="user_choose_dislike_food">확인했어요! 센스있게 추천해드릴게요</string>
     <string name="start">시작하기</string>
+
+    <!-- Profile -->
+    <string name="profile_topbar">프로필</string>
+    <string name="profile_edit_topbar">프로필 편집</string>
+    <string name="edit_profile">프로필 수정하기</string>
+    <string name="star">*</string>
+    <string name="nickname_textfield_title">닉네임</string>
+    <string name="nickname_birthday_title">생년월일</string>
+    <string name="nickname_textfield_placeholder">닉네임을 입력해주세요</string>
+    <string name="birthday_textfield_placeholder">2025.01.01</string>
+    <string name="nickname_textfield_guide">16자 이내 영문, 한글, 숫자, 밑줄 및 마침표만 포함 가능하며 1자 이상 16자 이하로 입력해주세요.</string>
+    <string name="upload_photo_from_album">앨범에서 사진 업로드</string>
+    <string name="set_default_profile_image">기본 이미지로 변경</string>
+    <string name="you_need_login">로그인이 필요해요</string>
+
+    <!-- 진행 중 -->
+    <string name="my_album">나의 앨범</string>
+    <string name="nickname_error_msg_input_nickname">닉네임을 입력해 주세요</string>
+    <string name="nickname_vaild_msg_available_nickname">닉네임을 입력해 주세요</string>
+    <string name="snackbar_profile_save_success">프로필이 저장되었습니다!</string>
+    <string name="default_album_photo_count">나의 앨범</string>
 
     <!-- setting -->
     <string name="settings_screen_topbar">설정</string>
