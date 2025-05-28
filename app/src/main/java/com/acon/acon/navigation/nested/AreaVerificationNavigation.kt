@@ -9,8 +9,8 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.toRoute
 import com.acon.acon.feature.SettingsRoute
 import com.acon.acon.feature.areaverification.AreaVerificationRoute
-import com.acon.acon.feature.areaverification.v2.AreaVerificationHomeScreenContainer
-import com.acon.acon.feature.areaverification.v2.PreferenceMapScreen
+import com.acon.acon.feature.areaverification.composable.AreaVerificationScreenContainer
+import com.acon.acon.feature.areaverification.composable.PreferenceMapScreen
 import com.acon.acon.feature.onboarding.OnboardingRoute
 
 fun NavGraphBuilder.areaVerificationNavigation(
@@ -27,7 +27,7 @@ fun NavGraphBuilder.areaVerificationNavigation(
                 )
             }
 
-            AreaVerificationHomeScreenContainer(
+            AreaVerificationScreenContainer(
                 modifier = Modifier.fillMaxSize(),
                 route = routeData?.route ?: "onboarding",
                 onNextScreen = { latitude, longitude ->

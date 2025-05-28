@@ -1,4 +1,4 @@
-package com.acon.acon.feature.areaverification.v2
+package com.acon.acon.feature.areaverification.composable
 
 import android.app.Activity
 import android.content.Intent
@@ -39,7 +39,7 @@ fun PreferenceMapScreen(
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit = {},
     onNavigateToNext: () -> Unit = {},
-    viewModel: AreaVerificationHomeViewModel = hiltViewModel()
+    viewModel: AreaVerificationViewModel = hiltViewModel()
 ) {
     var currentLatitude by remember { mutableDoubleStateOf(latitude) }
     var currentLongitude by remember { mutableDoubleStateOf(longitude) }
