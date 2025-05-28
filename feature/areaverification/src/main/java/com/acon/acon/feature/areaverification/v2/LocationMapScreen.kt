@@ -1,7 +1,6 @@
 package com.acon.acon.feature.areaverification.v2
 
 import android.location.Location
-import android.view.Gravity
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -35,7 +34,7 @@ import com.naver.maps.map.overlay.OverlayImage
 
 private const val ZOOM = 20.0
 private const val MARKER_WIDTH = 240
-private const val MARKER_HEIGHT= 240
+private const val MARKER_HEIGHT = 240
 
 @Composable
 internal fun LocationMapScreen(
@@ -100,8 +99,7 @@ internal fun LocationMapScreen(
                             isZoomControlEnabled = false
                             isCompassEnabled = false
                             isScaleBarEnabled = false
-                            logoGravity = Gravity.TOP or Gravity.END
-                            setLogoMargin(0, (24 * density).toInt(), (16 * density).toInt(), 0)
+                            setLogoMargin((20 * density).toInt(), 0, 0, (100 * density).toInt())
                         }
 
                         if (initialLatitude != 0.0 && initialLongitude != 0.0) {
