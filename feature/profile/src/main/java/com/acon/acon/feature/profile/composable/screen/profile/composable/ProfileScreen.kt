@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -27,12 +28,10 @@ import coil3.compose.AsyncImage
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.bottomsheet.LoginBottomSheet
 import com.acon.acon.core.designsystem.component.topbar.AconTopBar
-import com.acon.acon.core.designsystem.effect.LocalHazeState
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.feature.profile.composable.amplitude.profileAmplitude
 import com.acon.acon.feature.profile.composable.screen.profile.ProfileUiState
-import dev.chrisbanes.haze.hazeSource
 
 @Composable
 fun ProfileScreen(
@@ -43,13 +42,17 @@ fun ProfileScreen(
     onGoogleSignIn: () -> Unit = {},
     onBottomSheetShowStateChange: (Boolean) -> Unit = {}
 ) {
+    val configuration = LocalConfiguration.current
+    val screenHeightDp = configuration.screenHeightDp
+    val boxHeight = (screenHeightDp * (60f / 740f))
+
     when (state) {
         is ProfileUiState.Success -> {
             Column(
                 modifier = modifier
                     .background(AconTheme.color.Gray900)
                     .padding(horizontal = 16.dp)
-                    .hazeSource(LocalHazeState.current)
+
             ) {
                 Spacer(Modifier.height(40.dp))
                 AconTopBar(
@@ -83,7 +86,7 @@ fun ProfileScreen(
                             imageVector = ImageVector.vectorResource(R.drawable.ic_default_profile),
                             contentDescription = stringResource(R.string.content_description_default_profile_image),
                             modifier = Modifier
-                                .size(60.dp)
+                                .size(boxHeight.dp)
                                 .clip(CircleShape)
                         )
                     } else {
@@ -91,7 +94,7 @@ fun ProfileScreen(
                             model = state.profileImage,
                             contentDescription = stringResource(R.string.content_description_profile_image),
                             modifier = Modifier
-                                .size(60.dp)
+                                .size(boxHeight.dp)
                                 .clip(CircleShape),
                             contentScale = ContentScale.Crop
                         )
@@ -147,7 +150,6 @@ fun ProfileScreen(
                 modifier = modifier
                     .background(AconTheme.color.Gray900)
                     .padding(horizontal = 16.dp)
-                    .hazeSource(LocalHazeState.current)
             ) {
                 Spacer(Modifier.height(40.dp))
                 AconTopBar(
@@ -180,7 +182,7 @@ fun ProfileScreen(
                         imageVector = ImageVector.vectorResource(R.drawable.ic_default_profile),
                         contentDescription = stringResource(R.string.content_description_default_profile_image),
                         modifier = Modifier
-                            .size(60.dp)
+                            .size(boxHeight.dp)
                             .clip(CircleShape)
                     )
 
