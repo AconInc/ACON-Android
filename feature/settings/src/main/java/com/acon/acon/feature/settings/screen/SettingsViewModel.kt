@@ -31,6 +31,7 @@ class SettingsViewModel @Inject constructor(
         }
 
     fun onSignOut() = intent {
+        onLogoutDialogShowStateChange(false)
         tokenRepository.getRefreshToken().onSuccess { refreshToken ->
             viewModelScope.launch {
                 refreshToken?.let {
@@ -40,7 +41,6 @@ class SettingsViewModel @Inject constructor(
                     postSideEffect(SettingsSideEffect.NavigateToSignIn)
                 }
                 ?.onFailure {
-                    onLogoutDialogShowStateChange(false)
                     postSideEffect(SettingsSideEffect.ShowToastMessage)
                 }
             }

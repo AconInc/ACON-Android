@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- settings -->
-    <string name="settings_screen_topbar">설정</string>
-    <string name="settings_title_version_info">버전 정보</string>
-    <string name="settings_title_terms_and_policies">약관 및 정책</string>
-    <string name="settings_title_service_settings">서비스 설정</string>
-    <string name="settings_title_login_and_delete_account">로그인/탈퇴</string>
-    <string name="settings_logout_failed">로그아웃에 실패했습니다</string>
-    <string name="settings_delete_account_failed">서비스 탈퇴에 실패했습니다</string>
+<!--    <string name="settings_screen_topbar">설정</string>-->
+<!--    <string name="settings_title_version_info">버전 정보</string>-->
+<!--    <string name="settings_title_terms_and_policies">약관 및 정책</string>-->
+<!--    <string name="settings_title_service_settings">서비스 설정</string>-->
+<!--    <string name="settings_title_login_and_delete_account">로그인/탈퇴</string>-->
+<!--    <string name="settings_logout_failed">로그아웃에 실패했습니다</string>-->
+<!--    <string name="settings_delete_account_failed">서비스 탈퇴에 실패했습니다</string>-->
 
     <!-- settings section component -->
     <string name="latest_version">최신버전</string>
     <string name="do_update_version">업데이트하기</string>
-    <string name="settings_section_current_version">현재 버전</string>
     <string name="settings_section_term_of_use">이용약관</string>
     <string name="settings_section_private_policy">개인정보처리방침</string>
     <string name="settings_section_retry_onboarding">취향탐색 다시하기</string>
