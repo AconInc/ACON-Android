@@ -63,6 +63,7 @@ fun LocalVerificationScreen(
                     onDismissRequest = { onShowEditVerifiedAreaChipDialog(false) },
                     onClickLeft = { onShowEditVerifiedAreaChipDialog(false) } ,
                     onClickRight = {
+                        onShowEditVerifiedAreaChipDialog(false)
                         if(state.verificationAreaList.size == 1) {
                             onclickEditArea(state.verificationAreaList[0].name)
                         }
