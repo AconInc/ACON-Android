@@ -17,12 +17,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.acon.acon.core.designsystem.component.dialog.AconTwoButtonDialog
+import com.acon.acon.core.designsystem.R
+import com.acon.acon.core.designsystem.component.dialog.v2.AconTwoActionDialog
 import com.acon.acon.core.designsystem.component.topbar.AconTopBar
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.feature.settings.R
 import com.acon.acon.feature.settings.amplitude.settingsAmplitudeSignOut
 import com.acon.acon.feature.settings.component.SettingSectionItem
 import com.acon.acon.feature.settings.component.SettingSectionVersionItem
@@ -33,7 +34,7 @@ import com.acon.acon.feature.withdraw.amplitude.deleteAccountAmplitudeSettingsTo
 @Composable
 fun SettingsScreen(
     state: SettingsUiState,
-    versionName: String,
+    isLatestVersion: Boolean,
     modifier: Modifier = Modifier,
     onLogoutDialogShowStateChange: (Boolean) -> Unit = {},
     navigateBack: () -> Unit = {},
@@ -48,29 +49,28 @@ fun SettingsScreen(
     BackHandler {
         navigateBack()
     }
+
     val scrollState = rememberScrollState()
 
     Column(
         modifier = modifier
-            .background(AconTheme.color.Gray9)
+            .background(AconTheme.color.Gray900)
             .padding(horizontal = 16.dp)
             .verticalScroll(scrollState),
     ) {
         when (state) {
             is SettingsUiState.User -> {
-                if(state.showLogOutDialog) {
-                    AconTwoButtonDialog(
+                if (state.showLogOutDialog) {
+                    AconTwoActionDialog(
                         title = stringResource(R.string.logout_dialog_title),
-                        content = stringResource(R.string.logout_dialog_content),
-                        leftButtonContent = stringResource(R.string.logout_dialog_cancel_btn),
-                        rightButtonContent = stringResource(R.string.settings_section_logout),
+                        action1 = stringResource(R.string.cancel),
+                        action2 = stringResource(R.string.settings_section_logout),
                         onDismissRequest = { onLogoutDialogShowStateChange(false) },
-                        onClickLeft = { onLogoutDialogShowStateChange(false) },
-                        onClickRight = {
+                        onAction1 = { onLogoutDialogShowStateChange(false) },
+                        onAction2 = {
                             onSignOut()
                             settingsAmplitudeSignOut()
-                        },
-                        isImageEnabled = false
+                        }
                     )
                 }
 
@@ -84,8 +84,9 @@ fun SettingsScreen(
                             onClick = navigateBack
                         ) {
                             Icon(
-                                imageVector = ImageVector.vectorResource(com.acon.acon.core.designsystem.R.drawable.ic_arrow_left_28),
-                                contentDescription = stringResource(R.string.go_back_content_description),
+                                //TODO - PR 합쳐지면 변경
+                                imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_left_28),
+                                contentDescription = stringResource(R.string.back),
                                 tint = AconTheme.color.White
                             )
                         }
@@ -93,29 +94,31 @@ fun SettingsScreen(
                     content = {
                         Text(
                             text = stringResource(R.string.settings_screen_topbar),
-                            style = AconTheme.typography.head5_22_sb,
+                            style = AconTheme.typography.Title4,
+                            fontWeight = FontWeight.SemiBold,
                             color = AconTheme.color.White
                         )
                     },
                 )
 
+                Spacer(Modifier.height(32.dp))
                 Text(
                     text = stringResource(R.string.settings_title_version_info),
-                    style = AconTheme.typography.subtitle2_14_med,
-                    color = AconTheme.color.Gray5
+                    style = AconTheme.typography.Body1,
+                    color = AconTheme.color.Gray500
                 )
 
                 Spacer(Modifier.height(16.dp))
                 SettingSectionVersionItem(
-                    currentVersion = versionName, // TODO - 앱 출시 후 버전 분기 처리
+                    isLatestVersion = isLatestVersion, // TODO - 버전 분기 처리
                     onClickContinue = onUpdateVersion
                 )
 
                 Spacer(Modifier.height(40.dp))
                 Text(
                     text = stringResource(R.string.settings_title_terms_and_policies),
-                    style = AconTheme.typography.subtitle2_14_med,
-                    color = AconTheme.color.Gray5
+                    style = AconTheme.typography.Body1,
+                    color = AconTheme.color.Gray500
                 )
 
                 Spacer(Modifier.height(16.dp))
@@ -124,7 +127,7 @@ fun SettingsScreen(
                     onClickContinue = onTermOfUse
                 )
 
-                Spacer(Modifier.height(16.dp))
+                Spacer(Modifier.height(12.dp))
                 SettingSectionItem(
                     settingsType = SettingsType.PRIVACY_POLICY,
                     onClickContinue = onPrivatePolicy
@@ -133,8 +136,8 @@ fun SettingsScreen(
                 Spacer(Modifier.height(40.dp))
                 Text(
                     text = stringResource(R.string.settings_title_service_settings),
-                    style = AconTheme.typography.subtitle2_14_med,
-                    color = AconTheme.color.Gray5
+                    style = AconTheme.typography.Body1,
+                    color = AconTheme.color.Gray500
                 )
 
                 Spacer(Modifier.height(16.dp))
@@ -143,7 +146,7 @@ fun SettingsScreen(
                     onClickContinue = onRetryOnBoarding
                 )
 
-                Spacer(Modifier.height(16.dp))
+                Spacer(Modifier.height(12.dp))
                 SettingSectionItem(
                     settingsType = SettingsType.AREA_VERIFICATION,
                     onClickContinue = onAreaVerification
@@ -152,17 +155,17 @@ fun SettingsScreen(
                 Spacer(Modifier.height(40.dp))
                 Text(
                     text = stringResource(R.string.settings_title_login_and_delete_account),
-                    style = AconTheme.typography.subtitle2_14_med,
-                    color = AconTheme.color.Gray5
+                    style = AconTheme.typography.Body1,
+                    color = AconTheme.color.Gray500
                 )
 
                 Spacer(Modifier.height(16.dp))
                 SettingSectionItem(
                     settingsType = SettingsType.LOGOUT,
-                    onClickContinue = { onLogoutDialogShowStateChange(true)  }
+                    onClickContinue = { onLogoutDialogShowStateChange(true) }
                 )
 
-                Spacer(Modifier.height(16.dp))
+                Spacer(Modifier.height(12.dp))
                 SettingSectionItem(
                     settingsType = SettingsType.DELETE_ACCOUNT,
                     onClickContinue = {
@@ -171,6 +174,7 @@ fun SettingsScreen(
                     }
                 )
             }
+
             is SettingsUiState.Guest -> {
                 Spacer(Modifier.height(42.dp))
                 AconTopBar(
@@ -182,8 +186,8 @@ fun SettingsScreen(
                             onClick = navigateBack
                         ) {
                             Icon(
-                                imageVector = ImageVector.vectorResource(com.acon.acon.core.designsystem.R.drawable.ic_arrow_left_28),
-                                contentDescription = stringResource(R.string.go_back_content_description),
+                                imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_left_28),
+                                contentDescription = stringResource(R.string.back),
                                 tint = AconTheme.color.White
                             )
                         }
@@ -191,29 +195,31 @@ fun SettingsScreen(
                     content = {
                         Text(
                             text = stringResource(R.string.settings_screen_topbar),
-                            style = AconTheme.typography.head5_22_sb,
+                            style = AconTheme.typography.Title4,
+                            fontWeight = FontWeight.SemiBold,
                             color = AconTheme.color.White
                         )
                     },
                 )
 
+                Spacer(Modifier.height(32.dp))
                 Text(
                     text = stringResource(R.string.settings_title_version_info),
-                    style = AconTheme.typography.subtitle2_14_med,
-                    color = AconTheme.color.Gray5
+                    style = AconTheme.typography.Body1,
+                    color = AconTheme.color.Gray500
                 )
 
                 Spacer(Modifier.height(16.dp))
                 SettingSectionVersionItem(
-                    currentVersion = versionName,
+                    isLatestVersion = isLatestVersion, // TODO - 버전 분기 처리
                     onClickContinue = onUpdateVersion
                 )
 
                 Spacer(Modifier.height(40.dp))
                 Text(
                     text = stringResource(R.string.settings_title_terms_and_policies),
-                    style = AconTheme.typography.subtitle2_14_med,
-                    color = AconTheme.color.Gray5
+                    style = AconTheme.typography.Body1,
+                    color = AconTheme.color.Gray500
                 )
 
                 Spacer(Modifier.height(16.dp))
@@ -222,7 +228,7 @@ fun SettingsScreen(
                     onClickContinue = onTermOfUse
                 )
 
-                Spacer(Modifier.height(16.dp))
+                Spacer(Modifier.height(12.dp))
                 SettingSectionItem(
                     settingsType = SettingsType.PRIVACY_POLICY,
                     onClickContinue = onPrivatePolicy
@@ -239,7 +245,7 @@ fun SettingsScreenPreview() {
     AconTheme {
         SettingsScreen(
             state = SettingsUiState.User(),
-            versionName = ""
+            isLatestVersion = true
         )
     }
 }
