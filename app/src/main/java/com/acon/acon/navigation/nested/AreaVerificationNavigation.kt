@@ -17,11 +17,11 @@ fun NavGraphBuilder.areaVerificationNavigation(
     navController: NavHostController
 ) {
     navigation<AreaVerificationRoute.Graph>(
-        startDestination = AreaVerificationRoute.AreaVerificationHome()
+        startDestination = AreaVerificationRoute.AreaVerification()
     ) {
-        composable<AreaVerificationRoute.AreaVerificationHome> { backStackEntry ->
+        composable<AreaVerificationRoute.AreaVerification> { backStackEntry ->
             val routeData = backStackEntry.arguments?.let {
-                AreaVerificationRoute.AreaVerificationHome(
+                AreaVerificationRoute.AreaVerification(
                     route = it.getString("route"),
                     isEdit = it.getBoolean("isEdit", false)
                 )

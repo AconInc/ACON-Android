@@ -60,7 +60,7 @@ internal fun NavGraphBuilder.settingsNavigation(
                 navigateToSettingsScreen = { navController.popBackStack() },
                 navigateToAreaVerificationToAdd = {
                     navController.navigate(
-                        AreaVerificationRoute.AreaVerificationHome(
+                        AreaVerificationRoute.AreaVerification(
                             route = "settings",
                             isEdit = false
                         )
@@ -68,7 +68,7 @@ internal fun NavGraphBuilder.settingsNavigation(
                 },
                 navigateToAreaVerificationToEdit = {
                     navController.navigate(
-                        AreaVerificationRoute.AreaVerificationHome(
+                        AreaVerificationRoute.AreaVerification(
                             route = "settings",
                             isEdit = true
                         )
