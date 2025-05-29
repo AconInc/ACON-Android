@@ -22,6 +22,7 @@ fun NavGraphBuilder.areaVerificationNavigation(
         composable<AreaVerificationRoute.AreaVerification> { backStackEntry ->
             val routeData = backStackEntry.arguments?.let {
                 AreaVerificationRoute.AreaVerification(
+                    area = backStackEntry.arguments?.getString("area") ?: "",
                     route = it.getString("route"),
                     isEdit = it.getBoolean("isEdit", false)
                 )
@@ -35,6 +36,7 @@ fun NavGraphBuilder.areaVerificationNavigation(
                         AreaVerificationRoute.CheckInMap(
                             latitude = latitude,
                             longitude = longitude,
+                            area = routeData?.area,
                             route = routeData?.route,
                             isEdit = routeData?.isEdit ?: false
                         )
@@ -49,6 +51,7 @@ fun NavGraphBuilder.areaVerificationNavigation(
             PreferenceMapScreen(
                 latitude = route.latitude,
                 longitude = route.longitude,
+                area = route?.area ?: "",
                 isEdit = route.isEdit,
                 onNavigateToNext = {
                     if (route.route == "settings") {

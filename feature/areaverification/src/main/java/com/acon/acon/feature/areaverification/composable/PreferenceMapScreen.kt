@@ -35,6 +35,7 @@ import com.acon.acon.core.designsystem.theme.AconTheme
 fun PreferenceMapScreen(
     latitude: Double,
     longitude: Double,
+    area: String,
     isEdit: Boolean,
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit = {},
@@ -48,7 +49,6 @@ fun PreferenceMapScreen(
     val state by viewModel.container.stateFlow.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
-        //viewModel.fetchVerifiedArea()
         viewModel.checkDeviceGPSStatus()
         viewModel.checkSupportLocation(context)
 
@@ -163,6 +163,7 @@ fun PreferenceMapScreen(
                 onClickConfirm = {
                     if (isEdit) {
                         viewModel.editVerifiedArea(
+                            area = area,
                             latitude = currentLatitude,
                             longitude = currentLongitude
                         )
