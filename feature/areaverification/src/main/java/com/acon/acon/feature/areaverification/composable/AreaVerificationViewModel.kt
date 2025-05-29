@@ -88,7 +88,7 @@ class AreaVerificationViewModel @Inject constructor(
         }
     }
 
-    fun editVerifiedArea(latitude: Double, longitude: Double) = intent {
+    fun editVerifiedArea(area: String, latitude: Double, longitude: Double) = intent {
         reduce {
             state.copy(
                 error = null
@@ -99,40 +99,48 @@ class AreaVerificationViewModel @Inject constructor(
             areaVerificationRepository.fetchVerifiedAreaList().getOrElse { emptyList() }
         val verifiedAreaId = verifiedAreaList[0].verifiedAreaId
 
-        areaVerificationRepository.verifyArea(latitude, longitude)
-            .onSuccess { newVerifiedArea ->
-                if (verifiedAreaId != newVerifiedArea.verifiedAreaId) {
-                    areaVerificationRepository.deleteVerifiedArea(verifiedAreaId)
-                        .onSuccess {
-                            reduce {
-                                state.copy(
-                                    verifiedArea = newVerifiedArea,
-                                    isVerifySuccess = true
-                                )
+        if(verifiedAreaList[0].name == area) {
+            reduce {
+                state.copy(
+                    isVerifySuccess = true
+                )
+            }
+        } else {
+            areaVerificationRepository.verifyArea(latitude, longitude)
+                .onSuccess { newVerifiedArea ->
+                    if (verifiedAreaId != newVerifiedArea.verifiedAreaId) {
+                        areaVerificationRepository.deleteVerifiedArea(verifiedAreaId)
+                            .onSuccess {
+                                reduce {
+                                    state.copy(
+                                        verifiedArea = newVerifiedArea,
+                                        isVerifySuccess = true
+                                    )
+                                }
                             }
+                            .onFailure { deleteError ->
+                                reduce { state.copy(error = deleteError.message) }
+                                // TODO - 네트워크에러
+                            }
+                    } else {
+                        reduce {
+                            state.copy(
+                                verifiedArea = newVerifiedArea,
+                                isVerifySuccess = true
+                            )
                         }
-                        .onFailure { deleteError ->
-                            reduce { state.copy(error = deleteError.message) }
-                            // TODO - 네트워크에러
-                        }
-                } else {
+                    }
+                    amplitudeCompleteArea()
+                }
+                .onFailure { throwable ->
                     reduce {
                         state.copy(
-                            verifiedArea = newVerifiedArea,
-                            isVerifySuccess = true
+                            error = throwable.message
                         )
                     }
+                    // TODO - 네트워크에러
                 }
-                amplitudeCompleteArea()
-            }
-            .onFailure { throwable ->
-                reduce {
-                    state.copy(
-                        error = throwable.message
-                    )
-                }
-                // TODO - 네트워크에러
-            }
+        }
     }
 
     fun checkSupportLocation(context: Context) = intent {

@@ -69,6 +69,7 @@ internal fun NavGraphBuilder.settingsNavigation(
                 navigateToAreaVerificationToEdit = {
                     navController.navigate(
                         AreaVerificationRoute.AreaVerification(
+                            area = it,
                             route = "settings",
                             isEdit = true
                         )

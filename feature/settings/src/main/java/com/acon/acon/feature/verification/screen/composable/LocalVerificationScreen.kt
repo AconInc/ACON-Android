@@ -44,7 +44,7 @@ fun LocalVerificationScreen(
     maxLocalVerificationArea: Int = 5,
     onNavigateBack: () -> Unit = {},
     onclickAddArea: () -> Unit = {},
-    onclickEditArea: () -> Unit = {},
+    onclickEditArea: (String) -> Unit = {},
     onDeleteVerifiedAreaChip: (Long) -> Unit = {},
     onShowEditVerifiedAreaChipDialog: (Boolean) -> Unit = {},
     onShowDeleteVerifiedAreaChipDialog: (Boolean, Long) -> Unit = { _, _ -> }
@@ -62,7 +62,11 @@ fun LocalVerificationScreen(
                     rightButtonContent = stringResource(R.string.area_edit_dialog_right_btn),
                     onDismissRequest = { onShowEditVerifiedAreaChipDialog(false) },
                     onClickLeft = { onShowEditVerifiedAreaChipDialog(false) } ,
-                    onClickRight = onclickEditArea,
+                    onClickRight = {
+                        if(state.verificationAreaList.size == 1) {
+                            onclickEditArea(state.verificationAreaList[0].name)
+                        }
+                    },
                 )
             }
 
