@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -46,7 +45,6 @@ import com.acon.acon.core.designsystem.effect.imageGradientLayer
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.domain.model.spot.v2.Spot
 import com.acon.acon.domain.type.TransportMode
-import com.acon.feature.common.compose.getTextSizeDp
 
 @Composable
 internal fun SpotItem(
@@ -128,11 +126,7 @@ private fun SpotInfo(
                 style = AconTheme.typography.Body1,
                 fontWeight = FontWeight.W400,
                 color = AconTheme.color.White,
-                modifier = Modifier
-                    .padding(start = 2.dp)
-                    .width(
-                        getTextSizeDp("+9999", AconTheme.typography.Body1).width
-                    ),
+                modifier = Modifier.padding(start = 2.dp),
                 textAlign = TextAlign.End
             )
         }
@@ -173,6 +167,12 @@ private fun SpotImage(
             .background(color = AconTheme.color.GlassWhiteDefault),
             contentAlignment = Alignment.Center
         ) {
+            Image(
+                painter = painterResource(R.drawable.ic_background_no_store),
+                contentScale = ContentScale.Crop,
+                contentDescription = null,
+                modifier = Modifier.fillMaxSize()
+            )
             Column(
                 modifier = Modifier,
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -187,7 +187,7 @@ private fun SpotImage(
                     text = stringResource(R.string.empty_spot_image),
                     style = AconTheme.typography.Body1,
                     fontWeight = FontWeight.SemiBold,
-                    color = AconTheme.color.Gray200,
+                    color = AconTheme.color.White,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.padding(top = 12.dp)
                 )

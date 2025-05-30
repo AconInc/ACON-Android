@@ -159,7 +159,7 @@ internal fun SpotListSuccessView(
             }
 
             LaunchedEffect(Unit) {
-                spotFogColor = spot.image.getOverlayColor(context)
+                spotFogColor = if (spot.image.isBlank()) Color(0xFFE17651) else spot.image.getOverlayColor(context)
             }
         }
     }
