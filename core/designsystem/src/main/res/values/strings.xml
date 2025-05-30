@@ -45,7 +45,9 @@
     <string name="restaurant">식당</string>
     <string name="cafe">카페</string>
     <string name="find_way">길찾기</string>
-    <string name="empty_spot_image">쉿! 비밀스러운 곳인가 봐요\n아직 등록된 사진이 없어요</string>
+    <string name="empty_spot_image1">등록된 사진은 없지만\n맛집임을 아콘이 보장해요</string>
+    <string name="empty_spot_image2">쉿! 비밀스러운 곳인가 봐요\n아직 등록된 사진이 없어요</string>
+    <string name="empty_spot_image3">직접 가봐야 알 수 있는 장소네요\n설레임을 안고 떠나볼까요?</string>
     <string name="korean">한식</string>
     <string name="chinese">중식</string>
     <string name="japanese">일식</string>

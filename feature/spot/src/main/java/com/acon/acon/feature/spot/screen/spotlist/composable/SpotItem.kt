@@ -1,7 +1,6 @@
 package com.acon.acon.feature.spot.screen.spotlist.composable
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -39,8 +38,6 @@ import coil3.request.crossfade
 import coil3.size.Scale
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.button.v2.AconFilledButton
-import com.acon.acon.core.designsystem.effect.LocalHazeState
-import com.acon.acon.core.designsystem.effect.defaultHazeEffect
 import com.acon.acon.core.designsystem.effect.imageGradientLayer
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.domain.model.spot.v2.Spot
@@ -79,7 +76,6 @@ internal fun SpotItem(
                         }
                     )
             )
-
             SpotInfo(
                 spot = spot,
                 transportMode = transportMode,
@@ -87,7 +83,6 @@ internal fun SpotItem(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(20.dp)
-                    .fillMaxSize()
             )
         }
     }
@@ -122,7 +117,7 @@ private fun SpotInfo(
                 tint = AconTheme.color.Gray50
             )
             Text(
-                text = (if(spot.dotori >= 9999) "+" else "") + spot.dotori.coerceAtMost(9999),
+                text = (if (spot.dotori >= 9999) "+" else "") + spot.dotori.coerceAtMost(9999),
                 style = AconTheme.typography.Body1,
                 fontWeight = FontWeight.W400,
                 color = AconTheme.color.White,
@@ -132,12 +127,7 @@ private fun SpotInfo(
         }
         Spacer(modifier = Modifier.weight(1f))
         AconFilledButton(
-            modifier = Modifier
-                .align(Alignment.End)
-                .defaultHazeEffect(
-                    hazeState = LocalHazeState.current,
-                    tintColor = AconTheme.color.GlassWhiteDefault
-                ),
+            modifier = Modifier.align(Alignment.End),
             onClick = {
                 onFindWayButtonClick(spot)
             },
@@ -147,7 +137,10 @@ private fun SpotInfo(
             ),
         ) {
             Text(
-                text = stringResource(if (transportMode == TransportMode.WALKING) R.string.walking_eta else R.string.biking_eta, spot.eta),
+                text = stringResource(
+                    if (transportMode == TransportMode.WALKING) R.string.walking_eta else R.string.biking_eta,
+                    spot.eta
+                ),
                 style = AconTheme.typography.Body1,
                 fontWeight = FontWeight.SemiBold,
                 color = AconTheme.color.White,
@@ -162,9 +155,8 @@ private fun SpotImage(
     modifier: Modifier = Modifier,
 ) {
     if (spot.image.isBlank()) {
-        Box(modifier = Modifier
-            .fillMaxSize()
-            .background(color = AconTheme.color.GlassWhiteDefault),
+        Box(
+            modifier = modifier,
             contentAlignment = Alignment.Center
         ) {
             Image(
@@ -183,8 +175,15 @@ private fun SpotImage(
                     tint = AconTheme.color.GlassWhiteDefault,
                     modifier = Modifier.size(36.dp)
                 )
+
+                val emptyDescriptionIds = listOf(
+                    R.string.empty_spot_image1,
+                    R.string.empty_spot_image2,
+                    R.string.empty_spot_image3
+                )
+                val descriptionId = emptyDescriptionIds.random()
                 Text(
-                    text = stringResource(R.string.empty_spot_image),
+                    text = stringResource(descriptionId),
                     style = AconTheme.typography.Body1,
                     fontWeight = FontWeight.SemiBold,
                     color = AconTheme.color.White,
