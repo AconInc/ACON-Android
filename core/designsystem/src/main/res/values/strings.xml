@@ -9,6 +9,10 @@
     <string name="title_spot">추천</string>
     <string name="title_upload">업로드</string>
     <string name="title_profile">프로필</string>
+    <string name="network_error_title">네트워크 연결에 문제가 발생했습니다</string>
+    <string name="network_error_content">네트워크 연결상태를 확인하고\n다시 시도해주세요</string>
+    <string name="network_retry">다시 시도하기</string>
+
 
     <!-- Button component -->
     <string name="login_btn_preview_content">button</string>

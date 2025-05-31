@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.location.Location
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -17,7 +18,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.acon.acon.domain.model.spot.v2.Spot
 import com.acon.acon.feature.spot.screen.spotlist.SpotListSideEffectV2
 import com.acon.acon.feature.spot.screen.spotlist.SpotListViewModel
+import com.acon.feature.common.compose.LocalOnRetry
 import com.acon.feature.common.coroutine.collectWithLifecycle
+import com.acon.feature.common.location.getLocation
 import com.acon.feature.common.location.locationFlow
 import com.acon.feature.common.permission.LocationPermissionRequester
 import org.orbitmvi.orbit.compose.collectAsState
@@ -48,20 +51,22 @@ fun SpotListScreenContainer(
         }
     )
 
-    SpotListScreen(
-        state = state,
-        userType = userType,
-        onSpotTypeChanged = viewModel::onSpotTypeClicked,
-        onSpotClick = viewModel::onSpotClicked,
-        onTryFindWay = viewModel::onTryFindWay,
-        onFilterButtonClick = viewModel::onFilterButtonClicked,
-        onFilterModalDismissRequest = viewModel::onFilterModalDismissed,
-        onRestaurantFilterSaved = viewModel::onRestaurantFilterSaved,
-        onCafeFilterSaved = viewModel::onCafeFilterSaved,
-        onGuestItemClick = viewModel::onRequestLogin,
-        onGuestModalDismissRequest = viewModel::onDismissLoginModal,
-        modifier = modifier.fillMaxSize(),
-    )
+    CompositionLocalProvider(LocalOnRetry provides viewModel::retry) {
+        SpotListScreen(
+            state = state,
+            userType = userType,
+            onSpotTypeChanged = viewModel::onSpotTypeClicked,
+            onSpotClick = viewModel::onSpotClicked,
+            onTryFindWay = viewModel::onTryFindWay,
+            onFilterButtonClick = viewModel::onFilterButtonClicked,
+            onFilterModalDismissRequest = viewModel::onFilterModalDismissed,
+            onRestaurantFilterSaved = viewModel::onRestaurantFilterSaved,
+            onCafeFilterSaved = viewModel::onCafeFilterSaved,
+            onGuestItemClick = viewModel::onRequestLogin,
+            onGuestModalDismissRequest = viewModel::onDismissLoginModal,
+            modifier = modifier.fillMaxSize(),
+        )
+    }
 
     LaunchedEffect(isPermissionGranted) {
         if (isPermissionGranted) {

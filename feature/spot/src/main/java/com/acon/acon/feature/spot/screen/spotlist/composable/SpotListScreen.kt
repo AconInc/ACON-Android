@@ -2,7 +2,6 @@ package com.acon.acon.feature.spot.screen.spotlist.composable
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -33,8 +32,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.bottomsheet.LoginBottomSheet
+import com.acon.acon.core.designsystem.component.error.NetworkErrorView
 import com.acon.acon.core.designsystem.effect.LocalHazeState
 import com.acon.acon.core.designsystem.effect.defaultHazeEffect
+import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.domain.model.spot.v2.Spot
 import com.acon.acon.domain.type.CafeFilterType
@@ -45,6 +46,7 @@ import com.acon.acon.feature.spot.mock.spotListUiStateRestaurantMock
 import com.acon.acon.feature.spot.screen.component.SpotTypeToggle
 import com.acon.acon.feature.spot.screen.spotlist.FilterDetailKey
 import com.acon.acon.feature.spot.screen.spotlist.SpotListUiStateV2
+import com.acon.feature.common.compose.LocalOnRetry
 import com.acon.feature.common.remember.rememberSocialRepository
 import dev.chrisbanes.haze.hazeSource
 import kotlinx.collections.immutable.toImmutableSet
@@ -103,7 +105,7 @@ internal fun SpotListScreen(
                 modifier = Modifier
                     .align(Alignment.CenterEnd)
                     .padding(end = 16.dp)
-                    .clickable {
+                    .noRippleClickable {
                         onFilterButtonClick()
                     }
                     .then(
@@ -205,7 +207,10 @@ internal fun SpotListScreen(
                     )
             )
             is SpotListUiStateV2.LoadFailed -> {
-                // TODO("Error")
+                NetworkErrorView(
+                    onRetry = LocalOnRetry.current,
+                    modifier = Modifier.fillMaxSize()
+                )
             }
         }
     }
