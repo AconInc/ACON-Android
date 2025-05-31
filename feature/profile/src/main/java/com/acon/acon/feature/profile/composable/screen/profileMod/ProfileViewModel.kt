@@ -76,67 +76,60 @@ class ProfileModViewModel @Inject constructor(
     }
 
     private suspend fun validateNickname(
-        nickname: String,
-        errors: MutableList<NicknameErrorType>
-    ): Boolean {
+        nickname: String
+    ): NicknameErrorType? {
         return profileRepository.validateNickname(nickname)
-            .map { true }
+            .map { null }
             .recover { throwable ->
                 when (throwable) {
-                    is ValidateNicknameError.UnsatisfiedCondition -> {
-                        errors.add(NicknameErrorType.InvalidChar)
-                        false
-                    }
-
-                    is ValidateNicknameError.AlreadyUsedNickname -> {
-                        errors.add(NicknameErrorType.AlreadyUsed)
-                        false
-                    }
-
-                    else -> {
-                        false
-                    }
+                    is ValidateNicknameError.UnsatisfiedCondition -> NicknameErrorType.InvalidChar
+                    is ValidateNicknameError.AlreadyUsedNickname -> NicknameErrorType.AlreadyUsed
+                    else -> null
                 }
             }
-            .getOrDefault(false)
+            .getOrNull()
     }
 
     fun onNicknameChanged(text: String, delayValidation: Boolean = false) = intent {
         runOn<ProfileModState.Success> {
             val (limitedText, count) = text.limitedNickname()
 
-            val invalidCharRegex = Regex("""[!@#$%^&*()\-=+\[\]{};:'",<>/?\\|`~]""")
-            val allowedCharRegex = Regex("""^[A-Za-z0-9._가-힣ㄱ-ㅎㅏ-ㅣ]*$""")
-            val hasInvalidChar = invalidCharRegex.containsMatchIn(limitedText)
-            val matchesAllowedChars = allowedCharRegex.matches(limitedText)
+            val invalidCharRegex = Regex("""[^A-Za-z0-9._가-힣ㄱ-ㅎㅏ-ㅣ]""")
+            val hasInvalidChar = invalidCharRegex.containsMatchIn(text)
 
-            val errors = mutableListOf<NicknameErrorType>()
-            if (hasInvalidChar) errors.add(NicknameErrorType.InvalidChar)
-            else if (!matchesAllowedChars) errors.add(NicknameErrorType.InvalidLang)
+            val localErrorType: NicknameErrorType? = when {
+                text.isNotEmpty() && limitedText != text -> NicknameErrorType.InvalidChar
+                text.isNotBlank() && !Regex("""^[A-Za-z0-9._가-힣ㄱ-ㅎㅏ-ㅣ]*$""").matches(text) -> NicknameErrorType.InvalidLang
+                else -> null
+            }
 
             reduce {
                 state.copy(
                     isEdited = (state.isEdited || limitedText != state.fetchedNickname),
                     nicknameCount = count,
-                    nicknameValidationStatus = if (limitedText.isBlank()) NicknameValidationStatus.Empty else NicknameValidationStatus.Typing,
+                    nicknameValidationStatus = when {
+                        text.isEmpty() -> NicknameValidationStatus.Empty
+                        localErrorType != null -> NicknameValidationStatus.Error(localErrorType)
+                        else -> NicknameValidationStatus.Typing
+                    },
                     nicknameFieldStatus = if (limitedText.isEmpty()) TextFieldStatus.Empty else state.nicknameFieldStatus
                 )
             }
+
             nicknameValidationJob?.cancel()
             nicknameValidationJob = viewModelScope.launch {
                 if (delayValidation) delay(1000L) else delay(500L)
 
-                val serverErrors = mutableListOf<NicknameErrorType>()
-                val isValid = validateNickname(limitedText, serverErrors)
+                if (localErrorType == NicknameErrorType.InvalidChar) return@launch
+                val serverErrorType = validateNickname(limitedText)
 
                 reduce {
                     state.copy(
                         nicknameValidationStatus = when {
                             limitedText.isBlank() -> NicknameValidationStatus.Empty
-                            serverErrors.isNotEmpty() -> NicknameValidationStatus.Error(serverErrors)
-                            errors.isNotEmpty() -> NicknameValidationStatus.Error(errors)
-                            isValid -> NicknameValidationStatus.Valid
-                            else -> NicknameValidationStatus.Typing
+                            serverErrorType != null -> NicknameValidationStatus.Error(serverErrorType)
+                            localErrorType != null -> NicknameValidationStatus.Error(localErrorType)
+                            else -> NicknameValidationStatus.Valid
                         }
                     )
                 }
@@ -172,7 +165,7 @@ class ProfileModViewModel @Inject constructor(
                         state.copy(
                             isEdited = (state.isEdited || newTextFieldValue.text != state.fetchedBirthday),
                             birthdayTextFieldValue = newTextFieldValue,
-                            birthdayValidationStatus = BirthdayValidationStatus.Invalid(errorMsg = "정확한 생년월일을 입력해주세요"),
+                            birthdayValidationStatus = BirthdayValidationStatus.Invalid,
                             birthdayFieldStatus = TextFieldStatus.Error
                         )
                     }
@@ -185,8 +178,8 @@ class ProfileModViewModel @Inject constructor(
                             isEdited = (state.isEdited || newTextFieldValue.text != state.fetchedBirthday),
                             birthdayTextFieldValue = newTextFieldValue,
                             birthdayValidationStatus = if (isValid) BirthdayValidationStatus.Valid
-                            else BirthdayValidationStatus.Invalid(errorMsg = "정확한 생년월일을 입력해주세요"),
-                            birthdayFieldStatus = if (isValid) TextFieldStatus.Active else TextFieldStatus.Error
+                            else BirthdayValidationStatus.Invalid,
+                            birthdayFieldStatus = if (isValid) TextFieldStatus.Focused else TextFieldStatus.Error
                         )
                     }
                 }

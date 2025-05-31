@@ -47,7 +47,7 @@ import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.core.utils.feature.permission.CheckAndRequestPhotoPermission
 import com.acon.acon.feature.profile.composable.component.GallerySelectBottomSheet
-import com.acon.acon.feature.profile.composable.component.NicknameErrMessageRow
+import com.acon.acon.feature.profile.composable.component.NicknameValidMessageRow
 import com.acon.acon.feature.profile.composable.component.ProfilePhotoBox
 import com.acon.acon.feature.profile.composable.component.ProfileTextField
 import com.acon.acon.feature.profile.composable.component.addFocusCleaner
@@ -55,6 +55,8 @@ import com.acon.acon.feature.profile.composable.screen.profileMod.ProfileModStat
 import com.acon.acon.feature.profile.composable.type.BirthdayValidationStatus
 import com.acon.acon.feature.profile.composable.type.FocusType
 import com.acon.acon.feature.profile.composable.type.NicknameValidationStatus
+import com.acon.acon.feature.profile.composable.type.contentDescriptionResId
+import com.acon.acon.feature.profile.composable.type.validMessageResId
 import com.acon.acon.feature.profile.composable.utils.BirthdayTransformation
 import com.acon.acon.feature.profile.composable.utils.limitedNicknameTextFieldValue
 import dev.chrisbanes.haze.hazeSource
@@ -255,7 +257,7 @@ internal fun ProfileModScreen(
                                 Spacer(modifier = Modifier.width(4.dp))
                                 Text(
                                     text = stringResource(R.string.star),
-                                    style = AconTheme.typography.head8_16_sb,
+                                    style = AconTheme.typography.Title4,
                                     color = AconTheme.color.Gray50
                                 )
                             }
@@ -266,7 +268,7 @@ internal fun ProfileModScreen(
                                 focusType = FocusType.Nickname,
                                 focusRequester = nickNameFocusRequester,
                                 value = limitedTextFieldValue,
-                                placeholder = stringResource(R.string.nickname_textfield_placeholder),
+                                placeholder = stringResource(R.string.nickname_placeholder),
                                 isTyping = (state.nicknameValidationStatus == NicknameValidationStatus.Typing),
                                 onValueChange = { fieldValue ->
                                     nicknameTextFieldValue = fieldValue
@@ -287,33 +289,32 @@ internal fun ProfileModScreen(
                                     verticalArrangement = Arrangement.Top,
                                     horizontalAlignment = Alignment.Start
                                 ) {
-                                    when (val status = state.nicknameValidationStatus) {
+                                    when (state.nicknameValidationStatus) {
                                         is NicknameValidationStatus.Empty -> {
-                                            NicknameErrMessageRow(
-                                                modifier = modifier,
-                                                iconRes = ImageVector.vectorResource(R.drawable.and_ic_error_20),
-                                                errMessage = stringResource(R.string.nickname_error_msg_input_nickname),
-                                                textColor = AconTheme.color.Danger
+                                            NicknameValidMessageRow(
+                                                validMessage = R.string.nickname_error_empty,
+                                                iconRes = R.drawable.ic_error,
+                                                validContentDescription = R.string.content_description_empty_nickname,
+                                                color = AconTheme.color.Danger
                                             )
                                         }
 
                                         is NicknameValidationStatus.Error -> {
-                                            status.errorTypes.forEach { error ->
-                                                NicknameErrMessageRow(
-                                                    modifier = modifier,
-                                                    iconRes = ImageVector.vectorResource(R.drawable.and_ic_error_20),
-                                                    errMessage = error.message,
-                                                    textColor = AconTheme.color.Danger
-                                                )
-                                            }
+                                            val validState = state.nicknameValidationStatus
+                                            NicknameValidMessageRow(
+                                                validMessage = validState.errorTypes.validMessageResId(),
+                                                iconRes = R.drawable.ic_error,
+                                                validContentDescription = validState.errorTypes.contentDescriptionResId(),
+                                                color = AconTheme.color.Danger
+                                            )
                                         }
 
                                         is NicknameValidationStatus.Valid -> {
-                                            NicknameErrMessageRow(
-                                                modifier = modifier,
-                                                iconRes = ImageVector.vectorResource(R.drawable.and_ic_local_check_mark_20),
-                                                errMessage = stringResource(R.string.nickname_vaild_msg_available_nickname),
-                                                textColor = AconTheme.color.Success_blue1
+                                            NicknameValidMessageRow(
+                                                validMessage = R.string.nickname_valid,
+                                                iconRes = R.drawable.ic_valid,
+                                                validContentDescription = R.string.content_description_valid_nickname,
+                                                color = AconTheme.color.Success
                                             )
                                         }
 
@@ -343,7 +344,7 @@ internal fun ProfileModScreen(
                             ) {
                                 Text(
                                     text = stringResource(R.string.nickname_birthday_title),
-                                    style = AconTheme.typography.head8_16_sb,
+                                    style = AconTheme.typography.Title4,
                                     color = AconTheme.color.White
                                 )
                                 Spacer(modifier = Modifier.width(4.dp))
@@ -354,7 +355,7 @@ internal fun ProfileModScreen(
                                 focusType = FocusType.Birthday,
                                 focusRequester = birthDayFocusRequester,
                                 value = state.birthdayTextFieldValue,
-                                placeholder = stringResource(R.string.birthday_textfield_placeholder),
+                                placeholder = stringResource(R.string.birthday_placeholder),
                                 onValueChange = { fieldValue ->
                                     onBirthdayChanged(fieldValue)
                                 },
@@ -366,17 +367,17 @@ internal fun ProfileModScreen(
                             )
 
                             Spacer(modifier = Modifier.height(8.dp))
-                            when (val status = state.birthdayValidationStatus) {
+                            when (state.birthdayValidationStatus) {
                                 is BirthdayValidationStatus.Valid -> {
                                     Spacer(modifier = Modifier.height(4.dp))
                                 }
 
                                 is BirthdayValidationStatus.Invalid -> {
-                                    NicknameErrMessageRow(
-                                        modifier = modifier,
-                                        iconRes = ImageVector.vectorResource(R.drawable.and_ic_error_20),
-                                        errMessage = status.errorMsg ?: "",
-                                        textColor = AconTheme.color.Danger
+                                    NicknameValidMessageRow(
+                                        validMessage = R.string.birthday_error_invalid,
+                                        iconRes = R.drawable.ic_error,
+                                        validContentDescription = R.string.content_description_invalid_birthday,
+                                        color = AconTheme.color.Danger
                                     )
                                 }
 
