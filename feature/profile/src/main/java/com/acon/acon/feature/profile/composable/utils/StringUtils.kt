@@ -18,7 +18,7 @@ fun Char.isAllowedChar(): Boolean {
 }
 
 fun TextFieldValue.limitedNicknameTextFieldValue(
-    maxLength: Int = 16,
+    maxLength: Int = 14,
     charWeight: (Char) -> Int = { if (it.isKorean()) 2 else 1 },
     isAllowed: (Char) -> Boolean = { it.isAllowedChar() }
 ): TextFieldValue {
@@ -43,7 +43,7 @@ fun TextFieldValue.limitedNicknameTextFieldValue(
 }
 
 fun String.limitedNickname(
-    maxLength: Int = 16,
+    maxLength: Int = 14,
     isAllowed: (Char) -> Boolean = { it.isAllowedChar() },
     charWeight: (Char) -> Int = { if (it.isKorean()) 2 else 1 }
 ): Pair<String, Int> {
