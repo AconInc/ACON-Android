@@ -116,7 +116,7 @@ internal val spotListUiStateRestaurantMock = SpotListUiStateV2.Success(
 )
 
 internal val spotListUiStateCafeMock = SpotListUiStateV2.Success(
-    transportMode = TransportMode.WALKING,
+    transportMode = TransportMode.BIKING,
     spotList = listOf(
         Spot(
             id = 1L,

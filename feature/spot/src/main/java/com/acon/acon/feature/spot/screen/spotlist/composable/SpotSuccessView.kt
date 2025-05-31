@@ -63,7 +63,9 @@ internal fun SpotListSuccessView(
 
     if (state.transportMode == TransportMode.BIKING) {
         SpotEmptyView(
+            userType = userType,
             otherSpots = state.spotList.toImmutableList(),
+            onGuestItemClick = onGuestItemClick,
             onSpotClick = onSpotClick,
             onTryFindWay = onTryFindWay,
             modifier = modifier
