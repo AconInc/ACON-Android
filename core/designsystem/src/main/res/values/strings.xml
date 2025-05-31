@@ -6,6 +6,9 @@
     <string name="cancel">취소</string>
     <string name="ok">확인</string>
     <string name="done">완료</string>
+    <string name="title_spot">추천</string>
+    <string name="title_upload">업로드</string>
+    <string name="title_profile">프로필</string>
 
     <!-- Button component -->
     <string name="login_btn_preview_content">button</string>
@@ -93,7 +96,6 @@
 
     <!-- Upload -->
     <string name="close_upload">리뷰 그만두기</string>
-    <string name="title_upload">업로드</string>
     <string name="next">다음</string>
     <string name="search_spot_placeholder">장소를 입력해주세요</string>
     <string name="no_search_result">앗… 검색 결과가 없어요</string>
