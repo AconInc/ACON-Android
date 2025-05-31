@@ -4,6 +4,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -32,15 +34,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.util.fastForEach
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import coil3.size.Scale
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.button.v2.AconFilledButton
+import com.acon.acon.core.designsystem.component.tag.AconTag
 import com.acon.acon.core.designsystem.effect.imageGradientLayer
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.domain.model.spot.v2.Spot
+import com.acon.acon.domain.type.TagType
 import com.acon.acon.domain.type.TransportMode
 
 @Composable
@@ -88,6 +93,7 @@ internal fun SpotItem(
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun SpotInfo(
     spot: Spot,
@@ -124,6 +130,21 @@ private fun SpotInfo(
                 modifier = Modifier.padding(start = 2.dp),
                 textAlign = TextAlign.End
             )
+        }
+        FlowRow(
+            modifier = Modifier.padding(top = 8.dp),
+            horizontalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            spot.tags.fastForEach { tagType ->
+                AconTag(
+                    text = tagType.name.replace("_", " "),
+                    backgroundColor = when (tagType) {
+                        TagType.NEW -> AconTheme.color.TagNew
+                        TagType.LOCAL -> AconTheme.color.TagLocal
+                        else -> AconTheme.color.Gray900
+                    }
+                )
+            }
         }
         Spacer(modifier = Modifier.weight(1f))
         AconFilledButton(
