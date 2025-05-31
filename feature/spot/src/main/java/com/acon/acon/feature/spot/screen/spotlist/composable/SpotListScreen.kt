@@ -23,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
@@ -86,7 +87,7 @@ internal fun SpotListScreen(
                 .height(IntrinsicSize.Min)
                 .defaultHazeEffect(
                     hazeState = LocalHazeState.current,
-                    tintColor = AconTheme.color.Gray900,
+                    tintColor = Color(0xFF1C1C20),
                     blurRadius = 20.dp,
                 )
                 .padding(bottom = 14.dp, top = 6.dp)

@@ -14,7 +14,9 @@ import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.PagerSnapDistance
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.VerticalPager
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -69,6 +71,9 @@ internal fun SpotListSuccessView(
             onSpotClick = onSpotClick,
             onTryFindWay = onTryFindWay,
             modifier = modifier
+                .verticalScroll(rememberScrollState())
+                .hazeSource(LocalHazeState.current)
+                .padding(horizontal = 16.dp)
         )
     } else {
         VerticalPager(
@@ -87,6 +92,7 @@ internal fun SpotListSuccessView(
             ),
             horizontalAlignment = Alignment.CenterHorizontally,
             snapPosition = SnapPosition.Center,
+            beyondViewportPageCount = 1,
             pageSize = PageSize.Fixed((itemHeightPx).toDp())
         ) { page ->
             val spot = state.spotList[page]

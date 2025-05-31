@@ -2,13 +2,12 @@ package com.acon.acon.feature.spot.screen.spotlist.composable
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,6 +26,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.util.fastForEachIndexed
 import com.acon.acon.core.common.UrlConstants
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.effect.fog.fogBackground
@@ -61,35 +61,29 @@ internal fun SpotEmptyView(
         mutableFloatStateOf(screenHeightPx * .3f)
     }
 
-    LazyColumn(
-        contentPadding = PaddingValues(
-            horizontal = 16.dp,
-            vertical = 24.dp
-        ),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        item {
-            Text(
-                text = stringResource(R.string.no_available_spots),
-                style = AconTheme.typography.Title2,
-                color = AconTheme.color.White,
-                fontWeight = FontWeight.SemiBold,
-                modifier = Modifier.padding(top = 24.dp),
-                textAlign = TextAlign.Center
-            )
-            Text(
-                text = stringResource(R.string.apologize_for_no_spots),
-                style = AconTheme.typography.Body1,
-                color = AconTheme.color.Gray500,
-                fontWeight = FontWeight.W400,
-                modifier = Modifier.padding(top = 8.dp)
-            )
-        }
+        Spacer(modifier = Modifier.height(24.dp))
+        Text(
+            text = stringResource(R.string.no_available_spots),
+            style = AconTheme.typography.Title2,
+            color = AconTheme.color.White,
+            fontWeight = FontWeight.SemiBold,
+            modifier = Modifier.padding(top = 24.dp),
+            textAlign = TextAlign.Center
+        )
+        Text(
+            text = stringResource(R.string.apologize_for_no_spots),
+            style = AconTheme.typography.Body1,
+            color = AconTheme.color.Gray500,
+            fontWeight = FontWeight.W400,
+            modifier = Modifier.padding(top = 8.dp)
+        )
+
         if (otherSpots.isNotEmpty()) {
-            itemsIndexed(
-                items = otherSpots
-            ) { index, spot ->
+            otherSpots.fastForEachIndexed { index, spot ->
                 if (index == 0)
                     Text(
                         text = stringResource(R.string.recommend_other_spots),
@@ -111,7 +105,8 @@ internal fun SpotEmptyView(
                             )
                             .clickable {
                                 onGuestItemClick()
-                            }.fogBackground(
+                            }
+                            .fogBackground(
                                 glowColor = AconTheme.color.White,
                             )
                     )
@@ -129,33 +124,32 @@ internal fun SpotEmptyView(
                 }
             }
         } else {
-            item {
-                val uriHandler = LocalUriHandler.current
-                val context = LocalContext.current
+            val uriHandler = LocalUriHandler.current
+            val context = LocalContext.current
 
-                Text(
-                    text = stringResource(R.string.no_other_spots),
-                    style = AconTheme.typography.Title4,
-                    color = AconTheme.color.White,
-                    fontWeight = FontWeight.SemiBold,
-                    modifier = Modifier.padding(top = 60.dp, bottom = 24.dp),
-                    textAlign = TextAlign.Center
-                )
-                Text(
-                    text = stringResource(R.string.ask_for_new_spot),
-                    style = AconTheme.typography.Body1,
-                    color = AconTheme.color.Action,
-                    fontWeight = FontWeight.SemiBold,
-                    modifier = Modifier.noRippleClickable {
-                        try {
-                            uriHandler.openUri(UrlConstants.REQUEST_NEW_SPOT)
-                        } catch (e: Exception) {
-                            context.showToast("웹사이트 접속에 실패했어요")
-                        }
+            Text(
+                text = stringResource(R.string.no_other_spots),
+                style = AconTheme.typography.Title4,
+                color = AconTheme.color.White,
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.padding(top = 60.dp, bottom = 24.dp),
+                textAlign = TextAlign.Center
+            )
+            Text(
+                text = stringResource(R.string.ask_for_new_spot),
+                style = AconTheme.typography.Body1,
+                color = AconTheme.color.Action,
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.noRippleClickable {
+                    try {
+                        uriHandler.openUri(UrlConstants.REQUEST_NEW_SPOT)
+                    } catch (e: Exception) {
+                        context.showToast("웹사이트 접속에 실패했어요")
                     }
-                )
-            }
+                }
+            )
         }
+        Spacer(modifier = Modifier.height(24.dp))
     }
 }
 
