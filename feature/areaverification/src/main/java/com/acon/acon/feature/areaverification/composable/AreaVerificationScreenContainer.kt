@@ -1,4 +1,4 @@
-package com.acon.acon.feature.areaverification.v2
+package com.acon.acon.feature.areaverification.composable
 
 import android.content.Intent
 import android.net.Uri
@@ -13,16 +13,16 @@ import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
-fun AreaVerificationHomeScreenContainer(
+fun AreaVerificationScreenContainer(
     route: String,
     onNextScreen: (Double, Double) -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: AreaVerificationHomeViewModel = hiltViewModel()
+    viewModel: AreaVerificationViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
     val state by viewModel.collectAsState()
 
-    AreaVerificationHomeScreen(
+    AreaVerificationScreen(
         state = state,
         route = route,
         onPermissionSettingClick = { viewModel.onPermissionSettingClick(context.packageName) },
@@ -30,8 +30,11 @@ fun AreaVerificationHomeScreenContainer(
             val hasPermission = context.checkLocationPermission()
             viewModel.updateLocationPermissionStatus(hasPermission)
 
-            if (hasPermission) { viewModel.onNextButtonClick() }
-            else { viewModel.showPermissionDialog() }
+            if (hasPermission) {
+                viewModel.onNextButtonClick()
+            } else {
+                viewModel.showPermissionDialog()
+            }
         },
         modifier = modifier
     )

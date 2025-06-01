@@ -1,4 +1,4 @@
-package com.acon.acon.feature.areaverification.v2
+package com.acon.acon.feature.areaverification.composable
 
 import android.app.Activity
 import android.content.Intent
@@ -36,11 +36,12 @@ import com.acon.acon.core.designsystem.theme.AconTheme
 fun PreferenceMapScreen(
     latitude: Double,
     longitude: Double,
+    area: String,
     isEdit: Boolean,
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit = {},
     onNavigateToNext: () -> Unit = {},
-    viewModel: AreaVerificationHomeViewModel = hiltViewModel()
+    viewModel: AreaVerificationViewModel = hiltViewModel()
 ) {
     var currentLatitude by remember { mutableDoubleStateOf(latitude) }
     var currentLongitude by remember { mutableDoubleStateOf(longitude) }
@@ -49,7 +50,6 @@ fun PreferenceMapScreen(
     val state by viewModel.container.stateFlow.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
-        viewModel.fetchVerifiedArea()
         viewModel.checkDeviceGPSStatus()
         viewModel.checkSupportLocation(context)
 
@@ -68,6 +68,12 @@ fun PreferenceMapScreen(
     LaunchedEffect(state.isGPSEnabled) {
         viewModel.checkDeviceGPSStatus()
         viewModel.checkSupportLocation(context)
+    }
+
+    LaunchedEffect(state.isVerifySuccess) {
+        if (state.isVerifySuccess) {
+            onNavigateToNext()
+        }
     }
 
     if (state.showDeviceGPSDialog) {
@@ -159,14 +165,12 @@ fun PreferenceMapScreen(
                 onClickConfirm = {
                     if (isEdit) {
                         viewModel.editVerifiedArea(
-                            verifiedAreaId = state.verifiedAreaList[0].verifiedAreaId,
+                            area = area,
                             latitude = currentLatitude,
                             longitude = currentLongitude
                         )
-                        onNavigateToNext()
                     } else {
                         viewModel.verifyArea(currentLatitude, currentLongitude)
-                        onNavigateToNext()
                     }
                 }
             )

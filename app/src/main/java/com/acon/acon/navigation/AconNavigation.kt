@@ -107,7 +107,7 @@ fun AconNavigation(
                                 } else {
                                     showLoginBottomSheet = false
                                     navController.navigate(
-                                        AreaVerificationRoute.AreaVerificationHome(
+                                        AreaVerificationRoute.AreaVerification(
                                             "onboarding"
                                         )
                                     ) {

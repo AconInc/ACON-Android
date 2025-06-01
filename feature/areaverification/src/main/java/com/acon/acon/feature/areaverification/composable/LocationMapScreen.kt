@@ -1,4 +1,4 @@
-package com.acon.acon.feature.areaverification.v2
+package com.acon.acon.feature.areaverification.composable
 
 import android.location.Location
 import androidx.compose.foundation.layout.Box
@@ -70,16 +70,18 @@ internal fun LocationMapScreen(
             createCustomMarker(map, initialLatitude, initialLongitude)
         }
     } else {
-        ProceedWithLocation { location ->
-            currentLocation = location
-            onLocationObtained(location.latitude, location.longitude)
-            naverMap?.let { map ->
-                val cameraUpdate =
-                    CameraUpdate.scrollTo(LatLng(location.latitude, location.longitude))
-                map.moveCamera(cameraUpdate)
-                createCustomMarker(map, location.latitude, location.longitude)
+        ProceedWithLocation(
+            onReady = { location ->
+                currentLocation = location
+                onLocationObtained(location.latitude, location.longitude)
+                naverMap?.let { map ->
+                    val cameraUpdate =
+                        CameraUpdate.scrollTo(LatLng(location.latitude, location.longitude))
+                    map.moveCamera(cameraUpdate)
+                    createCustomMarker(map, location.latitude, location.longitude)
+                }
             }
-        }
+        )
     }
 
     Box(

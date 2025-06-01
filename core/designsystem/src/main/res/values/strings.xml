@@ -45,6 +45,7 @@
     <string name="location_permission_denied_content">설정에서 위치접근 권한을 허용해주세요.</string>
 
     <!-- AreaVerification -->
+    <string name="area_verification_settings">settings</string>
     <string name="area_verification_topbar">지역인증</string>
     <string name="area_verification_main_title">믿을 수 있는 리뷰를 위해\n지역인증이 필요해요</string>
     <string name="area_verification_main_subtitle">더 정확한 로컬맛집을 추천해드릴 수 있어요</string>

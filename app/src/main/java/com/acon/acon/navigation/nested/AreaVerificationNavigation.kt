@@ -9,25 +9,26 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.toRoute
 import com.acon.acon.feature.SettingsRoute
 import com.acon.acon.feature.areaverification.AreaVerificationRoute
-import com.acon.acon.feature.areaverification.v2.AreaVerificationHomeScreenContainer
-import com.acon.acon.feature.areaverification.v2.PreferenceMapScreen
+import com.acon.acon.feature.areaverification.composable.AreaVerificationScreenContainer
+import com.acon.acon.feature.areaverification.composable.PreferenceMapScreen
 import com.acon.acon.feature.onboarding.OnboardingRoute
 
 fun NavGraphBuilder.areaVerificationNavigation(
     navController: NavHostController
 ) {
     navigation<AreaVerificationRoute.Graph>(
-        startDestination = AreaVerificationRoute.AreaVerificationHome()
+        startDestination = AreaVerificationRoute.AreaVerification()
     ) {
-        composable<AreaVerificationRoute.AreaVerificationHome> { backStackEntry ->
+        composable<AreaVerificationRoute.AreaVerification> { backStackEntry ->
             val routeData = backStackEntry.arguments?.let {
-                AreaVerificationRoute.AreaVerificationHome(
+                AreaVerificationRoute.AreaVerification(
+                    area = backStackEntry.arguments?.getString("area") ?: "",
                     route = it.getString("route"),
                     isEdit = it.getBoolean("isEdit", false)
                 )
             }
 
-            AreaVerificationHomeScreenContainer(
+            AreaVerificationScreenContainer(
                 modifier = Modifier.fillMaxSize(),
                 route = routeData?.route ?: "onboarding",
                 onNextScreen = { latitude, longitude ->
@@ -35,6 +36,7 @@ fun NavGraphBuilder.areaVerificationNavigation(
                         AreaVerificationRoute.CheckInMap(
                             latitude = latitude,
                             longitude = longitude,
+                            area = routeData?.area,
                             route = routeData?.route,
                             isEdit = routeData?.isEdit ?: false
                         )
@@ -49,6 +51,7 @@ fun NavGraphBuilder.areaVerificationNavigation(
             PreferenceMapScreen(
                 latitude = route.latitude,
                 longitude = route.longitude,
+                area = route?.area ?: "",
                 isEdit = route.isEdit,
                 onNavigateToNext = {
                     if (route.route == "settings") {

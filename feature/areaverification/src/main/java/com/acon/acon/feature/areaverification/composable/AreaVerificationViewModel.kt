@@ -1,4 +1,4 @@
-package com.acon.acon.feature.areaverification.v2
+package com.acon.acon.feature.areaverification.composable
 
 import android.Manifest
 import android.app.Application
@@ -9,9 +9,8 @@ import androidx.core.app.ActivityCompat
 import com.acon.acon.core.utils.feature.base.BaseContainerHost
 import com.acon.acon.domain.model.area.Area
 import com.acon.acon.domain.repository.AreaVerificationRepository
-import com.acon.acon.domain.repository.TokenRepository
-import com.acon.acon.feature.areaverification.amplitudeClickNext
-import com.acon.acon.feature.areaverification.amplitudeCompleteArea
+import com.acon.acon.feature.areaverification.amplitude.amplitudeClickNext
+import com.acon.acon.feature.areaverification.amplitude.amplitudeCompleteArea
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,18 +19,14 @@ import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
-class AreaVerificationHomeViewModel @Inject constructor(
+class AreaVerificationViewModel @Inject constructor(
     private val application: Application,
-    private val tokenRepository: TokenRepository,
     private val areaVerificationRepository: AreaVerificationRepository
 ) : BaseContainerHost<AreaVerificationHomeUiState, AreaVerificationHomeSideEffect>() {
 
     override val container = container<AreaVerificationHomeUiState, AreaVerificationHomeSideEffect>(
-        AreaVerificationHomeUiState(
-            isNewLocationSelected = true,
-        )
+        AreaVerificationHomeUiState()
     ) {
-        fetchVerifiedArea()
         checkDeviceGPSStatus()
     }
 
@@ -53,16 +48,9 @@ class AreaVerificationHomeViewModel @Inject constructor(
         }
     }
 
-    fun showLocationDialog() = intent {
+    private fun showLocationDialog() = intent {
         reduce {
             state.copy(showLocationDialog = true)
-        }
-    }
-
-    // TODO - api 연결 때 사용 또는 제거
-    fun hideLocationDialog() = intent {
-        reduce {
-            state.copy(showLocationDialog = false)
         }
     }
 
@@ -73,14 +61,12 @@ class AreaVerificationHomeViewModel @Inject constructor(
     }
 
     fun onNextButtonClick() = intent {
-        if (state.isNewLocationSelected) {
-            postSideEffect(
-                AreaVerificationHomeSideEffect.NavigateToNextScreen(
-                    state.latitude,
-                    state.longitude
-                )
+        postSideEffect(
+            AreaVerificationHomeSideEffect.NavigateToNextScreen(
+                state.latitude,
+                state.longitude
             )
-        }
+        )
         amplitudeClickNext()
     }
 
@@ -102,54 +88,59 @@ class AreaVerificationHomeViewModel @Inject constructor(
         }
     }
 
-    fun fetchVerifiedArea() = intent {
-        areaVerificationRepository.fetchVerifiedAreaList()
-            .onSuccess { verifiedAreaList ->
-                reduce {
-                    state.copy(verifiedAreaList = verifiedAreaList)
-                }
-            }
-            .onFailure {
-
-            }
-    }
-
-    fun editVerifiedArea(verifiedAreaId: Long, latitude: Double, longitude: Double) = intent {
+    fun editVerifiedArea(area: String, latitude: Double, longitude: Double) = intent {
         reduce {
             state.copy(
-                isLoading = true,
                 error = null
             )
         }
 
-        areaVerificationRepository.verifyArea(latitude, longitude)
-            .onSuccess { newVerifiedArea ->
-                if (state.verifiedAreaList[0].verifiedAreaId != newVerifiedArea.verifiedAreaId) {
-                    areaVerificationRepository.deleteVerifiedArea(verifiedAreaId)
-                        .onSuccess {
-                            reduce { state.copy(isLoading = false, verifiedArea = newVerifiedArea) }
+        val verifiedAreaList =
+            areaVerificationRepository.fetchVerifiedAreaList().getOrElse { emptyList() }
+        val verifiedAreaId = verifiedAreaList[0].verifiedAreaId
+
+        if(verifiedAreaList[0].name == area) {
+            reduce {
+                state.copy(
+                    isVerifySuccess = true
+                )
+            }
+        } else {
+            areaVerificationRepository.verifyArea(latitude, longitude)
+                .onSuccess { newVerifiedArea ->
+                    if (verifiedAreaId != newVerifiedArea.verifiedAreaId) {
+                        areaVerificationRepository.deleteVerifiedArea(verifiedAreaId)
+                            .onSuccess {
+                                reduce {
+                                    state.copy(
+                                        verifiedArea = newVerifiedArea,
+                                        isVerifySuccess = true
+                                    )
+                                }
+                            }
+                            .onFailure { deleteError ->
+                                reduce { state.copy(error = deleteError.message) }
+                                // TODO - 네트워크에러
+                            }
+                    } else {
+                        reduce {
+                            state.copy(
+                                verifiedArea = newVerifiedArea,
+                                isVerifySuccess = true
+                            )
                         }
-                        .onFailure { deleteError ->
-                            reduce { state.copy(isLoading = false, error = deleteError.message) }
-                        }
-                } else {
+                    }
+                    amplitudeCompleteArea()
+                }
+                .onFailure { throwable ->
                     reduce {
                         state.copy(
-                            isLoading = false,
-                            verifiedArea = newVerifiedArea
+                            error = throwable.message
                         )
                     }
+                    // TODO - 네트워크에러
                 }
-                amplitudeCompleteArea()
-            }
-            .onFailure { throwable ->
-                reduce {
-                    state.copy(
-                        isLoading = false,
-                        error = throwable.message
-                    )
-                }
-            }
+        }
     }
 
     fun checkSupportLocation(context: Context) = intent {
@@ -189,31 +180,28 @@ class AreaVerificationHomeViewModel @Inject constructor(
     fun verifyArea(latitude: Double, longitude: Double) = intent {
         reduce {
             state.copy(
-                isLoading = true,
                 error = null
             )
         }
 
         areaVerificationRepository.verifyArea(latitude, longitude)
             .onSuccess { area ->
-                tokenRepository.saveAreaVerification(true)
                 reduce {
                     state.copy(
-                        isLoading = false,
                         verifiedArea = area,
-                        areaName = area.name
+                        areaName = area.name,
+                        isVerifySuccess = true
                     )
                 }
                 amplitudeCompleteArea()
             }
             .onFailure { throwable ->
-                tokenRepository.saveAreaVerification(false)
                 reduce {
                     state.copy(
-                        isLoading = false,
                         error = throwable.message,
                     )
                 }
+                // TODO - 네트워크에러
             }
     }
 
@@ -223,22 +211,18 @@ class AreaVerificationHomeViewModel @Inject constructor(
 }
 
 data class AreaVerificationHomeUiState(
-    val isNewLocationSelected: Boolean = false,
-    val isButtonEnabled: Boolean = true,
-    val isLocationPermissionGranted: Boolean = false,
-    var showPermissionDialog: Boolean = false,
     val hasLocationPermission: Boolean = false,
-    val latitude: Double = 0.0,
-    val longitude: Double = 0.0,
-    val isLocationObtained: Boolean = false,
-    val isLoading: Boolean = false,
-    val error: String? = null,
-    val areaName: String = "",
-    val verifiedArea: Area? = null,
-    val verifiedAreaList: List<Area> = emptyList(),
+    var showPermissionDialog: Boolean = false,
     val isGPSEnabled: Boolean = false,
     val showDeviceGPSDialog: Boolean = false,
     val showLocationDialog: Boolean = false,
+    val latitude: Double = 0.0,
+    val longitude: Double = 0.0,
+    val isVerifySuccess: Boolean = false,
+    val verifiedArea: Area? = null,
+    val verifiedAreaList: List<Area> = emptyList(),
+    val areaName: String = "",
+    val error: String? = null
 )
 
 sealed interface AreaVerificationHomeSideEffect {
