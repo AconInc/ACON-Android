@@ -51,58 +51,54 @@ internal fun AreaVerificationScreen(
         BackOnPressed(context)
     }
 
-    when (state) {
-        is AreaVerificationHomeUiState -> {
-            Box(
-                modifier = modifier
-                    .paint(
-                        painterResource(R.drawable.area_verification_home_bg),
-                        contentScale = ContentScale.FillBounds
-                    )
+    Box(
+        modifier = modifier
+            .paint(
+                painterResource(R.drawable.area_verification_home_bg),
+                contentScale = ContentScale.FillBounds
+            )
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .navigationBarsPadding(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Spacer(modifier = Modifier.height(offsetY))
+            Text(
+                text = stringResource(R.string.area_verification_main_title),
+                color = AconTheme.color.White,
+                style = AconTheme.typography.Title1,
+                textAlign = TextAlign.Center
+            )
+
+            Spacer(Modifier.height(12.dp))
+            Text(
+                text = stringResource(R.string.area_verification_main_subtitle),
+                color = AconTheme.color.Gray50,
+                style = AconTheme.typography.Body1
+            )
+
+            Spacer(Modifier.weight(1f))
+            Text(
+                text = stringResource(R.string.area_verification_one_second_verify),
+                color = AconTheme.color.Gray500,
+                style = AconTheme.typography.Body1,
+            )
+
+            AconFilledButton(
+                onClick = { onNextButtonClick() },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp, bottom = 20.dp)
+                    .padding(horizontal = 16.dp)
             ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .navigationBarsPadding(),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Spacer(modifier = Modifier.height(offsetY))
-                    Text(
-                        text = stringResource(R.string.area_verification_main_title),
-                        color = AconTheme.color.White,
-                        style = AconTheme.typography.Title1,
-                        textAlign = TextAlign.Center
-                    )
-
-                    Spacer(Modifier.height(12.dp))
-                    Text(
-                        text = stringResource(R.string.area_verification_main_subtitle),
-                        color = AconTheme.color.Gray50,
-                        style = AconTheme.typography.Body1
-                    )
-
-                    Spacer(Modifier.weight(1f))
-                    Text(
-                        text = stringResource(R.string.area_verification_one_second_verify),
-                        color = AconTheme.color.Gray500,
-                        style = AconTheme.typography.Body1,
-                    )
-
-                    AconFilledButton(
-                        onClick = { onNextButtonClick() },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 16.dp, bottom = 20.dp)
-                            .padding(horizontal = 16.dp)
-                    ) {
-                        Text(
-                            text = stringResource(R.string.next),
-                            color = AconTheme.color.White,
-                            style = AconTheme.typography.Title4,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                    }
-                }
+                Text(
+                    text = stringResource(R.string.next),
+                    color = AconTheme.color.White,
+                    style = AconTheme.typography.Title4,
+                    fontWeight = FontWeight.SemiBold
+                )
             }
         }
     }
