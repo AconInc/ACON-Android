@@ -8,6 +8,7 @@
     <string name="done">완료</string>
     <string name="exit">나가기</string>
     <string name="save">저장</string>
+    <string name="select">선택</string>
     <string name="continue_writing">계속 작성</string>
 
     <!-- Button component -->
@@ -38,6 +39,11 @@
     <string name="content_description_edit_profile">프로필 수정</string>
     <string name="content_description_settings">설정 화면 이동</string>
     <string name="content_description_go_login">로그인 창으로 이동</string>
+    <string name="content_description_valid_nickname">닉네임 사용 가능</string>
+    <string name="content_description_empty_nickname">닉네임 미입력</string>
+    <string name="content_description_duplicate_nickname">닉네임 중복</string>
+    <string name="content_description_invalid_language">지원하지 않는 언어</string>
+    <string name="content_description_invalid_birthday">잘못된 생년월일</string>
 
     <!-- login BottomSheet -->
     <string name="login_bottom_sheet_title">Acon에 로그인</string>
@@ -153,23 +159,24 @@
     <!-- Profile -->
     <string name="profile_topbar">프로필</string>
     <string name="profile_edit_topbar">프로필 편집</string>
+    <string name="you_need_login">로그인이 필요해요</string>
+    <string name="profile_save_success">프로필이 저장되었습니다</string>
     <string name="edit_profile">프로필 수정하기</string>
     <string name="star">*</string>
+    <string name="max_nickname_count">/14</string>
     <string name="nickname_textfield_title">닉네임</string>
     <string name="nickname_birthday_title">생년월일</string>
-    <string name="nickname_textfield_placeholder">닉네임을 입력해주세요</string>
-    <string name="birthday_textfield_placeholder">2025.01.01</string>
-    <string name="nickname_textfield_guide">16자 이내 영문, 한글, 숫자, 밑줄 및 마침표만 포함 가능하며 1자 이상 16자 이하로 입력해주세요.</string>
+    <string name="nickname_placeholder">닉네임을 입력해주세요</string>
+    <string name="birthday_placeholder">2025.01.01</string>
+    <string name="nickname_valid">사용할 수 있는 닉네임이에요.</string>
+    <string name="nickname_error_empty">닉네임을 입력해주세요.</string>
+    <string name="nickname_error_duplicate">이미 사용 중인 닉네임이에요.</string>
+    <string name="nickname_error_invalid">영어, 숫자, 밑줄 및 마침표만 사용 가능해요</string>
+    <string name="birthday_error_invalid">정확한 생년월일을 입력해주세요</string>
+    <string name="album">앨범</string>
+    <string name="my_album">나의 앨범</string>
     <string name="upload_photo_from_album">앨범에서 사진 업로드</string>
     <string name="set_default_profile_image">기본 이미지로 변경</string>
-    <string name="you_need_login">로그인이 필요해요</string>
-
-    <!-- 진행 중 -->
-    <string name="my_album">나의 앨범</string>
-    <string name="nickname_error_msg_input_nickname">닉네임을 입력해 주세요</string>
-    <string name="nickname_vaild_msg_available_nickname">닉네임을 입력해 주세요</string>
-    <string name="snackbar_profile_save_success">프로필이 저장되었습니다!</string>
-    <string name="default_album_photo_count">나의 앨범</string>
 
     <!-- setting -->
     <string name="settings_screen_topbar">설정</string>
@@ -191,4 +198,5 @@
     <string name="settings_section_delete_account">서비스 탈퇴</string>
 
     <string name="logout_dialog_title">로그아웃 하시겠어요?</string>
+    <string name="selected_image">선택 이미지</string>
 </resources>
