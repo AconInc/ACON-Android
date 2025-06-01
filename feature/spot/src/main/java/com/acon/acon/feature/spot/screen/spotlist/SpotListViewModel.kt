@@ -52,54 +52,59 @@ class SpotListViewModel @Inject constructor(
         }
 
         runOn<SpotListUiStateV2.Loading> {
-            fetchSpotList(location, Condition(SpotType.RESTAURANT, emptyList())) {
-                SpotListUiStateV2.Success(
-                    transportMode = it.transportMode,
-                    spotList = it.spots,
-                    headTitle = "최고의 선택.",
-                    selectedSpotType = SpotType.RESTAURANT,
-                    currentLocation = location
-                )
-            }
-
-//            if (BuildConfig.DEBUG) {
-//                reduce {
-//                    spotListUiStateRestaurantMock
-//                }
+//            fetchSpotList(location, Condition(SpotType.RESTAURANT, emptyList())) {
+//                SpotListUiStateV2.Success(
+//                    transportMode = it.transportMode,
+//                    spotList = it.spots,
+//                    headTitle = "최고의 선택.",
+//                    selectedSpotType = SpotType.RESTAURANT,
+//                    currentLocation = location
+//                )
 //            }
+
+            if (BuildConfig.DEBUG) {
+                reduce {
+                    spotListUiStateRestaurantMock
+                }
+            }
         }
     }
 
     fun onSpotTypeClicked(spotType: SpotType) = intent {
         runOn<SpotListUiStateV2.Success> {
             if (spotType == state.selectedSpotType) return@runOn
-
-            fetchSpotList(
-                location = state.currentLocation,
-                condition = Condition(spotType, emptyList())
-            ) {
-                SpotListUiStateV2.Success(
-                    transportMode = it.transportMode,
-                    spotList = it.spots,
-                    headTitle = "최고의 선택.",
-                    selectedSpotType = spotType,
-                    currentLocation = state.currentLocation,
-                    selectedRestaurantFilters = emptyMap(),
-                    selectedCafeFilters = emptyMap()
-                )
-            }
-//
-//            if (BuildConfig.DEBUG) {
-//                if (spotType == SpotType.RESTAURANT)
-//                    reduce {
-//                        spotListUiStateRestaurantMock
-//                    }
-//                else {
-//                    reduce {
-//                        spotListUiStateCafeMock
-//                    }
-//                }
+            if (userType.value == UserType.GUEST)
+                reduce {
+                    state.copy(showLoginModal = true)
+                }
+            else {
+//            fetchSpotList(
+//                location = state.currentLocation,
+//                condition = Condition(spotType, emptyList())
+//            ) {
+//                SpotListUiStateV2.Success(
+//                    transportMode = it.transportMode,
+//                    spotList = it.spots,
+//                    headTitle = "최고의 선택.",
+//                    selectedSpotType = spotType,
+//                    currentLocation = state.currentLocation,
+//                    selectedRestaurantFilters = emptyMap(),
+//                    selectedCafeFilters = emptyMap()
+//                )
 //            }
+
+                if (BuildConfig.DEBUG) {
+                    if (spotType == SpotType.RESTAURANT)
+                        reduce {
+                            spotListUiStateRestaurantMock
+                        }
+                    else {
+                        reduce {
+                            spotListUiStateCafeMock
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -214,6 +219,14 @@ class SpotListViewModel @Inject constructor(
                 SpotListUiStateV2.LoadFailed
             }
         )
+    }
+
+    fun retry() = intent {
+        runOn<SpotListUiStateV2.LoadFailed> {
+            reduce {
+                SpotListUiStateV2.Loading
+            }
+        }
     }
 
     private fun mapCondition(state: SpotListUiStateV2.Success): Condition {

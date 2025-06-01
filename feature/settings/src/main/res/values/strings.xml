@@ -39,7 +39,7 @@
 
     <!-- delete account -->
     <string name="settings_delete_account_topbar">서비스 탈퇴</string>
-    <string name="settings_delete_account_title">이별의 순간이 왔어요...\n떠나시려는 이유가 있을까요?</string>
+    <string name="settings_delete_account_title">이별의 순간이 왔어요…\n떠나시려는 이유가 있을까요?</string>
     <string name="settings_delete_account_content">어떤 부분이 마음에 들지 않았는지 알려주시면,\n더 좋은 acon을 만드는데 도움이 됩니다.</string>
     <string name="reason_few_restaurants">등록된 맛집이 너무 적어요</string>
     <string name="reason_unsatisfied_recommendations">추천 결과가 만족스럽지 않아요</string>

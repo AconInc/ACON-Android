@@ -110,10 +110,11 @@ private fun SpotInfo(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = spot.name,
+                text = if (spot.name.length > 15) spot.name.take(15) + "…" else spot.name,
                 style = AconTheme.typography.Title4,
                 fontWeight = FontWeight.SemiBold,
                 color = AconTheme.color.White,
+                maxLines = 1,
                 modifier = Modifier.padding()
             )
             Spacer(modifier = Modifier.weight(1f))
@@ -127,6 +128,7 @@ private fun SpotInfo(
                 style = AconTheme.typography.Body1,
                 fontWeight = FontWeight.W400,
                 color = AconTheme.color.White,
+                maxLines = 1,
                 modifier = Modifier.padding(start = 2.dp),
                 textAlign = TextAlign.End
             )
