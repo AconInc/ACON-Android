@@ -11,9 +11,9 @@ import com.acon.acon.domain.model.area.Area
 import com.acon.acon.domain.repository.AreaVerificationRepository
 import com.acon.acon.feature.areaverification.amplitude.amplitudeClickNext
 import com.acon.acon.feature.areaverification.amplitude.amplitudeCompleteArea
-import com.google.android.gms.location.LocationServices
-import com.google.android.gms.location.Priority
+import com.acon.feature.common.location.locationFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.firstOrNull
 import org.orbitmvi.orbit.viewmodel.container
 import timber.log.Timber
 import javax.inject.Inject
@@ -152,28 +152,21 @@ class AreaVerificationViewModel @Inject constructor(
             return@intent
         }
 
-        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
         var isSupportLocation: Boolean
 
-        fusedLocationClient.getCurrentLocation(
-            Priority.PRIORITY_HIGH_ACCURACY,
-            null
-        ).addOnSuccessListener { location ->
-            if (location != null) {
+        context.locationFlow()
+            .firstOrNull()
+            ?.let { location ->
                 val latitude = location.latitude
                 val longitude = location.longitude
-
                 isSupportLocation = latitude in 33.1..38.6 && longitude in 124.6..131.9
+
                 if (!isSupportLocation) {
                     Timber.tag(TAG).d("GPS 불가 지역(해외)")
                     showLocationDialog()
                 }
-            } else {
-                Timber.tag(TAG).d("GPS 좌표 가져오기 실패")
-            }
-
-        }.addOnFailureListener { e ->
-            Timber.tag(TAG).d("GPS 좌표 가져오기 오류 발생, ${e.message}")
+            } ?: run {
+            Timber.tag(TAG).d("GPS 좌표 가져오기 실패")
         }
     }
 
