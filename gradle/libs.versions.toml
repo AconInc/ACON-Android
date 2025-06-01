@@ -21,12 +21,13 @@ kotlin = "2.0.21"
 coreKtx = "1.16.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
+junitComposeVersion = "1.8.2"
 espressoCore = "3.5.0"
 lifecycleRuntimeKtx = "2.8.7"
-composeBom = "2025.03.01"
+composeBom = "2025.05.01"
 composeFoundation = "1.7.8"
 appcompat = "1.7.0"
-mapSdk = "3.19.1"
+mapSdk = "3.21.0"
 material = "1.12.0"
 jetbrainsKotlinJvm = "2.0.21"
 navigationCompose = "2.8.2"
@@ -43,9 +44,9 @@ javaxInject = "1"
 orbit = "9.0.0"
 coroutine = "1.7.3"
 
-amplitudeVersion="1.20.1"
+amplitudeVersion = "1.20.1"
 
-firebaseBom ="33.12.0"
+firebaseBom = "33.12.0"
 firebaseCrashlytics = "3.0.3"
 playServicesLocation = "21.3.0"
 googleServices = "4.4.2"
@@ -78,7 +79,7 @@ androidx-compose-animation = { group = "androidx.compose.animation", name = "ani
 androidx-compose-animation-core = { group = "androidx.compose.animation", name = "animation-core" }
 androidx-compose-animation-graphics = { group = "androidx.compose.animation", name = "animation-graphics" }
 androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation" }
-androidx-compose-foundation-layout = { group = "androidx.compose.foundation", name = "foundation-layout", version = { strictly = "1.7.8" } }
+androidx-compose-foundation-layout = { group = "androidx.compose.foundation", name = "foundation-layout" }
 androidx-compose-ui = { group = "androidx.compose.ui", name = "ui" }
 androidx-compose-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
 androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
@@ -102,7 +103,7 @@ accompanist-permissions = { module = "com.google.accompanist:accompanist-permiss
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
-androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
+androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4", version.ref = "junitComposeVersion" }
 
 # Coil
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coilCompose" }
@@ -139,7 +140,7 @@ haze-materials = { module = "dev.chrisbanes.haze:haze-materials", version.ref = 
 orbit-compose = { module = "org.orbit-mvi:orbit-compose", version.ref = "orbit" }
 orbit-viewmodel = { module = "org.orbit-mvi:orbit-viewmodel", version.ref = "orbit" }
 
-lottie-compose = { group = "com.airbnb.android", name = "lottie-compose", version.ref= "lottie" }
+lottie-compose = { group = "com.airbnb.android", name = "lottie-compose", version.ref = "lottie" }
 
 kotlinx-immutable = { group = "org.jetbrains.kotlinx", name = "kotlinx-collections-immutable", version.ref = "kotlinxImmutable" }
 

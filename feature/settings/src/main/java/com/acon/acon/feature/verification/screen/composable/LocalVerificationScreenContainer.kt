@@ -14,7 +14,7 @@ fun LocalVerificationScreenContainer(
     modifier: Modifier = Modifier,
     navigateToSettingsScreen: () -> Unit = {},
     navigateToAreaVerificationToAdd: () -> Unit = {},
-    navigateToAreaVerificationToEdit: () -> Unit = {},
+    navigateToAreaVerificationToEdit: (String) -> Unit = {},
     viewModel: LocalVerificationViewModel = hiltViewModel()
 ) {
     val state by viewModel.collectAsState()
@@ -34,7 +34,7 @@ fun LocalVerificationScreenContainer(
         when(it) {
             is LocalVerificationSideEffect.NavigateToSettingsScreen -> navigateToSettingsScreen()
             is LocalVerificationSideEffect.NavigateToAreaVerificationToAdd -> navigateToAreaVerificationToAdd()
-            is LocalVerificationSideEffect.NavigateToAreaVerificationToEdit -> navigateToAreaVerificationToEdit()
+            is LocalVerificationSideEffect.NavigateToAreaVerificationToEdit -> navigateToAreaVerificationToEdit(it.area)
         }
     }
 
