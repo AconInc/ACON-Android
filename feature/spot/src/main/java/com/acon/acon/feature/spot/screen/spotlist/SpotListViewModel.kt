@@ -16,6 +16,7 @@ import com.acon.acon.domain.type.RestaurantFilterType
 import com.acon.acon.domain.type.SpotType
 import com.acon.acon.domain.type.TransportMode
 import com.acon.acon.domain.type.UserType
+import com.acon.acon.domain.usecase.IsDistanceExceededUseCase
 import com.acon.acon.feature.spot.BuildConfig
 import com.acon.acon.feature.spot.mock.spotListUiStateCafeMock
 import com.acon.acon.feature.spot.mock.spotListUiStateRestaurantMock
@@ -32,7 +33,8 @@ import kotlin.reflect.KClass
 @OptIn(OrbitExperimental::class)
 class SpotListViewModel @Inject constructor(
     private val userRepository: UserRepository,
-    private val spotRepository: SpotRepository
+    private val spotRepository: SpotRepository,
+    private val isDistanceExceededUseCase: IsDistanceExceededUseCase
 ) : BaseContainerHost<SpotListUiStateV2, SpotListSideEffectV2>() {
 
     override val container =
@@ -44,14 +46,28 @@ class SpotListViewModel @Inject constructor(
         initialValue = UserType.GUEST
     )
 
+    private lateinit var initialLocation: Location
+
     fun onNewLocationEmitted(location: Location) = intent {
         runOn<SpotListUiStateV2.Success> {
             reduce {
                 state.copy(currentLocation = location)
             }
+            if (isDistanceExceededUseCase(
+                    initialLocation.latitude,
+                    initialLocation.longitude,
+                    location.latitude,
+                    location.longitude
+                )
+            ) {
+                reduce {
+                    state.copy(showRefreshPopup = true)
+                }
+            }
         }
 
         runOn<SpotListUiStateV2.Loading> {
+            initialLocation = location
 //            fetchSpotList(location, Condition(SpotType.RESTAURANT, emptyList())) {
 //                SpotListUiStateV2.Success(
 //                    transportMode = it.transportMode,
@@ -222,10 +238,8 @@ class SpotListViewModel @Inject constructor(
     }
 
     fun retry() = intent {
-        runOn<SpotListUiStateV2.LoadFailed> {
-            reduce {
-                SpotListUiStateV2.Loading
-            }
+        reduce {
+            SpotListUiStateV2.Loading
         }
     }
 
@@ -272,6 +286,7 @@ sealed interface SpotListUiStateV2 {
         val selectedCafeFilters: Map<FilterDetailKey, Set<CafeFilterType>> = emptyMap(),
         val showFilterModal: Boolean = false,
         val showLoginModal: Boolean = false,
+        val showRefreshPopup: Boolean = false
     ) : SpotListUiStateV2
     data object Loading : SpotListUiStateV2
     data object LoadFailed : SpotListUiStateV2
