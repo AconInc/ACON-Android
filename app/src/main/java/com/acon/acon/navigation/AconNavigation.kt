@@ -106,7 +106,7 @@ fun AconNavigation(
                                 } else {
                                     showLoginBottomSheet = false
                                     navController.navigate(
-                                        AreaVerificationRoute.RequireAreaVerification(
+                                        AreaVerificationRoute.AreaVerification(
                                             "onboarding"
                                         )
                                     ) {
@@ -144,12 +144,13 @@ fun AconNavigation(
                 if (shouldShowBottomBar) {
                     BottomBar(
                         modifier = Modifier
-                            .background(color = AconTheme.color.Black.copy(alpha=.0f))  // TODO Color?
+                            .background(color = AconTheme.color.Black.copy(alpha = .0f))  // TODO Color?
                             .fillMaxWidth()
                             .defaultHazeEffect(
                                 hazeState = LocalHazeState.current,
                                 tintColor = AconTheme.color.Dim_b_30
-                            ).navigationBarsPadding(),
+                            )
+                            .navigationBarsPadding(),
                         selectedItem = selectedBottomNavItem,
                         onItemClick = { item ->
                             if (item == BottomNavType.UPLOAD) {
@@ -184,7 +185,9 @@ fun AconNavigation(
             NavHost(
                 navController = navController,
                 startDestination = SignInRoute.Graph,
-                modifier = Modifier.padding(innerPadding).consumeWindowInsets(innerPadding),
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .consumeWindowInsets(innerPadding),
                 enterTransition = {
                     defaultEnterTransition()
                 }, exitTransition = {

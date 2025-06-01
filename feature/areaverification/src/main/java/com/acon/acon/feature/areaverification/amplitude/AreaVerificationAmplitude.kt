@@ -1,4 +1,4 @@
-package com.acon.acon.feature.areaverification
+package com.acon.acon.feature.areaverification.amplitude
 
 import com.acon.acon.core.utils.feature.amplitude.AconAmplitude
 import com.acon.acon.core.utils.feature.amplitude.AconTestAmplitude
