@@ -1,6 +1,5 @@
 package com.acon.acon.feature.profile.composable.screen.photoCrop
 
-import android.app.Application
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.orbitmvi.orbit.ContainerHost
@@ -9,12 +8,17 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PhotoCropViewModel @Inject constructor(
-    private val application: Application
-) : ViewModel(), ContainerHost<PhotoCropState, PhotoCropSideEffect> {
 
+) : ViewModel(), ContainerHost<PhotoCropState, PhotoCropSideEffect> {
     override val container = container<PhotoCropState, PhotoCropSideEffect>(PhotoCropState())
 
+    fun navigateToBack() = intent {
+        postSideEffect(PhotoCropSideEffect.NavigateToBack)
+    }
 
+    fun navigateToProfileMod(selectedPhotoUri: String) = intent {
+        postSideEffect(PhotoCropSideEffect.NavigateToProfileMod(selectedPhotoUri))
+    }
 }
 
 data class PhotoCropState(
@@ -22,5 +26,6 @@ data class PhotoCropState(
 )
 
 sealed interface PhotoCropSideEffect {
+    data object NavigateToBack : PhotoCropSideEffect
     data class NavigateToProfileMod(val selectedPhotoUri: String) : PhotoCropSideEffect
 }
