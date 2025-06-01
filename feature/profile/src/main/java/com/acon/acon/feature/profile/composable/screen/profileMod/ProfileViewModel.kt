@@ -84,8 +84,8 @@ class ProfileModViewModel @Inject constructor(
             .map { null }
             .recover { throwable ->
                 when (throwable) {
-                    is ValidateNicknameError.UnsatisfiedCondition -> NicknameErrorType.InvalidChar
-                    is ValidateNicknameError.AlreadyUsedNickname -> NicknameErrorType.AlreadyUsed
+                    is ValidateNicknameError.UnsatisfiedCondition -> NicknameErrorType.Invalid
+                    is ValidateNicknameError.AlreadyUsedNickname -> NicknameErrorType.Duplicate
                     else -> null
                 }
             }
@@ -97,8 +97,7 @@ class ProfileModViewModel @Inject constructor(
             val (limitedText, count) = text.limitedNickname()
 
             val localErrorType: NicknameErrorType? = when {
-                text.any { !it.isAllowedChar() } -> NicknameErrorType.InvalidChar
-                text.isNotBlank() && !Regex("""^[A-Za-z0-9._가-힣ㄱ-ㅎㅏ-ㅣ]*$""").matches(text) -> NicknameErrorType.InvalidLang
+                text.any { !it.isAllowedChar() } -> NicknameErrorType.Invalid
                 else -> null
             }
 
@@ -121,7 +120,7 @@ class ProfileModViewModel @Inject constructor(
                 if (text.length > 14) return@launch
                 if (delayValidation) delay(1000L) else delay(500L)
 
-                if (localErrorType == NicknameErrorType.InvalidChar) return@launch
+                if (localErrorType == NicknameErrorType.Invalid) return@launch
                 val serverErrorType = validateNickname(limitedText)
 
                 reduce {

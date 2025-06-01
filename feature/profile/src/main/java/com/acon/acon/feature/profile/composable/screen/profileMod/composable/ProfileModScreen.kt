@@ -58,7 +58,6 @@ import com.acon.acon.feature.profile.composable.type.NicknameValidationStatus
 import com.acon.acon.feature.profile.composable.type.contentDescriptionResId
 import com.acon.acon.feature.profile.composable.type.validMessageResId
 import com.acon.acon.feature.profile.composable.utils.BirthdayTransformation
-import com.acon.acon.feature.profile.composable.utils.isAllowedChar
 import com.acon.acon.feature.profile.composable.utils.limitedNicknameTextFieldValue
 import dev.chrisbanes.haze.hazeSource
 
@@ -272,8 +271,7 @@ internal fun ProfileModScreen(
                                 placeholder = stringResource(R.string.nickname_placeholder),
                                 isTyping = (state.nicknameValidationStatus == NicknameValidationStatus.Typing),
                                 onValueChange = { fieldValue ->
-                                    val filtered = fieldValue.text.filter { it.isAllowedChar() }
-                                    if (filtered.length <= 14) {
+                                    if (fieldValue.text.length <= 14) {
                                         nicknameTextFieldValue = fieldValue
                                         onNicknameChanged(fieldValue.text)
                                     }
