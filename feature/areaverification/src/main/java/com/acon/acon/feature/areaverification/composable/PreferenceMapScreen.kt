@@ -15,6 +15,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.remember
@@ -26,11 +27,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.dialog.v2.AconDefaultDialog
 import com.acon.acon.core.designsystem.component.topbar.AconTopBar
 import com.acon.acon.core.designsystem.theme.AconTheme
+import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
 fun PreferenceMapScreen(
@@ -47,22 +48,22 @@ fun PreferenceMapScreen(
     var currentLongitude by remember { mutableDoubleStateOf(longitude) }
 
     val context = LocalContext.current
-    val state by viewModel.container.stateFlow.collectAsStateWithLifecycle()
+    val state by viewModel.container.stateFlow.collectAsState()
+
+    viewModel.collectSideEffect { effect ->
+        when (effect) {
+            is AreaVerificationHomeSideEffect.NavigateToSystemLocationSettings -> {
+                val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+                context.startActivity(intent)
+            }
+
+            else -> {}
+        }
+    }
 
     LaunchedEffect(Unit) {
         viewModel.checkDeviceGPSStatus()
         viewModel.checkSupportLocation(context)
-
-        viewModel.container.sideEffectFlow.collect { effect ->
-            when (effect) {
-                is AreaVerificationHomeSideEffect.NavigateToSystemLocationSettings -> {
-                    val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
-                    context.startActivity(intent)
-                }
-
-                else -> {}
-            }
-        }
     }
 
     LaunchedEffect(state.isGPSEnabled) {
