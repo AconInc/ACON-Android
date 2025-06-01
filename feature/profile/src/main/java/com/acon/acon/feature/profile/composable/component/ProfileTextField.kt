@@ -102,7 +102,7 @@ internal fun ProfileTextField(
                 }
             )
 
-            if (value.text.isNotEmpty()) {
+            if (value.text.isNotEmpty() && value.text.length < 14) {
                 if (isTyping) {
                     CircularProgressIndicator(
                         modifier = Modifier.size(16.dp),
