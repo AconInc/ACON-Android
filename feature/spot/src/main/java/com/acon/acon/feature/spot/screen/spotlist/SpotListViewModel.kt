@@ -18,9 +18,6 @@ import com.acon.acon.domain.type.SpotType
 import com.acon.acon.domain.type.TransportMode
 import com.acon.acon.domain.type.UserType
 import com.acon.acon.domain.usecase.IsDistanceExceededUseCase
-import com.acon.acon.feature.spot.BuildConfig
-import com.acon.acon.feature.spot.mock.spotListUiStateCafeMock
-import com.acon.acon.feature.spot.mock.spotListUiStateRestaurantMock
 import com.acon.feature.common.location.isInKorea
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -72,20 +69,14 @@ class SpotListViewModel @Inject constructor(
         runOn<SpotListUiStateV2.Loading> {
             initialLocation = location
             if (location.isInKorea(context)) {
-//            fetchSpotList(location, Condition(SpotType.RESTAURANT, emptyList())) {
-//                SpotListUiStateV2.Success(
-//                    transportMode = it.transportMode,
-//                    spotList = it.spots,
-//                    headTitle = "최고의 선택.",
-//                    selectedSpotType = SpotType.RESTAURANT,
-//                    currentLocation = location
-//                )
-//            }
-
-                if (BuildConfig.DEBUG) {
-                    reduce {
-                        spotListUiStateRestaurantMock
-                    }
+                fetchSpotList(location, Condition(SpotType.RESTAURANT, emptyList())) {
+                    SpotListUiStateV2.Success(
+                        transportMode = it.transportMode,
+                        spotList = it.spots,
+                        headTitle = "최고의 선택.",
+                        selectedSpotType = SpotType.RESTAURANT,
+                        currentLocation = location
+                    )
                 }
             } else {
                 reduce {
@@ -103,31 +94,23 @@ class SpotListViewModel @Inject constructor(
                     state.copy(showLoginModal = true)
                 }
             else {
-//            fetchSpotList(
-//                location = state.currentLocation,
-//                condition = Condition(spotType, emptyList())
-//            ) {
-//                SpotListUiStateV2.Success(
-//                    transportMode = it.transportMode,
-//                    spotList = it.spots,
-//                    headTitle = "최고의 선택.",
-//                    selectedSpotType = spotType,
-//                    currentLocation = state.currentLocation,
-//                    selectedRestaurantFilters = emptyMap(),
-//                    selectedCafeFilters = emptyMap()
-//                )
-//            }
+                reduce {
+                    state.copy(selectedSpotType = spotType)
+                }
 
-                if (BuildConfig.DEBUG) {
-                    if (spotType == SpotType.RESTAURANT)
-                        reduce {
-                            spotListUiStateRestaurantMock
-                        }
-                    else {
-                        reduce {
-                            spotListUiStateCafeMock
-                        }
-                    }
+                fetchSpotList(
+                    location = state.currentLocation,
+                    condition = Condition(spotType, emptyList())
+                ) {
+                    SpotListUiStateV2.Success(
+                        transportMode = it.transportMode,
+                        spotList = it.spots,
+                        headTitle = "최고의 선택.",
+                        selectedSpotType = spotType,
+                        currentLocation = state.currentLocation,
+                        selectedRestaurantFilters = emptyMap(),
+                        selectedCafeFilters = emptyMap()
+                    )
                 }
             }
         }
