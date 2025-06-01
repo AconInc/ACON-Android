@@ -1,5 +1,6 @@
 package com.acon.acon.feature.spot.screen.spotlist
 
+import android.content.Context
 import android.location.Location
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.viewModelScope
@@ -20,7 +21,9 @@ import com.acon.acon.domain.usecase.IsDistanceExceededUseCase
 import com.acon.acon.feature.spot.BuildConfig
 import com.acon.acon.feature.spot.mock.spotListUiStateCafeMock
 import com.acon.acon.feature.spot.mock.spotListUiStateRestaurantMock
+import com.acon.feature.common.location.isInKorea
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.stateIn
@@ -32,6 +35,7 @@ import kotlin.reflect.KClass
 @HiltViewModel
 @OptIn(OrbitExperimental::class)
 class SpotListViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val userRepository: UserRepository,
     private val spotRepository: SpotRepository,
     private val isDistanceExceededUseCase: IsDistanceExceededUseCase
@@ -68,6 +72,7 @@ class SpotListViewModel @Inject constructor(
 
         runOn<SpotListUiStateV2.Loading> {
             initialLocation = location
+            if (location.isInKorea(context)) {
 //            fetchSpotList(location, Condition(SpotType.RESTAURANT, emptyList())) {
 //                SpotListUiStateV2.Success(
 //                    transportMode = it.transportMode,
@@ -78,9 +83,14 @@ class SpotListViewModel @Inject constructor(
 //                )
 //            }
 
-            if (BuildConfig.DEBUG) {
+                if (BuildConfig.DEBUG) {
+                    reduce {
+                        spotListUiStateRestaurantMock
+                    }
+                }
+            } else {
                 reduce {
-                    spotListUiStateRestaurantMock
+                    SpotListUiStateV2.UnavailableLocation
                 }
             }
         }
@@ -286,10 +296,11 @@ sealed interface SpotListUiStateV2 {
         val selectedCafeFilters: Map<FilterDetailKey, Set<CafeFilterType>> = emptyMap(),
         val showFilterModal: Boolean = false,
         val showLoginModal: Boolean = false,
-        val showRefreshPopup: Boolean = false
+        val showRefreshPopup: Boolean = false,
     ) : SpotListUiStateV2
     data object Loading : SpotListUiStateV2
     data object LoadFailed : SpotListUiStateV2
+    data object UnavailableLocation: SpotListUiStateV2
 }
 
 sealed interface SpotListSideEffectV2 {

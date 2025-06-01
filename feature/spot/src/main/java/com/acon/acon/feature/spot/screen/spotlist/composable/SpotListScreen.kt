@@ -240,6 +240,11 @@ internal fun SpotListScreen(
                     modifier = Modifier.fillMaxSize()
                 )
             }
+            is SpotListUiStateV2.UnavailableLocation -> {
+                UnavailableLocationView(
+                    modifier = Modifier.fillMaxSize().padding(top = 24.dp)
+                )
+            }
         }
     }
 }
