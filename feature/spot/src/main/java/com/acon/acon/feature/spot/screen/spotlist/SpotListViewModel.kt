@@ -25,7 +25,6 @@ import com.acon.feature.common.location.isInKorea
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.stateIn
 import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.viewmodel.container
@@ -261,7 +260,7 @@ class SpotListViewModel @Inject constructor(
                     Filter(
                         category = when (it.key) {
                             RestaurantFilterType.RestaurantType::class -> CategoryType.RESTAURANT_FEATURE
-                            RestaurantFilterType.RestaurantOperationType::class -> CategoryType.OPENING_HOUR
+                            RestaurantFilterType.RestaurantOperationType::class -> CategoryType.OPENING_HOURS
                             RestaurantFilterType.RestaurantPriceType::class -> CategoryType.PRICE
                             else -> throw IllegalArgumentException("Unknown filter type")
                         },
@@ -273,7 +272,7 @@ class SpotListViewModel @Inject constructor(
                     Filter(
                         category = when (it.key) {
                             CafeFilterType.CafeType::class -> CategoryType.CAFE_FEATURE
-                            CafeFilterType.CafeOperationType::class -> CategoryType.OPENING_HOUR
+                            CafeFilterType.CafeOperationType::class -> CategoryType.OPENING_HOURS
                             else -> throw IllegalArgumentException("Unknown filter type")
                         },
                         optionList = it.value.toList()
