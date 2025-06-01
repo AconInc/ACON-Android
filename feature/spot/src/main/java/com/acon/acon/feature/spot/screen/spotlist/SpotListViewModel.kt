@@ -123,9 +123,14 @@ class SpotListViewModel @Inject constructor(
 
     fun onFilterButtonClicked() = intent {
         runOn<SpotListUiStateV2.Success> {
-            reduce {
-                state.copy(showFilterModal = true)
-            }
+            if (userType.value == UserType.GUEST)
+                reduce {
+                    state.copy(showLoginModal = true)
+                }
+            else
+                reduce {
+                    state.copy(showFilterModal = true)
+                }
         }
     }
 
