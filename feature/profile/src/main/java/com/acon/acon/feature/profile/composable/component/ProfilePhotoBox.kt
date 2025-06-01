@@ -23,9 +23,9 @@ import com.acon.acon.core.designsystem.noRippleClickable
 
 @Composable
 fun ProfilePhotoBox(
+    photoUri: String,
     modifier: Modifier = Modifier,
-    onProfileClicked: () -> Unit = {},
-    photoUri: String = "",
+    onProfileClicked: () -> Unit = {}
 ) {
     BoxWithConstraints(
         modifier = modifier.fillMaxSize()
