@@ -17,6 +17,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
@@ -48,6 +49,7 @@ import com.acon.acon.feature.spot.screen.component.SpotTypeToggle
 import com.acon.acon.feature.spot.screen.spotlist.FilterDetailKey
 import com.acon.acon.feature.spot.screen.spotlist.SpotListUiStateV2
 import com.acon.feature.common.compose.LocalOnRetry
+import com.acon.feature.common.compose.LocalTrigger
 import com.acon.feature.common.remember.rememberSocialRepository
 import dev.chrisbanes.haze.hazeSource
 import kotlinx.collections.immutable.toImmutableSet
@@ -170,6 +172,10 @@ internal fun SpotListScreen(
                             modifier = Modifier.fillMaxSize(),
                             onGuestItemClick = onGuestItemClick
                         )
+
+                        LaunchedEffect(LocalTrigger.current) {
+                            pagerState.animateScrollToPage(0)
+                        }
                     }
                     SpotType.CAFE -> {
                         pagerState = rememberPagerState {
@@ -192,6 +198,10 @@ internal fun SpotListScreen(
                             modifier = Modifier.fillMaxSize(),
                             onGuestItemClick = onGuestItemClick
                         )
+
+                        LaunchedEffect(LocalTrigger.current) {
+                            pagerState.animateScrollToPage(0)
+                        }
                     }
                 }
             }
