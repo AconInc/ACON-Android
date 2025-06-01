@@ -15,6 +15,7 @@ import com.acon.acon.feature.profile.composable.type.FocusType
 import com.acon.acon.feature.profile.composable.type.NicknameErrorType
 import com.acon.acon.feature.profile.composable.type.NicknameValidationStatus
 import com.acon.acon.feature.profile.composable.type.TextFieldStatus
+import com.acon.acon.feature.profile.composable.utils.isAllowedChar
 import com.acon.acon.feature.profile.composable.utils.limitedNickname
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -23,10 +24,11 @@ import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.viewmodel.container
+import timber.log.Timber
 import javax.inject.Inject
 
 @OptIn(OrbitExperimental::class)
@@ -94,17 +96,15 @@ class ProfileModViewModel @Inject constructor(
         runOn<ProfileModState.Success> {
             val (limitedText, count) = text.limitedNickname()
 
-            val invalidCharRegex = Regex("""[^A-Za-z0-9._가-힣ㄱ-ㅎㅏ-ㅣ]""")
-            val hasInvalidChar = invalidCharRegex.containsMatchIn(text)
-
             val localErrorType: NicknameErrorType? = when {
-                text.isNotEmpty() && limitedText != text -> NicknameErrorType.InvalidChar
+                text.any { !it.isAllowedChar() } -> NicknameErrorType.InvalidChar
                 text.isNotBlank() && !Regex("""^[A-Za-z0-9._가-힣ㄱ-ㅎㅏ-ㅣ]*$""").matches(text) -> NicknameErrorType.InvalidLang
                 else -> null
             }
 
             reduce {
                 state.copy(
+                    nickname = limitedText,
                     isEdited = (state.isEdited || limitedText != state.fetchedNickname),
                     nicknameCount = count,
                     nicknameValidationStatus = when {
@@ -118,6 +118,7 @@ class ProfileModViewModel @Inject constructor(
 
             nicknameValidationJob?.cancel()
             nicknameValidationJob = viewModelScope.launch {
+                if (text.length > 14) return@launch
                 if (delayValidation) delay(1000L) else delay(500L)
 
                 if (localErrorType == NicknameErrorType.InvalidChar) return@launch
@@ -127,7 +128,10 @@ class ProfileModViewModel @Inject constructor(
                     state.copy(
                         nicknameValidationStatus = when {
                             limitedText.isBlank() -> NicknameValidationStatus.Empty
-                            serverErrorType != null -> NicknameValidationStatus.Error(serverErrorType)
+                            serverErrorType != null -> NicknameValidationStatus.Error(
+                                serverErrorType
+                            )
+
                             localErrorType != null -> NicknameValidationStatus.Error(localErrorType)
                             else -> NicknameValidationStatus.Valid
                         }
@@ -296,39 +300,41 @@ class ProfileModViewModel @Inject constructor(
         }
     }
 
-    fun getPreSignedUrl(nickname: String) = intent {
+    fun getPreSignedUrl() = intent {
         runOn<ProfileModState.Success> {
-            if (state.selectedPhotoUri == "basic_profile_image") {
-                if (state.birthdayValidationStatus == BirthdayValidationStatus.Valid) {
+            val nickname = state.nickname
+            val isBirthdayValid = state.birthdayValidationStatus == BirthdayValidationStatus.Valid
+            val birthday = if (isBirthdayValid) state.birthdayTextFieldValue.text else null
+
+            when {
+                state.selectedPhotoUri.isEmpty() -> {
                     updateProfile(
-                        fileName = state.uploadFileName,
+                        fileName = state.fetchedPhotoUri,
                         nickname = nickname,
-                        birthday = state.birthdayTextFieldValue.text
-                    )
-                } else {
-                    updateProfile(
-                        fileName = state.uploadFileName,
-                        nickname = nickname,
-                        birthday = null
+                        birthday = birthday
                     )
                 }
-            } else {
-                profileRepository.getPreSignedUrl()
-                    .onSuccess { result ->
-                        reduce {
-                            state.copy(
-                                uploadFileName = result.fileName
+                state.selectedPhotoUri == "basic_profile_image" -> {
+                    updateProfile(
+                        fileName = state.uploadFileName,
+                        nickname = nickname,
+                        birthday = birthday
+                    )
+                }
+                else -> {
+                    profileRepository.getPreSignedUrl()
+                        .onSuccess { result ->
+                            reduce { state.copy(uploadFileName = result.fileName) }
+                            putPhotoToPreSignedUrl(
+                                nickname = nickname,
+                                imageUri = Uri.parse(state.selectedPhotoUri),
+                                preSignedUrl = result.preSignedUrl
                             )
                         }
-                        putPhotoToPreSignedUrl(
-                            nickname = nickname,
-                            imageUri = Uri.parse(state.selectedPhotoUri),
-                            preSignedUrl = result.preSignedUrl
-                        )
-                    }
-                    .onFailure {
-                        // 실패시 에러 처리
-                    }
+                        .onFailure {
+                            // 실패 처리
+                        }
+                }
             }
         }
     }
@@ -338,6 +344,7 @@ class ProfileModViewModel @Inject constructor(
             runOn<ProfileModState.Success> {
                 val context = getApplication<Application>().applicationContext
                 val client = OkHttpClient()
+                Timber.tag(TAG).d("imageUri: $imageUri")
 
                 try {
                     val byteArray: ByteArray
@@ -349,9 +356,8 @@ class ProfileModViewModel @Inject constructor(
                             ?: throw IllegalArgumentException("Failed to read image")
                         mimeType = context.contentResolver.getType(imageUri) ?: "image/jpeg"
 
-                    } else if (state.selectedPhotoUri.startsWith("http://") || state.selectedPhotoUri.startsWith(
-                            "https://"
-                        )
+                    } else if (state.selectedPhotoUri.startsWith("http://") ||
+                        state.selectedPhotoUri.startsWith("https://")
                     ) {
                         val getRequest = Request.Builder().url(imageUri.toString()).build()
                         val getResponse = client.newCall(getRequest).execute()
@@ -368,7 +374,8 @@ class ProfileModViewModel @Inject constructor(
                         throw IllegalArgumentException("Unsupported URI scheme")
                     }
 
-                    val fileBody = RequestBody.create(mimeType.toMediaTypeOrNull(), byteArray)
+                    val fileBody =
+                        byteArray.toRequestBody(mimeType.toMediaTypeOrNull(), 0, byteArray.size)
 
                     val request = Request.Builder()
                         .url(preSignedUrl)
@@ -396,6 +403,7 @@ class ProfileModViewModel @Inject constructor(
                         // PUT 실패 시 에러 처리
                     }
                 } catch (e: Exception) {
+                    Timber.tag(TAG).e(e, "이미지 업로드 과정에서 예외 발생: ${e.message}")
                 }
             }
         }
@@ -411,12 +419,17 @@ class ProfileModViewModel @Inject constructor(
                 postSideEffect(ProfileModSideEffect.NavigateToProfile)
             }
     }
+
+    companion object {
+        const val TAG = "ProfileViewModel"
+    }
 }
 
 sealed interface ProfileModState {
     @Immutable
     data class Success(
         val fetchedNickname: String = "",
+        val nickname: String = "",
         val nicknameFieldStatus: TextFieldStatus = TextFieldStatus.Inactive,
         val nicknameValidationStatus: NicknameValidationStatus = NicknameValidationStatus.Empty,
         val nicknameCount: Int = 0,
@@ -441,10 +454,12 @@ sealed interface ProfileModState {
                 val isProfileImageChanged = when {
                     selectedPhotoUri.contains("basic_profile_image") &&
                             fetchedPhotoUri.contains("basic_profile_image") -> false
+
                     selectedPhotoUri.isNotEmpty() && selectedPhotoUri != fetchedPhotoUri -> true
                     else -> false
                 }
-                val isBirthValid = fetchedBirthday.isNotEmpty() && birthdayTextFieldValue.text.isEmpty()
+                val isBirthValid =
+                    fetchedBirthday.isNotEmpty() && birthdayTextFieldValue.text.isEmpty()
                 val isContentValid = nicknameValidationStatus == NicknameValidationStatus.Valid &&
                         (birthdayTextFieldValue.text.isEmpty() ||
                                 birthdayValidationStatus == BirthdayValidationStatus.Valid)

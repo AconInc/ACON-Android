@@ -58,6 +58,7 @@ import com.acon.acon.feature.profile.composable.type.NicknameValidationStatus
 import com.acon.acon.feature.profile.composable.type.contentDescriptionResId
 import com.acon.acon.feature.profile.composable.type.validMessageResId
 import com.acon.acon.feature.profile.composable.utils.BirthdayTransformation
+import com.acon.acon.feature.profile.composable.utils.isAllowedChar
 import com.acon.acon.feature.profile.composable.utils.limitedNicknameTextFieldValue
 import dev.chrisbanes.haze.hazeSource
 
@@ -80,7 +81,7 @@ internal fun ProfileModScreen(
     onProfileClicked: () -> Unit = {},
     onDisMissProfileEditModal: () -> Unit,
     onUpdateProfileImage: (String) -> Unit,
-    onClickSaveButton: (String) -> Unit = {},
+    onClickSaveButton: () -> Unit = {},
 ) {
     val context = LocalContext.current
     val configuration = LocalConfiguration.current
@@ -271,8 +272,11 @@ internal fun ProfileModScreen(
                                 placeholder = stringResource(R.string.nickname_placeholder),
                                 isTyping = (state.nicknameValidationStatus == NicknameValidationStatus.Typing),
                                 onValueChange = { fieldValue ->
-                                    nicknameTextFieldValue = fieldValue
-                                    onNicknameChanged(fieldValue.text)
+                                    val filtered = fieldValue.text.filter { it.isAllowedChar() }
+                                    if (filtered.length <= 14) {
+                                        nicknameTextFieldValue = fieldValue
+                                        onNicknameChanged(fieldValue.text)
+                                    }
                                 },
                                 onFocusChanged = onFocusChanged,
                                 onClick = {
@@ -321,16 +325,22 @@ internal fun ProfileModScreen(
                                         else -> Unit
                                     }
                                 }
-                            }
 
-                            Text(
-                                text = stringResource(R.string.nickname_textfield_guide),
-                                color = AconTheme.color.Gray300,
-                                style = AconTheme.typography.Body1,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(top = 8.dp)
-                            )
+                                Row(
+                                    horizontalArrangement = Arrangement.End
+                                ) {
+                                    Text(
+                                        text = "${state.nicknameCount}",
+                                        style = AconTheme.typography.Caption1,
+                                        color = AconTheme.color.Gray500
+                                    )
+                                    Text(
+                                        text = stringResource(R.string.max_nickname_count),
+                                        style = AconTheme.typography.Caption1,
+                                        color = AconTheme.color.Gray500
+                                    )
+                                }
+                            }
                         }
 
                         Column(
@@ -392,7 +402,7 @@ internal fun ProfileModScreen(
                                 .padding(horizontal = 16.dp)
                                 .padding(bottom = 16.dp),
                             enabled = state.isEditButtonEnabled,
-                            onClick = { onClickSaveButton(limitedTextFieldValue.text) },
+                            onClick = { onClickSaveButton() },
                             content = {
                                 Text(
                                     text = stringResource(R.string.save),
@@ -406,7 +416,6 @@ internal fun ProfileModScreen(
             }
         }
     }
-
 }
 
 @Preview(showBackground = true)
