@@ -85,7 +85,7 @@ fun SettingsScreen(
                         ) {
                             Icon(
                                 //TODO - PR 합쳐지면 변경
-                                imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_left_28),
+                                imageVector = ImageVector.vectorResource(R.drawable.ic_topbar_arrow_left),
                                 contentDescription = stringResource(R.string.back),
                                 tint = AconTheme.color.White
                             )
