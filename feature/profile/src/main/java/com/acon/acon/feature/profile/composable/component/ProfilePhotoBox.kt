@@ -18,14 +18,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import coil3.compose.AsyncImage
 import coil3.compose.rememberAsyncImagePainter
+import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.noRippleClickable
-import com.acon.acon.feature.profile.R
 
 @Composable
 fun ProfilePhotoBox(
+    photoUri: String,
     modifier: Modifier = Modifier,
-    onProfileClicked: () -> Unit = {},
-    photoUri: String = "",
+    onProfileClicked: () -> Unit = {}
 ) {
     BoxWithConstraints(
         modifier = modifier.fillMaxSize()
@@ -64,7 +64,7 @@ fun ProfilePhotoBox(
 
                     photoUri == "basic_profile_image" -> {
                         Image(
-                            imageVector = ImageVector.vectorResource(com.acon.acon.core.designsystem.R.drawable.img_profile_basic_80),
+                            imageVector = ImageVector.vectorResource(R.drawable.ic_default_profile),
                             contentDescription = stringResource(R.string.content_description_default_profile_image),
                             modifier = Modifier.fillMaxSize(),
                             contentScale = ContentScale.Crop,
@@ -75,7 +75,7 @@ fun ProfilePhotoBox(
             }
         } else {
             Image(
-                imageVector = ImageVector.vectorResource(com.acon.acon.core.designsystem.R.drawable.img_profile_basic_80),
+                imageVector = ImageVector.vectorResource(R.drawable.ic_default_profile),
                 contentDescription = stringResource(R.string.content_description_default_profile_image),
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop,

@@ -3,11 +3,11 @@ package com.acon.acon.feature.profile.composable.screen.galleryGrid.composable
 import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -15,21 +15,23 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.rememberAsyncImagePainter
+import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.topbar.AconTopBar
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.feature.profile.R
 import com.acon.acon.feature.profile.composable.screen.galleryGrid.GalleryGridSideEffect
 import com.acon.acon.feature.profile.composable.screen.galleryGrid.GalleryGridState
 import com.acon.acon.feature.profile.composable.screen.galleryGrid.GalleryGridViewModel
@@ -38,14 +40,14 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
 fun GalleryGridContainer(
-    modifier : Modifier = Modifier,
-    viewModel: GalleryGridViewModel = hiltViewModel(),
     albumId: String,
     albumName: String,
+    modifier : Modifier = Modifier,
+    viewModel: GalleryGridViewModel = hiltViewModel(),
     onBackClicked: () -> Unit = {},
-    onNavigateToPhotoCrop: (String) -> Unit = {},
+    onNavigateToPhotoCrop: (String) -> Unit = {}
 ){
-    val state = viewModel.collectAsState().value
+    val state by viewModel.collectAsState()
 
     LaunchedEffect(albumId) {
         viewModel.loadPhotos(albumId)
@@ -54,9 +56,7 @@ fun GalleryGridContainer(
     viewModel.collectSideEffect {
         when(it) {
             is GalleryGridSideEffect.NavigateToPhotoCropScreen -> {
-                state.selectedPhotoUri?.let { selectedPhotoUri ->
-                    onNavigateToPhotoCrop(selectedPhotoUri.toString())
-                }
+                onNavigateToPhotoCrop(it.photoUri)
             }
         }
     }
@@ -72,7 +72,7 @@ fun GalleryGridContainer(
 }
 
 @Composable
-fun GalleryGridScreen(
+internal fun GalleryGridScreen(
     modifier: Modifier = Modifier,
     state: GalleryGridState,
     albumName: String,
@@ -83,7 +83,7 @@ fun GalleryGridScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(color = AconTheme.color.Gray9)
+            .background(color = AconTheme.color.Gray900)
             .statusBarsPadding()
             .navigationBarsPadding()
     ) {
@@ -92,26 +92,29 @@ fun GalleryGridScreen(
             leadingIcon = {
                 IconButton(onClick = onBackClicked) {
                     Image(
-                        imageVector = ImageVector.vectorResource(id = com.acon.acon.core.designsystem.R.drawable.ic_arrow_left_28),
-                        contentDescription = stringResource(R.string.content_description_back),
+                        imageVector = ImageVector.vectorResource(R.drawable.ic_topbar_arrow_left),
+                        contentDescription = stringResource(R.string.back)
                     )
                 }
             },
             content = {
                 Text(
                     text = albumName,
-                    style = AconTheme.typography.head5_22_sb,
+                    style = AconTheme.typography.Title4,
+                    fontWeight = FontWeight.SemiBold,
                     color = AconTheme.color.White
                 )
             },
             trailingIcon = {
-                TextButton(
-                    onClick = { state.selectedPhotoUri?.let { onConfirmSelected(it.toString()) } }
-                ) {
+                if (state.selectedPhotoUri != null) {
                     Text(
-                        text = stringResource(R.string.select_btn),
-                        style = AconTheme.typography.subtitle1_16_med,
-                        color = if (state.selectedPhotoUri != null) AconTheme.color.White else AconTheme.color.Gray5
+                        text = stringResource(R.string.select),
+                        style = AconTheme.typography.Title4,
+                        fontWeight = FontWeight.SemiBold,
+                        color = AconTheme.color.Action,
+                        modifier = Modifier.noRippleClickable {
+                            onConfirmSelected(state.selectedPhotoUri.toString())
+                        }
                     )
                 }
             }
@@ -120,8 +123,13 @@ fun GalleryGridScreen(
         LazyVerticalGrid(
             columns = GridCells.Fixed(4),
             modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+            horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            items(state.photoList) { photoUri ->
+            items(
+                items =  state.photoList,
+                key = { photoUri -> photoUri }
+            ) { photoUri ->
                 PhotoItem(
                     uri = photoUri,
                     isSelected = photoUri == state.selectedPhotoUri,
@@ -133,13 +141,21 @@ fun GalleryGridScreen(
 }
 
 @Composable
-fun PhotoItem(
+private fun PhotoItem(
     uri: Uri,
+    columns: Int = 4,
+    spacing: Int = 4,
     isSelected: Boolean,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
+    val configuration = LocalConfiguration.current
+    val screenWidthDp = configuration.screenWidthDp
+    val itemSize = (screenWidthDp - ((columns - 1) * spacing)) / columns
+
     Box(
-        modifier = Modifier.padding(2.dp).size(87.dp).noRippleClickable{ onClick() }
+        modifier = Modifier
+            .size(itemSize.dp)
+            .noRippleClickable{ onClick() }
     ) {
         Image(
             painter = rememberAsyncImagePainter(uri),
@@ -157,4 +173,3 @@ fun PhotoItem(
         }
     }
 }
-

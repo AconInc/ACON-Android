@@ -112,8 +112,7 @@ fun SignInScreen(
                             onClickLoginGoogle()
                             amplitudeSignIn()
                         }
-                    },
-                    textStyle = AconTheme.typography.subtitle1_16_med
+                    }
                 )
                 Text(
                     text = stringResource(R.string.signin_policy),
