@@ -17,6 +17,7 @@
     <string name="google_login_btn_description">구글 로그인 버튼</string>
     <string name="google_login_btn_content">Google로 계속하기</string>
     <string name="area_verification_btn_content">인증완료</string>
+    <string name="btn_change">변경하기</string>
 
     <!-- Content Description -->
     <string name="location_content_description">위치</string>
@@ -78,10 +79,9 @@
     <string name="photo_permission_alert_right_btn">설정으로 가기</string>
     <string name="profile_mod_exit_title">변경사항이 저장되지 않았습니다.</string>
     <string name="profile_mod_exit_content">지금 나가면 변경한 내용이 삭제돼요</string>
-
-    <string name="delete_area_alert_title">\'%s\'을 삭제할까요?</string>
-    <string name="delete_area_alert_left_btn">취소</string>
-    <string name="delete_area_alert_right_btn">삭제하기</string>
+    <string name="delete_area_dialog_fail_title">지역 삭제 불가</string>
+    <string name="delete_area_dialog_fail_content">인증한지 1주일이 지난 지역은\n3개월 간 삭제가 불가능해요.</string>
+    <string name="delete_area_dialog_edit_content">지역은 최소 1개 이상을 등록해야 해요.\n현재 설정된 지역을 변경할까요?</string>
 
     <!-- SpotList -->
     <string name="dotori_count_content_description">도토리 개수</string>
@@ -208,7 +208,7 @@
     <string name="settings_section_term_of_use">이용약관</string>
     <string name="settings_section_private_policy">개인정보처리방침</string>
     <string name="settings_section_retry_onboarding">취향탐색 다시하기</string>
-    <string name="settings_section_verify_area">동네 인증하기</string>
+    <string name="settings_section_verify_area">지역 인증하기</string>
     <string name="settings_section_logout">로그아웃하기</string>
     <string name="settings_section_delete_account">서비스 탈퇴</string>
     <string name="logout_dialog_title">로그아웃 하시겠어요?</string>
@@ -221,6 +221,11 @@
     <string name="delete_account_bottom_sheet_title">지금 탈퇴를 진행할까요?</string>
     <string name="delete_account_bottom_sheet_content">탈퇴하면 취향정보, 리뷰 등\n모든 데이터는 영구적으로 삭제되며 복구할 수 없어요.</string>
     <string name="delete_account_btn_content">아쉽지만 탈퇴하기</string>
+    <string name="reason_few_restaurants">다양한 맛집이 없어요</string>
+    <string name="reason_unsatisfied_recommendations">추천 결과가 만족스럽지 않아요</string>
+    <string name="reason_fake_reviews">거짓 리뷰를 봤어요</string>
+    <string name="reason_other">기타</string>
+    <string name="reason_max_length">50</string>
 
     <!-- settings - AreaVerification-->
     <string name="settings_area_verification_topbar">지역 인증</string>
