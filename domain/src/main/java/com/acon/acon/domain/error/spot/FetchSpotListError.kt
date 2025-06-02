@@ -20,7 +20,7 @@ sealed class FetchSpotListError : RootError() {
     class NonMatchingCategoryAndOption : FetchSpotListError() {
         override val code: Int = 40021
     }
-    class OutOfServiceAreaError : FetchSpotListError() {
+    class OutOfServiceArea : FetchSpotListError() {
         override val code: Int = 40405
     }
 
@@ -32,7 +32,7 @@ sealed class FetchSpotListError : RootError() {
                 InvalidOption(),
                 NonMatchingSpotTypeAndCategory(),
                 NonMatchingCategoryAndOption(),
-                OutOfServiceAreaError()
+                OutOfServiceArea()
             )
         }
     }

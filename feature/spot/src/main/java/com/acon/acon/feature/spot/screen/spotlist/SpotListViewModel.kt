@@ -5,6 +5,7 @@ import android.location.Location
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.viewModelScope
 import com.acon.acon.core.utils.feature.base.BaseContainerHost
+import com.acon.acon.domain.error.spot.FetchSpotListError
 import com.acon.acon.domain.model.spot.Condition
 import com.acon.acon.domain.model.spot.Filter
 import com.acon.acon.domain.model.spot.v2.Spot
@@ -80,7 +81,7 @@ class SpotListViewModel @Inject constructor(
                 }
             } else {
                 reduce {
-                    SpotListUiStateV2.UnavailableLocation
+                    SpotListUiStateV2.OutOfServiceArea
                 }
             }
         }
@@ -223,8 +224,11 @@ class SpotListViewModel @Inject constructor(
         ).reduceResult(
             syntax = this@intent,
             onSuccess = onSuccess,
-            onFailure = {
-                SpotListUiStateV2.LoadFailed
+            onFailure = { e ->
+                if (e is FetchSpotListError.OutOfServiceArea)
+                    SpotListUiStateV2.OutOfServiceArea
+                else
+                    SpotListUiStateV2.LoadFailed
             }
         )
     }
@@ -282,7 +286,7 @@ sealed interface SpotListUiStateV2 {
     ) : SpotListUiStateV2
     data object Loading : SpotListUiStateV2
     data object LoadFailed : SpotListUiStateV2
-    data object UnavailableLocation: SpotListUiStateV2
+    data object OutOfServiceArea: SpotListUiStateV2
 }
 
 sealed interface SpotListSideEffectV2 {
