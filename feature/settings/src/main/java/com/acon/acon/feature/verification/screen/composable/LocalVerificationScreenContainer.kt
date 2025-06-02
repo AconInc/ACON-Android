@@ -25,9 +25,7 @@ fun LocalVerificationScreenContainer(
         onNavigateBack = viewModel::onNavigateToSettingsScreen,
         onclickAddArea = viewModel::onNavigateToAreaVerificationAdd,
         onclickEditArea = viewModel::onNavigateToAreaVerificationEdit,
-        onDeleteVerifiedAreaChip = viewModel::deleteVerifiedArea,
-        onShowEditVerifiedAreaChipDialog = viewModel::onShowEditVerifiedAreaChipDialog,
-        onShowDeleteVerifiedAreaChipDialog = viewModel::onShowDeleteVerifiedAreaChipDialog,
+        onDeleteVerifiedAreaChip = viewModel::deleteVerifiedArea
     )
 
     viewModel.collectSideEffect {
@@ -37,5 +35,4 @@ fun LocalVerificationScreenContainer(
             is LocalVerificationSideEffect.NavigateToAreaVerificationToEdit -> navigateToAreaVerificationToEdit(it.area)
         }
     }
-
 }

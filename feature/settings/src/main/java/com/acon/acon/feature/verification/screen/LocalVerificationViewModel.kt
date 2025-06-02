@@ -40,26 +40,6 @@ class LocalVerificationViewModel @Inject constructor(
             .onFailure {}
     }
 
-    fun onShowEditVerifiedAreaChipDialog(show: Boolean) = intent {
-        runOn<LocalVerificationUiState.Success> {
-            reduce {
-                state.copy(showEditVerifiedAreaChipDialog = show)
-            }
-        }
-    }
-
-
-    fun onShowDeleteVerifiedAreaChipDialog(show: Boolean, verifiedAreaId: Long) = intent {
-        runOn<LocalVerificationUiState.Success> {
-            reduce {
-                state.copy(
-                    showDeleteVerifiedAreaChipDialog = show,
-                    selectedAreaId = verifiedAreaId
-                )
-            }
-        }
-    }
-
     fun onNavigateToSettingsScreen() = intent {
         postSideEffect(LocalVerificationSideEffect.NavigateToSettingsScreen)
     }
@@ -71,14 +51,11 @@ class LocalVerificationViewModel @Inject constructor(
     fun onNavigateToAreaVerificationEdit(area: String) = intent {
         postSideEffect(LocalVerificationSideEffect.NavigateToAreaVerificationToEdit(area))
     }
-
 }
 
 sealed interface LocalVerificationUiState {
     data class Success(
         val selectedAreaId: Long? = null,
-        val showEditVerifiedAreaChipDialog: Boolean = false,
-        val showDeleteVerifiedAreaChipDialog: Boolean = false,
         val verificationAreaList: List<Area>,
     ) : LocalVerificationUiState
     data object Loading : LocalVerificationUiState
