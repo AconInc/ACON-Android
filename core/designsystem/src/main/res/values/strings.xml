@@ -46,6 +46,7 @@
     <string name="content_description_duplicate_nickname">닉네임 중복</string>
     <string name="content_description_invalid_language">지원하지 않는 언어</string>
     <string name="content_description_invalid_birthday">잘못된 생년월일</string>
+    <string name="content_description_delete_area">인증 지역 삭제</string>
 
     <!-- login BottomSheet -->
     <string name="login_bottom_sheet_title">Acon에 로그인</string>
@@ -220,5 +221,11 @@
     <string name="delete_account_bottom_sheet_title">지금 탈퇴를 진행할까요?</string>
     <string name="delete_account_bottom_sheet_content">탈퇴하면 취향정보, 리뷰 등\n모든 데이터는 영구적으로 삭제되며 복구할 수 없어요.</string>
     <string name="delete_account_btn_content">아쉽지만 탈퇴하기</string>
+
+    <!-- settings - AreaVerification-->
+    <string name="settings_area_verification_topbar">지역 인증</string>
+    <string name="settings_area_verification_title">인증 지역</string>
+    <string name="settings_area_verification_content">등록한 지 1주일 이내 지역은 수정이 가능하며 이후 3개월 동안 변경이 불가해요.</string>
+    <string name="settings_area_verification_add_area">지역 추가하기</string>
 
 </resources>
