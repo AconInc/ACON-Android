@@ -20,9 +20,12 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.acon.acon.core.designsystem.R
+import com.acon.acon.core.designsystem.component.dialog.v2.AconDefaultDialog
+import com.acon.acon.core.designsystem.component.dialog.v2.AconTwoActionDialog
 import com.acon.acon.core.designsystem.component.topbar.AconTopBar
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.feature.verification.component.VerifiedAreaChip
@@ -31,15 +34,59 @@ import com.acon.acon.feature.verification.screen.LocalVerificationUiState
 @Composable
 fun LocalVerificationScreen(
     state: LocalVerificationUiState,
-    modifier: Modifier = Modifier,
-    onNavigateBack: () -> Unit = {},
-    onclickAddArea: () -> Unit = {},
-    onclickEditArea: (String) -> Unit = {},
-    onDeleteVerifiedAreaChip: (Long) -> Unit = {},
+    onNavigateBack: () -> Unit,
+    onclickAddArea: () -> Unit,
+    onclickEditArea: (String) -> Unit,
+    onDeleteVerifiedAreaChip: (Long) -> Unit,
+    onShowEditAreaDialog: () -> Unit,
+    onDismissEditAreaDialog: () -> Unit,
+    onDismissDeleteFailDialog: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
-
     when(state) {
         is LocalVerificationUiState.Success -> {
+            if(state.showAreaDeleteFailDialog) {
+                AconDefaultDialog (
+                    title = stringResource(R.string.delete_area_dialog_fail_title),
+                    action = stringResource(R.string.ok),
+                    onAction = onDismissDeleteFailDialog,
+                    onDismissRequest = {},
+                    content = {
+                        Text(
+                            text = stringResource(R.string.delete_area_dialog_fail_content),
+                            color = AconTheme.color.Gray200,
+                            style = AconTheme.typography.Body1,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                )
+            }
+
+            if (state.showEditAreaDialog) {
+                AconTwoActionDialog(
+                    title = stringResource(R.string.delete_area_dialog_fail_title),
+                    action1 = stringResource(R.string.cancel),
+                    action2 = stringResource(R.string.btn_change),
+                    onAction1 = onDismissEditAreaDialog,
+                    onAction2 = {
+                        onDismissEditAreaDialog()
+                        if(state.verificationAreaList.size == 1) {
+                            onclickEditArea(state.verificationAreaList[0].name)
+                        }
+                    },
+                    onDismissRequest = {},
+                    content = {
+                        Text(
+                            text = stringResource(R.string.delete_area_dialog_edit_content),
+                            color = AconTheme.color.Gray200,
+                            style = AconTheme.typography.Body1,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.padding(bottom = 22.dp)
+                        )
+                    }
+                )
+            }
+
             Column(
                 modifier = modifier
                     .background(AconTheme.color.Gray900)
@@ -103,11 +150,7 @@ fun LocalVerificationScreen(
                 Spacer(Modifier.height(16.dp))
                 VerifiedAreaChip(
                     areaList = state.verificationAreaList,
-                    onEditArea = {
-                        if(state.verificationAreaList.size == 1) {
-                            onclickEditArea(state.verificationAreaList[0].name)
-                        }
-                    },
+                    onEditArea = onShowEditAreaDialog,
                     onRemoveChip = {
                         state.selectedAreaId?.let { verifiedAreaId ->
                             onDeleteVerifiedAreaChip(verifiedAreaId)
@@ -131,6 +174,13 @@ fun LocalVerificationScreenPreview() {
             state = LocalVerificationUiState.Success(
                 verificationAreaList = emptyList()
             ),
+            onNavigateBack = {},
+            onclickAddArea = {},
+            onclickEditArea = {},
+            onDeleteVerifiedAreaChip = {},
+            onShowEditAreaDialog = {},
+            onDismissEditAreaDialog = {},
+            onDismissDeleteFailDialog = {},
             modifier = Modifier.fillMaxSize()
         )
     }
