@@ -190,6 +190,7 @@
     <string name="my_album">나의 앨범</string>
     <string name="upload_photo_from_album">앨범에서 사진 업로드</string>
     <string name="set_default_profile_image">기본 이미지로 변경</string>
+    <string name="selected_image">선택 이미지</string>
 
     <!-- setting -->
     <string name="settings_screen_topbar">설정</string>
@@ -211,5 +212,4 @@
     <string name="settings_section_delete_account">서비스 탈퇴</string>
 
     <string name="logout_dialog_title">로그아웃 하시겠어요?</string>
-    <string name="selected_image">선택 이미지</string>
 </resources>
