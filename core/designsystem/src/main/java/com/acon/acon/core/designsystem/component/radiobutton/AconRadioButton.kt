@@ -12,7 +12,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.acon.acon.core.designsystem.theme.AconTheme
@@ -22,41 +21,30 @@ fun AconRadioButton(
     selected: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    enabled: Boolean = true,
 ) {
-    val borderColor = if (enabled.not()) {
-        Color.Transparent
-    } else {
-        if (selected)
-            Color.Transparent
-        else AconTheme.color.Gray5
-    }
+    val borderColor = AconTheme.color.GlassWhiteDefault
 
-    val containerColor = if (enabled.not()) {
-        AconTheme.color.Gray8
-    } else {
-        if (selected)
-            AconTheme.color.Main_org35
-        else AconTheme.color.Gray9
-    }
+    val containerColor =
+        if (selected) AconTheme.color.GlassWhiteDefault
+        else AconTheme.color.Gray900
 
-    val contentColor = if (enabled.not()) {
-        AconTheme.color.Gray7
-    } else {
-        if (selected)
-            AconTheme.color.Main_org1
-        else Color.Transparent
-    }
+
+    val contentColor =
+        if (selected) AconTheme.color.Gray50
+        else AconTheme.color.Gray900
+
 
     Box(
         modifier = modifier
-            .size(22.dp)
+            .size(20.dp)
             .clip(CircleShape)
             .border(
                 shape = CircleShape,
                 width = 1.dp,
                 color = borderColor
-            ).background(containerColor).clickable {
+            )
+            .background(containerColor)
+            .clickable {
                 onClick()
             },
         contentAlignment = Alignment.Center
@@ -94,7 +82,6 @@ private fun AconSelectedRadioButtonPreview() {
 private fun AconDisabledRadioButtonPreview() {
     AconRadioButton(
         selected = false,
-        onClick = {},
-        enabled = false
+        onClick = {}
     )
 }
