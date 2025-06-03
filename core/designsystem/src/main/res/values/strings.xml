@@ -156,7 +156,6 @@
     <string name="complete_drop_dotori">도토리로 리뷰 남기기</string>
     <string name="review_complete">%s의\n리뷰 작성을 완료했어요!</string>
     <string name="wish_was_your_spot">당신의 취향이 가득 담긴 장소였길 바래요</string>
-    <string name="tab_closed_in_seconds">%s초 후 탭이 자동으로 닫힙니다</string>
 
     <!-- Onboarding -->
     <string name="request_dislike_food_title">싫어하는 음식을 알려줄 수 있나요?</string>
