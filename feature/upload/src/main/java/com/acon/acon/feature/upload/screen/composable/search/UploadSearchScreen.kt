@@ -34,6 +34,7 @@ import com.acon.acon.core.designsystem.effect.defaultHazeEffect
 import com.acon.acon.core.designsystem.effect.rememberHazeState
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
+import com.acon.acon.domain.model.upload.UploadSpotSuggestion
 import com.acon.acon.domain.model.upload.v2.SearchedSpot
 import com.acon.acon.feature.upload.mock.uploadSearchUiStateMock
 import com.acon.acon.feature.upload.screen.UploadSearchUiState
@@ -47,6 +48,8 @@ import kotlinx.collections.immutable.toImmutableList
 internal fun UploadSearchScreen(
     state: UploadSearchUiState,
     onSearchQueryChanged: (String) -> Unit,
+    onSearchedSpotClick: (SearchedSpot) -> Unit,
+    onSuggestionSpotClick: (UploadSpotSuggestion) -> Unit,
     onBackAction: () -> Unit,
     onNextAction: () -> Unit,
     modifier: Modifier = Modifier,
@@ -54,10 +57,10 @@ internal fun UploadSearchScreen(
 
     val hazeState = rememberHazeState()
     
-    val isRightActionEnabled by remember(state) {
+    val isNextActionEnabled by remember(state) {
         derivedStateOf {
             when (state) {
-                is UploadSearchUiState.Success -> state.query.isNotEmpty()
+                is UploadSearchUiState.Success -> state.selectedSpot != null
                 else -> false
             }
         }
@@ -67,7 +70,7 @@ internal fun UploadSearchScreen(
         modifier = modifier,
     ) {
         UploadTopAppBar(
-            isRightActionEnabled = isRightActionEnabled,
+            isRightActionEnabled = isNextActionEnabled,
             onLeftAction = onBackAction,
             onRightAction = onNextAction,
             modifier = Modifier
@@ -97,10 +100,10 @@ internal fun UploadSearchScreen(
                             horizontalArrangement = Arrangement.spacedBy(8.dp),
                             verticalArrangement = Arrangement.spacedBy(8.dp),
                         ) {
-                            state.suggestions.fastForEach {
+                            state.uploadSpotSuggestions.fastForEach {
                                 AconChip(
-                                    title = it,
-                                    onClick = { onSearchQueryChanged(it) },
+                                    title = it.name,
+                                    onClick = { onSuggestionSpotClick(it) },
                                     isSelected = false,
                                     modifier = Modifier.hazeSource(state = hazeState)
                                 )
@@ -110,9 +113,7 @@ internal fun UploadSearchScreen(
                         if (state.query.isNotEmpty()) {
                             SearchedSpots(
                                 searchedSpots = state.searchedSpots.toImmutableList(),
-                                onItemClick = {
-                                    onSearchQueryChanged(it.name)
-                                },
+                                onItemClick = onSearchedSpotClick,
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(top = 10.dp)
@@ -126,9 +127,6 @@ internal fun UploadSearchScreen(
                         }
                     }
                 }
-            }
-            UploadSearchUiState.LoadFailed -> {
-                // TODO
             }
         }
     }
@@ -235,6 +233,8 @@ private fun UploadSearchScreenPreview() {
         onSearchQueryChanged = {},
         onBackAction = {},
         onNextAction = {},
+        onSearchedSpotClick = {},
+        onSuggestionSpotClick = {},
         modifier = Modifier
     )
 }

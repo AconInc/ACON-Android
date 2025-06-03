@@ -3,9 +3,9 @@ package com.acon.acon.feature.upload.screen
 import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.toRoute
 import com.acon.acon.core.utils.feature.base.BaseContainerHost
-import com.acon.acon.domain.model.upload.v2.SearchedSpot
+import com.acon.acon.domain.model.spot.SimpleSpot
 import com.acon.acon.feature.upload.UploadRoute
-import com.acon.feature.common.navigation.searchedSpotNavType
+import com.acon.feature.common.navigation.simpleSpotNavType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.viewmodel.container
@@ -17,12 +17,12 @@ class UploadReviewViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle
 ) : BaseContainerHost<UploadReviewUiState, UploadReviewSideEffect>() {
 
-    private val typeMap = mapOf(searchedSpotNavType)
+    private val typeMap = mapOf(simpleSpotNavType)
 
-    private val searchedSpot = savedStateHandle.toRoute<UploadRoute.Review>(typeMap).searchedSpot
+    private val spot = savedStateHandle.toRoute<UploadRoute.Review>(typeMap).spot
 
     override val container =
-        container<UploadReviewUiState, UploadReviewSideEffect>(UploadReviewUiState.Success(spot = searchedSpot)) {
+        container<UploadReviewUiState, UploadReviewSideEffect>(UploadReviewUiState.Success(spot = spot)) {
 
         }
 
@@ -33,7 +33,7 @@ class UploadReviewViewModel @Inject constructor(
     fun onCompletion() = intent {
         runOn<UploadReviewUiState.Success> {
             // TODO : 업로드 API 호출
-            postSideEffect(UploadReviewSideEffect.NavigateToComplete(state.spot.name))
+            postSideEffect(UploadReviewSideEffect.NavigateToComplete(state.spot))
         }
     }
 
@@ -50,7 +50,7 @@ class UploadReviewViewModel @Inject constructor(
 
 sealed interface UploadReviewUiState {
     data class Success(
-        val spot: SearchedSpot,
+        val spot: SimpleSpot,
         val selectedDotoriCount: Int = 0,
     ): UploadReviewUiState
     data object LoadFailed: UploadReviewSideEffect
@@ -58,5 +58,5 @@ sealed interface UploadReviewUiState {
 
 sealed interface UploadReviewSideEffect {
     data object NavigateBack : UploadReviewSideEffect
-    data class NavigateToComplete(val spotName: String) : UploadReviewSideEffect
+    data class NavigateToComplete(val spot: SimpleSpot) : UploadReviewSideEffect
 }

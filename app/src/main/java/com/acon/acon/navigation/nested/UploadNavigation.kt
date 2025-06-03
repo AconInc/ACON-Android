@@ -19,7 +19,7 @@ import com.acon.acon.feature.upload.UploadRoute
 import com.acon.acon.feature.upload.screen.composable.complete.UploadCompleteScreenContainer
 import com.acon.acon.feature.upload.screen.composable.review.UploadReviewScreenContainer
 import com.acon.acon.feature.upload.screen.composable.search.UploadSearchScreenContainer
-import com.acon.feature.common.navigation.searchedSpotNavType
+import com.acon.feature.common.navigation.simpleSpotNavType
 
 internal fun NavGraphBuilder.uploadNavigation(
     navController: NavHostController
@@ -52,7 +52,7 @@ internal fun NavGraphBuilder.uploadNavigation(
         }
 
         composable<UploadRoute.Review>(
-            typeMap = mapOf(searchedSpotNavType)
+            typeMap = mapOf(simpleSpotNavType)
         ) {
             UploadReviewScreenContainer(
                 onNavigateBack = navController::popBackStack,
@@ -71,12 +71,13 @@ internal fun NavGraphBuilder.uploadNavigation(
         }
 
         composable<UploadRoute.Complete>(
+            typeMap = mapOf(simpleSpotNavType),
             exitTransition = {
                 ExitTransition.None
             }
         ) {
             UploadCompleteScreenContainer(
-                spotName = it.toRoute<UploadRoute.Complete>().spotName,
+                spotName = it.toRoute<UploadRoute.Complete>().spot.name,
                 onNavigateToHome = {
                     navController.navigate(SpotRoute.Graph) {
                         popUpTo(UploadRoute.Search) {

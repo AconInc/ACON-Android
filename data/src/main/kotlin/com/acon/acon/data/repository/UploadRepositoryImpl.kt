@@ -6,9 +6,9 @@ import com.acon.acon.domain.error.upload.GetVerifySpotLocationError
 import com.acon.acon.domain.error.upload.UploadReviewError
 import com.acon.acon.domain.error.user.GetSuggestionsError
 import com.acon.acon.domain.model.upload.DotoriCount
-import com.acon.acon.domain.model.upload.KeyWord
 import com.acon.acon.domain.model.upload.SpotVerification
-import com.acon.acon.domain.model.upload.Suggestions
+import com.acon.acon.domain.model.upload.UploadSpotSuggestion
+import com.acon.acon.domain.model.upload.v2.SearchedSpot
 import com.acon.acon.domain.repository.UploadRepository
 import javax.inject.Inject
 
@@ -19,15 +19,11 @@ class UploadRepositoryImpl @Inject constructor(
         uploadRemoteDataSource.getDotoriCount().toDotoriCount()
     }
 
-    override suspend fun getKeyWord(keyword: String): Result<KeyWord> = runCatchingWith {
-        uploadRemoteDataSource.getKeyWord(keyword).toKeyWord()
-    }
-
     override suspend fun getSuggestions(
         latitude: Double,
         longitude: Double
-    ): Result<Suggestions> = runCatchingWith(*GetSuggestionsError.createErrorInstances()) {
-        uploadRemoteDataSource.getSuggestions(latitude, longitude).toSuggestions()
+    ): Result<List<UploadSpotSuggestion>> = runCatchingWith(*GetSuggestionsError.createErrorInstances()) {
+        uploadRemoteDataSource.getSuggestions(latitude, longitude).suggestionList.map { it.toSuggestion() }
     }
 
     override suspend fun getVerifySpotLocation(
@@ -50,5 +46,11 @@ class UploadRepositoryImpl @Inject constructor(
             spotId = spotId,
             acornCount = acornCount
         )
+    }
+
+    override suspend fun getSearchedSpots(query: String): Result<List<SearchedSpot>> {
+        return runCatchingWith {
+            uploadRemoteDataSource.getSearchedSpots(query).searchedSpots.map { it.toSearchedSpot() }
+        }
     }
 }

@@ -46,7 +46,6 @@ import com.acon.acon.domain.repository.UserRepository
 import com.acon.acon.domain.type.UserType
 import com.acon.acon.feature.areaverification.AreaVerificationRoute
 import com.acon.acon.feature.profile.composable.ProfileRoute
-import com.acon.acon.feature.signin.screen.SignInRoute
 import com.acon.acon.feature.spot.SpotRoute
 import com.acon.acon.feature.upload.UploadRoute
 import com.acon.acon.navigation.bottom.BottomBar

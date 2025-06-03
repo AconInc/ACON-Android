@@ -2,9 +2,8 @@ package com.acon.acon.data.datasource.remote
 
 import com.acon.acon.data.dto.request.ReviewRequest
 import com.acon.acon.data.dto.response.upload.UploadGetDotoriResponse
-import com.acon.acon.data.dto.response.upload.UploadGetKeyWordResponse
 import com.acon.acon.data.dto.response.upload.UploadGetSpotVerifyResponse
-import com.acon.acon.data.dto.response.upload.UploadGetSuggestionsResponse
+import com.acon.acon.data.dto.response.upload.UploadSpotSuggestionsResponse
 import com.acon.acon.data.remote.UploadApi
 import javax.inject.Inject
 
@@ -15,14 +14,10 @@ class UploadRemoteDataSource @Inject constructor(
         return uploadApi.getDotoriCount()
     }
 
-    suspend fun getKeyWord(keyword: String): UploadGetKeyWordResponse {
-        return uploadApi.getKeyWord(keyword)
-    }
-
     suspend fun getSuggestions(
         latitude: Double,
         longitude: Double
-    ): UploadGetSuggestionsResponse {
+    ): UploadSpotSuggestionsResponse {
         return uploadApi.getSuggestions(latitude, longitude)
     }
 
@@ -43,4 +38,8 @@ class UploadRemoteDataSource @Inject constructor(
             acornCount = acornCount
         )
     )
+
+    suspend fun getSearchedSpots(
+        query: String
+    ) = uploadApi.getSearchedSpots(query)
 }

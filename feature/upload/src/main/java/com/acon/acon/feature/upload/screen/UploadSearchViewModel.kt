@@ -4,16 +4,15 @@ import android.annotation.SuppressLint
 import android.content.Context
 import androidx.compose.runtime.Immutable
 import com.acon.acon.core.utils.feature.base.BaseContainerHost
+import com.acon.acon.domain.model.spot.SimpleSpot
+import com.acon.acon.domain.model.upload.UploadSpotSuggestion
 import com.acon.acon.domain.model.upload.v2.SearchedSpot
 import com.acon.acon.domain.repository.UploadRepository
-import com.acon.acon.feature.upload.BuildConfig
-import com.acon.acon.feature.upload.mock.uploadSearchUiStateMock
 import com.acon.feature.common.location.getLocation
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
@@ -30,19 +29,15 @@ class UploadSearchViewModel @Inject constructor(
 
     @SuppressLint("MissingPermission")
     override val container = container<UploadSearchUiState, UploadSearchSideEffect>(UploadSearchUiState.Success()) {
-        if (BuildConfig.DEBUG)
-            reduce {
-                uploadSearchUiStateMock
-            }
         val currentLocation = context.getLocation()
         currentLocation?.let {
             uploadRepository.getSuggestions(it.latitude, it.longitude).onSuccess {
                 runOn<UploadSearchUiState.Success> {
-//                    reduce {
-//                        state.copy(
-//                            suggestions = it.suggestions
-//                        )
-//                    }
+                    reduce {
+                        state.copy(
+                            uploadSpotSuggestions = it
+                        )
+                    }
                 }
             }.onFailure {
 
@@ -52,16 +47,16 @@ class UploadSearchViewModel @Inject constructor(
             .debounce(300)
             .filter { it.isNotBlank() }
             .distinctUntilChanged()
-            .collectLatest { query ->
-                // TODO : 검색 결과 조회
-//                val result = runCatching { searchRepository.search(query) }
-//                runOn<UploadSearchUiState.Success> {
-//                    reduce {
-//                        state.copy(
-//                            searchedSpots = result.getOrDefault(emptyList())
-//                        )
-//                    }
-//                }
+            .collect { query ->
+                uploadRepository.getSearchedSpots(query).onSuccess {
+                        runOn<UploadSearchUiState.Success> {
+                            reduce {
+                                state.copy(
+                                    searchedSpots = it
+                                )
+                            }
+                        }
+                    }.onFailure {  }
             }
     }
 
@@ -71,10 +66,33 @@ class UploadSearchViewModel @Inject constructor(
         runOn<UploadSearchUiState.Success> {
             reduce {
                 state.copy(
-                    query = query
+                    query = query,
+                    selectedSpot = null
                 )
             }
             queryFlow.value = query
+        }
+    }
+
+    fun onSuggestionSpotClicked(spot: UploadSpotSuggestion) = intent {
+        runOn<UploadSearchUiState.Success> {
+            reduce {
+                state.copy(
+                    query = spot.name,
+                    selectedSpot = SimpleSpot(spot.spotId.toInt(), spot.name)
+                )
+            }
+        }
+    }
+
+    fun onSearchedSpotClicked(spot: SearchedSpot) = intent {
+        runOn<UploadSearchUiState.Success> {
+            reduce {
+                state.copy(
+                    query = spot.name,
+                    selectedSpot = SimpleSpot(spot.spotId.toInt(), spot.name)
+                )
+            }
         }
     }
 
@@ -83,9 +101,10 @@ class UploadSearchViewModel @Inject constructor(
     }
 
     fun onNextAction() = intent {
-        // TODO : Searched Spot 선택
         runOn<UploadSearchUiState.Success> {
-            postSideEffect(UploadSearchSideEffect.NavigateToReviewScreen(state.searchedSpots[0]))
+            state.selectedSpot?.let {
+                postSideEffect(UploadSearchSideEffect.NavigateToReviewScreen(it))
+            }
         }
     }
 }
@@ -93,14 +112,14 @@ class UploadSearchViewModel @Inject constructor(
 sealed interface UploadSearchUiState {
     @Immutable
     data class Success(
-        val suggestions: List<String> = listOf(),
+        val uploadSpotSuggestions: List<UploadSpotSuggestion> = listOf(),
         val query: String = "",
+        val selectedSpot: SimpleSpot? = null,
         val searchedSpots: List<SearchedSpot> = listOf(),
     ) : UploadSearchUiState
-    data object LoadFailed : UploadSearchUiState
 }
 
 sealed interface UploadSearchSideEffect {
-    data class NavigateToReviewScreen(val spot: SearchedSpot) : UploadSearchSideEffect
+    data class NavigateToReviewScreen(val spot: SimpleSpot) : UploadSearchSideEffect
     data object NavigateBack : UploadSearchSideEffect
 }
