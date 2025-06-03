@@ -16,7 +16,7 @@ interface UploadRepository {
         longitude: Double
     ): Result<SpotVerification>
 
-    suspend fun postReview(
+    suspend fun submitReview(
         spotId: Long,
         acornCount: Int
     ): Result<Unit>

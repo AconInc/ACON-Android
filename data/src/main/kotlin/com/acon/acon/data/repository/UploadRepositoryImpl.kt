@@ -38,11 +38,11 @@ class UploadRepositoryImpl @Inject constructor(
         ).toSpotVerification()
     }
 
-    override suspend fun postReview(
+    override suspend fun submitReview(
         spotId: Long,
         acornCount: Int
     ): Result<Unit> = runCatchingWith(*UploadReviewError.createErrorInstances()) {
-        uploadRemoteDataSource.postReview(
+        uploadRemoteDataSource.submitReview(
             spotId = spotId,
             acornCount = acornCount
         )

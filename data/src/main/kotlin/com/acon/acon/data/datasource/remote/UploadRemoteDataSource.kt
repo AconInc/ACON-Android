@@ -29,10 +29,10 @@ class UploadRemoteDataSource @Inject constructor(
         return uploadApi.getVerifySpotLocation(spotId, latitude, longitude)
     }
 
-    suspend fun postReview(
+    suspend fun submitReview(
         spotId: Long,
         acornCount: Int
-    ) = uploadApi.uploadPostReview(
+    ) = uploadApi.submitReview(
         ReviewRequest(
             spotId = spotId,
             acornCount = acornCount

@@ -12,13 +12,13 @@ data class SearchedSpotsResponse(
 
 @Serializable
 data class SearchedSpotResponse(
-    @SerialName("spotId") val spotId: Int,
+    @SerialName("spotId") val spotId: Long,
     @SerialName("name") val name: String,
     @SerialName("address") val address: String,
     @SerialName("spotType") val spotType: String
 ) {
     fun toSearchedSpot() = SearchedSpot(
-        spotId = spotId.toLong(),
+        spotId = spotId,
         name = name,
         address = address,
         spotType = SpotType.valueOf(spotType)

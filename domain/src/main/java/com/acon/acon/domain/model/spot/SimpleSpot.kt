@@ -6,6 +6,6 @@ import kotlinx.serialization.Serializable
 @Immutable
 @Serializable
 data class SimpleSpot(
-    val spotId: Int,
+    val spotId: Long,
     val name: String
 )

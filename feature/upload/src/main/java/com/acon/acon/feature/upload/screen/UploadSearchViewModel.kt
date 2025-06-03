@@ -86,7 +86,7 @@ class UploadSearchViewModel @Inject constructor(
         runOn<UploadSearchUiState.Success> {
             reduce {
                 state.copy(
-                    selectedSpot = SimpleSpot(spot.spotId.toInt(), spot.name),
+                    selectedSpot = SimpleSpot(spot.spotId, spot.name),
                     showSearchedSpots = false
                 )
             }
@@ -97,7 +97,7 @@ class UploadSearchViewModel @Inject constructor(
         runOn<UploadSearchUiState.Success> {
             reduce {
                 state.copy(
-                    selectedSpot = SimpleSpot(spot.spotId.toInt(), spot.name),
+                    selectedSpot = SimpleSpot(spot.spotId, spot.name),
                     showSearchedSpots = false
                 )
             }

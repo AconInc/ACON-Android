@@ -28,7 +28,7 @@ interface UploadApi {
     ): UploadGetSpotVerifyResponse
 
     @POST("/api/v1/reviews")
-    suspend fun uploadPostReview(
+    suspend fun submitReview(
         @Body request: ReviewRequest
     )
 

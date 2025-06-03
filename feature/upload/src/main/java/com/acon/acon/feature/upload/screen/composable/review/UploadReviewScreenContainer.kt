@@ -3,8 +3,11 @@ package com.acon.acon.feature.upload.screen.composable.review
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.acon.acon.core.utils.feature.toast.showToast
 import com.acon.acon.domain.model.spot.SimpleSpot
+import com.acon.acon.core.designsystem.R
 import com.acon.acon.feature.upload.screen.UploadReviewSideEffect
 import com.acon.acon.feature.upload.screen.UploadReviewViewModel
 import org.orbitmvi.orbit.compose.collectAsState
@@ -18,6 +21,7 @@ fun UploadReviewScreenContainer(
     viewModel: UploadReviewViewModel = hiltViewModel()
 ) {
     val state by viewModel.collectAsState()
+    val context = LocalContext.current
 
     UploadReviewScreen(
         state = state,
@@ -31,6 +35,7 @@ fun UploadReviewScreenContainer(
         when (effect) {
             is UploadReviewSideEffect.NavigateBack -> onNavigateBack()
             is UploadReviewSideEffect.NavigateToComplete -> onComplete(effect.spot)
+            is UploadReviewSideEffect.ShowToast -> context.showToast(context.getString(R.string.failed_submit_review))
             else -> Unit
         }
     }
