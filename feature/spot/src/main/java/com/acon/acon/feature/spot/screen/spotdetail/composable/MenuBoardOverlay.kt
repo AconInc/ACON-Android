@@ -49,18 +49,24 @@ internal fun MenuBoardOverlay(
         )
     ) {
         Box(
-            modifier = Modifier
-                .fillMaxSize(),
+            modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
+            Icon(
+                imageVector = ImageVector.vectorResource(R.drawable.ic_x_mark),
+                contentDescription = stringResource(R.string.exit),
+                tint = AconTheme.color.Gray50,
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .padding(top = 22.dp, start = 14.dp)
+                    .noRippleClickable {
+                        onDismiss()
+                    }
+            )
+
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .noRippleClickable {
-                        if (!zoomState.isZooming) {
-                            onDismiss()
-                        }
-                    }
             )
 
             PinchToZoomImage(
@@ -68,45 +74,43 @@ internal fun MenuBoardOverlay(
                 imageResId = imageList[currentIndex]
             )
 
-            if (!zoomState.isZooming) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(horizontal = 16.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    if (imageList.size > 1 && currentIndex > 0) {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(R.drawable.ic_menu_arrow_back),
-                            contentDescription = stringResource(R.string.btn_previous_background_image_content_description),
-                            modifier = Modifier
-                                .size(36.dp)
-                                .noRippleClickable(enabled = !zoomState.isZooming) {
-                                    currentIndex--
-                                },
-                            tint = AconTheme.color.Gray50
-                        )
-                    } else {
-                        Spacer(modifier = Modifier.size(36.dp))
-                    }
+            Row(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                if (imageList.size > 1 && currentIndex > 0) {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(R.drawable.ic_menu_arrow_back),
+                        contentDescription = stringResource(R.string.btn_previous_background_image_content_description),
+                        modifier = Modifier
+                            .size(36.dp)
+                            .noRippleClickable(enabled = !zoomState.isZooming) {
+                                currentIndex--
+                            },
+                        tint = AconTheme.color.Gray50
+                    )
+                } else {
+                    Spacer(modifier = Modifier.size(36.dp))
+                }
 
-                    Spacer(modifier = Modifier.weight(1f))
+                Spacer(modifier = Modifier.weight(1f))
 
-                    if (imageList.size > 1 && currentIndex < imageList.lastIndex) {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(R.drawable.ic_menu_arrow_forward),
-                            contentDescription = stringResource(R.string.btn_next_image_content_description),
-                            modifier = Modifier
-                                .size(36.dp)
-                                .noRippleClickable(enabled = !zoomState.isZooming) {
-                                    currentIndex++
-                                },
-                            tint = AconTheme.color.Gray50
-                        )
-                    } else {
-                        Spacer(modifier = Modifier.size(36.dp))
-                    }
+                if (imageList.size > 1 && currentIndex < imageList.lastIndex) {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(R.drawable.ic_menu_arrow_forward),
+                        contentDescription = stringResource(R.string.btn_next_image_content_description),
+                        modifier = Modifier
+                            .size(36.dp)
+                            .noRippleClickable(enabled = !zoomState.isZooming) {
+                                currentIndex++
+                            },
+                        tint = AconTheme.color.Gray50
+                    )
+                } else {
+                    Spacer(modifier = Modifier.size(36.dp))
                 }
             }
         }
