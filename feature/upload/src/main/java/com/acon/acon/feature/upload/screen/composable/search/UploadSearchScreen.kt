@@ -14,9 +14,14 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -56,13 +61,20 @@ internal fun UploadSearchScreen(
 ) {
 
     val hazeState = rememberHazeState()
-    
+
+    var query by rememberSaveable(stateSaver = TextFieldValue.Saver) { mutableStateOf(TextFieldValue("")) }
     val isNextActionEnabled by remember(state) {
         derivedStateOf {
             when (state) {
                 is UploadSearchUiState.Success -> state.selectedSpot != null
                 else -> false
             }
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        snapshotFlow { query }.collect {
+            onSearchQueryChanged(it.text)
         }
     }
 
@@ -84,15 +96,12 @@ internal fun UploadSearchScreen(
                     Modifier.padding(horizontal = 16.dp)
                 ) {
                     AconSearchTextField(
-                        value = TextFieldValue(state.query, TextRange(state.query.length)),
-                        onValueChange = {
-                            onSearchQueryChanged(it.text)
-                        },
+                        value = query,
+                        onValueChange = { query = it },
                         placeholder = stringResource(R.string.search_spot_placeholder),
                         modifier = Modifier.fillMaxWidth()
                     )
                     Box {
-                        // TODO FlowRow
                         FlowRow(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -103,17 +112,23 @@ internal fun UploadSearchScreen(
                             state.uploadSpotSuggestions.fastForEach {
                                 AconChip(
                                     title = it.name,
-                                    onClick = { onSuggestionSpotClick(it) },
+                                    onClick = {
+                                        query = TextFieldValue(text = it.name, selection = TextRange(it.name.length))
+                                        onSuggestionSpotClick(it)
+                                    },
                                     isSelected = false,
                                     modifier = Modifier.hazeSource(state = hazeState)
                                 )
                             }
                         }
 
-                        if (state.query.isNotEmpty()) {
+                        if (state.showSearchedSpots) {
                             SearchedSpots(
                                 searchedSpots = state.searchedSpots.toImmutableList(),
-                                onItemClick = onSearchedSpotClick,
+                                onItemClick = {
+                                    query = TextFieldValue(text = it.name, selection = TextRange(it.name.length))
+                                    onSearchedSpotClick(it)
+                                },
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(top = 10.dp)

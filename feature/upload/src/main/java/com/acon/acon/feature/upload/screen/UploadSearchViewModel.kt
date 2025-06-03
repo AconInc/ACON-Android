@@ -15,7 +15,6 @@ import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filter
 import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.viewmodel.container
 import javax.inject.Inject
@@ -44,19 +43,29 @@ class UploadSearchViewModel @Inject constructor(
             }
         }
         queryFlow
-            .debounce(300)
-            .filter { it.isNotBlank() }
+            .debounce(200)
             .distinctUntilChanged()
             .collect { query ->
-                uploadRepository.getSearchedSpots(query).onSuccess {
-                        runOn<UploadSearchUiState.Success> {
+                runOn<UploadSearchUiState.Success> {
+                    if (query.isBlank()) {
+                        reduce {
+                            state.copy(
+                                searchedSpots = emptyList(),
+                                showSearchedSpots = false
+                            )
+                        }
+                    } else {
+                        uploadRepository.getSearchedSpots(query).onSuccess {
                             reduce {
                                 state.copy(
-                                    searchedSpots = it
+                                    searchedSpots = it,
+                                    showSearchedSpots = it.isNotEmpty()
                                 )
                             }
-                        }
-                    }.onFailure {  }
+
+                        }.onFailure { }
+                    }
+                }
             }
     }
 
@@ -66,7 +75,6 @@ class UploadSearchViewModel @Inject constructor(
         runOn<UploadSearchUiState.Success> {
             reduce {
                 state.copy(
-                    query = query,
                     selectedSpot = null
                 )
             }
@@ -78,8 +86,8 @@ class UploadSearchViewModel @Inject constructor(
         runOn<UploadSearchUiState.Success> {
             reduce {
                 state.copy(
-                    query = spot.name,
-                    selectedSpot = SimpleSpot(spot.spotId.toInt(), spot.name)
+                    selectedSpot = SimpleSpot(spot.spotId.toInt(), spot.name),
+                    showSearchedSpots = false
                 )
             }
         }
@@ -89,8 +97,8 @@ class UploadSearchViewModel @Inject constructor(
         runOn<UploadSearchUiState.Success> {
             reduce {
                 state.copy(
-                    query = spot.name,
-                    selectedSpot = SimpleSpot(spot.spotId.toInt(), spot.name)
+                    selectedSpot = SimpleSpot(spot.spotId.toInt(), spot.name),
+                    showSearchedSpots = false
                 )
             }
         }
@@ -113,9 +121,9 @@ sealed interface UploadSearchUiState {
     @Immutable
     data class Success(
         val uploadSpotSuggestions: List<UploadSpotSuggestion> = listOf(),
-        val query: String = "",
         val selectedSpot: SimpleSpot? = null,
         val searchedSpots: List<SearchedSpot> = listOf(),
+        val showSearchedSpots: Boolean = false
     ) : UploadSearchUiState
 }
 
