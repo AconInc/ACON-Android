@@ -128,6 +128,7 @@
     <string name="store_tag_new">NEW</string>
     <string name="store_tag_local">LOCAL</string>
     <string name="store_tag_ranking">TOP %d</string>
+    <string name="over_max_acon_count">9999+</string>
 
     <!-- Upload -->
     <string name="close_upload">리뷰 그만두기</string>

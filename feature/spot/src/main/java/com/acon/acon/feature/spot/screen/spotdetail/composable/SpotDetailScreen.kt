@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -40,6 +41,7 @@ import com.acon.acon.core.designsystem.component.button.v2.AconFilledButton
 import com.acon.acon.core.designsystem.component.topbar.AconTopBar
 import com.acon.acon.core.designsystem.effect.LocalHazeState
 import com.acon.acon.core.designsystem.effect.imageGradientLayer
+import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.feature.common.compose.getTextSizeDp
 import dev.chrisbanes.haze.hazeSource
@@ -50,6 +52,8 @@ internal fun SpotDetailScreen(
     state: SpotDetailUiState,
     onFindWayButtonClick: () -> Unit,
     modifier: Modifier = Modifier,
+    onClickAddBookmark: () -> Unit = {},
+    onClickDeleteBookmark: () -> Unit = {},
     onClickMenuBoard: () -> Unit = {},
     onDismissMenuBoard: () -> Unit = {},
     onRequestErrorReportModal: () -> Unit = {},
@@ -72,28 +76,34 @@ internal fun SpotDetailScreen(
     val noStoreText = immutableListOf(
         stringResource(R.string.no_store_image_verified),
         stringResource(R.string.no_store_image_secret),
-        stringResource(R.string.no_store_image_mystery),
+        stringResource(R.string.no_store_image_mystery)
     )
 
     when (state) {
         SpotDetailUiState.LoadFailed -> {}
-        SpotDetailUiState.Loading -> { }
+        SpotDetailUiState.Loading -> {}
         is SpotDetailUiState.Success -> {
             val storeName = state.spotDetailInfo.name
             val storeImageList = state.spotDetailInfo.imageList
-            val bottomPadding = if (storeImageList.size <= 1) { 34.dp } else { 0.dp }
+            val acornCount = 99 //TODO - state.spotDetailInfo.acornCount
+            val bottomPadding = if (storeImageList.size <= 1) {
+                34.dp
+            } else {
+                0.dp
+            }
 
             val pageCount = state.spotDetailInfo.imageList.size
             val pagerState = rememberPagerState(initialPage = 0, pageCount = { pageCount })
 
             Box(
-                modifier = modifier
+                modifier = modifier.navigationBarsPadding()
             ) {
                 if (state.showReportErrorModal) {
                     ReportErrorBottomSheet(
                         onDismissRequest = { onDismissErrorReportModal() },
                         onClickReportError = {
-                            val url = "https://walla.my/survey/ekYLYwpJv2d0Eznnijla" // TODO - 구글폼 (주소 나중에 따로 저장하여 불러와야 함)
+                            val url =
+                                "https://walla.my/survey/ekYLYwpJv2d0Eznnijla" // TODO - 구글폼 (주소 나중에 따로 저장하여 불러와야 함)
                             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
                             context.startActivity(intent)
                         }
@@ -125,7 +135,7 @@ internal fun SpotDetailScreen(
                             modifier = Modifier
                                 .fillMaxSize()
                                 .imageGradientLayer(
-                                    startColor = AconTheme.color.Gray900.copy(alpha = 0.8f),
+                                    startColor = AconTheme.color.Gray900.copy(alpha = 0.8f)
                                 )
                         )
                     }
@@ -178,12 +188,22 @@ internal fun SpotDetailScreen(
                                 onClick = { onNavigateToBack() }
                             ) {
                                 Icon(
-                                    imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_left_28),
+                                    imageVector = ImageVector.vectorResource(R.drawable.ic_topbar_arrow_left),
                                     contentDescription = stringResource(R.string.back),
-                                    tint = AconTheme.color.White
+                                    tint = AconTheme.color.Gray50
                                 )
                             }
                         },
+                        trailingIcon = {
+                            Icon(
+                                imageVector = ImageVector.vectorResource(R.drawable.ic_ellipsis),
+                                contentDescription = stringResource(R.string.floating_btn_more_option),
+                                tint = AconTheme.color.Gray50,
+                                modifier = Modifier
+                                    .padding(end = 16.dp)
+                                    .noRippleClickable { onRequestErrorReportModal() }
+                            )
+                        }
                     )
 
                     Row(
@@ -206,7 +226,7 @@ internal fun SpotDetailScreen(
                         )
 
                         Text(
-                            text = "+8888", // TODO - spot.dotori
+                            text = if (acornCount > 9999) stringResource(R.string.over_max_acon_count) else acornCount.toString(),
                             style = AconTheme.typography.Body1,
                             fontWeight = FontWeight.W400,
                             color = AconTheme.color.White,
@@ -221,8 +241,8 @@ internal fun SpotDetailScreen(
 
                     Spacer(Modifier.height(8.dp))
                     StoreTagRow(
-                        isNew = true,
-                        isLocal = true,
+                        isNew = true, // TODO - state.spotDetailInfo.tagList.contains(stringResource(R.string.store_tag_new)),
+                        isLocal = true, // TODO - state.spotDetailInfo.tagList.contains(stringResource(R.string.store_tag_local)),
                         isRanking = true,
                         rankingNumber = 1, // TODO - api 나오면 수정 (임시 값들)
                         modifier = Modifier.padding(start = 20.dp)
@@ -245,7 +265,7 @@ internal fun SpotDetailScreen(
 
                             Spacer(Modifier.height(12.dp))
                             SignatureMenu(
-                                signatureMenuList = state.spotDetailMenuList
+                                signatureMenuList = state.spotDetailMenuList // TODO - state.spotDetailInfo.signatureMenuList
                             )
                         }
 
@@ -269,10 +289,12 @@ internal fun SpotDetailScreen(
                                 )
                                 context.startActivity(shareIntent)
                             },
-                            onClickMoreOptions = {
-                                onRequestErrorReportModal()
+                            onClickBookmark = {
+                                //onClickAddBookmark()
+                                //onClickDeleteBookmark()
+                                // TODO - 북마크 ON 상태이면 북마크 삭제 / 북마크 OFF 상태이면 북마크 추가
                             },
-                            isMenuBoarEnabled = state.spotDetailMenuList.isEmpty()
+                            isMenuBoarEnabled = true //TODO - state.spotDetailInfo.hasMenuboardImage
                         )
                     }
 
@@ -286,7 +308,6 @@ internal fun SpotDetailScreen(
                                 pagerState = pagerState,
                                 indicatorScrollState = indicatorScrollState,
                                 modifier = Modifier
-                                    .width(66.dp)
                                     .padding(top = 16.dp, bottom = 12.dp)
                             )
                         }
@@ -299,7 +320,10 @@ internal fun SpotDetailScreen(
                             .padding(start = 16.dp, end = 16.dp, bottom = 20.dp)
                     ) {
                         Text(
-                            text = stringResource(R.string.btn_find_way_walking_time, 11), // TODO - 예상 도착 시간 (도보)
+                            text = stringResource(
+                                R.string.btn_find_way_walking_time,
+                                11
+                            ), // TODO - 예상 도착 시간 (도보)
                             color = AconTheme.color.White,
                             style = AconTheme.typography.Title4
                         )
