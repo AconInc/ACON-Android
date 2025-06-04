@@ -68,8 +68,8 @@ class LocalVerificationViewModel @Inject constructor(
         postSideEffect(LocalVerificationSideEffect.NavigateToAreaVerificationToAdd)
     }
 
-    fun onNavigateToAreaVerificationEdit() = intent {
-        postSideEffect(LocalVerificationSideEffect.NavigateToAreaVerificationToEdit)
+    fun onNavigateToAreaVerificationEdit(area: String) = intent {
+        postSideEffect(LocalVerificationSideEffect.NavigateToAreaVerificationToEdit(area))
     }
 
 }
@@ -88,5 +88,5 @@ sealed interface LocalVerificationUiState {
 sealed interface LocalVerificationSideEffect {
     data object NavigateToSettingsScreen : LocalVerificationSideEffect
     data object NavigateToAreaVerificationToAdd : LocalVerificationSideEffect
-    data object NavigateToAreaVerificationToEdit : LocalVerificationSideEffect
+    data class NavigateToAreaVerificationToEdit(val area: String) : LocalVerificationSideEffect
 }

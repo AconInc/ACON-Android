@@ -10,6 +10,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.acon.acon.core.designsystem.R
 import com.acon.acon.domain.repository.SocialRepository
 import com.acon.acon.domain.type.UpdateProfileType
 import com.acon.acon.feature.profile.composable.screen.profile.ProfileUiSideEffect
@@ -33,7 +34,7 @@ fun ProfileScreenContainer(
     val state by viewModel.collectAsState()
 
     val coroutineScope = rememberCoroutineScope()
-    val snackbarMsg = stringResource(com.acon.acon.feature.profile.R.string.snackbar_profile_save_success)
+    val snackbarMsg = stringResource(R.string.profile_save_success)
 
     LaunchedEffect(viewModel.updateProfileState) {
         viewModel.updateProfileState.collectLatest {

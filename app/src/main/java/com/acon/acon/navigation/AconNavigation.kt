@@ -6,10 +6,12 @@ import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarData
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -21,6 +23,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavDestination
@@ -34,7 +37,7 @@ import com.acon.acon.core.designsystem.animation.defaultExitTransition
 import com.acon.acon.core.designsystem.animation.defaultPopEnterTransition
 import com.acon.acon.core.designsystem.animation.defaultPopExitTransition
 import com.acon.acon.core.designsystem.component.bottomsheet.LoginBottomSheet
-import com.acon.acon.core.designsystem.component.snackbar.AconTextSnackBar
+import com.acon.acon.core.designsystem.component.toast.AconToastPopup
 import com.acon.acon.core.designsystem.effect.LocalHazeState
 import com.acon.acon.core.designsystem.effect.defaultHazeEffect
 import com.acon.acon.core.designsystem.effect.rememberHazeState
@@ -98,7 +101,6 @@ fun AconNavigation(
     ) {
         if (showLoginBottomSheet) {
             LoginBottomSheet(
-                hazeState = LocalHazeState.current,
                 onDismissRequest = { showLoginBottomSheet = false },
                 onGoogleSignIn = {
                     coroutineScope.launch {
@@ -115,7 +117,7 @@ fun AconNavigation(
                                 } else {
                                     showLoginBottomSheet = false
                                     navController.navigate(
-                                        AreaVerificationRoute.RequireAreaVerification(
+                                        AreaVerificationRoute.AreaVerification(
                                             "onboarding"
                                         )
                                     ) {
@@ -141,8 +143,17 @@ fun AconNavigation(
                     modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 36.dp),
                     hostState = snackbarHostState
                 ) { snackbarData: SnackbarData ->
-                    AconTextSnackBar(
-                        message = snackbarData.visuals.message
+                    AconToastPopup(
+                        shape = RoundedCornerShape(8.dp),
+                        content = {
+                            Text(
+                                text = snackbarData.visuals.message,
+                                color = AconTheme.color.White,
+                                style = AconTheme.typography.Body1,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.padding(vertical = 16.dp)
+                            )
+                        }
                     )
                 }
             },
@@ -153,12 +164,13 @@ fun AconNavigation(
                 if (shouldShowBottomBar) {
                     BottomBar(
                         modifier = Modifier
-                            .background(color = AconTheme.color.Black.copy(alpha=.0f))  // TODO Color?
+                            .background(color = AconTheme.color.Black.copy(alpha = .0f))  // TODO Color?
                             .fillMaxWidth()
                             .defaultHazeEffect(
                                 hazeState = LocalHazeState.current,
                                 tintColor = AconTheme.color.Dim_b_30
-                            ).navigationBarsPadding(),
+                            )
+                            .navigationBarsPadding(),
                         selectedItem = selectedBottomNavItem,
                         onItemClick = { item ->
                             if (item == BottomNavType.UPLOAD) {
@@ -196,7 +208,9 @@ fun AconNavigation(
             NavHost(
                 navController = navController,
                 startDestination = SignInRoute.Graph,
-                modifier = Modifier.padding(innerPadding).consumeWindowInsets(innerPadding),
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .consumeWindowInsets(innerPadding),
                 enterTransition = {
                     defaultEnterTransition()
                 }, exitTransition = {

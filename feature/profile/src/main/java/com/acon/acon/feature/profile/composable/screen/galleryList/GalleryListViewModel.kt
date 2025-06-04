@@ -19,14 +19,13 @@ class GalleryListViewModel @Inject constructor(
 
     private fun getAlbumList(context: Context): List<Album> {
         val albumMap = mutableMapOf<String, Album>()
+        val bucketCountMap = mutableMapOf<String, Int>()
 
         val projection = arrayOf(
-            MediaStore.Images.Media.BUCKET_DISPLAY_NAME,
+            MediaStore.Images.Media._ID,
             MediaStore.Images.Media.BUCKET_ID,
-            MediaStore.Images.Media.DATA,
-            MediaStore.Images.Media._ID
+            MediaStore.Images.Media.BUCKET_DISPLAY_NAME
         )
-
         val sortOrder = "${MediaStore.Images.Media.DATE_ADDED} DESC"
 
         context.contentResolver.query(
@@ -36,27 +35,37 @@ class GalleryListViewModel @Inject constructor(
             null,
             sortOrder
         )?.use { cursor ->
-            val bucketColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_DISPLAY_NAME)
-            val bucketIdColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_ID)
-            val dataColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
             val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
+            val bucketIdColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_ID)
+            val bucketNameColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_DISPLAY_NAME)
 
             while (cursor.moveToNext()) {
-                val albumName = cursor.getString(bucketColumn) ?: "기타"
                 val albumId = cursor.getString(bucketIdColumn)
-
+                val albumName = cursor.getString(bucketNameColumn) ?: "기타"
                 val imageId = cursor.getLong(idColumn)
                 val coverUri = Uri.withAppendedPath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, imageId.toString())
 
+                bucketCountMap[albumId] = bucketCountMap.getOrDefault(albumId, 0) + 1
+
                 if (!albumMap.containsKey(albumId)) {
-                    albumMap[albumId] = Album(albumId, albumName, coverUri)
+                    albumMap[albumId] = Album(
+                        id = albumId,
+                        name = albumName,
+                        coverUri = coverUri,
+                        imageCount = 0
+                    )
                 }
             }
         }
 
-        return albumMap.values.toMutableList()
+        return albumMap.values.map { album ->
+            album.copy(imageCount = bucketCountMap[album.id] ?: 0)
+        }.toMutableList()
     }
 
+    fun onClickAlbum(albumId: String, albumName: String) = intent {
+        postSideEffect(GalleryListSideEffect.NavigateToAlbumGrid(albumId, albumName))
+    }
 
     fun loadAlbums() = intent {
         val albums = getAlbumList(application.applicationContext)
@@ -76,5 +85,6 @@ sealed interface GalleryListSideEffect {
 data class Album(
     val id: String,
     val name: String,
-    val coverUri: Uri
+    val coverUri: Uri,
+    val imageCount: Int
 )

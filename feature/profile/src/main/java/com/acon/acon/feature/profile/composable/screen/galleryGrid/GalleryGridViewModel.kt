@@ -69,7 +69,3 @@ data class GalleryGridState(
 sealed interface GalleryGridSideEffect {
     data class NavigateToPhotoCropScreen(val photoUri: String) : GalleryGridSideEffect
 }
-
-
-
-

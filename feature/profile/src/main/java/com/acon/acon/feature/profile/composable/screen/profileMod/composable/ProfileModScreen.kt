@@ -1,8 +1,5 @@
 package com.acon.acon.feature.profile.composable.screen.profileMod.composable
 
-import android.content.Intent
-import android.net.Uri
-import android.provider.Settings
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -17,481 +14,404 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import com.acon.acon.core.designsystem.component.button.AconFilledLargeButton
-import com.acon.acon.core.designsystem.component.dialog.AconTwoButtonDialog
+import com.acon.acon.core.designsystem.R
+import com.acon.acon.core.designsystem.component.button.v2.AconFilledButton
+import com.acon.acon.core.designsystem.component.dialog.v2.AconTwoActionDialog
 import com.acon.acon.core.designsystem.component.topbar.AconTopBar
+import com.acon.acon.core.designsystem.effect.LocalHazeState
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.core.utils.feature.permission.CheckAndRequestPhotoPermission
-import com.acon.acon.feature.profile.R
-import com.acon.acon.feature.profile.composable.component.CustomModalBottomSheet
-import com.acon.acon.feature.profile.composable.component.NicknameErrMessageRow
+import com.acon.acon.feature.profile.composable.component.GallerySelectBottomSheet
+import com.acon.acon.feature.profile.composable.component.NicknameValidMessageRow
 import com.acon.acon.feature.profile.composable.component.ProfilePhotoBox
 import com.acon.acon.feature.profile.composable.component.ProfileTextField
-import com.acon.acon.feature.profile.composable.component.TextFieldStatus
 import com.acon.acon.feature.profile.composable.component.addFocusCleaner
-import com.acon.acon.feature.profile.composable.screen.profileMod.BirthdayStatus
-import com.acon.acon.feature.profile.composable.screen.profileMod.NicknameStatus
-import com.acon.acon.feature.profile.composable.screen.profileMod.ProfileModSideEffect
 import com.acon.acon.feature.profile.composable.screen.profileMod.ProfileModState
-import com.acon.acon.feature.profile.composable.screen.profileMod.ProfileModViewModel
+import com.acon.acon.feature.profile.composable.type.BirthdayValidationStatus
 import com.acon.acon.feature.profile.composable.type.FocusType
+import com.acon.acon.feature.profile.composable.type.NicknameValidationStatus
+import com.acon.acon.feature.profile.composable.type.contentDescriptionResId
+import com.acon.acon.feature.profile.composable.type.validMessageResId
 import com.acon.acon.feature.profile.composable.utils.BirthdayTransformation
-import com.acon.acon.feature.profile.composable.utils.isAllowedChar
-import com.acon.acon.feature.profile.composable.utils.isKorean
-import org.orbitmvi.orbit.compose.collectAsState
-import org.orbitmvi.orbit.compose.collectSideEffect
+import com.acon.acon.feature.profile.composable.utils.limitedNicknameTextFieldValue
+import dev.chrisbanes.haze.hazeSource
 
 @Composable
-fun ProfileModScreenContainer(
-    modifier: Modifier = Modifier,
-    viewModel: ProfileModViewModel = hiltViewModel(),
-    selectedPhotoId: String? = null,
-    backToProfile: () -> Unit = {},
-    onClickComplete: () -> Unit = { },
-    onNavigateToCustomGallery: () -> Unit = {},
-) {
-    val state by viewModel.collectAsState()
-    val context = LocalContext.current
-
-    LaunchedEffect(selectedPhotoId) {
-        if (!selectedPhotoId.isNullOrBlank() && state.originalPhotoUri != selectedPhotoId) {
-            viewModel.updateProfileImage(selectedPhotoId)
-        }
-    }
-
-    viewModel.collectSideEffect { effect ->
-        when (effect) {
-            is ProfileModSideEffect.NavigateToSettings -> {
-                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                    data = Uri.fromParts("package", effect.packageName, null)
-                }
-                context.startActivity(intent)
-            }
-
-            is ProfileModSideEffect.NavigateBack -> {
-                backToProfile()
-            }
-
-            is ProfileModSideEffect.NavigateToCustomGallery -> {
-                onNavigateToCustomGallery()
-            }
-
-            is ProfileModSideEffect.UpdateProfileImage -> {
-                selectedPhotoId.let {
-                    viewModel.updateProfileImage(selectedPhotoId ?: "")
-                }
-            }
-
-            is ProfileModSideEffect.NavigateToProfile -> {
-                onClickComplete()
-            }
-        }
-    }
-
-    if (state.requestPhotoPermission) {
-        CheckAndRequestPhotoPermission(
-            onPermissionGranted = {
-                viewModel.onPermissionHandled()
-                onNavigateToCustomGallery()
-            },
-            onPermissionDenied = {
-                viewModel.showPermissionDialog()
-                viewModel.onPermissionHandled()
-            }
-        )
-    }
-
-    if (state.showExitDialog) {
-        AconTwoButtonDialog(
-            title = stringResource(R.string.profile_mod_alert_title),
-            content = stringResource(R.string.profile_mod_alert_description),
-            leftButtonContent = stringResource(R.string.profile_mod_alert_left_btn),
-            rightButtonContent = stringResource(R.string.profile_mod_alert_right_btn),
-            contentImage = 0,
-            onDismissRequest = {
-                viewModel.hideExitDialog()
-            },
-            onClickLeft = {
-                backToProfile()
-            },
-            onClickRight = {
-                viewModel.hideExitDialog()
-            },
-            isImageEnabled = false
-        )
-    }
-
-    if (state.showPermissionDialog) {
-        AconTwoButtonDialog(
-            title = stringResource(R.string.photo_permission_alert_title),
-            content = stringResource(R.string.photo_permission_alert_subtitle),
-            leftButtonContent = stringResource(R.string.photo_permission_alert_left_btn),
-            rightButtonContent = stringResource(R.string.photo_permission_alert_right_btn),
-            contentImage = 0,
-            onDismissRequest = { viewModel.hidePermissionDialog() },
-            onClickLeft = { viewModel.hidePermissionDialog() },
-            onClickRight = { viewModel.onPermissionSettingClick(context.packageName) },
-            isImageEnabled = false
-        )
-    }
-
-    if (state.showPhotoEditDialog) {
-        CustomModalBottomSheet(
-            onDismiss = viewModel::hideProfileEditDialog,
-            onGallerySelect = viewModel::onProfileClicked,
-            onDefaultImageSelect = { viewModel.updateProfileImage("") },
-        )
-    }
-
-    ProfileModScreen(
-        modifier = modifier,
-        state = state,
-        onNicknameChanged = viewModel::onNicknameChanged,
-        onBirthdayChanged = viewModel::onBirthdayChanged,
-        onFocusChanged = viewModel::onFocusChanged,
-        onBackClicked = viewModel::showExitDialog,
-        onSaveClicked = viewModel::getPreSignedUrl,
-        onProfileClicked = viewModel::showProfileEditDialog,
-    )
-}
-
-@Composable
-fun ProfileModScreen(
+internal fun ProfileModScreen(
     modifier: Modifier = Modifier,
     state: ProfileModState,
+    navigateToBack: () -> Unit,
+    navigateToCustomGallery: () -> Unit,
     onNicknameChanged: (String) -> Unit = {},
-    onBirthdayChanged: (String) -> Unit = {},
+    onBirthdayChanged: (TextFieldValue) -> Unit = {},
     onFocusChanged: (Boolean, FocusType) -> Unit = { _, _ -> },
-    onBackClicked: () -> Unit,
-    onSaveClicked: () -> Unit,
+    onRequestExitDialog: () -> Unit,
+    onDisMissExitDialog: () -> Unit,
+    onRequestPhotoPermission: () -> Unit,
+    onDisMissPhotoPermission: () -> Unit,
+    onRequestPermissionDialog: () -> Unit,
+    onDisMissPermissionDialog: () -> Unit,
+    moveToSettings: (String) -> Unit,
     onProfileClicked: () -> Unit = {},
+    onDisMissProfileEditModal: () -> Unit,
+    onUpdateProfileImage: (String) -> Unit,
+    onClickSaveButton: () -> Unit = {},
 ) {
-    val scrollState = rememberScrollState()
+    val context = LocalContext.current
+    val configuration = LocalConfiguration.current
+    val screenHeightDp = configuration.screenHeightDp
+    val boxHeight = (screenHeightDp * (80f / 740f))
+
     val focusManager = LocalFocusManager.current
+
     val nickNameFocusRequester = remember { FocusRequester() }
     val birthDayFocusRequester = remember { FocusRequester() }
 
-    // 커서 위치를 관리하기 위해 사용
-    var nicknameText by remember { mutableStateOf(TextFieldValue("")) }
-    var birthdayText by remember { mutableStateOf(TextFieldValue("")) }
-
-    // 서버로 부터 받아온 초기값 설정 (닉네임)
-    LaunchedEffect(state.nickNameState) {
-        if (nicknameText.text != state.nickNameState) {
-            nicknameText = TextFieldValue(state.nickNameState)
-        }
-    }
-
-    // 서버로 부터 받아온 초기값 설정 (생일)
-    LaunchedEffect(state.birthdayState) {
-        if (birthdayText.text != state.birthdayState) {
-            birthdayText = TextFieldValue(state.birthdayState)
-        }
-    }
-
     BackHandler(enabled = true) {
-        onBackClicked()
+        onRequestExitDialog()
     }
 
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(color = AconTheme.color.Gray9)
-            .statusBarsPadding()
-            .navigationBarsPadding()
-            .addFocusCleaner(focusManager),
-        verticalArrangement = Arrangement.Center
-    ) {
-        AconTopBar(
-            leadingIcon = {
-                IconButton(onClick = onBackClicked) {
-                    Image(
-                        imageVector = ImageVector.vectorResource(id = com.acon.acon.core.designsystem.R.drawable.ic_arrow_left_28),
-                        contentDescription = stringResource(R.string.content_description_back),
-                    )
-                }
-            },
-            content = {
-                Text(
-                    text = stringResource(R.string.profile_edit_topbar),
-                    style = AconTheme.typography.head5_22_sb,
-                    color = AconTheme.color.White
+    when (state) {
+        ProfileModState.LoadFailed -> {}
+        ProfileModState.Loading -> {}
+        is ProfileModState.Success -> {
+            var nicknameTextFieldValue by rememberSaveable(
+                state.fetchedNickname,
+                stateSaver = TextFieldValue.Saver
+            ) {
+                mutableStateOf(TextFieldValue(state.fetchedNickname))
+            }
+
+            val limitedTextFieldValue = remember(nicknameTextFieldValue) {
+                nicknameTextFieldValue.limitedNicknameTextFieldValue()
+            }
+
+            if (state.requestPhotoPermission) {
+                CheckAndRequestPhotoPermission(
+                    onPermissionGranted = {
+                        onDisMissPhotoPermission()
+                        navigateToCustomGallery()
+                    },
+                    onPermissionDenied = {
+                        onRequestPermissionDialog()
+                        onRequestPhotoPermission()
+                    }
                 )
             }
-        )
 
-        Box(
-            modifier = Modifier.weight(1f)
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .verticalScroll(scrollState),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 10.dp),
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Spacer(modifier = Modifier.weight(1f))
-                    Box(
-                        modifier = Modifier
-                            .weight(1f)
-                            .aspectRatio(1f),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        ProfilePhotoBox(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .align(Alignment.Center),
-                            onProfileClicked = onProfileClicked,
-                            photoUri = state.selectedPhotoUri
-                        )
-                        Icon(
-                            imageVector = ImageVector.vectorResource(com.acon.acon.core.designsystem.R.drawable.and_ic_profile_img_edit),
-                            contentDescription = stringResource(R.string.content_description_edit_profile_icon),
-                            tint = Color.Unspecified,
-                            modifier = Modifier
-                                .align(alignment = Alignment.BottomEnd)
-                                .noRippleClickable { onProfileClicked() }
-                        )
+            if (state.showExitDialog) {
+                AconTwoActionDialog(
+                    title = stringResource(R.string.profile_mod_exit_title),
+                    action1 = stringResource(R.string.continue_writing),
+                    action2 = stringResource(R.string.exit),
+                    onDismissRequest = {
+                        onRequestExitDialog()
+                    },
+                    onAction1 = {
+                        onDisMissExitDialog()
+                    },
+                    onAction2 = {
+                        navigateToBack()
                     }
-                    Spacer(modifier = Modifier.weight(1f))
-                }
-
-                Column(
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 15.dp),
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Start
-                    ) {
-                        Text(
-                            text = stringResource(R.string.nickname_textfield_title),
-                            style = AconTheme.typography.head8_16_sb,
-                            color = AconTheme.color.White
-                        )
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(
-                            text = stringResource(R.string.star),
-                            style = AconTheme.typography.head8_16_sb,
-                            color = AconTheme.color.Main_org1
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(12.dp))
-                    ProfileTextField(
-                        status = state.nickNameFieldStatus,
-                        focusType = FocusType.Nickname,
-                        focusRequester = nickNameFocusRequester,
-                        value = nicknameText,
-                        placeholder = stringResource(R.string.nickname_textfield_placeholder),
-                        isTyping = (state.nicknameStatus == NicknameStatus.Typing),
-                        onTextChanged = { fieldValue ->
-                            val inputText = fieldValue.text
-                            var count = 0
-                            var textLimit = false
-
-                            val displayText = buildString {
-                                for (char in inputText) {
-                                    val weight = if (char.isKorean()) 2 else 1
-                                    if (count + weight > 16) {
-                                        textLimit = true
-                                        break
-                                    }
-                                    if (char.isAllowedChar()) {
-                                        append(char)
-                                        count += weight
-                                    }
-                                }
-                            }
-                            if (!textLimit || displayText.length <= nicknameText.text.length) {
-                                nicknameText = fieldValue.copy(text = displayText)
-                                onNicknameChanged(inputText)
-                            }
-                        },
-                        onFocusChanged = onFocusChanged,
-                        onClick = {
-                            nickNameFocusRequester.requestFocus()
-                        },
-                    )
-
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Row(
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Column(
-                            modifier = Modifier.weight(1f),
-                            verticalArrangement = Arrangement.Top,
-                            horizontalAlignment = Alignment.Start
-                        ) {
-                            when (val status = state.nicknameStatus) {
-                                is NicknameStatus.Empty -> {
-                                    NicknameErrMessageRow(
-                                        modifier = modifier,
-                                        iconRes = ImageVector.vectorResource(com.acon.acon.core.designsystem.R.drawable.and_ic_error_20),
-                                        errMessage = stringResource(R.string.nickname_error_msg_input_nickname),
-                                        textColor = AconTheme.color.Error_red1
-                                    )
-                                }
-
-                                is NicknameStatus.Error -> {
-                                    status.errorTypes.forEach { error ->
-                                        NicknameErrMessageRow(
-                                            modifier = modifier,
-                                            iconRes = ImageVector.vectorResource(com.acon.acon.core.designsystem.R.drawable.and_ic_error_20),
-                                            errMessage = error.message,
-                                            textColor = AconTheme.color.Error_red1
-                                        )
-                                    }
-                                }
-
-                                is NicknameStatus.Valid -> {
-                                    NicknameErrMessageRow(
-                                        modifier = modifier,
-                                        iconRes = ImageVector.vectorResource(com.acon.acon.core.designsystem.R.drawable.and_ic_local_check_mark_20),
-                                        errMessage = stringResource(R.string.nickname_vaild_msg_available_nickname),
-                                        textColor = AconTheme.color.Success_blue1
-                                    )
-                                }
-
-                                else -> Unit
-                            }
-                        }
-
-                        Row(
-                            horizontalArrangement = Arrangement.End
-                        ) {
-                            Text(
-                                text = "${state.nicknameCount}",
-                                style = AconTheme.typography.subtitle2_14_med,
-                                color = AconTheme.color.White
-                            )
-                            Text(
-                                text = stringResource(R.string.nickname_max_nickname_length),
-                                style = AconTheme.typography.subtitle2_14_med,
-                                color = AconTheme.color.Gray5
-                            )
-                        }
-                    }
-                }
-
-                Column(
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 15.dp),
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Start
-                    ) {
-                        Text(
-                            text = stringResource(R.string.nickname_birthday_title),
-                            style = AconTheme.typography.head8_16_sb,
-                            color = AconTheme.color.White
-                        )
-                        Spacer(modifier = Modifier.width(4.dp))
-                    }
-                    Spacer(modifier = Modifier.height(12.dp))
-                    ProfileTextField(
-                        status = state.birthdayFieldStatus,
-                        focusType = FocusType.Birthday,
-                        focusRequester = birthDayFocusRequester,
-                        value = birthdayText,
-                        placeholder = stringResource(R.string.birthday_textfield_placeholder),
-                        onTextChanged = { fieldValue ->
-                            val digitsOnly = fieldValue.text.filter { it.isDigit() }.take(8)
-                            val cursorPos = minOf(digitsOnly.length, fieldValue.selection.start)
-
-                            birthdayText = fieldValue.copy(
-                                text = digitsOnly,
-                                selection = TextRange(cursorPos)
-                            )
-                            onBirthdayChanged(digitsOnly)
-                        },
-                        onFocusChanged = onFocusChanged,
-                        visualTransformation = BirthdayTransformation(),
-                        onClick = {
-                            birthDayFocusRequester.requestFocus()
-                        }
-                    )
-
-                    Spacer(modifier = Modifier.height(8.dp))
-                    when (val status = state.birthdayStatus) {
-                        is BirthdayStatus.Valid -> {
-                            Spacer(modifier = Modifier.height(4.dp))
-                        }
-
-                        is BirthdayStatus.Invalid -> {
-                            NicknameErrMessageRow(
-                                modifier = modifier,
-                                iconRes = ImageVector.vectorResource(com.acon.acon.core.designsystem.R.drawable.and_ic_error_20),
-                                errMessage = status.errorMsg ?: "",
-                                textColor = AconTheme.color.Error_red1
-                            )
-                        }
-
-                        else -> Spacer(modifier = Modifier.height(4.dp))
-                    }
-                }
-
+                )
             }
-        }
 
-        Column(
-            modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 10.dp)
-        ) {
-            AconFilledLargeButton(
-                text = stringResource(R.string.save_btn),
-                textStyle = AconTheme.typography.head8_16_sb,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 10.dp),
-                disabledBackgroundColor = AconTheme.color.Gray7,
-                enabledBackgroundColor = AconTheme.color.Gray5,
-                disabledTextColor = AconTheme.color.Gray5,
-                enabledTextColor = AconTheme.color.White,
-                onClick = onSaveClicked,
-                isEnabled =
-                (
-                        (state.selectedPhotoUri != state.originalPhotoUri) ||
-                                (state.nickNameState != state.originalNickname && state.nicknameStatus == NicknameStatus.Valid) ||
-                                (
-                                        (state.birthdayState != state.originalBirthday && state.birthdayStatus == BirthdayStatus.Valid) ||
-                                                (state.originalBirthday.isNotEmpty() && state.birthdayState.isEmpty()) ||
-                                                (state.originalBirthday.isEmpty() && state.birthdayState.isNotEmpty() &&
-                                                        state.birthdayStatus == BirthdayStatus.Valid)
-                                        )
-                        ) && state.nickNameState.isNotEmpty()
-            )
+            if (state.showPermissionDialog) {
+                AconTwoActionDialog(
+                    title = stringResource(R.string.photo_permission_title),
+                    action1 = stringResource(R.string.photo_permission_alert_left_btn),
+                    action2 = stringResource(R.string.photo_permission_alert_right_btn),
+                    onDismissRequest = { onDisMissPermissionDialog() },
+                    onAction1 = { onDisMissPermissionDialog() },
+                    onAction2 = { moveToSettings(context.packageName) },
+                ) {
+                    Text(
+                        text = stringResource(R.string.photo_permission_content),
+                        color = AconTheme.color.Gray200,
+                        style = AconTheme.typography.Body1,
+                        maxLines = 1,
+                        modifier = Modifier.padding(bottom = 20.dp)
+                    )
+                }
+            }
+
+            if (state.showPhotoEditModal) {
+                GallerySelectBottomSheet(
+                    isDefault = state.fetchedPhotoUri.contains("basic_profile_image"),
+                    onDismiss = { onDisMissProfileEditModal() },
+                    onGallerySelect = { onRequestPhotoPermission() },
+                    onDefaultImageSelect = { onUpdateProfileImage("basic_profile_image") },
+                )
+            }
+
+            Column(
+                modifier = modifier
+                    .fillMaxSize()
+                    .background(color = AconTheme.color.Gray900)
+                    .hazeSource(LocalHazeState.current)
+                    .statusBarsPadding()
+                    .navigationBarsPadding()
+                    .addFocusCleaner(focusManager),
+                verticalArrangement = Arrangement.Center
+            ) {
+                AconTopBar(
+                    modifier = Modifier.padding(vertical = 14.dp),
+                    leadingIcon = {
+                        IconButton(
+                            onClick = onRequestExitDialog
+                        ) {
+                            Image(
+                                imageVector = ImageVector.vectorResource(id = R.drawable.ic_topbar_arrow_left),
+                                contentDescription = stringResource(R.string.back)
+                            )
+                        }
+                    },
+                    content = {
+                        Text(
+                            text = stringResource(R.string.profile_edit_topbar),
+                            style = AconTheme.typography.Title4,
+                            fontWeight = FontWeight.SemiBold,
+                            color = AconTheme.color.White
+                        )
+                    }
+                )
+
+                Box(
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 19.dp),
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Spacer(modifier = Modifier.weight(1f))
+                            Box(
+                                modifier = Modifier
+                                    .size(boxHeight.dp)
+                                    .aspectRatio(1f),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                ProfilePhotoBox(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .align(Alignment.Center),
+                                    onProfileClicked = onProfileClicked,
+                                    photoUri = state.selectedPhotoUri.ifEmpty { state.fetchedPhotoUri }
+                                )
+                                Image(
+                                    imageVector = ImageVector.vectorResource(R.drawable.ic_profile_img_edit),
+                                    contentDescription = stringResource(R.string.content_description_edit_profile),
+                                    modifier = Modifier
+                                        .align(alignment = Alignment.BottomEnd)
+                                        .noRippleClickable { onProfileClicked() }
+                                )
+                            }
+                            Spacer(modifier = Modifier.weight(1f))
+                        }
+
+                        Column(
+                            modifier = Modifier
+                                .padding(horizontal = 16.dp)
+                                .padding(top = 48.dp)
+                        ) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.Start
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.nickname_textfield_title),
+                                    style = AconTheme.typography.Title4,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = AconTheme.color.White
+                                )
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Text(
+                                    text = stringResource(R.string.star),
+                                    style = AconTheme.typography.Title4,
+                                    color = AconTheme.color.Gray50
+                                )
+                            }
+
+                            Spacer(modifier = Modifier.height(12.dp))
+                            ProfileTextField(
+                                status = state.nicknameFieldStatus,
+                                focusType = FocusType.Nickname,
+                                focusRequester = nickNameFocusRequester,
+                                value = limitedTextFieldValue,
+                                placeholder = stringResource(R.string.nickname_placeholder),
+                                isTyping = (state.nicknameValidationStatus == NicknameValidationStatus.Typing),
+                                onValueChange = { fieldValue ->
+                                    if (fieldValue.text.length <= 14) {
+                                        nicknameTextFieldValue = fieldValue
+                                        onNicknameChanged(fieldValue.text)
+                                    }
+                                },
+                                onFocusChanged = onFocusChanged,
+                                onClick = {
+                                    nickNameFocusRequester.requestFocus()
+                                }
+                            )
+
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Row(
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Column(
+                                    modifier = Modifier.weight(1f),
+                                    verticalArrangement = Arrangement.Top,
+                                    horizontalAlignment = Alignment.Start
+                                ) {
+                                    when (state.nicknameValidationStatus) {
+                                        is NicknameValidationStatus.Empty -> {
+                                            NicknameValidMessageRow(
+                                                validMessage = R.string.nickname_error_empty,
+                                                iconRes = R.drawable.ic_error,
+                                                validContentDescription = R.string.content_description_empty_nickname,
+                                                color = AconTheme.color.Danger
+                                            )
+                                        }
+
+                                        is NicknameValidationStatus.Error -> {
+                                            val validState = state.nicknameValidationStatus
+                                            NicknameValidMessageRow(
+                                                validMessage = validState.errorTypes.validMessageResId(),
+                                                iconRes = R.drawable.ic_error,
+                                                validContentDescription = validState.errorTypes.contentDescriptionResId(),
+                                                color = AconTheme.color.Danger
+                                            )
+                                        }
+
+                                        is NicknameValidationStatus.Valid -> {
+                                            NicknameValidMessageRow(
+                                                validMessage = R.string.nickname_valid,
+                                                iconRes = R.drawable.ic_valid,
+                                                validContentDescription = R.string.content_description_valid_nickname,
+                                                color = AconTheme.color.Success
+                                            )
+                                        }
+
+                                        else -> Unit
+                                    }
+                                }
+
+                                Row(
+                                    horizontalArrangement = Arrangement.End
+                                ) {
+                                    Text(
+                                        text = "${state.nicknameCount}",
+                                        style = AconTheme.typography.Caption1,
+                                        color = AconTheme.color.Gray500
+                                    )
+                                    Text(
+                                        text = stringResource(R.string.max_nickname_count),
+                                        style = AconTheme.typography.Caption1,
+                                        color = AconTheme.color.Gray500
+                                    )
+                                }
+                            }
+                        }
+
+                        Column(
+                            modifier = Modifier
+                                .padding(horizontal = 16.dp)
+                                .padding(top = 44.dp)
+                        ) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.Start
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.nickname_birthday_title),
+                                    style = AconTheme.typography.Title4,
+                                    color = AconTheme.color.White
+                                )
+                                Spacer(modifier = Modifier.width(4.dp))
+                            }
+                            Spacer(modifier = Modifier.height(12.dp))
+                            ProfileTextField(
+                                status = state.birthdayFieldStatus,
+                                focusType = FocusType.Birthday,
+                                focusRequester = birthDayFocusRequester,
+                                value = state.birthdayTextFieldValue,
+                                placeholder = stringResource(R.string.birthday_placeholder),
+                                onValueChange = { fieldValue ->
+                                    onBirthdayChanged(fieldValue)
+                                },
+                                onFocusChanged = onFocusChanged,
+                                visualTransformation = BirthdayTransformation(),
+                                onClick = {
+                                    birthDayFocusRequester.requestFocus()
+                                }
+                            )
+
+                            Spacer(modifier = Modifier.height(8.dp))
+                            when (state.birthdayValidationStatus) {
+                                is BirthdayValidationStatus.Valid -> {
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                }
+
+                                is BirthdayValidationStatus.Invalid -> {
+                                    NicknameValidMessageRow(
+                                        validMessage = R.string.birthday_error_invalid,
+                                        iconRes = R.drawable.ic_error,
+                                        validContentDescription = R.string.content_description_invalid_birthday,
+                                        color = AconTheme.color.Danger
+                                    )
+                                }
+
+                                else -> Spacer(modifier = Modifier.height(4.dp))
+                            }
+                        }
+
+                        Spacer(Modifier.weight(1f))
+                        AconFilledButton(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp)
+                                .padding(bottom = 16.dp),
+                            enabled = state.isEditButtonEnabled,
+                            onClick = { onClickSaveButton() },
+                            content = {
+                                Text(
+                                    text = stringResource(R.string.save),
+                                    style = AconTheme.typography.Title4,
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                            }
+                        )
+                    }
+                }
+            }
         }
     }
 }
@@ -499,22 +419,26 @@ fun ProfileModScreen(
 @Preview(showBackground = true)
 @Composable
 private fun ProfileModScreenPreview() {
-    val nickNameState = remember { mutableStateOf("") }
-    val birthdayState = remember { mutableStateOf("") }
-
-    ProfileModScreen(
-        onFocusChanged = { _, _ -> },
-        state = ProfileModState(
-            nickNameState = nickNameState.value,
-            birthdayState = birthdayState.value,
-            nickNameFieldStatus = TextFieldStatus.Inactive,
-            birthdayFieldStatus = TextFieldStatus.Inactive
-        ),
-        onNicknameChanged = { newValue -> nickNameState.value = newValue },
-        onBirthdayChanged = { newValue -> birthdayState.value = newValue },
-        onBackClicked = {},
-        onSaveClicked = {},
-    )
+    AconTheme {
+        ProfileModScreen(
+            modifier = Modifier,
+            state = ProfileModState.Success(),
+            navigateToBack = {},
+            navigateToCustomGallery = {},
+            onNicknameChanged = {},
+            onBirthdayChanged = {},
+            onFocusChanged = { _, _ -> },
+            onRequestExitDialog = {},
+            onDisMissExitDialog = {},
+            onRequestPhotoPermission = {},
+            onDisMissPhotoPermission = {},
+            onRequestPermissionDialog = {},
+            onDisMissPermissionDialog = {},
+            moveToSettings = {},
+            onProfileClicked = {},
+            onDisMissProfileEditModal = {},
+            onUpdateProfileImage = {},
+            onClickSaveButton = {}
+        )
+    }
 }
-
-
