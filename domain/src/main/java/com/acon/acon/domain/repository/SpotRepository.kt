@@ -2,9 +2,9 @@ package com.acon.acon.domain.repository
 
 import com.acon.acon.domain.model.area.LegalArea
 import com.acon.acon.domain.model.spot.Condition
-import com.acon.acon.domain.model.spot.Spot
 import com.acon.acon.domain.model.spot.SpotDetailInfo
 import com.acon.acon.domain.model.spot.SpotDetailMenu
+import com.acon.acon.domain.model.spot.v2.SpotList
 
 interface SpotRepository {
 
@@ -12,7 +12,7 @@ interface SpotRepository {
         latitude: Double,
         longitude: Double,
         condition: Condition,
-    ): Result<List<Spot>>
+    ): Result<SpotList>
 
     suspend fun fetchRecentNavigationLocation(
         spotId: Long,

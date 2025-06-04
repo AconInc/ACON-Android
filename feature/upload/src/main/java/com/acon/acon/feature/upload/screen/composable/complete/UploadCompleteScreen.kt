@@ -1,9 +1,8 @@
 package com.acon.acon.feature.upload.screen.composable.complete
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
@@ -27,7 +26,7 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.rememberLottieComposition
 import kotlinx.coroutines.delay
 
-private const val SCREEN_CLOSE_SECONDS = 3
+private const val SCREEN_CLOSE_SECONDS = 300
 
 @Composable
 internal fun UploadCompleteScreen(
@@ -66,23 +65,17 @@ internal fun UploadCompleteScreen(
             fontWeight = FontWeight.W400,
             modifier = Modifier.padding(top = 12.dp)
         )
-        Box(
-            modifier = Modifier
-                .padding(top = 30.dp)
-                .fillMaxWidth()
-                .weight(1f)
-        ) {
             LottieAnimation(
                 composition = rememberLottieComposition(
                     spec = LottieCompositionSpec.RawRes(R.raw.upload_success)
                 ).value,
                 modifier = Modifier
-                    .fillMaxSize()
-                    .align(Alignment.Center),
+                    .padding(top = 54.dp)
+                    .fillMaxWidth(.8f),
                 iterations = 1,
                 isPlaying = true
             )
-        }
+        Spacer(Modifier.weight(1f))
         Text(
             text = stringResource(R.string.tab_closed_in_seconds, closeInSeconds),
             style = AconTheme.typography.Body1,

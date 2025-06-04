@@ -1,14 +1,16 @@
 package com.acon.acon.domain.model.spot.v2
 
 import androidx.compose.runtime.Immutable
+import com.acon.acon.domain.type.TagType
 
 @Immutable
-data class SpotV2(
+data class Spot(
     val id: Long,
-    val name: String,
     val image: String,
-    val dotori: String,
-    val walkingTime: String,
+    val name: String,
+    val dotori: Int,
+    val tags: List<TagType>,
+    val eta: Int,
     val latitude: Double,
     val longitude: Double,
 )

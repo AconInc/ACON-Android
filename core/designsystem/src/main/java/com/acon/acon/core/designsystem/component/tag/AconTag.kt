@@ -23,7 +23,7 @@ fun AconTag(
     modifier: Modifier = Modifier,
     shape: Shape = RoundedCornerShape(4.dp),
     textStyle: TextStyle = AconTheme.typography.Caption1.copy(fontWeight = FontWeight.W400),
-    contentPadding: PaddingValues = PaddingValues(vertical = 3.dp, horizontal = 17.dp)
+    contentPadding: PaddingValues = PaddingValues(vertical = 3.dp, horizontal = 15.dp)
 ) {
     Row(
         modifier = modifier

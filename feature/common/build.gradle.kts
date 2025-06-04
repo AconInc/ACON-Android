@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.acon.android.library.orbit)
     alias(libs.plugins.acon.android.library.hilt)
 }
+
 android {
     namespace = "com.acon.feature.common"
 }
