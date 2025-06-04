@@ -5,6 +5,7 @@ import android.content.Context
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.viewModelScope
 import com.acon.acon.core.utils.feature.base.BaseContainerHost
+import com.acon.acon.domain.error.upload.GetVerifySpotLocationError
 import com.acon.acon.domain.model.spot.SimpleSpot
 import com.acon.acon.domain.model.upload.UploadSpotSuggestion
 import com.acon.acon.domain.model.upload.v2.SearchedSpot
@@ -109,11 +110,16 @@ class UploadSearchViewModel @Inject constructor(
                         showSearchedSpots = false
                     )
                 }
-            }.onFailure {
+            }.onFailure { e ->
                 reduce {
-                    state.copy(
-                        showNotAvailableLocationDialog = true
-                    )
+                    if (e is GetVerifySpotLocationError.OutOfServiceAreaError)
+                        state.copy(
+                            showNotInKoreaDialog = true
+                        )
+                    else
+                        state.copy(
+                            showNotAvailableLocationDialog = true
+                        )
                 }
             }
         }
@@ -131,7 +137,8 @@ class UploadSearchViewModel @Inject constructor(
         runOn<UploadSearchUiState.Success> {
             reduce {
                 state.copy(
-                    showNotAvailableLocationDialog = false
+                    showNotAvailableLocationDialog = false,
+                    showNotInKoreaDialog = false
                 )
             }
         }
@@ -157,7 +164,8 @@ sealed interface UploadSearchUiState {
         val selectedSpot: SimpleSpot? = null,
         val searchedSpots: List<SearchedSpot> = listOf(),
         val showSearchedSpots: Boolean = false,
-        val showNotAvailableLocationDialog: Boolean = false
+        val showNotAvailableLocationDialog: Boolean = false,
+        val showNotInKoreaDialog: Boolean = false
     ) : UploadSearchUiState
 }
 

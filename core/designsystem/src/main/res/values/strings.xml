@@ -159,6 +159,7 @@
     <string name="failed_submit_review">리뷰를 남기지 못했어요</string>
     <string name="failed_verify_location">위치 인식 실패</string>
     <string name="failed_verify_location_description">현재 위치와 리뷰 등록 장소가\n오차범위 밖에 있습니다.\n좀 더 가까이 이동해보세요.</string>
+    <string name="failed_verify_location_not_in_korea_description">문제가 발생했습니다. 나중에 다시 시도해주세요.</string>
 
     <!-- Onboarding -->
     <string name="request_dislike_food_title">싫어하는 음식을 알려줄 수 있나요?</string>

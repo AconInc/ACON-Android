@@ -95,7 +95,7 @@ internal fun UploadSearchScreen(
 
         when(state) {
             is UploadSearchUiState.Success -> {
-                if (state.showNotAvailableLocationDialog) {
+                if (state.showNotAvailableLocationDialog || state.showNotInKoreaDialog) {
                     AconDefaultDialog(
                         title = stringResource(R.string.failed_verify_location),
                         action = stringResource(R.string.ok),
@@ -103,7 +103,12 @@ internal fun UploadSearchScreen(
                         onDismissRequest = onVerifyLocationDialogAction
                     ) {
                         Text(
-                            text = stringResource(R.string.failed_verify_location_description),
+                            text = stringResource(
+                                if (state.showNotAvailableLocationDialog)
+                                    R.string.failed_verify_location_description
+                                else
+                                    R.string.failed_verify_location_not_in_korea_description
+                            ),
                             style = AconTheme.typography.Body1,
                             color = AconTheme.color.Gray200,
                             textAlign = TextAlign.Center,
@@ -158,8 +163,7 @@ internal fun UploadSearchScreen(
                                     .height(300.dp)
                                     .clip(RoundedCornerShape(16.dp))
                                     .defaultHazeEffect(
-                                        hazeState = hazeState,
-                                        tintColor = AconTheme.color.Gray700
+                                        hazeState = hazeState, tintColor = AconTheme.color.Gray700
                                     )
                             )
                         }
@@ -210,9 +214,11 @@ private fun SearchedSpots(
                         style = AconTheme.typography.Body1,
                         color = AconTheme.color.Action,
                         fontWeight = FontWeight.SemiBold,
-                        modifier = Modifier.padding(top = 20.dp).noRippleClickable {
-                            // TODO 링크입력
-                        }
+                        modifier = Modifier
+                            .padding(top = 20.dp)
+                            .noRippleClickable {
+                                // TODO 링크입력
+                            }
                     )
                 }
             }
