@@ -16,7 +16,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.domain.model.spot.SpotDetailMenu
-import java.util.Locale
+import com.acon.acon.feature.spot.toPriceString
 
 @Composable
 internal fun SignatureMenu(
@@ -28,7 +28,7 @@ internal fun SignatureMenu(
         signatureMenuList.take(3).forEach { menu -> // TODO - api 변경되면 제거
             SignatureMenuItem(
                 menuName = menu.name,
-                menuPrice = String.format(Locale.getDefault(), "%,d", menu.price)
+                menuPrice = menu.price.toPriceString()
             )
         }
     }

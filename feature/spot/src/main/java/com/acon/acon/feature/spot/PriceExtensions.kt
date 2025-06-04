@@ -1,5 +1,5 @@
 package com.acon.acon.feature.spot
 
-internal fun toPrice(price: Int): String {
-    return if(price == -1) "변동" else "%,d원".format(price)
-}
+import java.util.Locale
+
+internal fun Int.toPriceString(): String = String.format(Locale.getDefault(), "%,d", this)
