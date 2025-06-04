@@ -7,11 +7,11 @@ import com.acon.acon.feature.upload.screen.UploadSearchUiState
 
 internal val uploadSearchUiStateMock = UploadSearchUiState.Success(
     uploadSpotSuggestions = listOf(
-        UploadSpotSuggestion(1, "버거킹"),
-        UploadSpotSuggestion(2, "맘스터치"),
-        UploadSpotSuggestion(3, "롯데리아"),
-        UploadSpotSuggestion(4, "KFC"),
-        UploadSpotSuggestion(5, "맥도날드"),
+        UploadSpotSuggestion(1, "디버그1"),
+        UploadSpotSuggestion(2, "TheBug2"),
+        UploadSpotSuggestion(3, "Debug3"),
+        UploadSpotSuggestion(4, "디벅4"),
+        UploadSpotSuggestion(5, "디Bug5"),
     ),
     searchedSpots = listOf(
         SearchedSpot(

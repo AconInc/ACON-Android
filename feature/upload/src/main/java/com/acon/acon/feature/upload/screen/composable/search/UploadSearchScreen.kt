@@ -1,5 +1,6 @@
 package com.acon.acon.feature.upload.screen.composable.search
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -166,8 +167,15 @@ internal fun UploadSearchScreen(
                                     .padding(top = 10.dp)
                                     .height(300.dp)
                                     .clip(RoundedCornerShape(16.dp))
-                                    .defaultHazeEffect(
-                                        hazeState = hazeState, tintColor = AconTheme.color.Gray700
+                                    .then(
+                                        if (state.uploadSpotSuggestions.isEmpty())
+                                            Modifier.background(AconTheme.color.GlassWhiteLight)
+                                        else Modifier.defaultHazeEffect(
+                                            hazeState = hazeState,
+                                            tintColor = AconTheme.color.Gray800,
+                                            blurRadius = 20.dp,
+                                            alpha = .4f
+                                        )
                                     )
                             )
                         }

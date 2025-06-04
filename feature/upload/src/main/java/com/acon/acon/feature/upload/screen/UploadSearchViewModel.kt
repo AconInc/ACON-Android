@@ -10,6 +10,8 @@ import com.acon.acon.domain.model.spot.SimpleSpot
 import com.acon.acon.domain.model.upload.UploadSpotSuggestion
 import com.acon.acon.domain.model.upload.v2.SearchedSpot
 import com.acon.acon.domain.repository.UploadRepository
+import com.acon.acon.feature.upload.BuildConfig
+import com.acon.acon.feature.upload.mock.uploadSearchUiStateMock
 import com.acon.feature.common.location.getLocation
 import com.acon.feature.common.location.locationFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -45,7 +47,14 @@ class UploadSearchViewModel @Inject constructor(
                     }
                 }
             }.onFailure {
-
+                runOn<UploadSearchUiState.Success> {
+                    if (BuildConfig.DEBUG)
+                        reduce {
+                            state.copy(
+                                uploadSpotSuggestions = uploadSearchUiStateMock.uploadSpotSuggestions
+                            )
+                        }
+                }
             }
         }
         queryFlow
