@@ -28,7 +28,7 @@ import com.acon.acon.core.designsystem.component.dialog.v2.AconDefaultDialog
 import com.acon.acon.core.designsystem.component.dialog.v2.AconTwoActionDialog
 import com.acon.acon.core.designsystem.component.topbar.AconTopBar
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.feature.verification.component.VerifiedAreaChip
+import com.acon.acon.feature.verification.component.VerifiedAreaChipRow
 import com.acon.acon.feature.verification.screen.LocalVerificationUiState
 
 @Composable
@@ -148,7 +148,7 @@ fun LocalVerificationScreen(
                 )
 
                 Spacer(Modifier.height(16.dp))
-                VerifiedAreaChip(
+                VerifiedAreaChipRow(
                     areaList = state.verificationAreaList,
                     onEditArea = onShowEditAreaDialog,
                     onRemoveChip = {
@@ -156,7 +156,8 @@ fun LocalVerificationScreen(
                             onDeleteVerifiedAreaChip(verifiedAreaId)
                         }
                     },
-                    onClickAddArea = onclickAddArea
+                    onClickAddArea = onclickAddArea,
+                    modifier = Modifier.fillMaxWidth()
                 )
             }
         }

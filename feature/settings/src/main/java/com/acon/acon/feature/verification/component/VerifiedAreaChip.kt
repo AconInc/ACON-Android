@@ -19,26 +19,27 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.util.fastForEach
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.domain.model.area.Area
 
 @Composable
-fun VerifiedAreaChip(
+internal fun VerifiedAreaChipRow(
     areaList: List<Area>,
     onEditArea: () -> Unit,
     onRemoveChip: (Long) -> Unit,
     onClickAddArea: () -> Unit,
+    modifier: Modifier = Modifier,
     maxChipPerRowSize: Int = 3
 ) {
     FlowRow(
-        modifier = Modifier
-            .fillMaxWidth(),
+        modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        areaList.forEach { area ->
+        areaList.fastForEach { area ->
             LocalAreaChip(
                 text = area.name,
                 onClickChip = {
@@ -57,7 +58,7 @@ fun VerifiedAreaChip(
 }
 
 @Composable
-fun LocalAreaChip(
+private fun LocalAreaChip(
     text: String,
     onClickChip: () -> Unit,
 ) {
@@ -88,7 +89,7 @@ fun LocalAreaChip(
 }
 
 @Composable
-fun AddAreaChip(
+private fun AddAreaChip(
     onClickAddArea: () -> Unit
 ) {
     Row(
@@ -126,7 +127,7 @@ private fun VerifiedAreaChipPreview() {
             modifier = Modifier
                 .background(AconTheme.color.Gray900)
         ) {
-            VerifiedAreaChip(
+            VerifiedAreaChipRow(
                 areaList = list,
                 onClickAddArea = {},
                 onRemoveChip = {},
