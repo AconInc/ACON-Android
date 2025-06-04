@@ -25,6 +25,8 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
@@ -33,6 +35,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
+import com.acon.acon.core.common.UrlConstants
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.chip.AconChip
 import com.acon.acon.core.designsystem.component.dialog.v2.AconDefaultDialog
@@ -41,6 +44,7 @@ import com.acon.acon.core.designsystem.effect.defaultHazeEffect
 import com.acon.acon.core.designsystem.effect.rememberHazeState
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
+import com.acon.acon.core.utils.feature.toast.showToast
 import com.acon.acon.domain.model.upload.UploadSpotSuggestion
 import com.acon.acon.domain.model.upload.v2.SearchedSpot
 import com.acon.acon.feature.upload.mock.uploadSearchUiStateMock
@@ -180,6 +184,9 @@ private fun SearchedSpots(
     onItemClick: (SearchedSpot) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val uriHandler = LocalUriHandler.current
+    val context = LocalContext.current
+
     Column(modifier = modifier) {
         LazyColumn(
             modifier = Modifier.fillMaxWidth(),
@@ -217,7 +224,11 @@ private fun SearchedSpots(
                         modifier = Modifier
                             .padding(top = 20.dp)
                             .noRippleClickable {
-                                // TODO 링크입력
+                                try {
+                                    uriHandler.openUri(UrlConstants.REQUEST_NEW_SPOT_UPLOAD)
+                                } catch (e: Exception) {
+                                    context.showToast("웹사이트 접속에 실패했어요")
+                                }
                             }
                     )
                 }
