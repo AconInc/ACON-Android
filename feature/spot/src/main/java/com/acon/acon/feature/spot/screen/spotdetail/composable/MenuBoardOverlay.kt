@@ -64,11 +64,6 @@ internal fun MenuBoardOverlay(
                     }
             )
 
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-            )
-
             PinchToZoomImage(
                 zoomState = zoomState,
                 imageResId = imageList[currentIndex]
