@@ -215,7 +215,7 @@
 
     <!-- Delete Account -->
     <string name="settings_delete_account_topbar">서비스 탈퇴</string>
-    <string name="settings_delete_account_title">이별의 순간이 왔네요...\n떠나시려는 이유가 있을까요?</string>
+    <string name="settings_delete_account_title">이별의 순간이 왔네요…\n떠나시려는 이유가 있을까요?</string>
     <string name="settings_delete_account_content">지금까지 저희 서비스를 사용해주셔서 감사해요.\n마음에 들지 않았던 서비스에 대해 알려주시면\n더 성장해서 찾아올게요.</string>
     <string name="reason_other_placeholder">탈퇴하려는 이유를 적어주세요</string>
     <string name="delete_account_bottom_sheet_title">지금 탈퇴를 진행할까요?</string>
