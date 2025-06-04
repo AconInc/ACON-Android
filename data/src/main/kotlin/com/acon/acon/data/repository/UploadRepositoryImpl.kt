@@ -6,7 +6,6 @@ import com.acon.acon.domain.error.upload.GetVerifySpotLocationError
 import com.acon.acon.domain.error.upload.UploadReviewError
 import com.acon.acon.domain.error.user.GetSuggestionsError
 import com.acon.acon.domain.model.upload.DotoriCount
-import com.acon.acon.domain.model.upload.SpotVerification
 import com.acon.acon.domain.model.upload.UploadSpotSuggestion
 import com.acon.acon.domain.model.upload.v2.SearchedSpot
 import com.acon.acon.domain.repository.UploadRepository
@@ -26,16 +25,16 @@ class UploadRepositoryImpl @Inject constructor(
         uploadRemoteDataSource.getSuggestions(latitude, longitude).suggestionList.map { it.toSuggestion() }
     }
 
-    override suspend fun getVerifySpotLocation(
+    override suspend fun verifyLocation(
         spotId: Long,
         latitude: Double,
         longitude: Double
-    ): Result<SpotVerification> = runCatchingWith(*GetVerifySpotLocationError.createErrorInstances()) {
-        uploadRemoteDataSource.getVerifySpotLocation(
+    ): Result<Boolean> = runCatchingWith(*GetVerifySpotLocationError.createErrorInstances()) {
+        uploadRemoteDataSource.verifyLocation(
             spotId = spotId,
             latitude = latitude,
             longitude = longitude
-        ).toSpotVerification()
+        ).isPossible
     }
 
     override suspend fun submitReview(

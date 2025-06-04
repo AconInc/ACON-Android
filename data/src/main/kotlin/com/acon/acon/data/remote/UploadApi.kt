@@ -2,7 +2,7 @@ package com.acon.acon.data.remote
 
 import com.acon.acon.data.dto.request.ReviewRequest
 import com.acon.acon.data.dto.response.upload.UploadGetDotoriResponse
-import com.acon.acon.data.dto.response.upload.UploadGetSpotVerifyResponse
+import com.acon.acon.data.dto.response.upload.VerifyLocationResponse
 import com.acon.acon.data.dto.response.upload.UploadSpotSuggestionsResponse
 import com.acon.acon.data.dto.response.upload.v2.SearchedSpotsResponse
 import retrofit2.http.Body
@@ -21,11 +21,11 @@ interface UploadApi {
     ): UploadSpotSuggestionsResponse
 
     @GET("/api/v1/spots/verify")
-    suspend fun getVerifySpotLocation(
+    suspend fun verifyLocation(
         @Query("spotId") spotId: Long,
         @Query("latitude") latitude: Double,
         @Query("longitude") longitude: Double
-    ): UploadGetSpotVerifyResponse
+    ): VerifyLocationResponse
 
     @POST("/api/v1/reviews")
     suspend fun submitReview(

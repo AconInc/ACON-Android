@@ -1,7 +1,6 @@
 package com.acon.acon.domain.repository
 
 import com.acon.acon.domain.model.upload.DotoriCount
-import com.acon.acon.domain.model.upload.SpotVerification
 import com.acon.acon.domain.model.upload.UploadSpotSuggestion
 import com.acon.acon.domain.model.upload.v2.SearchedSpot
 
@@ -10,11 +9,11 @@ interface UploadRepository {
 
     suspend fun getSuggestions(latitude: Double, longitude: Double): Result<List<UploadSpotSuggestion>>
 
-    suspend fun getVerifySpotLocation(
+    suspend fun verifyLocation(
         spotId: Long,
         latitude: Double,
         longitude: Double
-    ): Result<SpotVerification>
+    ): Result<Boolean>
 
     suspend fun submitReview(
         spotId: Long,

@@ -25,6 +25,7 @@ fun UploadSearchScreenContainer(
         onSearchQueryChanged = viewModel::onSearchQueryChanged,
         onSearchedSpotClick = viewModel::onSearchedSpotClicked,
         onSuggestionSpotClick = viewModel::onSuggestionSpotClicked,
+        onVerifyLocationDialogAction = viewModel::onVerifyLocationDialogAction,
         onBackAction = viewModel::onBackAction,
         onNextAction = viewModel::onNextAction,
         modifier = modifier

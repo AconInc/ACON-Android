@@ -3,18 +3,23 @@ package com.acon.acon.feature.upload.screen
 import android.annotation.SuppressLint
 import android.content.Context
 import androidx.compose.runtime.Immutable
+import androidx.lifecycle.viewModelScope
 import com.acon.acon.core.utils.feature.base.BaseContainerHost
 import com.acon.acon.domain.model.spot.SimpleSpot
 import com.acon.acon.domain.model.upload.UploadSpotSuggestion
 import com.acon.acon.domain.model.upload.v2.SearchedSpot
 import com.acon.acon.domain.repository.UploadRepository
 import com.acon.feature.common.location.getLocation
+import com.acon.feature.common.location.locationFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.stateIn
 import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.viewmodel.container
 import javax.inject.Inject
@@ -59,7 +64,7 @@ class UploadSearchViewModel @Inject constructor(
                             reduce {
                                 state.copy(
                                     searchedSpots = it,
-                                    showSearchedSpots = it.isNotEmpty()
+                                    showSearchedSpots = true
                                 )
                             }
 
@@ -70,6 +75,13 @@ class UploadSearchViewModel @Inject constructor(
     }
 
     private val queryFlow = MutableStateFlow("")
+
+    @SuppressLint("MissingPermission")
+    private val currentLocationFlow = context.locationFlow().stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = null
+    )
 
     fun onSearchQueryChanged(query: String) = intent {
         runOn<UploadSearchUiState.Success> {
@@ -82,23 +94,44 @@ class UploadSearchViewModel @Inject constructor(
         }
     }
 
-    fun onSuggestionSpotClicked(spot: UploadSpotSuggestion) = intent {
+    fun onSuggestionSpotClicked(spot: UploadSpotSuggestion, onSuccess: () -> Unit) = intent {
         runOn<UploadSearchUiState.Success> {
-            reduce {
-                state.copy(
-                    selectedSpot = SimpleSpot(spot.spotId, spot.name),
-                    showSearchedSpots = false
-                )
+            val verifyingLocation = currentLocationFlow.first { it != null }!!
+            uploadRepository.verifyLocation(
+                spot.spotId,
+                verifyingLocation.latitude,
+                verifyingLocation.longitude
+            ).onSuccess {
+                onSuccess()
+                reduce {
+                    state.copy(
+                        selectedSpot = SimpleSpot(spot.spotId, spot.name),
+                        showSearchedSpots = false
+                    )
+                }
+            }.onFailure {
+                reduce {
+                    state.copy(
+                        showNotAvailableLocationDialog = true
+                    )
+                }
             }
         }
     }
 
-    fun onSearchedSpotClicked(spot: SearchedSpot) = intent {
+    fun onSearchedSpotClicked(spot: SearchedSpot, onSuccess: () -> Unit) = intent {
+        runOn<UploadSearchUiState.Success> {
+            onSuggestionSpotClicked(
+                UploadSpotSuggestion(spot.spotId, spot.name), onSuccess
+            )
+        }
+    }
+
+    fun onVerifyLocationDialogAction() = intent {
         runOn<UploadSearchUiState.Success> {
             reduce {
                 state.copy(
-                    selectedSpot = SimpleSpot(spot.spotId, spot.name),
-                    showSearchedSpots = false
+                    showNotAvailableLocationDialog = false
                 )
             }
         }
@@ -123,7 +156,8 @@ sealed interface UploadSearchUiState {
         val uploadSpotSuggestions: List<UploadSpotSuggestion> = listOf(),
         val selectedSpot: SimpleSpot? = null,
         val searchedSpots: List<SearchedSpot> = listOf(),
-        val showSearchedSpots: Boolean = false
+        val showSearchedSpots: Boolean = false,
+        val showNotAvailableLocationDialog: Boolean = false
     ) : UploadSearchUiState
 }
 

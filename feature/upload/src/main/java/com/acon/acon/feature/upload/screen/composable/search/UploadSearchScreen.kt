@@ -29,11 +29,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.chip.AconChip
+import com.acon.acon.core.designsystem.component.dialog.v2.AconDefaultDialog
 import com.acon.acon.core.designsystem.component.textfield.v2.AconSearchTextField
 import com.acon.acon.core.designsystem.effect.defaultHazeEffect
 import com.acon.acon.core.designsystem.effect.rememberHazeState
@@ -53,8 +55,9 @@ import kotlinx.collections.immutable.toImmutableList
 internal fun UploadSearchScreen(
     state: UploadSearchUiState,
     onSearchQueryChanged: (String) -> Unit,
-    onSearchedSpotClick: (SearchedSpot) -> Unit,
-    onSuggestionSpotClick: (UploadSpotSuggestion) -> Unit,
+    onSearchedSpotClick: (SearchedSpot, onSuccess: () -> Unit) -> Unit,
+    onSuggestionSpotClick: (UploadSpotSuggestion, onSuccess: () -> Unit) -> Unit,
+    onVerifyLocationDialogAction: () -> Unit,
     onBackAction: () -> Unit,
     onNextAction: () -> Unit,
     modifier: Modifier = Modifier,
@@ -92,6 +95,24 @@ internal fun UploadSearchScreen(
 
         when(state) {
             is UploadSearchUiState.Success -> {
+                if (state.showNotAvailableLocationDialog) {
+                    AconDefaultDialog(
+                        title = stringResource(R.string.failed_verify_location),
+                        action = stringResource(R.string.ok),
+                        onAction = onVerifyLocationDialogAction,
+                        onDismissRequest = onVerifyLocationDialogAction
+                    ) {
+                        Text(
+                            text = stringResource(R.string.failed_verify_location_description),
+                            style = AconTheme.typography.Body1,
+                            color = AconTheme.color.Gray200,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier
+                                .padding(horizontal = 16.dp)
+                                .padding(bottom = 20.dp)
+                        )
+                    }
+                }
                 Column(
                     Modifier.padding(horizontal = 16.dp)
                 ) {
@@ -113,8 +134,9 @@ internal fun UploadSearchScreen(
                                 AconChip(
                                     title = it.name,
                                     onClick = {
-                                        query = TextFieldValue(text = it.name, selection = TextRange(it.name.length))
-                                        onSuggestionSpotClick(it)
+                                        onSuggestionSpotClick(it) {
+                                            query = TextFieldValue(text = it.name, selection = TextRange(it.name.length))
+                                        }
                                     },
                                     isSelected = false,
                                     modifier = Modifier.hazeSource(state = hazeState)
@@ -126,8 +148,9 @@ internal fun UploadSearchScreen(
                             SearchedSpots(
                                 searchedSpots = state.searchedSpots.toImmutableList(),
                                 onItemClick = {
-                                    query = TextFieldValue(text = it.name, selection = TextRange(it.name.length))
-                                    onSearchedSpotClick(it)
+                                    onSearchedSpotClick(it) {
+                                        query = TextFieldValue(text = it.name, selection = TextRange(it.name.length))
+                                    }
                                 },
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -155,7 +178,7 @@ private fun SearchedSpots(
 ) {
     Column(modifier = modifier) {
         LazyColumn(
-            modifier = Modifier,
+            modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             if (searchedSpots.isEmpty()) {
@@ -187,7 +210,9 @@ private fun SearchedSpots(
                         style = AconTheme.typography.Body1,
                         color = AconTheme.color.Action,
                         fontWeight = FontWeight.SemiBold,
-                        modifier = Modifier.padding(top = 20.dp)
+                        modifier = Modifier.padding(top = 20.dp).noRippleClickable {
+                            // TODO 링크입력
+                        }
                     )
                 }
             }
@@ -248,8 +273,9 @@ private fun UploadSearchScreenPreview() {
         onSearchQueryChanged = {},
         onBackAction = {},
         onNextAction = {},
-        onSearchedSpotClick = {},
-        onSuggestionSpotClick = {},
+        onSearchedSpotClick = {_, _ ->},
+        onVerifyLocationDialogAction = {},
+        onSuggestionSpotClick = {_, _ ->},
         modifier = Modifier
     )
 }
