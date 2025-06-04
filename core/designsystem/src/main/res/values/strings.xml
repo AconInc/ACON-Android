@@ -10,6 +10,13 @@
     <string name="save">저장</string>
     <string name="select">선택</string>
     <string name="continue_writing">계속 작성</string>
+    <string name="title_spot">추천</string>
+    <string name="title_upload">업로드</string>
+    <string name="title_profile">프로필</string>
+    <string name="network_error_title">네트워크 연결에 문제가 발생했습니다</string>
+    <string name="network_error_content">네트워크 연결상태를 확인하고\n다시 시도해주세요</string>
+    <string name="network_retry">다시 시도하기</string>
+
 
     <!-- Button component -->
     <string name="login_btn_preview_content">button</string>
@@ -87,7 +94,9 @@
     <string name="restaurant">식당</string>
     <string name="cafe">카페</string>
     <string name="find_way">길찾기</string>
-    <string name="empty_spot_image">장소 이미지를\n 준비하고 있어요</string>
+    <string name="empty_spot_image1">등록된 사진은 없지만\n맛집임을 아콘이 보장해요</string>
+    <string name="empty_spot_image2">쉿! 비밀스러운 곳인가 봐요\n아직 등록된 사진이 없어요</string>
+    <string name="empty_spot_image3">직접 가봐야 알 수 있는 장소네요\n설레임을 안고 떠나볼까요?</string>
     <string name="korean">한식</string>
     <string name="chinese">중식</string>
     <string name="japanese">일식</string>
@@ -115,6 +124,11 @@
     <string name="recommend_other_spots">대신 여기는 어떠세요?</string>
     <string name="no_other_spots">다음에 들어오실 땐,\n꼭 찾아서 추천드릴게요</string>
     <string name="ask_for_new_spot">장소 등록 신청하기</string>
+    <string name="walking_eta">도보 %d분 길찾기</string>
+    <string name="biking_eta">자전거로 %d분 길찾기</string>
+    <string name="refresh_spot">지금 위치 기준으로 다시 추천 받기</string>
+    <string name="unavailable_location_title">서비스 불가 지역이에요</string>
+    <string name="unavailable_location_description">서비스 지원이 불가능한 지역에 있어요\n지역을 옮기신 후 다시 시도해주세요</string>
 
     <!-- SpotDetail -->
     <string name="no_store_image_verified">등록된 사진은 없지만\n맛집임을 아콘이 보장해요</string>
@@ -132,7 +146,6 @@
 
     <!-- Upload -->
     <string name="close_upload">리뷰 그만두기</string>
-    <string name="title_upload">업로드</string>
     <string name="next">다음</string>
     <string name="search_spot_placeholder">장소를 입력해주세요</string>
     <string name="no_search_result">앗… 검색 결과가 없어요</string>

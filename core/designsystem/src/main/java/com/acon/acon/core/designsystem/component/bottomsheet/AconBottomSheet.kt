@@ -45,7 +45,7 @@ fun AconBottomSheet(
     ),
     sheetMaxWidth: Dp = BottomSheetDefaults.SheetMaxWidth,
     shape: Shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
-    containerColor: Color = AconTheme.color.GlassWhiteDisabled,
+    containerColor: Color = AconTheme.color.Gray900,
     contentColor: Color = AconTheme.color.White,
     tonalElevation: Dp = 0.dp,
     scrimColor: Color = BottomSheetDefaults.ScrimColor,
@@ -89,7 +89,7 @@ fun AconBottomSheet(
                 .defaultHazeEffect(
                     hazeState = LocalHazeState.current,
                     tintColor = containerColor,
-                    alpha = .8f
+                    alpha = .8f,
                 ).navigationBarsPadding()
         ) {
             dragHandle()

@@ -13,9 +13,9 @@ import com.acon.acon.domain.error.spot.GetSpotDetailInfoError
 import com.acon.acon.domain.error.spot.GetSpotMenuListError
 import com.acon.acon.domain.model.area.LegalArea
 import com.acon.acon.domain.model.spot.Condition
-import com.acon.acon.domain.model.spot.Spot
 import com.acon.acon.domain.model.spot.SpotDetailInfo
 import com.acon.acon.domain.model.spot.SpotDetailMenu
+import com.acon.acon.domain.model.spot.v2.SpotList
 import com.acon.acon.domain.repository.SpotRepository
 import javax.inject.Inject
 
@@ -27,23 +27,23 @@ class SpotRepositoryImpl @Inject constructor(
         latitude: Double,
         longitude: Double,
         condition: Condition,
-    ): Result<List<Spot>> {
+    ): Result<SpotList> {
         return runCatchingWith(*FetchSpotListError.createErrorInstances()) {
             spotRemoteDataSource.fetchSpotList(
                 SpotListRequest(
                     latitude = latitude,
                     longitude = longitude,
                     condition = ConditionRequest(
-                        spotType = condition.spotType?.name,
+                        spotType = condition.spotType.name,
                         filterList = condition.filterList?.map { filter ->
                             FilterListRequest(
                                 category = filter.category.name,
                                 optionList = filter.optionList.map { optionTypes -> optionTypes.getName() }
                             )
-                        }, walkingTime = condition.walkingTime, priceRange = condition.priceRange
+                        }
                     ),
                 )
-            ).spotList.map { it.toSpot() }
+            ).toSpotList()
         }
     }
 

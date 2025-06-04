@@ -1,6 +1,14 @@
 package com.acon.acon.domain.type
 
-interface FilterType
+interface FilterType {
+    fun getName(): String {
+        return if (this is Enum<*>) {
+            this.name
+        } else {
+            throw IllegalArgumentException("OptionType must be Enum")
+        }
+    }
+}
 
 sealed interface RestaurantFilterType : FilterType {
 
@@ -11,29 +19,29 @@ sealed interface RestaurantFilterType : FilterType {
         WESTERN,
         ASIAN,
         FUSION,
-        KOREAN_STREET,
+        BUNSIK,
         BUFFET,
-        DRINK_BAR,
+        DRINKING_PLACE,
         EXCLUDE_FRANCHISE;
     }
 
     enum class RestaurantOperationType: FilterType {
-        AFTER_12AM
+        OPEN_AFTER_MIDNIGHT
     }
 
     enum class RestaurantPriceType: FilterType {
-        COST_EFFECTIVENESS
+        VALUE_FOR_MONEY
     }
 }
 
 sealed interface CafeFilterType : FilterType {
 
     enum class CafeType: FilterType {
-        FOR_WORK,
+        WORK_FRIENDLY,
         EXCLUDE_FRANCHISE;
     }
 
     enum class CafeOperationType: FilterType {
-        AFTER_10PM
+        OPEN_AFTER_10PM
     }
 }
