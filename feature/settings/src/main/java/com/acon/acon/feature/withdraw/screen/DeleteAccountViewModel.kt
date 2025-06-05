@@ -1,12 +1,9 @@
 package com.acon.acon.feature.withdraw.screen
 
 import androidx.compose.runtime.Immutable
-import androidx.lifecycle.viewModelScope
 import com.acon.acon.core.utils.feature.base.BaseContainerHost
-import com.acon.acon.domain.repository.TokenRepository
 import com.acon.acon.domain.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.viewmodel.container
 import javax.inject.Inject
@@ -14,7 +11,6 @@ import javax.inject.Inject
 @OptIn(OrbitExperimental::class)
 @HiltViewModel
 class DeleteAccountViewModel @Inject constructor(
-    private val tokenRepository: TokenRepository,
     private val userRepository: UserRepository
 ) : BaseContainerHost<DeleteAccountUiState, DeleteAccountSideEffect>() {
 
@@ -23,24 +19,14 @@ class DeleteAccountViewModel @Inject constructor(
 
     fun onDeleteAccount() = intent {
         runOn<DeleteAccountUiState.Default> {
-            val reason = state.reason
-
-            viewModelScope.launch {
-                tokenRepository.getRefreshToken()
-                    .onSuccess { refreshToken ->
-                        refreshToken?.let { token ->
-                            userRepository.deleteAccount(reason, token)
-                                .onSuccess {
-                                    tokenRepository.removeAllToken()
-                                    postSideEffect(DeleteAccountSideEffect.NavigateToSignIn)
-                                }
-                                .onFailure {
-                                    onDeleteAccountBottomSheetShowStateChange(false)
-                                    postSideEffect(DeleteAccountSideEffect.ShowToastMessage)
-                                }
-                        }
-                    }
-            }
+            onDeleteAccountBottomSheetShowStateChange(false)
+            userRepository.deleteAccount(state.reason)
+                .onSuccess {
+                    postSideEffect(DeleteAccountSideEffect.NavigateToSignIn)
+                }
+                .onFailure {
+                    postSideEffect(DeleteAccountSideEffect.ShowToastMessage)
+                }
         }
     }
 

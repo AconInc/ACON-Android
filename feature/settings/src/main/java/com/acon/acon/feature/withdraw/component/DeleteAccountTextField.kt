@@ -18,7 +18,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.SolidColor
@@ -26,8 +25,8 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.feature.settings.R
 
 @Composable
 fun DeleteAccountTextField(
@@ -40,27 +39,25 @@ fun DeleteAccountTextField(
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default
 ) {
-    val lineHeight = AconTheme.typography.subtitle1_16_med.lineHeight
+    val lineHeight = AconTheme.typography.Body1.lineHeight
     val density = LocalDensity.current
     val threeLineHeight = with(density) { (lineHeight * 3).toDp() }
 
-    Column (
+    Column(
         modifier = modifier
             .fillMaxWidth()
-            .background(color = AconTheme.color.Gray9),
+            .background(color = AconTheme.color.Gray900),
     ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .clip(shape = RoundedCornerShape(4.dp))
-                .background(
-                    shape = RoundedCornerShape(4.dp),
-                    color = AconTheme.color.Gray9
-                )
                 .border(
-                    shape = RoundedCornerShape(4.dp),
+                    shape = RoundedCornerShape(8.dp),
                     width = 1.dp,
-                    color = AconTheme.color.Gray6
+                    color = AconTheme.color.GlassWhiteDefault
+                )
+                .background(
+                    color = AconTheme.color.Gray900
                 )
         ) {
             Row(
@@ -73,11 +70,11 @@ fun DeleteAccountTextField(
                 BasicTextField(
                     value = value,
                     onValueChange = { inputText ->
-                        if(inputText.length <= maxLength) {
+                        if (inputText.length <= maxLength) {
                             onValueChange(inputText)
                         }
                     },
-                    textStyle = AconTheme.typography.subtitle1_16_med.copy(
+                    textStyle = AconTheme.typography.Body1.copy(
                         color = AconTheme.color.White
                     ),
                     cursorBrush = SolidColor(AconTheme.color.White),
@@ -85,11 +82,11 @@ fun DeleteAccountTextField(
                         .focusRequester(focusRequester),
                     decorationBox = { innerTextField ->
                         Box(modifier = Modifier.fillMaxWidth()) {
-                            if(value.isEmpty()) {
+                            if (value.isEmpty()) {
                                 Text(
                                     text = placeholder,
-                                    style = AconTheme.typography.subtitle1_16_med,
-                                    color = AconTheme.color.Gray5
+                                    style = AconTheme.typography.Body1,
+                                    color = AconTheme.color.Gray500
                                 )
                             }
                             innerTextField()
@@ -110,13 +107,13 @@ fun DeleteAccountTextField(
         ) {
             Text(
                 text = value.length.toString(),
-                style = AconTheme.typography.subtitle2_14_med,
+                style = AconTheme.typography.Caption1,
                 color = AconTheme.color.White
             )
             Text(
                 text = stringResource(R.string.reason_max_length),
-                style = AconTheme.typography.subtitle2_14_med,
-                color = AconTheme.color.Gray5,
+                style = AconTheme.typography.Caption1,
+                color = AconTheme.color.Gray500,
                 modifier = Modifier.padding(start = 2.dp)
             )
         }
@@ -130,7 +127,7 @@ private fun DeleteAccountTextFiledPreview() {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(AconTheme.color.Gray9)
+                .background(AconTheme.color.Gray900)
                 .padding(horizontal = 16.dp),
             contentAlignment = Alignment.Center
         ) {

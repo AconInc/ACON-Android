@@ -10,15 +10,15 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 
 interface AreaVerificationApi {
-    @POST("/api/v1/members/verified-areas")
+    @POST("/api/v1/verified-areas")
     suspend fun verifyArea(
         @Body request: AreaVerificationRequest
     ): AreaVerificationResponse
 
-    @GET("/api/v1/members/verified-areas")
+    @GET("/api/v1/verified-areas")
     suspend fun fetchVerifiedAreaList() : VerifiedAreaListResponse
 
-    @DELETE("/api/v1/members/verified-areas/{verifiedAreaId}")
+    @DELETE("/api/v1/verified-areas/{verifiedAreaId}")
     suspend fun deleteVerifiedArea(
         @Path("verifiedAreaId") verifiedAreaId: Long
     )

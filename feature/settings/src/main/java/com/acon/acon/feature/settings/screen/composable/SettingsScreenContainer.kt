@@ -10,7 +10,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.acon.acon.core.utils.feature.constants.AppURL
 import com.acon.acon.core.utils.feature.toast.showToast
-import com.acon.acon.feature.settings.R
+import com.acon.acon.core.designsystem.R
 import com.acon.acon.feature.settings.screen.SettingsSideEffect
 import com.acon.acon.feature.settings.screen.SettingsViewModel
 import org.orbitmvi.orbit.compose.collectAsState
@@ -30,9 +30,12 @@ fun SettingsScreenContainer(
     val context = LocalContext.current
     val state by viewModel.collectAsState()
 
+    //TODO - 임시변수
+    val isLatestVersion = true
+
     SettingsScreen(
         state = state,
-        versionName = versionName,
+        isLatestVersion = isLatestVersion,
         modifier = modifier.fillMaxSize(),
         onLogoutDialogShowStateChange = viewModel::onLogoutDialogShowStateChange,
         navigateBack = viewModel::navigateBack,
@@ -47,7 +50,7 @@ fun SettingsScreenContainer(
 
     viewModel.collectSideEffect {
         when(it) {
-            is SettingsSideEffect.ShowToastMessage -> { context.showToast(R.string.settings_logout_failed) }
+            is SettingsSideEffect.ShowToastMessage -> { context.showToast(R.string.toast_logout_failed) }
             is SettingsSideEffect.NavigateToSignIn -> onNavigateToSignInScreen()
             is SettingsSideEffect.NavigateToProfile -> onNavigateToProfileScreen()
             is SettingsSideEffect.OpenPlayStore -> {

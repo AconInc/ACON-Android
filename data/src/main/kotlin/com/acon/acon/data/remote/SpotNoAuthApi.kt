@@ -12,7 +12,7 @@ import retrofit2.http.Query
 
 interface SpotNoAuthApi {
 
-    @POST("/api/v1/members/guided-spots")
+    @POST("/api/v1/guided-spots")
     suspend fun fetchRecentNavigationLocation(
         @Body request: RecentNavigationLocationRequest
     )

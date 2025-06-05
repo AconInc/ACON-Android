@@ -21,8 +21,8 @@ import javax.inject.Inject
 class UserRepositoryImpl @Inject constructor(
     private val userRemoteDataSource: UserRemoteDataSource,
     private val tokenLocalDataSource: TokenLocalDataSource,
-    private val sessionManager: SessionManager,
-): UserRepository {
+    private val sessionManager: SessionManager
+) : UserRepository {
 
     override fun getUserType(): Flow<UserType> {
         return sessionManager.getUserType()
@@ -55,7 +55,8 @@ class UserRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun logout(refreshToken: String): Result<Unit> {
+    override suspend fun logout(): Result<Unit> {
+        val refreshToken = tokenLocalDataSource.getRefreshToken() ?: ""
         return runCatchingWith(*PostLogoutError.createErrorInstances()) {
             userRemoteDataSource.logout(
                 LogoutRequest(refreshToken = refreshToken)
@@ -65,7 +66,8 @@ class UserRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun deleteAccount(reason: String, refreshToken: String): Result<Unit> {
+    override suspend fun deleteAccount(reason: String): Result<Unit> {
+        val refreshToken = tokenLocalDataSource.getRefreshToken() ?: ""
         return runCatchingWith {
             userRemoteDataSource.deleteAccount(
                 DeleteAccountRequest(

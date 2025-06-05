@@ -1,6 +1,6 @@
 package com.acon.acon.data.remote
 
-import com.acon.acon.data.dto.request.updateProfileRequest
+import com.acon.acon.data.dto.request.UpdateProfileRequest
 import com.acon.acon.data.dto.response.profile.PreSignedUrlResponse
 import com.acon.acon.data.dto.response.profile.ProfileResponse
 import retrofit2.Response
@@ -16,14 +16,14 @@ interface ProfileApi {
     @GET("/api/v1/images/presigned-url?imageType=PROFILE")
     suspend fun getPreSignedUrl() : PreSignedUrlResponse
 
-    @GET("/api/v1/members/nickname/validate")
+    @GET("/api/v1/nickname/validate")
     suspend fun validateNickname(
         @Query("nickname", encoded = true) nickname: String
     ): Response<Unit>
 
     @PATCH("/api/v1/members/me")
     suspend fun updateProfile(
-        @Body request: updateProfileRequest
+        @Body request: UpdateProfileRequest
     ): Response<Unit>
 
 }

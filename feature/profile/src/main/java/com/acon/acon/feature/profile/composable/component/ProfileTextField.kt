@@ -7,6 +7,7 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -53,6 +54,7 @@ internal fun ProfileTextField(
     Box(
         modifier = modifier
             .fillMaxWidth()
+            .heightIn(min = 44.dp)
             .background(
                 shape = RoundedCornerShape(8.dp),
                 color = AconTheme.color.Gray900
@@ -62,7 +64,7 @@ internal fun ProfileTextField(
                 color = AconTheme.color.GlassWhiteDefault,
                 shape = RoundedCornerShape(8.dp)
             )
-            .padding(horizontal = 12.dp, vertical = 10.dp)
+            .padding(10.dp)
             .noRippleClickable(onClick = onClick),
         contentAlignment = Alignment.CenterStart
     ) {
@@ -102,7 +104,7 @@ internal fun ProfileTextField(
                 }
             )
 
-            if (value.text.isNotEmpty() && value.text.length < 14) {
+            if (value.text.isNotEmpty() && value.text.length <= 14) {
                 if (isTyping) {
                     CircularProgressIndicator(
                         modifier = Modifier.size(16.dp),
