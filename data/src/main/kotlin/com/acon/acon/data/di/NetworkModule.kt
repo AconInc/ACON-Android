@@ -10,7 +10,7 @@ import com.acon.acon.data.BuildConfig
 import com.acon.acon.data.SessionManager
 import com.acon.acon.data.datasource.local.TokenLocalDataSource
 import com.acon.acon.data.error.RemoteErrorCallAdapterFactory
-import com.acon.acon.data.remote.ReissueTokenApi
+import com.acon.acon.data.api.remote.ReissueTokenApi
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides

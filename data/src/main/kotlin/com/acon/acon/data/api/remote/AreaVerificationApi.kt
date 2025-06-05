@@ -1,4 +1,4 @@
-package com.acon.acon.data.remote
+package com.acon.acon.data.api.remote
 
 import com.acon.acon.data.dto.request.AreaVerificationRequest
 import com.acon.acon.data.dto.response.area.AreaVerificationResponse

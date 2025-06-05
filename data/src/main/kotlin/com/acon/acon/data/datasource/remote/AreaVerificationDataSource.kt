@@ -3,7 +3,7 @@ package com.acon.acon.data.datasource.remote
 import com.acon.acon.data.dto.request.AreaVerificationRequest
 import com.acon.acon.data.dto.response.area.AreaVerificationResponse
 import com.acon.acon.data.dto.response.area.VerifiedAreaListResponse
-import com.acon.acon.data.remote.AreaVerificationApi
+import com.acon.acon.data.api.remote.AreaVerificationApi
 import javax.inject.Inject
 
 class AreaVerificationRemoteDataSource @Inject constructor(

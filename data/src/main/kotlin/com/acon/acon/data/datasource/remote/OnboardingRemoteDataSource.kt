@@ -1,7 +1,7 @@
 package com.acon.acon.data.datasource.remote
 
 import com.acon.acon.data.dto.request.OnboardingRequest
-import com.acon.acon.data.remote.OnboardingApi
+import com.acon.acon.data.api.remote.OnboardingApi
 import javax.inject.Inject
 
 class OnboardingRemoteDataSource @Inject constructor(

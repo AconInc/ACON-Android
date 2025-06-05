@@ -4,7 +4,7 @@ import com.acon.acon.data.dto.request.DeleteAccountRequest
 import com.acon.acon.data.dto.request.LoginRequest
 import com.acon.acon.data.dto.request.LogoutRequest
 import com.acon.acon.data.dto.response.LoginResponse
-import com.acon.acon.data.remote.UserApi
+import com.acon.acon.data.api.remote.UserApi
 import javax.inject.Inject
 
 class UserRemoteDataSource @Inject constructor(
