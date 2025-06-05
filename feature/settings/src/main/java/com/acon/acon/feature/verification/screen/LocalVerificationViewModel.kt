@@ -6,10 +6,12 @@ import com.acon.acon.domain.model.area.Area
 import com.acon.acon.domain.repository.AreaVerificationRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.orbitmvi.orbit.Container
+import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.viewmodel.container
 import timber.log.Timber
 import javax.inject.Inject
 
+@OptIn(OrbitExperimental::class)
 @HiltViewModel
 class LocalVerificationViewModel @Inject constructor(
     private val areaVerificationRepository: AreaVerificationRepository
@@ -32,7 +34,7 @@ class LocalVerificationViewModel @Inject constructor(
             }
     }
 
-    private fun showAreaDeleteFailDialog() = intent{
+    private fun showAreaDeleteFailDialog() = intent {
         runOn<LocalVerificationUiState.Success> {
             reduce {
                 state.copy(showAreaDeleteFailDialog = true)
@@ -40,7 +42,7 @@ class LocalVerificationViewModel @Inject constructor(
         }
     }
 
-    fun dismissAreaDeleteFailDialog() = intent{
+    fun dismissAreaDeleteFailDialog() = intent {
         runOn<LocalVerificationUiState.Success> {
             reduce {
                 state.copy(showAreaDeleteFailDialog = false)
@@ -48,7 +50,7 @@ class LocalVerificationViewModel @Inject constructor(
         }
     }
 
-    fun showEditAreaDialog() = intent{
+    fun showEditAreaDialog() = intent {
         runOn<LocalVerificationUiState.Success> {
             reduce {
                 state.copy(showEditAreaDialog = true)
@@ -56,7 +58,7 @@ class LocalVerificationViewModel @Inject constructor(
         }
     }
 
-    fun dismissEditAreaDialog() = intent{
+    fun dismissEditAreaDialog() = intent {
         runOn<LocalVerificationUiState.Success> {
             reduce {
                 state.copy(showEditAreaDialog = false)
@@ -72,18 +74,28 @@ class LocalVerificationViewModel @Inject constructor(
             .onFailure { error ->
                 when (error) {
                     is DeleteVerifiedAreaError.InvalidVerifiedArea -> {
-                       Timber.e(TAG,"유효하지 않은 인증 지역입니다.")
+                        Timber.e(TAG, "유효하지 않은 인증 지역입니다.")
+                        postSideEffect(LocalVerificationSideEffect.ShowUnKnownErrorToast)
                     }
+
                     is DeleteVerifiedAreaError.VerifiedAreaLimitViolation -> {
-                        Timber.e(TAG,"인증 지역은 최소 1개 이상 존재해야 합니다.")
+                        Timber.e(TAG, "인증 지역은 최소 1개 이상 존재해야 합니다.")
                         showEditAreaDialog()
                     }
+
                     is DeleteVerifiedAreaError.VerifiedAreaDeletePeriodRestrictedError -> {
-                        Timber.e(TAG,"인증일로부터 1주 이상 3개월 미만인 지역은 삭제할 수 없습니다.")
+                        Timber.e(TAG, "인증일로부터 1주 이상 3개월 미만인 지역은 삭제할 수 없습니다.")
                         showAreaDeleteFailDialog()
                     }
+
                     is DeleteVerifiedAreaError.VerifiedAreaNotFound -> {
-                        Timber.e(TAG,"존재하지 않는 인증 동네입니다.")
+                        Timber.e(TAG, "존재하지 않는 인증 동네입니다.")
+                        postSideEffect(LocalVerificationSideEffect.ShowUnKnownErrorToast)
+                    }
+
+                    else -> {
+                        Timber.e(TAG, error.message)
+                        postSideEffect(LocalVerificationSideEffect.ShowUnKnownErrorToast)
                     }
                 }
             }
@@ -113,11 +125,13 @@ sealed interface LocalVerificationUiState {
         val showAreaDeleteFailDialog: Boolean = false,
         val showEditAreaDialog: Boolean = false
     ) : LocalVerificationUiState
+
     data object Loading : LocalVerificationUiState
-    data object LoadFailed: LocalVerificationUiState
+    data object LoadFailed : LocalVerificationUiState
 }
 
 sealed interface LocalVerificationSideEffect {
+    data object ShowUnKnownErrorToast : LocalVerificationSideEffect
     data object NavigateToSettingsScreen : LocalVerificationSideEffect
     data object NavigateToAreaVerificationToAdd : LocalVerificationSideEffect
     data class NavigateToAreaVerificationToEdit(val area: String) : LocalVerificationSideEffect

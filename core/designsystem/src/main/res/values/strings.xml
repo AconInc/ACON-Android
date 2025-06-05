@@ -11,6 +11,7 @@
     <string name="select">선택</string>
     <string name="submit">제출하기</string>
     <string name="continue_writing">계속 작성</string>
+    <string name="unknown_error">알 수 없는 오류가 발생했습니다</string>
 
     <!-- Button component -->
     <string name="login_btn_preview_content">button</string>
