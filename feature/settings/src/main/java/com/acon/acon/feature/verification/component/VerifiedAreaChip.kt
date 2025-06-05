@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
 import com.acon.acon.core.designsystem.R
@@ -61,9 +62,11 @@ internal fun VerifiedAreaChipRow(
 private fun LocalAreaChip(
     text: String,
     onClickChip: () -> Unit,
+    minHeight: Dp = 38.dp
 ) {
     Row(
         modifier = Modifier
+            .heightIn(min = minHeight)
             .background(
                 AconTheme.color.GlassWhiteDefault,
                 shape = CircleShape
@@ -90,10 +93,12 @@ private fun LocalAreaChip(
 
 @Composable
 private fun AddAreaChip(
-    onClickAddArea: () -> Unit
+    onClickAddArea: () -> Unit,
+    minHeight: Dp = 38.dp
 ) {
     Row(
         modifier = Modifier
+            .heightIn(min = minHeight)
             .background(
                 AconTheme.color.Gray900,
                 shape = CircleShape

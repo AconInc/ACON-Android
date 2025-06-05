@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -26,6 +27,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import com.acon.acon.core.designsystem.R
@@ -38,6 +40,7 @@ fun AconSearchTextField(
     onValueChange: (TextFieldValue) -> Unit,
     placeholder: String,
     modifier: Modifier = Modifier,
+    minHeight: Dp = 38.dp,
     enabled: Boolean = true,
     readOnly: Boolean = false,
     textStyle: TextStyle = AconTheme.typography.Title4.copy(fontWeight = FontWeight.Normal, color = AconTheme.color.White),
@@ -58,7 +61,7 @@ fun AconSearchTextField(
     AconFilledTextField(
         value = value,
         onValueChange = onValueChange,
-        modifier = modifier,
+        modifier = modifier.heightIn(min = minHeight),
         enabled = enabled,
         readOnly = readOnly,
         textStyle = textStyle,

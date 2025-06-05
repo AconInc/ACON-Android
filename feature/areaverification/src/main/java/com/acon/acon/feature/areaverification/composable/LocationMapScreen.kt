@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.button.v2.AconFilledButton
-import com.acon.acon.core.designsystem.component.toast.AconToastPopup
+import com.acon.acon.core.designsystem.component.popup.AconToastPopup
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.core.map.BuildConfig
 import com.acon.acon.core.map.ProceedWithLocation
