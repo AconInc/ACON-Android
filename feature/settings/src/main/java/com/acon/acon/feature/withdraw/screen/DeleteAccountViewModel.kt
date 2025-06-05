@@ -2,7 +2,7 @@ package com.acon.acon.feature.withdraw.screen
 
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.viewModelScope
-import com.acon.acon.core.utils.feature.base.BaseContainerHost
+import com.acon.feature.common.base.BaseContainerHost
 import com.acon.acon.domain.repository.TokenRepository
 import com.acon.acon.domain.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel

@@ -1,6 +1,6 @@
 package com.acon.acon.feature.verification.screen
 
-import com.acon.acon.core.utils.feature.base.BaseContainerHost
+import com.acon.feature.common.base.BaseContainerHost
 import com.acon.acon.domain.model.area.Area
 import com.acon.acon.domain.repository.AreaVerificationRepository
 import dagger.hilt.android.lifecycle.HiltViewModel

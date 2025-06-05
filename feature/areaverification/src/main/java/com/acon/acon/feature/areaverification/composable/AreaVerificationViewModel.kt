@@ -6,14 +6,12 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.location.LocationManager
 import androidx.core.app.ActivityCompat
-import com.acon.acon.core.utils.feature.base.BaseContainerHost
+import com.acon.feature.common.base.BaseContainerHost
 import com.acon.acon.domain.model.area.Area
 import com.acon.acon.domain.repository.AreaVerificationRepository
 import com.acon.acon.feature.areaverification.amplitude.amplitudeClickNext
 import com.acon.acon.feature.areaverification.amplitude.amplitudeCompleteArea
-import com.acon.feature.common.location.locationFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.firstOrNull
 import org.orbitmvi.orbit.viewmodel.container
 import timber.log.Timber
 import javax.inject.Inject
@@ -154,9 +152,7 @@ class AreaVerificationViewModel @Inject constructor(
 
         var isSupportLocation: Boolean
 
-        context.locationFlow()
-            .firstOrNull()
-            ?.let { location ->
+        getCurrentLocation().let { location ->
                 val latitude = location.latitude
                 val longitude = location.longitude
                 isSupportLocation = latitude in 33.1..38.6 && longitude in 124.6..131.9

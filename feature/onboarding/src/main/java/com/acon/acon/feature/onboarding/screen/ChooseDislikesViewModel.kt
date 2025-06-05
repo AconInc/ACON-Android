@@ -1,7 +1,7 @@
 package com.acon.acon.feature.onboarding.screen
 
 import androidx.compose.runtime.Immutable
-import com.acon.acon.core.utils.feature.base.BaseContainerHost
+import com.acon.feature.common.base.BaseContainerHost
 import com.acon.acon.domain.type.FoodType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.orbitmvi.orbit.annotation.OrbitExperimental

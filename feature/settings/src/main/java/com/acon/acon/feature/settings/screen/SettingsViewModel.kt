@@ -1,7 +1,7 @@
 package com.acon.acon.feature.settings.screen
 
 import androidx.lifecycle.viewModelScope
-import com.acon.acon.core.utils.feature.base.BaseContainerHost
+import com.acon.feature.common.base.BaseContainerHost
 import com.acon.acon.domain.repository.TokenRepository
 import com.acon.acon.domain.repository.UserRepository
 import com.acon.acon.domain.type.UserType

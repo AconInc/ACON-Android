@@ -2,7 +2,7 @@ package com.acon.acon.feature.profile.composable.screen.profile
 
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.viewModelScope
-import com.acon.acon.core.utils.feature.base.BaseContainerHost
+import com.acon.feature.common.base.BaseContainerHost
 import com.acon.acon.domain.model.profile.VerifiedArea
 import com.acon.acon.domain.repository.ProfileRepository
 import com.acon.acon.domain.repository.SocialRepository

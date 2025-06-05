@@ -4,7 +4,7 @@ import android.location.Location
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
-import com.acon.acon.core.utils.feature.base.BaseContainerHost
+import com.acon.feature.common.base.BaseContainerHost
 import com.acon.acon.domain.model.spot.SpotDetailInfo
 import com.acon.acon.domain.model.spot.SpotDetailMenu
 import com.acon.acon.domain.repository.SpotRepository
