@@ -70,7 +70,7 @@ class ChooseDislikesViewModel @Inject constructor(
             onboardingRepository.submitOnboardingResult(state.selectedDislikes.toList()).onSuccess {
                 postSideEffect(ChooseDislikesSideEffect.NavigateToHome)
             }.onFailure {
-                // TODO : 온보딩 API 실패
+                postSideEffect(ChooseDislikesSideEffect.ShowErrorToast)
             }
         }
     }
@@ -86,4 +86,5 @@ sealed interface ChooseDislikesUiState {
 
 sealed interface ChooseDislikesSideEffect {
     data object NavigateToHome : ChooseDislikesSideEffect
+    data object ShowErrorToast : ChooseDislikesSideEffect
 }
