@@ -2,7 +2,6 @@ package com.acon.acon.feature.spot.screen.spotlist.composable
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -18,12 +17,14 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
@@ -33,10 +34,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.bottomsheet.LoginBottomSheet
+import com.acon.acon.core.designsystem.component.error.NetworkErrorView
+import com.acon.acon.core.designsystem.component.popup.AconTextPopup
 import com.acon.acon.core.designsystem.effect.LocalHazeState
 import com.acon.acon.core.designsystem.effect.defaultHazeEffect
+import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.domain.model.spot.v2.SpotV2
+import com.acon.acon.domain.model.spot.v2.Spot
 import com.acon.acon.domain.type.CafeFilterType
 import com.acon.acon.domain.type.RestaurantFilterType
 import com.acon.acon.domain.type.SpotType
@@ -45,6 +49,8 @@ import com.acon.acon.feature.spot.mock.spotListUiStateRestaurantMock
 import com.acon.acon.feature.spot.screen.component.SpotTypeToggle
 import com.acon.acon.feature.spot.screen.spotlist.FilterDetailKey
 import com.acon.acon.feature.spot.screen.spotlist.SpotListUiStateV2
+import com.acon.feature.common.compose.LocalOnRetry
+import com.acon.feature.common.compose.LocalTrigger
 import com.acon.feature.common.remember.rememberSocialRepository
 import dev.chrisbanes.haze.hazeSource
 import kotlinx.collections.immutable.toImmutableSet
@@ -56,8 +62,8 @@ internal fun SpotListScreen(
     modifier: Modifier = Modifier,
     userType: UserType = UserType.GUEST,
     onSpotTypeChanged: (SpotType) -> Unit = {},
-    onSpotClick: (SpotV2) -> Unit = {},
-    onTryFindWay: (SpotV2) -> Unit = {},
+    onSpotClick: (Spot) -> Unit = {},
+    onTryFindWay: (Spot) -> Unit = {},
     onFilterButtonClick: () -> Unit = {},
     onFilterModalDismissRequest: () -> Unit = {},
     onRestaurantFilterSaved: (Map<FilterDetailKey, Set<RestaurantFilterType>>) -> Unit = {},
@@ -84,7 +90,7 @@ internal fun SpotListScreen(
                 .height(IntrinsicSize.Min)
                 .defaultHazeEffect(
                     hazeState = LocalHazeState.current,
-                    tintColor = AconTheme.color.Gray900,
+                    tintColor = Color(0xFF1C1C20),
                     blurRadius = 20.dp,
                 )
                 .padding(bottom = 14.dp, top = 6.dp)
@@ -103,7 +109,7 @@ internal fun SpotListScreen(
                 modifier = Modifier
                     .align(Alignment.CenterEnd)
                     .padding(end = 16.dp)
-                    .clickable {
+                    .noRippleClickable {
                         onFilterButtonClick()
                     }
                     .then(
@@ -125,70 +131,94 @@ internal fun SpotListScreen(
 
         when(state) {
             is SpotListUiStateV2.Success -> {
-                val socialRepository = rememberSocialRepository()
-                var pagerState = rememberPagerState {
-                    state.spotList.size
-                }
+                Box(Modifier.fillMaxSize()) {
+                    val socialRepository = rememberSocialRepository()
+                    var pagerState = rememberPagerState {
+                        state.spotList.size
+                    }
 
-                val scope = rememberCoroutineScope()
-                if(state.showLoginModal) {
-                    LoginBottomSheet(
-                        onDismissRequest = onGuestModalDismissRequest,
-                        onGoogleSignIn = {
-                            scope.launch {
-                                socialRepository.googleLogin().onSuccess {
-                                    onGuestModalDismissRequest()
-                                    pagerState.scrollToPage(0)
+                    val scope = rememberCoroutineScope()
+                    if (state.showLoginModal) {
+                        LoginBottomSheet(
+                            onDismissRequest = onGuestModalDismissRequest,
+                            onGoogleSignIn = {
+                                scope.launch {
+                                    socialRepository.googleLogin().onSuccess {
+                                        onGuestModalDismissRequest()
+                                        pagerState.scrollToPage(0)
+                                    }
                                 }
                             }
-                        }
-                    )
-                }
-                when (state.selectedSpotType) {
-                    SpotType.RESTAURANT -> {
-                        pagerState = rememberPagerState {
-                            state.spotList.size
-                        }
-                        if (state.showFilterModal) {
-                            RestaurantFilterBottomSheet(
-                                selectedItems = state.selectedRestaurantFilters.values.flatten().toImmutableSet(),
-                                onComplete = onRestaurantFilterSaved,
-                                onDismissRequest = onFilterModalDismissRequest
-                            )
-                        }
-                        SpotListSuccessView(
-                            pagerState = pagerState,
-                            state = state,
-                            userType = userType,
-                            onSpotClick = onSpotClick,
-                            onTryFindWay = onTryFindWay,
-                            itemHeightPx = itemHeightPx,
-                            modifier = Modifier.fillMaxSize(),
-                            onGuestItemClick = onGuestItemClick
                         )
                     }
-                    SpotType.CAFE -> {
-                        pagerState = rememberPagerState {
-                            state.spotList.size
-                        }
-                        if (state.showFilterModal) {
-                            CafeFilterBottomSheet(
-                                selectedItems = state.selectedCafeFilters.values.flatten().toImmutableSet(),
-                                onComplete = onCafeFilterSaved,
-                                onDismissRequest = onFilterModalDismissRequest
+                    when (state.selectedSpotType) {
+                        SpotType.RESTAURANT -> {
+                            pagerState = rememberPagerState {
+                                state.spotList.size
+                            }
+                            if (state.showFilterModal) {
+                                RestaurantFilterBottomSheet(
+                                    selectedItems = state.selectedRestaurantFilters.values.flatten()
+                                        .toImmutableSet(),
+                                    onComplete = onRestaurantFilterSaved,
+                                    onDismissRequest = onFilterModalDismissRequest
+                                )
+                            }
+                            SpotListSuccessView(
+                                pagerState = pagerState,
+                                state = state,
+                                userType = userType,
+                                onSpotClick = onSpotClick,
+                                onTryFindWay = onTryFindWay,
+                                itemHeightPx = itemHeightPx,
+                                modifier = Modifier.fillMaxSize(),
+                                onGuestItemClick = onGuestItemClick
                             )
+
+                            LaunchedEffect(LocalTrigger.current) {
+                                pagerState.animateScrollToPage(0)
+                            }
                         }
-                        SpotListSuccessView(
-                            pagerState = pagerState,
-                            state = state,
-                            userType = userType,
-                            onSpotClick = onSpotClick,
-                            onTryFindWay = onTryFindWay,
-                            itemHeightPx = itemHeightPx,
-                            modifier = Modifier.fillMaxSize(),
-                            onGuestItemClick = onGuestItemClick
-                        )
+
+                        SpotType.CAFE -> {
+                            pagerState = rememberPagerState {
+                                state.spotList.size
+                            }
+                            if (state.showFilterModal) {
+                                CafeFilterBottomSheet(
+                                    selectedItems = state.selectedCafeFilters.values.flatten()
+                                        .toImmutableSet(),
+                                    onComplete = onCafeFilterSaved,
+                                    onDismissRequest = onFilterModalDismissRequest
+                                )
+                            }
+                            SpotListSuccessView(
+                                pagerState = pagerState,
+                                state = state,
+                                userType = userType,
+                                onSpotClick = onSpotClick,
+                                onTryFindWay = onTryFindWay,
+                                itemHeightPx = itemHeightPx,
+                                modifier = Modifier.fillMaxSize(),
+                                onGuestItemClick = onGuestItemClick
+                            )
+
+                            LaunchedEffect(LocalTrigger.current) {
+                                pagerState.animateScrollToPage(0)
+                            }
+                        }
                     }
+
+                    if (state.showRefreshPopup)
+                        AconTextPopup(
+                            text = stringResource(R.string.refresh_spot),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 8.dp)
+                                .padding(horizontal = 16.dp)
+                                .align(Alignment.BottomCenter),
+                            onClick = LocalOnRetry.current
+                        )
                 }
             }
 
@@ -204,7 +234,15 @@ internal fun SpotListScreen(
                     )
             )
             is SpotListUiStateV2.LoadFailed -> {
-                // TODO("Error")
+                NetworkErrorView(
+                    onRetry = LocalOnRetry.current,
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
+            is SpotListUiStateV2.OutOfServiceArea -> {
+                UnavailableLocationView(
+                    modifier = Modifier.fillMaxSize().padding(top = 24.dp)
+                )
             }
         }
     }

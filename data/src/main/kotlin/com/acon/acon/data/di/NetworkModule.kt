@@ -136,6 +136,7 @@ internal object NetworkModule {
             .baseUrl(BuildConfig.BASE_URL)
             .client(client)
             .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
+            .addCallAdapterFactory(RemoteErrorCallAdapterFactory(json))
             .build()
     }
 

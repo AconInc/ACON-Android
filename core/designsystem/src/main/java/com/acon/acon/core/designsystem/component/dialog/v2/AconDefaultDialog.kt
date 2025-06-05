@@ -57,6 +57,7 @@ fun AconDefaultDialog(
                     style = AconTheme.typography.Title4,
                     fontWeight = FontWeight.SemiBold,
                     color = AconTheme.color.White,
+                    textAlign = TextAlign.Center,
                     modifier = Modifier
                         .padding(top = 24.dp, bottom = 22.dp)
                         .padding(horizontal = 16.dp)

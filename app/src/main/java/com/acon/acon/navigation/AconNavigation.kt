@@ -59,6 +59,7 @@ import com.acon.acon.navigation.nested.signInNavigationNavigation
 import com.acon.acon.navigation.nested.splashNavigationNavigation
 import com.acon.acon.navigation.nested.spotNavigation
 import com.acon.acon.navigation.nested.uploadNavigation
+import com.acon.feature.common.compose.LocalTrigger
 import com.acon.feature.common.remember.rememberSocialRepository
 import kotlinx.coroutines.launch
 
@@ -90,7 +91,14 @@ fun AconNavigation(
         }
     }
 
-    CompositionLocalProvider(LocalHazeState provides hazeState) {
+    var spotScrollTrigger by remember {
+        mutableStateOf(false)
+    }
+
+    CompositionLocalProvider(
+        LocalHazeState provides hazeState,
+        LocalTrigger provides spotScrollTrigger
+    ) {
         if (showLoginBottomSheet) {
             LoginBottomSheet(
                 onDismissRequest = { showLoginBottomSheet = false },
@@ -187,6 +195,9 @@ fun AconNavigation(
                                         popUpTo(SpotRoute.SpotList) { inclusive = false }
                                         launchSingleTop = true
                                     }
+                                } else {
+                                    if (item == BottomNavType.SPOT)
+                                        spotScrollTrigger = !spotScrollTrigger
                                 }
                             }
                         }

@@ -22,6 +22,8 @@ fun SpotDetailScreenContainer(
     SpotDetailScreen(
         state = state,
         modifier = modifier,
+        onClickAddBookmark = {}, //TODO - 북마크 추가 api
+        onClickDeleteBookmark = {}, //TODO - 북마크 삭제 api
         onNavigateToBack = viewModel::navigateToBack,
         onClickMenuBoard = viewModel::onRequestMenuBoard,
         onDismissMenuBoard = viewModel::onDismissMenuBoard,

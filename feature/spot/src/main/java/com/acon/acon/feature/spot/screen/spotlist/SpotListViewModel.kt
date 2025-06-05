@@ -5,16 +5,21 @@ import android.location.Location
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.viewModelScope
 import com.acon.acon.core.utils.feature.base.BaseContainerHost
-import com.acon.acon.domain.model.spot.v2.SpotV2
+import com.acon.acon.domain.error.spot.FetchSpotListError
+import com.acon.acon.domain.model.spot.Condition
+import com.acon.acon.domain.model.spot.Filter
+import com.acon.acon.domain.model.spot.v2.Spot
+import com.acon.acon.domain.model.spot.v2.SpotList
 import com.acon.acon.domain.repository.SpotRepository
 import com.acon.acon.domain.repository.UserRepository
 import com.acon.acon.domain.type.CafeFilterType
+import com.acon.acon.domain.type.CategoryType
 import com.acon.acon.domain.type.RestaurantFilterType
 import com.acon.acon.domain.type.SpotType
+import com.acon.acon.domain.type.TransportMode
 import com.acon.acon.domain.type.UserType
-import com.acon.acon.feature.spot.BuildConfig
-import com.acon.acon.feature.spot.mock.spotListUiStateCafeMock
-import com.acon.acon.feature.spot.mock.spotListUiStateRestaurantMock
+import com.acon.acon.domain.usecase.IsDistanceExceededUseCase
+import com.acon.feature.common.location.isInKorea
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.SharingStarted
@@ -29,7 +34,8 @@ import kotlin.reflect.KClass
 class SpotListViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val userRepository: UserRepository,
-    private val spotRepository: SpotRepository
+    private val spotRepository: SpotRepository,
+    private val isDistanceExceededUseCase: IsDistanceExceededUseCase
 ) : BaseContainerHost<SpotListUiStateV2, SpotListSideEffectV2>() {
 
     override val container =
@@ -41,18 +47,42 @@ class SpotListViewModel @Inject constructor(
         initialValue = UserType.GUEST
     )
 
+    private lateinit var initialLocation: Location
+
     fun onNewLocationEmitted(location: Location) = intent {
-        runOn<SpotListUiStateV2.Loading> {
-            // TODO("Repository Call")
-            if (BuildConfig.DEBUG) {
-                reduce {
-                    spotListUiStateRestaurantMock
-                }
-            }
-        }
         runOn<SpotListUiStateV2.Success> {
             reduce {
                 state.copy(currentLocation = location)
+            }
+            if (isDistanceExceededUseCase(
+                    initialLocation.latitude,
+                    initialLocation.longitude,
+                    location.latitude,
+                    location.longitude
+                )
+            ) {
+                reduce {
+                    state.copy(showRefreshPopup = true)
+                }
+            }
+        }
+
+        runOn<SpotListUiStateV2.Loading> {
+            initialLocation = location
+            if (location.isInKorea(context)) {
+                fetchSpotList(location, Condition(SpotType.RESTAURANT, emptyList())) {
+                    SpotListUiStateV2.Success(
+                        transportMode = it.transportMode,
+                        spotList = it.spots,
+                        headTitle = "최고의 선택.",
+                        selectedSpotType = SpotType.RESTAURANT,
+                        currentLocation = location
+                    )
+                }
+            } else {
+                reduce {
+                    SpotListUiStateV2.OutOfServiceArea
+                }
             }
         }
     }
@@ -60,35 +90,40 @@ class SpotListViewModel @Inject constructor(
     fun onSpotTypeClicked(spotType: SpotType) = intent {
         runOn<SpotListUiStateV2.Success> {
             if (spotType == state.selectedSpotType) return@runOn
-            // TODO("Repository Call")
-            reduce {
-                state.copy(
-                    selectedSpotType = spotType,
-                    selectedRestaurantFilters = emptyMap(),
-                    selectedCafeFilters = emptyMap()
-                )
-            }
-            if (BuildConfig.DEBUG) {
-                if (spotType == SpotType.RESTAURANT)
-                    reduce {
-                        spotListUiStateRestaurantMock
-                    }
-                else {
-                    reduce {
-                        spotListUiStateCafeMock
-                    }
+            if (userType.value == UserType.GUEST)
+                reduce {
+                    state.copy(showLoginModal = true)
+                }
+            else {
+                reduce {
+                    state.copy(selectedSpotType = spotType)
+                }
+
+                fetchSpotList(
+                    location = state.currentLocation,
+                    condition = Condition(spotType, emptyList())
+                ) {
+                    SpotListUiStateV2.Success(
+                        transportMode = it.transportMode,
+                        spotList = it.spots,
+                        headTitle = "최고의 선택.",
+                        selectedSpotType = spotType,
+                        currentLocation = state.currentLocation,
+                        selectedRestaurantFilters = emptyMap(),
+                        selectedCafeFilters = emptyMap()
+                    )
                 }
             }
         }
     }
 
-    fun onSpotClicked(spot: SpotV2) = intent {
+    fun onSpotClicked(spot: Spot) = intent {
         runOn<SpotListUiStateV2.Success> {
             postSideEffect(SpotListSideEffectV2.NavigateToSpotDetailScreen(spot))
         }
     }
 
-    fun onTryFindWay(spot: SpotV2) = intent {
+    fun onTryFindWay(spot: Spot) = intent {
         runOn<SpotListUiStateV2.Success> {
             postSideEffect(SpotListSideEffectV2.NavigateToExternalMap(
                 start = state.currentLocation,
@@ -102,9 +137,14 @@ class SpotListViewModel @Inject constructor(
 
     fun onFilterButtonClicked() = intent {
         runOn<SpotListUiStateV2.Success> {
-            reduce {
-                state.copy(showFilterModal = true)
-            }
+            if (userType.value == UserType.GUEST)
+                reduce {
+                    state.copy(showLoginModal = true)
+                }
+            else
+                reduce {
+                    state.copy(showFilterModal = true)
+                }
         }
     }
 
@@ -126,6 +166,15 @@ class SpotListViewModel @Inject constructor(
                     showFilterModal = false
                 )
             }
+            fetchSpotList(
+                location = state.currentLocation,
+                condition = mapCondition(state)
+            ) {
+                state.copy(
+                    transportMode = it.transportMode,
+                    spotList = it.spots,
+                )
+            }
         }
     }
 
@@ -137,6 +186,15 @@ class SpotListViewModel @Inject constructor(
                 state.copy(
                     selectedCafeFilters = selectedCafeFilters,
                     showFilterModal = false
+                )
+            }
+            fetchSpotList(
+                location = state.currentLocation,
+                condition = mapCondition(state)
+            ) {
+                state.copy(
+                    transportMode = it.transportMode,
+                    spotList = it.spots,
                 )
             }
         }
@@ -157,13 +215,66 @@ class SpotListViewModel @Inject constructor(
             }
         }
     }
+
+    private fun fetchSpotList(location: Location, condition: Condition, onSuccess: (SpotList) -> SpotListUiStateV2.Success) = intent {
+        spotRepository.fetchSpotList(
+            latitude = location.latitude,
+            longitude = location.longitude,
+            condition = condition
+        ).reduceResult(
+            syntax = this@intent,
+            onSuccess = onSuccess,
+            onFailure = { e ->
+                if (e is FetchSpotListError.OutOfServiceArea)
+                    SpotListUiStateV2.OutOfServiceArea
+                else
+                    SpotListUiStateV2.LoadFailed
+            }
+        )
+    }
+
+    fun retry() = intent {
+        reduce {
+            SpotListUiStateV2.Loading
+        }
+    }
+
+    private fun mapCondition(state: SpotListUiStateV2.Success): Condition {
+        return Condition(
+            spotType = state.selectedSpotType,
+            filterList = if (state.selectedSpotType == SpotType.RESTAURANT) {
+                state.selectedRestaurantFilters.map {
+                    Filter(
+                        category = when (it.key) {
+                            RestaurantFilterType.RestaurantType::class -> CategoryType.RESTAURANT_FEATURE
+                            RestaurantFilterType.RestaurantOperationType::class -> CategoryType.OPENING_HOURS
+                            RestaurantFilterType.RestaurantPriceType::class -> CategoryType.PRICE
+                            else -> throw IllegalArgumentException("Unknown filter type")
+                        },
+                        optionList = it.value.toList()
+                    )
+                }
+            } else {
+                state.selectedCafeFilters.map {
+                    Filter(
+                        category = when (it.key) {
+                            CafeFilterType.CafeType::class -> CategoryType.CAFE_FEATURE
+                            CafeFilterType.CafeOperationType::class -> CategoryType.OPENING_HOURS
+                            else -> throw IllegalArgumentException("Unknown filter type")
+                        },
+                        optionList = it.value.toList()
+                    )
+                }
+            }
+        )
+    }
 }
 
 sealed interface SpotListUiStateV2 {
     @Immutable
     data class Success(
-        val spotList: List<SpotV2>,
-        val bicycleSpotList: List<SpotV2>,
+        val transportMode: TransportMode,
+        val spotList: List<Spot>,
         val headTitle: String,
         val selectedSpotType: SpotType,
         val currentLocation: Location,
@@ -171,15 +282,17 @@ sealed interface SpotListUiStateV2 {
         val selectedCafeFilters: Map<FilterDetailKey, Set<CafeFilterType>> = emptyMap(),
         val showFilterModal: Boolean = false,
         val showLoginModal: Boolean = false,
+        val showRefreshPopup: Boolean = false,
     ) : SpotListUiStateV2
     data object Loading : SpotListUiStateV2
     data object LoadFailed : SpotListUiStateV2
+    data object OutOfServiceArea: SpotListUiStateV2
 }
 
 sealed interface SpotListSideEffectV2 {
     data object ShowToastMessage : SpotListSideEffectV2
     data class NavigateToExternalMap(val start: Location, val destination: Location) : SpotListSideEffectV2
-    data class NavigateToSpotDetailScreen(val spot: SpotV2) : SpotListSideEffectV2
+    data class NavigateToSpotDetailScreen(val spot: Spot) : SpotListSideEffectV2
 }
 
 internal typealias FilterDetailKey = KClass<out Enum<*>>

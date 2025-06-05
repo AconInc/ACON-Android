@@ -14,6 +14,7 @@ import androidx.navigation.toRoute
 import com.acon.acon.core.designsystem.animation.bottomUpEnterTransition
 import com.acon.acon.core.designsystem.animation.topDownExitTransition
 import com.acon.acon.core.designsystem.theme.AconTheme
+import com.acon.acon.feature.spot.SpotRoute
 import com.acon.acon.feature.upload.UploadRoute
 import com.acon.acon.feature.upload.screen.composable.complete.UploadCompleteScreenContainer
 import com.acon.acon.feature.upload.screen.composable.review.UploadReviewScreenContainer
@@ -63,7 +64,7 @@ internal fun NavGraphBuilder.uploadNavigation(
                     }
                 },
                 modifier = Modifier
-                    .background(AconTheme.color.Gray9)
+                    .background(AconTheme.color.Gray900)
                     .systemBarsPadding()
                     .fillMaxSize(),
             )
@@ -77,10 +78,14 @@ internal fun NavGraphBuilder.uploadNavigation(
             UploadCompleteScreenContainer(
                 spotName = it.toRoute<UploadRoute.Complete>().spotName,
                 onNavigateToHome = {
-                    navController.popBackStack(UploadRoute.Search, true)
+                    navController.navigate(SpotRoute.Graph) {
+                        popUpTo(UploadRoute.Search) {
+                            inclusive = true
+                        }
+                    }
                 },
                 modifier = Modifier
-                    .background(AconTheme.color.Gray9)
+                    .background(AconTheme.color.Gray900)
                     .systemBarsPadding()
                     .fillMaxSize()
             )

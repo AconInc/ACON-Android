@@ -35,23 +35,26 @@ import com.acon.acon.core.designsystem.theme.AconTheme
 internal fun StoreFloatingButtonSet(
     onClickMenuBoard: () -> Unit,
     onClickShare: () -> Unit,
-    onClickMoreOptions: () -> Unit,
+    onClickBookmark: () -> Unit,
     modifier: Modifier = Modifier,
     isMenuBoarEnabled: Boolean = false,
 ) {
     var isMenuBoardLongPressed by remember { mutableStateOf(false) }
     var isShareLongPressed by remember { mutableStateOf(false) }
-    var isMoreOptionsLongPressed by remember { mutableStateOf(false) }
+    var isBookmarkLongPressed by remember { mutableStateOf(false) }
+    var isBookmarkSelected by remember { mutableStateOf(false) }
 
     val menuBoardImage = when {
         isMenuBoardLongPressed -> R.drawable.ic_menu_board_pressed
         isMenuBoarEnabled -> R.drawable.ic_menu_board_enable
         else -> R.drawable.ic_menu_board_disable
     }
-    val shareImage =
-        if (isShareLongPressed) R.drawable.ic_share_pressed else R.drawable.ic_share_enable
-    val moreOptionsImage =
-        if (isMoreOptionsLongPressed) R.drawable.ic_ellipsis_pressed else R.drawable.ic_ellipsis_enable
+    val shareImage = if (isShareLongPressed) R.drawable.ic_share_pressed else R.drawable.ic_share_enable
+    val bookmarkImageRes = when {
+        isBookmarkLongPressed -> R.drawable.ic_bookmark_pressed
+        isBookmarkSelected -> R.drawable.ic_bookmark_selected
+        else -> R.drawable.ic_bookmark_enable
+    }
 
     Column(
         modifier = modifier
@@ -69,6 +72,25 @@ internal fun StoreFloatingButtonSet(
 
         Spacer(Modifier.height(36.dp))
         StoreDetailButton(
+            name = stringResource(R.string.save),
+            imageRes = bookmarkImageRes,
+            onClickButton = {
+                isBookmarkSelected = !isBookmarkSelected
+                isBookmarkLongPressed = false
+                onClickBookmark()
+            },
+            onLongClickButton = {
+                isBookmarkLongPressed = true
+            },
+            onReleaseAfterLongPress = {
+                isBookmarkSelected = !isBookmarkSelected
+                isBookmarkLongPressed = false
+                onClickBookmark()
+            }
+        )
+
+        Spacer(Modifier.height(36.dp))
+        StoreDetailButton(
             name = stringResource(R.string.floating_btn_share),
             imageRes = shareImage,
             onClickButton = onClickShare,
@@ -76,19 +98,8 @@ internal fun StoreFloatingButtonSet(
             onReleaseAfterLongPress = {
                 onClickShare()
                 isMenuBoardLongPressed = false
-            }
-        )
-
-        Spacer(Modifier.height(36.dp))
-        StoreDetailButton(
-            name = stringResource(R.string.floating_btn_more_option),
-            imageRes = moreOptionsImage,
-            onClickButton = onClickMoreOptions,
-            onLongClickButton = { isMoreOptionsLongPressed = true },
-            onReleaseAfterLongPress = {
-                onClickMoreOptions()
-                isMoreOptionsLongPressed = false
-            }
+            },
+            isShare = true
         )
     }
 }
@@ -99,7 +110,8 @@ internal fun StoreDetailButton(
     @DrawableRes imageRes: Int,
     onClickButton: () -> Unit,
     onLongClickButton: (() -> Unit),
-    onReleaseAfterLongPress: (() -> Unit)
+    onReleaseAfterLongPress: (() -> Unit),
+    isShare: Boolean = false
 ) {
     var isLongPressed by remember { mutableStateOf(false) }
     var lastClickTime by remember { mutableLongStateOf(0L) }
@@ -135,8 +147,12 @@ internal fun StoreDetailButton(
                             },
                             onTap = {
                                 val currentTime = System.currentTimeMillis()
-                                if (currentTime - lastClickTime >= throttleTime) {
-                                    lastClickTime = currentTime
+                                if (isShare) {
+                                    if (currentTime - lastClickTime >= throttleTime) {
+                                        lastClickTime = currentTime
+                                        onClickButton()
+                                    }
+                                } else {
                                     onClickButton()
                                 }
                             },
@@ -170,7 +186,7 @@ private fun StoreButtonSetPreview() {
         StoreFloatingButtonSet(
             onClickMenuBoard = {},
             onClickShare = {},
-            onClickMoreOptions = {}
+            onClickBookmark = {}
         )
     }
 }

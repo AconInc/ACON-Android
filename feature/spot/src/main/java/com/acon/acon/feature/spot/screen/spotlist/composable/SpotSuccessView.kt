@@ -14,7 +14,9 @@ import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.PagerSnapDistance
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.VerticalPager
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -36,7 +38,8 @@ import com.acon.acon.core.designsystem.effect.LocalHazeState
 import com.acon.acon.core.designsystem.effect.fog.fogBackground
 import com.acon.acon.core.designsystem.effect.fog.getOverlayColor
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.domain.model.spot.v2.SpotV2
+import com.acon.acon.domain.model.spot.v2.Spot
+import com.acon.acon.domain.type.TransportMode
 import com.acon.acon.domain.type.UserType
 import com.acon.acon.feature.spot.screen.spotlist.SpotListUiStateV2
 import com.acon.feature.common.compose.toDp
@@ -51,21 +54,26 @@ internal fun SpotListSuccessView(
     pagerState: PagerState,
     state: SpotListUiStateV2.Success,
     userType: UserType,
-    onSpotClick: (SpotV2) -> Unit,
+    onSpotClick: (Spot) -> Unit,
     onGuestItemClick: () -> Unit,
-    onTryFindWay: (SpotV2) -> Unit,
+    onTryFindWay: (Spot) -> Unit,
     itemHeightPx: Float,
     modifier: Modifier = Modifier,
 ) {
 
     val context = LocalContext.current
 
-    if (state.spotList.isEmpty()) {
+    if (state.transportMode == TransportMode.BIKING) {
         SpotEmptyView(
-            otherSpots = state.bicycleSpotList.toImmutableList(),
+            userType = userType,
+            otherSpots = state.spotList.toImmutableList(),
+            onGuestItemClick = onGuestItemClick,
             onSpotClick = onSpotClick,
             onTryFindWay = onTryFindWay,
             modifier = modifier
+                .verticalScroll(rememberScrollState())
+                .hazeSource(LocalHazeState.current)
+                .padding(horizontal = 16.dp)
         )
     } else {
         VerticalPager(
@@ -84,6 +92,7 @@ internal fun SpotListSuccessView(
             ),
             horizontalAlignment = Alignment.CenterHorizontally,
             snapPosition = SnapPosition.Center,
+            beyondViewportPageCount = 1,
             pageSize = PageSize.Fixed((itemHeightPx).toDp())
         ) { page ->
             val spot = state.spotList[page]
@@ -142,6 +151,7 @@ internal fun SpotListSuccessView(
                     )
                 } else {
                     SpotItem(
+                        transportMode = state.transportMode,
                         spot = spot,
                         onItemClick = onSpotClick,
                         onFindWayButtonClick = onTryFindWay,
@@ -157,7 +167,7 @@ internal fun SpotListSuccessView(
             }
 
             LaunchedEffect(Unit) {
-                spotFogColor = spot.image.getOverlayColor(context)
+                spotFogColor = if (spot.image.isBlank()) Color(0xFFE17651) else spot.image.getOverlayColor(context)
             }
         }
     }
