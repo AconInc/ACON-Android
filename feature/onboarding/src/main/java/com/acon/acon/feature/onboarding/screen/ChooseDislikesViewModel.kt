@@ -1,6 +1,7 @@
 package com.acon.acon.feature.onboarding.screen
 
 import androidx.compose.runtime.Immutable
+import com.acon.acon.domain.repository.OnboardingRepository
 import com.acon.feature.common.base.BaseContainerHost
 import com.acon.acon.domain.type.FoodType
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -11,7 +12,7 @@ import javax.inject.Inject
 @OptIn(OrbitExperimental::class)
 @HiltViewModel
 class ChooseDislikesViewModel @Inject constructor(
-
+    private val onboardingRepository: OnboardingRepository
 ) : BaseContainerHost<ChooseDislikesUiState, ChooseDislikesSideEffect>() {
 
     override val container = container<ChooseDislikesUiState, ChooseDislikesSideEffect>(ChooseDislikesUiState.Success()) {
@@ -32,20 +33,20 @@ class ChooseDislikesViewModel @Inject constructor(
 
     fun onDislikeFoodClicked(foodType: FoodType) = intent {
         runOn<ChooseDislikesUiState.Success> {
-            if (foodType == FoodType.Seafood) {
+            if (foodType == FoodType.SEAFOOD) {
                 reduce {
                     state.copy(
-                        selectedDislikes = if (state.selectedDislikes.contains(FoodType.Seafood)) {
-                            state.selectedDislikes - FoodType.Seafood
+                        selectedDislikes = if (state.selectedDislikes.contains(FoodType.SEAFOOD)) {
+                            state.selectedDislikes - FoodType.SEAFOOD
                         } else {
                             state.selectedDislikes + setOf(
-                                FoodType.Seafood,
-                                FoodType.Shrimp,
-                                FoodType.Crab,
-                                FoodType.Clam,
-                                FoodType.Oyster,
-                                FoodType.RawFish,
-                                FoodType.Fish
+                                FoodType.SEAFOOD,
+                                FoodType.SHRIMP,
+                                FoodType.CRAB,
+                                FoodType.CLAM,
+                                FoodType.OYSTER,
+                                FoodType.SASHIMI,
+                                FoodType.FISH
                             )
                         },
                     )
@@ -66,7 +67,11 @@ class ChooseDislikesViewModel @Inject constructor(
 
     fun onCompletion() = intent {
         runOn<ChooseDislikesUiState.Success> {
-            postSideEffect(ChooseDislikesSideEffect.NavigateToHome)
+            onboardingRepository.submitOnboardingResult(state.selectedDislikes.toList()).onSuccess {
+                postSideEffect(ChooseDislikesSideEffect.NavigateToHome)
+            }.onFailure {
+                // TODO : 온보딩 API 실패
+            }
         }
     }
 }
