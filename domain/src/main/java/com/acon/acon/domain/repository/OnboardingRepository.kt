@@ -1,16 +1,9 @@
 package com.acon.acon.domain.repository
 
-import kotlinx.coroutines.flow.StateFlow
+import com.acon.acon.domain.type.FoodType
 
 interface OnboardingRepository {
-
-    suspend fun postOnboardingResult(
-        dislikeFoodList: Set<String>,
-        favoriteCuisineRank: List<String>,
-        favoriteSpotType: String,
-        favoriteSpotStyle: String,
-        favoriteSpotRank: List<String>
+    suspend fun submitOnboardingResult(
+        dislikeFoodList: List<FoodType>
     ): Result<Unit>
-
-    val onboardingResultStateFlow: StateFlow<Result<Unit>?>
 }
