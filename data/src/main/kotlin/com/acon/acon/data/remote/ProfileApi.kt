@@ -1,6 +1,6 @@
 package com.acon.acon.data.remote
 
-import com.acon.acon.data.dto.request.updateProfileRequest
+import com.acon.acon.data.dto.request.UpdateProfileRequest
 import com.acon.acon.data.dto.response.profile.PreSignedUrlResponse
 import com.acon.acon.data.dto.response.profile.ProfileResponse
 import retrofit2.Response
@@ -23,7 +23,7 @@ interface ProfileApi {
 
     @PATCH("/api/v1/members/me")
     suspend fun updateProfile(
-        @Body request: updateProfileRequest
+        @Body request: UpdateProfileRequest
     ): Response<Unit>
 
 }
