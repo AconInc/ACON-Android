@@ -10,6 +10,7 @@ import com.acon.acon.data.api.remote.UploadApi
 import com.acon.acon.core.common.Auth
 import com.acon.acon.core.common.Naver
 import com.acon.acon.core.common.NoAuth
+import com.acon.acon.data.api.remote.AconAppApi
 import com.acon.acon.data.api.remote.ProfileApi
 import com.acon.acon.data.api.remote.SpotAuthApi
 import dagger.Module
@@ -91,5 +92,13 @@ internal object ApiModule {
         @Naver retrofit: Retrofit
     ): MapApi {
         return retrofit.create(MapApi::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun providesAconAppApi(
+        @NoAuth retrofit: Retrofit
+    ): AconAppApi {
+        return retrofit.create(AconAppApi::class.java)
     }
 }
