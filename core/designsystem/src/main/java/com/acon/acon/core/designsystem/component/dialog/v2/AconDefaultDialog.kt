@@ -35,7 +35,7 @@ fun AconDefaultDialog(
         usePlatformDefaultWidth = true,
         decorFitsSystemWindows = true
     ),
-    content: @Composable () -> Unit,
+    content: @Composable () -> Unit = {},
 ) {
     Dialog(
         onDismissRequest = onDismissRequest,

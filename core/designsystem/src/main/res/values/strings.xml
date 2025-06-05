@@ -20,6 +20,13 @@
     <string name="unknown_error">알 수 없는 오류가 발생했습니다</string>
     <string name="unknown_error_message">알 수 없는 오류가 발생했어요</string>
 
+    <!-- Etc -->
+    <string name="restart">재시작</string>
+    <string name="update">업데이트</string>
+    <string name="update_required_title">필수적인 업데이트가 있습니다</string>
+    <string name="update_available_title">최선 버전 업데이트가 가능합니다</string>
+    <string name="update_complete">최신 버전을 이용할 수 있어요</string>
+
     <!-- Button component -->
     <string name="login_btn_preview_content">button</string>
     <string name="google_login_btn_description">구글 로그인 버튼</string>

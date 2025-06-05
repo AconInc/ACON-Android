@@ -59,6 +59,7 @@ import com.acon.acon.navigation.nested.signInNavigationNavigation
 import com.acon.acon.navigation.nested.splashNavigationNavigation
 import com.acon.acon.navigation.nested.spotNavigation
 import com.acon.acon.navigation.nested.uploadNavigation
+import com.acon.feature.common.compose.LocalSnackbarHostState
 import com.acon.feature.common.compose.LocalTrigger
 import com.acon.feature.common.remember.rememberSocialRepository
 import kotlinx.coroutines.launch
@@ -71,12 +72,12 @@ fun AconNavigation(
 ) {
     val socialRepository = rememberSocialRepository()
 
-    val snackbarHostState = remember { SnackbarHostState() }
     val backStackEntry by navController.currentBackStackEntryAsState()
     var selectedBottomNavItem by rememberSaveable { mutableStateOf(BottomNavType.SPOT) }
     val currentRoute by remember { derivedStateOf { backStackEntry?.destination?.route } }
 
     val hazeState = rememberHazeState()
+    val snackbarHostState = LocalSnackbarHostState.current
 
     var showLoginBottomSheet by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()

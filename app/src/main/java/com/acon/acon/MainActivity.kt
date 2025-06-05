@@ -14,15 +14,20 @@ import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.rememberNavController
 import com.acon.acon.core.designsystem.theme.AconTheme
+import com.acon.acon.domain.repository.AconAppRepository
 import com.acon.acon.domain.repository.SocialRepository
 import com.acon.acon.domain.repository.UserRepository
 import com.acon.acon.navigation.AconNavigation
@@ -35,22 +40,36 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.LocationSettingsRequest
 import com.google.android.gms.location.Priority
 import com.google.android.gms.location.SettingsClient
+import com.google.android.play.core.appupdate.AppUpdateManagerFactory
+import com.google.android.play.core.install.InstallStateUpdatedListener
+import com.google.android.play.core.install.model.AppUpdateType
+import com.google.android.play.core.install.model.InstallStatus
+import com.google.android.play.core.install.model.UpdateAvailability
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 import javax.inject.Inject
+import com.acon.acon.core.designsystem.R
+import com.acon.acon.core.designsystem.component.dialog.v2.AconDefaultDialog
+import com.acon.acon.core.designsystem.component.dialog.v2.AconTwoActionDialog
+import com.acon.feature.common.compose.LocalSnackbarHostState
+import com.acon.feature.common.coroutine.firstNotNull
+import com.acon.feature.common.intent.launchPlayStore
+import com.google.android.play.core.appupdate.AppUpdateOptions
+import com.google.android.play.core.install.model.ActivityResult
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    @Inject
-    lateinit var socialRepository: SocialRepository
-
-    @Inject
-    lateinit var userRepository: UserRepository
+    @Inject lateinit var socialRepository: SocialRepository
+    @Inject lateinit var userRepository: UserRepository
+    @Inject lateinit var aconAppRepository: AconAppRepository
 
     private val gpsResolutionResultLauncher = registerForActivityResult(
         ActivityResultContracts.StartIntentSenderForResult()
@@ -61,6 +80,76 @@ class MainActivity : ComponentActivity() {
             Toast.makeText(this, "GPS를 켜주세요.", Toast.LENGTH_SHORT).show()
         }
     }
+
+    private val appUpdateManager = AppUpdateManagerFactory.create(application)
+    private val appUpdateInfo = flow {
+        emit(appUpdateManager.appUpdateInfo.await())
+    }.stateIn(
+        scope = lifecycleScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = null
+    )
+
+    private val updateStateFlow = flow {
+        val shouldUpdateAppDeferred = lifecycleScope.async {
+            val currentAppVersion = try {
+                val packageInfo = application.packageManager.getPackageInfo(application.packageName, 0)
+                packageInfo.versionName
+            } catch (e: Exception) {
+                null
+            }
+            currentAppVersion?.let {
+                aconAppRepository.shouldUpdateApp(currentAppVersion).getOrElse { false }
+            }
+        }
+
+        appUpdateInfo.firstNotNull().let { updateInfo ->
+            if (updateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE) {
+                if (updateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)) {  // 1. 강제 업데이트 (인앱)
+                    // Not used
+                } else if (shouldUpdateAppDeferred.await() == true) { // 2. 강제 업데이트 (스토어 이동)
+                    emit(UpdateState.FORCE)
+                } else if (updateInfo.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE)) { // 3. 선택적 업데이트 (인앱)
+                    emit(UpdateState.OPTIONAL)
+                }
+            }
+        }
+    }.stateIn(
+        scope = lifecycleScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = UpdateState.NONE
+    )
+
+    private val appInstallStateListener by lazy {
+        InstallStateUpdatedListener { state ->
+            if (state.installStatus() == InstallStatus.DOWNLOADED) {
+                lifecycleScope.launch {
+                    val result = snackbarHostState.showSnackbar(
+                        message = getString(R.string.update_complete),
+                        actionLabel = getString(R.string.restart)
+                    )
+                    when (result) {
+                        SnackbarResult.ActionPerformed -> {
+                            appUpdateManager.completeUpdate()
+                        }
+
+                        SnackbarResult.Dismissed -> Unit
+                    }
+                }
+            }
+        }
+    }
+    private val snackbarHostState = SnackbarHostState()
+    private val appUpdateActivityResultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {   // Immediate에서는 받을 일 없음
+                Timber.d("유저 업데이트 수락")
+            } else if (result.resultCode == RESULT_CANCELED) {
+                Timber.d("유저 업데이트 거부")
+            } else if (result.resultCode == ActivityResult.RESULT_IN_APP_UPDATE_FAILED) {
+                Timber.d("업데이트 실패")
+            }
+        }
 
     @SuppressLint("MissingPermission")
     private val currentLocationFlow = callbackFlow<Location> {
@@ -119,8 +208,9 @@ class MainActivity : ComponentActivity() {
         setContent {
             AconTheme {
                 val currentLocation by currentLocationFlow.collectAsStateWithLifecycle()
+                val updateState by updateStateFlow.collectAsStateWithLifecycle()
 
-                CompositionLocalProvider(LocalLocation provides currentLocation) {
+                CompositionLocalProvider(LocalLocation provides currentLocation, LocalSnackbarHostState provides snackbarHostState) {
                     AconNavigation(
                         modifier = Modifier
                             .fillMaxSize()
@@ -128,6 +218,41 @@ class MainActivity : ComponentActivity() {
                         navController = rememberNavController(),
                         userRepository = userRepository
                     )
+                }
+
+                when (updateState) {
+                    UpdateState.FORCE -> {
+                        AconDefaultDialog(
+                            title = stringResource(R.string.update_required_title),
+                            action = stringResource(R.string.update),
+                            onAction = { launchPlayStore() },
+                            onDismissRequest = {}
+                        )
+                    }
+
+                    UpdateState.OPTIONAL -> {
+                        AconTwoActionDialog(
+                            title = stringResource(R.string.update_available_title),
+                            action1 = stringResource(R.string.cancel),
+                            action2 = stringResource(R.string.update),
+                            onAction1 = {}, onAction2 = {
+                                appUpdateManager.startUpdateFlowForResult(
+                                    appUpdateInfo.value ?: return@AconTwoActionDialog,
+                                    appUpdateActivityResultLauncher,
+                                    AppUpdateOptions.defaultOptions(AppUpdateType.FLEXIBLE)
+                                )
+                            }, onDismissRequest = {}
+                        )
+                    }
+
+                    UpdateState.NONE -> Unit
+                }
+
+                DisposableEffect(appUpdateManager) {
+                    appUpdateManager.registerListener(appInstallStateListener)
+                    onDispose {
+                        appUpdateManager.unregisterListener(appInstallStateListener)
+                    }
                 }
             }
         }
@@ -156,4 +281,8 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+}
+
+enum class UpdateState {
+    FORCE, OPTIONAL, NONE
 }
