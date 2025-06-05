@@ -42,6 +42,7 @@ hiltCompose = "1.2.0"
 javaxInject = "1"
 orbit = "9.0.0"
 coroutine = "1.7.3"
+dataStoreVersion = "1.1.0"
 
 amplitudeVersion = "1.20.1"
 
@@ -166,6 +167,9 @@ play-core-ktx = { module = "com.google.android.play:app-update-ktx", version.ref
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
 firebase-analytics-sdk = { group = "com.google.firebase", name = "firebase-analytics" }
 firebase-crashlytics-sdk = { group = "com.google.firebase", name = "firebase-crashlytics" }
+
+# DataStore
+preferences-datastore = { module = "androidx.datastore:datastore-preferences", version.ref = "dataStoreVersion" }
 
 # Palette
 palette = { module = "androidx.palette:palette", version.ref = "paletteVersion" }

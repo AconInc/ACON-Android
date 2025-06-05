@@ -37,4 +37,6 @@ dependencies {
 
     implementation(libs.androidx.security.crypto.ktx)
     implementation(libs.bundles.googleSignIn)
+
+    implementation(libs.preferences.datastore)
 }
