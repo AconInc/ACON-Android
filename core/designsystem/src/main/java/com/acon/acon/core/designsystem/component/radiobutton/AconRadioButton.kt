@@ -14,25 +14,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.acon.acon.core.designsystem.theme.AconTheme
 
 @Composable
 fun AconRadioButton(
     selected: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    colors: AconRadioButtonColors = AconRadioButtonColors.DeleteAccountRadioButtonColors()
 ) {
-    val borderColor = AconTheme.color.GlassWhiteDefault
-
     val containerColor =
-        if (selected) AconTheme.color.GlassWhiteDefault
-        else AconTheme.color.Gray900
-
-
-    val contentColor =
-        if (selected) AconTheme.color.Gray50
-        else AconTheme.color.Gray900
-
+        if (selected) colors.selectedContainerColor else colors.unselectedContainerColor
+    val contentColor = if (selected) colors.selectedContentColor else colors.unselectedContentColor
+    val borderColor = colors.borderColor
 
     Box(
         modifier = modifier
