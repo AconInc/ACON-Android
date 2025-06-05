@@ -1,5 +1,6 @@
 package com.acon.acon.data.di
 
+import com.acon.acon.data.repository.AconAppRepositoryImpl
 import com.acon.acon.data.repository.AreaVerificationRepositoryImpl
 import com.acon.acon.data.repository.MapRepositoryImpl
 import com.acon.acon.data.repository.OnboardingRepositoryImpl
@@ -8,6 +9,7 @@ import com.acon.acon.data.repository.SpotRepositoryImpl
 import com.acon.acon.data.repository.TokenRepositoryImpl
 import com.acon.acon.data.repository.UploadRepositoryImpl
 import com.acon.acon.data.repository.UserRepositoryImpl
+import com.acon.acon.domain.repository.AconAppRepository
 import com.acon.acon.domain.repository.AreaVerificationRepository
 import com.acon.acon.domain.repository.MapRepository
 import com.acon.acon.domain.repository.OnboardingRepository
@@ -73,4 +75,10 @@ internal abstract class RepositoryModule {
     abstract fun bindsMapRepository(
         impl: MapRepositoryImpl
     ): MapRepository
+
+    @Singleton
+    @Binds
+    abstract fun bindsAconAppRepository(
+        impl: AconAppRepositoryImpl
+    ): AconAppRepository
 }
