@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface UserRepository {
     suspend fun login(socialType: SocialType, idToken: String): Result<VerificationStatus>
-    suspend fun logout(refreshToken: String): Result<Unit>
-    suspend fun deleteAccount(reason: String, refreshToken: String): Result<Unit>
+    suspend fun logout(): Result<Unit>
+    suspend fun deleteAccount(reason: String): Result<Unit>
     fun getUserType(): Flow<UserType>
 }
