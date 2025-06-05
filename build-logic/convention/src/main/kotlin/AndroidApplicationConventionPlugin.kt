@@ -62,6 +62,7 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
                 dependencies {
                     implementation(project(":core:common"))
                     implementation(catalog.findBundle("android-defaults").get())
+                    implementation(catalog.findBundle("play-app-update").get())
                     implementation(catalog.findLibrary("timber").get())
 
                     testImplementation(catalog.findLibrary("junit").get())
