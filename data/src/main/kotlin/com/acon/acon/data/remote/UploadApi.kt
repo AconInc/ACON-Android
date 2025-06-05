@@ -1,18 +1,15 @@
 package com.acon.acon.data.remote
 
 import com.acon.acon.data.dto.request.ReviewRequest
-import com.acon.acon.data.dto.response.upload.UploadGetDotoriResponse
-import com.acon.acon.data.dto.response.upload.VerifyLocationResponse
 import com.acon.acon.data.dto.response.upload.UploadSpotSuggestionsResponse
-import com.acon.acon.data.dto.response.upload.v2.SearchedSpotsResponse
+import com.acon.acon.data.dto.response.upload.VerifyLocationResponse
+import com.acon.acon.data.dto.response.upload.SearchedSpotsResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Query
 
 interface UploadApi {
-    @GET("/api/v1/members/acorn")
-    suspend fun getDotoriCount(): UploadGetDotoriResponse
 
     @GET("/api/v1/search-suggestions")
     suspend fun getSuggestions(

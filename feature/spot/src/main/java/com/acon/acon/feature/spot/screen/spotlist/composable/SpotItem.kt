@@ -120,11 +120,11 @@ private fun SpotInfo(
             Spacer(modifier = Modifier.weight(1f))
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.acon_line),
-                contentDescription = stringResource(R.string.dotori_count_content_description),
+                contentDescription = stringResource(R.string.acorn_count_content_description),
                 tint = AconTheme.color.Gray50
             )
             Text(
-                text = (if (spot.dotori >= 9999) "+" else "") + spot.dotori.coerceAtMost(9999),
+                text = (if (spot.acorn >= 9999) "+" else "") + spot.acorn.coerceAtMost(9999),
                 style = AconTheme.typography.Body1,
                 fontWeight = FontWeight.W400,
                 color = AconTheme.color.White,
@@ -276,7 +276,7 @@ private fun SpotItemV2Preview() {
             id = 1L,
             name = "장소명",
             image = "ddd",
-            dotori = 9999,
+            acorn = 9999,
             eta = 10,
             latitude = 0.0,
             longitude = 0.0,
@@ -299,7 +299,7 @@ private fun SpotItemV2EmptyImagePreview() {
             id = 1L,
             name = "장소명",
             image = "",
-            dotori = 9999,
+            acorn = 9999,
             eta = 10,
             latitude = 0.0,
             longitude = 0.0,

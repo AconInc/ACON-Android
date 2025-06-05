@@ -33,14 +33,14 @@ class UploadReviewViewModel @Inject constructor(
 
     fun onCompletion() = intent {
         runOn<UploadReviewUiState.Success> {
-            if (state.selectedDotoriCount < 1) {
+            if (state.selectedAcornCount < 1) {
                 postSideEffect(UploadReviewSideEffect.ShowToast)
                 return@runOn
             }
 
             uploadRepository.submitReview(
                 spotId = spot.spotId,
-                acornCount = state.selectedDotoriCount
+                acornCount = state.selectedAcornCount
             ).onSuccess {
                 postSideEffect(UploadReviewSideEffect.NavigateToComplete(state.spot))
             }.onFailure {
@@ -49,11 +49,11 @@ class UploadReviewViewModel @Inject constructor(
         }
     }
 
-    fun onDotoriCountChanged(count: Int) = intent {
+    fun onAcornCountChanged(count: Int) = intent {
         runOn<UploadReviewUiState.Success> {
             reduce {
                 state.copy(
-                    selectedDotoriCount = count
+                    selectedAcornCount = count
                 )
             }
         }
@@ -63,7 +63,7 @@ class UploadReviewViewModel @Inject constructor(
 sealed interface UploadReviewUiState {
     data class Success(
         val spot: SimpleSpot,
-        val selectedDotoriCount: Int = 0,
+        val selectedAcornCount: Int = 0,
     ): UploadReviewUiState
     data object LoadFailed: UploadReviewSideEffect
 }

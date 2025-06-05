@@ -1,7 +1,7 @@
 package com.acon.acon.feature.upload.mock
 
 import com.acon.acon.domain.model.upload.UploadSpotSuggestion
-import com.acon.acon.domain.model.upload.v2.SearchedSpot
+import com.acon.acon.domain.model.upload.SearchedSpot
 import com.acon.acon.domain.type.SpotType
 import com.acon.acon.feature.upload.screen.UploadSearchUiState
 

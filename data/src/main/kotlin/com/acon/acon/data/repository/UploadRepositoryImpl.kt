@@ -5,18 +5,14 @@ import com.acon.acon.data.error.runCatchingWith
 import com.acon.acon.domain.error.upload.GetVerifySpotLocationError
 import com.acon.acon.domain.error.upload.UploadReviewError
 import com.acon.acon.domain.error.user.GetSuggestionsError
-import com.acon.acon.domain.model.upload.DotoriCount
 import com.acon.acon.domain.model.upload.UploadSpotSuggestion
-import com.acon.acon.domain.model.upload.v2.SearchedSpot
+import com.acon.acon.domain.model.upload.SearchedSpot
 import com.acon.acon.domain.repository.UploadRepository
 import javax.inject.Inject
 
 class UploadRepositoryImpl @Inject constructor(
     private val uploadRemoteDataSource: UploadRemoteDataSource
 ) : UploadRepository {
-    override suspend fun getDotoriCount(): Result<DotoriCount> = runCatchingWith {
-        uploadRemoteDataSource.getDotoriCount().toDotoriCount()
-    }
 
     override suspend fun getSuggestions(
         latitude: Double,

@@ -1,18 +1,14 @@
 package com.acon.acon.data.datasource.remote
 
 import com.acon.acon.data.dto.request.ReviewRequest
-import com.acon.acon.data.dto.response.upload.UploadGetDotoriResponse
-import com.acon.acon.data.dto.response.upload.VerifyLocationResponse
 import com.acon.acon.data.dto.response.upload.UploadSpotSuggestionsResponse
+import com.acon.acon.data.dto.response.upload.VerifyLocationResponse
 import com.acon.acon.data.remote.UploadApi
 import javax.inject.Inject
 
 class UploadRemoteDataSource @Inject constructor(
     private val uploadApi: UploadApi
 ) {
-    suspend fun getDotoriCount(): UploadGetDotoriResponse {
-        return uploadApi.getDotoriCount()
-    }
 
     suspend fun getSuggestions(
         latitude: Double,

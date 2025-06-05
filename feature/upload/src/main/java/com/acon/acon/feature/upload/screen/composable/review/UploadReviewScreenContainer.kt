@@ -27,7 +27,7 @@ fun UploadReviewScreenContainer(
         state = state,
         onBackAction = viewModel::onBackAction,
         onCompleteAction = viewModel::onCompletion,
-        onDotoriClick = viewModel::onDotoriCountChanged,
+        onAcornClick = viewModel::onAcornCountChanged,
         modifier = modifier
     )
 

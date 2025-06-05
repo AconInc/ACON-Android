@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.acon.acon.domain.error.upload.GetVerifySpotLocationError
 import com.acon.acon.domain.model.spot.SimpleSpot
 import com.acon.acon.domain.model.upload.UploadSpotSuggestion
-import com.acon.acon.domain.model.upload.v2.SearchedSpot
+import com.acon.acon.domain.model.upload.SearchedSpot
 import com.acon.acon.domain.repository.UploadRepository
 import com.acon.acon.feature.upload.BuildConfig
 import com.acon.acon.feature.upload.mock.uploadSearchUiStateMock

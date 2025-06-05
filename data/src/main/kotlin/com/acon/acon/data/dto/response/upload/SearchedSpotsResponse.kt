@@ -1,6 +1,6 @@
-package com.acon.acon.data.dto.response.upload.v2
+package com.acon.acon.data.dto.response.upload
 
-import com.acon.acon.domain.model.upload.v2.SearchedSpot
+import com.acon.acon.domain.model.upload.SearchedSpot
 import com.acon.acon.domain.type.SpotType
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
