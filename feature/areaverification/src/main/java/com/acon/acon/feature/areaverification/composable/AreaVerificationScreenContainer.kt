@@ -41,21 +41,21 @@ fun AreaVerificationScreenContainer(
 
     viewModel.collectSideEffect {
         when (it) {
-            is AreaVerificationHomeSideEffect.NavigateToAppLocationSettings -> {
+            is AreaVerificationSideEffect.NavigateToAppLocationSettings -> {
                 val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
                     data = Uri.fromParts("package", it.packageName, null)
                 }
                 context.startActivity(intent)
             }
 
-            is AreaVerificationHomeSideEffect.NavigateToSystemLocationSettings -> {
+            is AreaVerificationSideEffect.NavigateToSystemLocationSettings -> {
                 val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS).apply {
                     data = Uri.fromParts("package", it.packageName, null)
                 }
                 context.startActivity(intent)
             }
 
-            is AreaVerificationHomeSideEffect.NavigateToNextScreen -> {
+            is AreaVerificationSideEffect.NavigateToNextScreen -> {
                 onNextScreen(it.latitude, it.longitude)
             }
         }

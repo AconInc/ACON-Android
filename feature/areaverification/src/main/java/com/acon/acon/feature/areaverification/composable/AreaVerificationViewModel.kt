@@ -22,10 +22,10 @@ import javax.inject.Inject
 class AreaVerificationViewModel @Inject constructor(
     private val application: Application,
     private val areaVerificationRepository: AreaVerificationRepository
-) : BaseContainerHost<AreaVerificationHomeUiState, AreaVerificationHomeSideEffect>() {
+) : BaseContainerHost<AreaVerificationUiState, AreaVerificationSideEffect>() {
 
-    override val container = container<AreaVerificationHomeUiState, AreaVerificationHomeSideEffect>(
-        AreaVerificationHomeUiState()
+    override val container = container<AreaVerificationUiState, AreaVerificationSideEffect>(
+        AreaVerificationUiState()
     ) {
         checkDeviceGPSStatus()
     }
@@ -62,7 +62,7 @@ class AreaVerificationViewModel @Inject constructor(
 
     fun onNextButtonClick() = intent {
         postSideEffect(
-            AreaVerificationHomeSideEffect.NavigateToNextScreen(
+            AreaVerificationSideEffect.NavigateToNextScreen(
                 state.latitude,
                 state.longitude
             )
@@ -72,7 +72,7 @@ class AreaVerificationViewModel @Inject constructor(
 
     fun onPermissionSettingClick(packageName: String) = intent {
         postSideEffect(
-            AreaVerificationHomeSideEffect.NavigateToAppLocationSettings(packageName)
+            AreaVerificationSideEffect.NavigateToAppLocationSettings(packageName)
         )
         reduce {
             state.copy(showPermissionDialog = false)
@@ -81,7 +81,7 @@ class AreaVerificationViewModel @Inject constructor(
 
     fun onDeviceGPSSettingClick(packageName: String) = intent {
         postSideEffect(
-            AreaVerificationHomeSideEffect.NavigateToSystemLocationSettings(packageName)
+            AreaVerificationSideEffect.NavigateToSystemLocationSettings(packageName)
         )
         reduce {
             state.copy(showDeviceGPSDialog = false)
@@ -203,7 +203,7 @@ class AreaVerificationViewModel @Inject constructor(
     }
 }
 
-data class AreaVerificationHomeUiState(
+data class AreaVerificationUiState(
     val hasLocationPermission: Boolean = false,
     var showPermissionDialog: Boolean = false,
     val isGPSEnabled: Boolean = false,
@@ -218,18 +218,18 @@ data class AreaVerificationHomeUiState(
     val error: String? = null
 )
 
-sealed interface AreaVerificationHomeSideEffect {
+sealed interface AreaVerificationSideEffect {
 
     data class NavigateToAppLocationSettings(
         val packageName: String
-    ) : AreaVerificationHomeSideEffect
+    ) : AreaVerificationSideEffect
 
     data class NavigateToSystemLocationSettings(
         val packageName: String
-    ) : AreaVerificationHomeSideEffect
+    ) : AreaVerificationSideEffect
 
     data class NavigateToNextScreen(
         val latitude: Double,
         val longitude: Double
-    ) : AreaVerificationHomeSideEffect
+    ) : AreaVerificationSideEffect
 }
