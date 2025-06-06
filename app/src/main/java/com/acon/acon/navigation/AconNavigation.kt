@@ -245,6 +245,7 @@ fun AconNavigation(
         selectedBottomNavItem = when (currentRoute) {
             SpotRoute.SpotList::class.qualifiedName -> BottomNavType.SPOT
             ProfileRoute.Profile::class.qualifiedName -> BottomNavType.PROFILE
+            ProfileRoute.Bookmark::class.qualifiedName -> BottomNavType.PROFILE
             else -> BottomNavType.SPOT // TODO : Route
         }
     }
@@ -254,6 +255,7 @@ private fun NavDestination.shouldShowBottomNav(): Boolean {
     return when (route) {
         SpotRoute.SpotList::class.qualifiedName -> true
         ProfileRoute.Profile::class.qualifiedName -> true
+        ProfileRoute.Bookmark::class.qualifiedName -> true
         else -> false
     }
 }
