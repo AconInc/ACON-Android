@@ -12,7 +12,8 @@ import com.acon.acon.core.designsystem.theme.AconTheme
 fun Modifier.imageGradientLayer(
     startColor: Color = AconTheme.color.Gray900.copy(alpha = 1f),
     endColor: Color = AconTheme.color.Gray900.copy(alpha = 0f),
-    @FloatRange(from = 0.0, to = 1.0) ratio: Float = 0.25f
+    @FloatRange(from = 0.0, to = 1.0) ratio: Float = 0.25f,
+    showBottomGradient: Boolean = true
 ): Modifier {
     return this.then(
         Modifier.drawWithContent {
@@ -26,13 +27,15 @@ fun Modifier.imageGradientLayer(
                 )
             )
 
-            drawRect(
-                brush = Brush.verticalGradient(
-                    colors = listOf(endColor, startColor),
-                    startY = size.height * (1 - ratio),
-                    endY = size.height
+            if(showBottomGradient) {
+                drawRect(
+                    brush = Brush.verticalGradient(
+                        colors = listOf(endColor, startColor),
+                        startY = size.height * (1 - ratio),
+                        endY = size.height
+                    )
                 )
-            )
+            }
         }
     )
 }
