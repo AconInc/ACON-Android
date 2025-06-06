@@ -35,6 +35,9 @@
         <meta-data
             android:name="com.naver.maps.map.NCP_KEY_ID"
             android:value="${naverClientId}" />
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="${admobAppUnitId}" />
     </application>
     <queries>
         <intent>
