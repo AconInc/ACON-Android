@@ -14,6 +14,9 @@ interface ProfileRoute {
     data class ProfileMod(val photoId: String?) : ProfileRoute
 
     @Serializable
+    data object Bookmark : ProfileRoute
+
+    @Serializable
     data object GalleryList : ProfileRoute
 
     @Serializable

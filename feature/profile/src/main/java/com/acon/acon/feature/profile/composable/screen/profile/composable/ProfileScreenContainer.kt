@@ -25,6 +25,7 @@ fun ProfileScreenContainer(
     socialRepository: SocialRepository,
     snackbarHostState: SnackbarHostState,
     modifier: Modifier = Modifier,
+    onNavigateToBookMark: () -> Unit = {},
     onNavigateToSpotListScreen: () -> Unit = {},
     onNavigateToSettingsScreen: () -> Unit = {},
     onNavigateToProfileEditScreen: () -> Unit = {},
@@ -58,6 +59,7 @@ fun ProfileScreenContainer(
     ProfileScreen(
         state = state,
         modifier = modifier.fillMaxSize(),
+        onBookmark = viewModel::onBookmark,
         onSettings = viewModel::onSettings,
         onEditProfile = viewModel::onEditProfile,
         onGoogleSignIn = { viewModel.googleLogin(socialRepository) },
@@ -66,6 +68,7 @@ fun ProfileScreenContainer(
 
     viewModel.collectSideEffect {
         when(it) {
+            is ProfileUiSideEffect.OnNavigateToBookmarkScreen -> { onNavigateToBookMark() }
             is ProfileUiSideEffect.OnNavigateToSpotListScreen -> { onNavigateToSpotListScreen() }
             is ProfileUiSideEffect.OnNavigateToSettingsScreen -> { onNavigateToSettingsScreen() }
             is ProfileUiSideEffect.OnNavigateToProfileEditScreen -> { onNavigateToProfileEditScreen() }

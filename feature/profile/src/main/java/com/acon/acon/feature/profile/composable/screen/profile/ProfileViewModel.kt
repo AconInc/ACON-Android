@@ -83,6 +83,10 @@ class ProfileViewModel @Inject constructor(
             }
     }
 
+    fun onBookmark() = intent {
+        postSideEffect(ProfileUiSideEffect.OnNavigateToBookmarkScreen)
+    }
+
     fun onSettings() = intent {
         postSideEffect(ProfileUiSideEffect.OnNavigateToSettingsScreen)
     }
@@ -118,6 +122,7 @@ sealed interface ProfileUiState {
 }
 
 sealed interface ProfileUiSideEffect {
+    data object OnNavigateToBookmarkScreen : ProfileUiSideEffect
     data object OnNavigateToSpotListScreen : ProfileUiSideEffect
     data object OnNavigateToSettingsScreen : ProfileUiSideEffect
     data object OnNavigateToProfileEditScreen : ProfileUiSideEffect
