@@ -72,7 +72,7 @@ fun BookmarkScreen(
                     },
                     content = {
                         Text(
-                            text = stringResource(R.string.settings_delete_account_topbar),
+                            text = stringResource(R.string.saved_store),
                             style = AconTheme.typography.Title4,
                             fontWeight = FontWeight.SemiBold,
                             color = AconTheme.color.White

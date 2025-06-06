@@ -195,18 +195,21 @@
     <string name="max_nickname_count">/14</string>
     <string name="nickname_textfield_title">닉네임</string>
     <string name="nickname_birthday_title">생년월일</string>
-    <string name="nickname_placeholder">닉네임을 입력해주세요</string>
+    <string name="nickname_placeholder">닉네임을 입력해주세요.</string>
     <string name="birthday_placeholder">2025.01.01</string>
     <string name="nickname_valid">사용할 수 있는 닉네임이에요.</string>
     <string name="nickname_error_empty">닉네임을 입력해주세요.</string>
     <string name="nickname_error_duplicate">이미 사용 중인 닉네임이에요.</string>
-    <string name="nickname_error_invalid">영어, 숫자, 밑줄 및 마침표만 사용 가능해요</string>
-    <string name="birthday_error_invalid">정확한 생년월일을 입력해주세요</string>
+    <string name="nickname_error_invalid">영어, 숫자, 밑줄 및 마침표만 사용 가능해요.</string>
+    <string name="birthday_error_invalid">정확한 생년월일을 입력해주세요.</string>
     <string name="album">앨범</string>
     <string name="my_album">나의 앨범</string>
     <string name="upload_photo_from_album">앨범에서 사진 업로드</string>
     <string name="set_default_profile_image">기본 이미지로 변경</string>
     <string name="selected_image">선택 이미지</string>
+    <string name="no_store_image">이미지 준비중</string>
+    <string name="saved_store">저장한 장소</string>
+    <string name="show_saved_all_store">전체보기</string>
 
     <!-- setting -->
     <string name="settings_screen_topbar">설정</string>
