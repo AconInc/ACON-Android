@@ -56,7 +56,6 @@ import com.acon.acon.navigation.nested.onboardingNavigationNavigation
 import com.acon.acon.navigation.nested.profileNavigation
 import com.acon.acon.navigation.nested.settingsNavigation
 import com.acon.acon.navigation.nested.signInNavigationNavigation
-import com.acon.acon.navigation.nested.splashNavigationNavigation
 import com.acon.acon.navigation.nested.spotNavigation
 import com.acon.acon.navigation.nested.uploadNavigation
 import com.acon.feature.common.compose.LocalTrigger
@@ -224,8 +223,6 @@ fun AconNavigation(
                     defaultPopExitTransition()
                 }
             ) {
-                splashNavigationNavigation(navController)
-
                 signInNavigationNavigation(navController, socialRepository)
 
                 areaVerificationNavigation(navController)

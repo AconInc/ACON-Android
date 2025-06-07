@@ -34,7 +34,8 @@ fun SignInScreenContainer(
         onClickPrivacyPolicy = viewModel::onClickPrivacyPolicy,
         onClickLoginGoogle = {
             viewModel.googleLogin(socialRepository)
-        }
+        },
+        onAnimationEnd = viewModel::autoSignIn
     )
 
     viewModel.collectSideEffect { sideEffect ->

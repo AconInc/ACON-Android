@@ -7,6 +7,7 @@ import com.acon.acon.domain.repository.UserRepository
 import com.acon.acon.domain.type.LocalVerificationType
 import com.acon.acon.domain.type.UserType
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.viewmodel.container
 import timber.log.Timber
@@ -19,11 +20,9 @@ class SignInViewModel @Inject constructor(
 ) : BaseContainerHost<SignInUiState, SignInSideEffect>() {
 
     override val container: Container<SignInUiState, SignInSideEffect> =
-        container(initialState = SignInUiState.Loading) {
-            autoSignIn()
-        }
+        container(initialState = SignInUiState.SignIn)
 
-    private fun autoSignIn() = intent {
+    fun autoSignIn() = intent {
         userRepository.getUserType().collect {
             when (it) {
                 UserType.GUEST -> {
@@ -39,6 +38,7 @@ class SignInViewModel @Inject constructor(
     }
 
     private fun isAreaVerified() = intent {
+        delay(500)
         userRepository.getLocalVerificationType().collect { verificationType ->
             when (verificationType) {
                 LocalVerificationType.VERIFIED -> {
@@ -67,23 +67,23 @@ class SignInViewModel @Inject constructor(
             .onFailure { error ->
                 when (error) {
                     is CredentialException.UserCanceled -> {
-                        reduce { SignInUiState.Loading }
+                        reduce { SignInUiState.SignIn }
                     }
 
                     is CancellationException -> {
-                        reduce { SignInUiState.Loading }
+                        reduce { SignInUiState.SignIn }
                     }
 
                     is CredentialException.NoStoredCredentials -> {
-                        reduce { SignInUiState.Loading }
+                        reduce { SignInUiState.SignIn }
                     }
 
                     is SecurityException -> {
-                        reduce { SignInUiState.Loading }
+                        reduce { SignInUiState.SignIn }
                     }
 
                     else -> {
-                        reduce { SignInUiState.Loading }
+                        reduce { SignInUiState.SignIn }
                         postSideEffect(SignInSideEffect.ShowToastMessage)
                     }
                 }
@@ -114,11 +114,7 @@ class SignInViewModel @Inject constructor(
 }
 
 sealed interface SignInUiState {
-    data class Success(
-        val localVerificationType: LocalVerificationType = LocalVerificationType.NOT_VERIFIED
-    ) : SignInUiState
-    data object Loading : SignInUiState
-    data object LoadFailed : SignInUiState
+    data object SignIn : SignInUiState
 }
 
 sealed interface SignInSideEffect {
