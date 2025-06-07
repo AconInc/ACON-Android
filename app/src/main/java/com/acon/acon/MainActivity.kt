@@ -16,6 +16,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
@@ -98,8 +99,8 @@ class MainActivity : ComponentActivity() {
             } catch (e: Exception) {
                 null
             }
-            currentAppVersion?.let {
-                aconAppRepository.shouldUpdateApp(currentAppVersion).getOrElse { false }
+            currentAppVersion?.let { v ->
+                aconAppRepository.shouldUpdateApp(v).getOrElse { false }
             }
         }
 
@@ -208,9 +209,13 @@ class MainActivity : ComponentActivity() {
         setContent {
             AconTheme {
                 val currentLocation by currentLocationFlow.collectAsStateWithLifecycle()
-                val updateState by updateStateFlow.collectAsStateWithLifecycle()
 
-                CompositionLocalProvider(LocalLocation provides currentLocation, LocalSnackbarHostState provides snackbarHostState) {
+                CheckAndRequireUpdate()
+
+                CompositionLocalProvider(
+                    LocalLocation provides currentLocation,
+                    LocalSnackbarHostState provides snackbarHostState
+                ) {
                     AconNavigation(
                         modifier = Modifier
                             .fillMaxSize()
@@ -220,40 +225,6 @@ class MainActivity : ComponentActivity() {
                     )
                 }
 
-                when (updateState) {
-                    UpdateState.FORCE -> {
-                        AconDefaultDialog(
-                            title = stringResource(R.string.update_required_title),
-                            action = stringResource(R.string.update),
-                            onAction = { launchPlayStore() },
-                            onDismissRequest = {}
-                        )
-                    }
-
-                    UpdateState.OPTIONAL -> {
-                        AconTwoActionDialog(
-                            title = stringResource(R.string.update_available_title),
-                            action1 = stringResource(R.string.cancel),
-                            action2 = stringResource(R.string.update),
-                            onAction1 = {}, onAction2 = {
-                                appUpdateManager.startUpdateFlowForResult(
-                                    appUpdateInfo.value ?: return@AconTwoActionDialog,
-                                    appUpdateActivityResultLauncher,
-                                    AppUpdateOptions.defaultOptions(AppUpdateType.FLEXIBLE)
-                                )
-                            }, onDismissRequest = {}
-                        )
-                    }
-
-                    UpdateState.NONE -> Unit
-                }
-
-                DisposableEffect(appUpdateManager) {
-                    appUpdateManager.registerListener(appInstallStateListener)
-                    onDispose {
-                        appUpdateManager.unregisterListener(appInstallStateListener)
-                    }
-                }
             }
         }
     }
@@ -278,6 +249,46 @@ class MainActivity : ComponentActivity() {
                 } catch (e: IntentSender.SendIntentException) {
 
                 }
+            }
+        }
+    }
+
+    @Composable
+    private fun CheckAndRequireUpdate() {
+        val updateState by updateStateFlow.collectAsStateWithLifecycle()
+
+        when (updateState) {
+            UpdateState.FORCE -> {
+                AconDefaultDialog(
+                    title = stringResource(R.string.update_required_title),
+                    action = stringResource(R.string.update),
+                    onAction = { launchPlayStore() },
+                    onDismissRequest = {}
+                )
+            }
+
+            UpdateState.OPTIONAL -> {
+                AconTwoActionDialog(
+                    title = stringResource(R.string.update_available_title),
+                    action1 = stringResource(R.string.cancel),
+                    action2 = stringResource(R.string.update),
+                    onAction1 = {}, onAction2 = {
+                        appUpdateManager.startUpdateFlowForResult(
+                            appUpdateInfo.value ?: return@AconTwoActionDialog,
+                            appUpdateActivityResultLauncher,
+                            AppUpdateOptions.defaultOptions(AppUpdateType.FLEXIBLE)
+                        )
+                    }, onDismissRequest = {}
+                )
+            }
+
+            UpdateState.NONE -> Unit
+        }
+
+        DisposableEffect(appUpdateManager) {
+            appUpdateManager.registerListener(appInstallStateListener)
+            onDispose {
+                appUpdateManager.unregisterListener(appInstallStateListener)
             }
         }
     }
