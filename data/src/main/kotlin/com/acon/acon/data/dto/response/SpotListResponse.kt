@@ -34,7 +34,7 @@ data class SpotResponse(
         id = id ?: 0L,
         image = image.orEmpty(),
         name = name.orEmpty(),
-        dotori = acornCount ?: 0,
+        acorn = acornCount ?: 0,
         tags = tags?.map { tagString ->
             when(tagString) {
                 "NEW" -> TagType.NEW

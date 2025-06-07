@@ -1,6 +1,6 @@
 package com.acon.acon.feature.signin.screen
 
-import com.acon.acon.core.utils.feature.base.BaseContainerHost
+import com.acon.feature.common.base.BaseContainerHost
 import com.acon.acon.domain.error.user.CredentialException
 import com.acon.acon.domain.repository.SocialRepository
 import com.acon.acon.domain.repository.UserRepository
@@ -17,7 +17,7 @@ import kotlin.coroutines.cancellation.CancellationException
 @HiltViewModel
 class SignInViewModel @Inject constructor(
     private val userRepository: UserRepository
-) : BaseContainerHost<SignInUiState, SignInSideEffect>() {
+) : com.acon.feature.common.base.BaseContainerHost<SignInUiState, SignInSideEffect>() {
 
     override val container: Container<SignInUiState, SignInSideEffect> =
         container(initialState = SignInUiState.SignIn)

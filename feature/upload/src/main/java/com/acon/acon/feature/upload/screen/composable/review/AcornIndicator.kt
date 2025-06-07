@@ -18,7 +18,7 @@ import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
 
 @Composable
-fun DotoriIndicator(
+fun AcornIndicator(
     isSelected: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -39,17 +39,17 @@ fun DotoriIndicator(
 
 @Preview(showBackground = true, backgroundColor = 0xFF1C1C1E)
 @Composable
-private fun DotoriIndicatorPreview() {
+private fun AcornIndicatorPreview() {
     AconTheme {
         Row(
             modifier = Modifier.padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            DotoriIndicator(
+            AcornIndicator(
                 isSelected = true,
                 onClick = {}
             )
-            DotoriIndicator(
+            AcornIndicator(
                 isSelected = false,
                 onClick = {}
             )

@@ -1,4 +1,4 @@
-package com.acon.acon.domain.model.upload.v2
+package com.acon.acon.domain.model.upload
 
 import androidx.compose.runtime.Immutable
 import com.acon.acon.domain.type.SpotType

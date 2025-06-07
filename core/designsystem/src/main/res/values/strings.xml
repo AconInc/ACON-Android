@@ -101,7 +101,7 @@
     <string name="delete_area_dialog_edit_content">지역은 최소 1개 이상을 등록해야 해요.\n현재 설정된 지역을 변경할까요?</string>
 
     <!-- SpotList -->
-    <string name="dotori_count_content_description">도토리 개수</string>
+    <string name="acorn_count_content_description">도토리 개수</string>
     <string name="filter_content_description">필터</string>
     <string name="restaurant">식당</string>
     <string name="cafe">카페</string>
@@ -164,12 +164,15 @@
     <string name="request_new_spot_description1">현재 장소를 바로 등록할 수 있어요</string>
     <string name="request_new_spot_description2">더욱 더 정확하게 추천이 가능해요</string>
     <string name="go_to_register_spot">5초만에 등록하러 가기</string>
-    <string name="introduce_drop_dotori">도토리를 떨어트려\n리뷰를 남겨 볼까요?</string>
-    <string name="introduce_click_dotori">도토리를 선택해보세요</string>
-    <string name="complete_drop_dotori">도토리로 리뷰 남기기</string>
+    <string name="introduce_drop_acorn">도토리를 떨어트려\n리뷰를 남겨 볼까요?</string>
+    <string name="introduce_click_acorn">도토리를 선택해보세요</string>
+    <string name="complete_drop_acorn">도토리로 리뷰 남기기</string>
     <string name="review_complete">%s의\n리뷰 작성을 완료했어요!</string>
     <string name="wish_was_your_spot">당신의 취향이 가득 담긴 장소였길 바래요</string>
-    <string name="tab_closed_in_seconds">%s초 후 탭이 자동으로 닫힙니다</string>
+    <string name="failed_submit_review">리뷰를 남기지 못했어요</string>
+    <string name="failed_verify_location">위치 인식 실패</string>
+    <string name="failed_verify_location_description">현재 위치와 리뷰 등록 장소가\n오차범위 밖에 있습니다.\n좀 더 가까이 이동해보세요.</string>
+    <string name="failed_verify_location_not_in_korea_description">문제가 발생했습니다. 나중에 다시 시도해주세요.</string>
 
     <!-- Onboarding -->
     <string name="request_dislike_food_title">싫어하는 음식을 알려줄 수 있나요?</string>
