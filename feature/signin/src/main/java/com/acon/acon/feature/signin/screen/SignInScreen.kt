@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.button.AconGoogleLoginButton
 import com.acon.acon.core.designsystem.noRippleClickable
+import com.acon.acon.core.designsystem.size.getScreenWidth
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.feature.signin.amplitude.amplitudeSignIn
 import com.acon.acon.feature.signin.screen.component.SignInTopBar
@@ -61,9 +62,9 @@ fun SignInScreen(
     val splashAudioManager = remember { SplashAudioManager(context) }
 
     val configuration = LocalConfiguration.current
-    val screenWidth = configuration.screenWidthDp
+    val screenWidth = getScreenWidth()
     val screenHeight = configuration.screenHeightDp
-    val lottieTopPadding = ((screenHeight * 0.25f) - 52).coerceAtLeast(0f).dp
+    val lottieTopPadding = (((screenHeight * 0.25f) - 52).coerceAtLeast(0f)).dp
 
     BackHandler(enabled = true) {
         activity?.finishAffinity()
@@ -123,7 +124,7 @@ fun SignInScreen(
                         logoAnimationState.progress
                     },
                     modifier = Modifier
-                        .width(width = (screenWidth * (240f / 360f)).dp)
+                        .width(width = (screenWidth * (240f / 360f)))
                 )
 
                 Spacer(Modifier.height(60.dp))
