@@ -1,5 +1,7 @@
 package com.acon.acon.feature.spot.screen.spotlist.composable
 
+import android.app.Activity
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -26,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -71,6 +74,8 @@ internal fun SpotListScreen(
     onGuestItemClick: () -> Unit = {},
     onGuestModalDismissRequest: () -> Unit = {},
 ) {
+    val context = LocalContext.current
+    val activity = context as? Activity
     val screenHeightDp = getScreenHeight()
     val screenHeightPx = with(LocalDensity.current) {
         screenHeightDp.toPx()
@@ -79,6 +84,11 @@ internal fun SpotListScreen(
     val itemHeightPx by remember {
         mutableFloatStateOf(screenHeightPx * .64f)
     }
+
+    BackHandler(enabled = true) {
+        activity?.finishAffinity()
+    }
+
 
     Column(
         modifier = modifier
