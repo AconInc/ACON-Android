@@ -4,11 +4,16 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -23,17 +28,26 @@ import com.acon.acon.core.designsystem.theme.AconTheme
 
 @Composable
 fun AconGoogleLoginButton(
-    onClick: () -> Unit = {},
+    onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val throttleTime = 1000L
+    var lastClickTime by remember { mutableLongStateOf(0L) }
+
     AconFilledButton(
         shape = RoundedCornerShape(percent = 50),
         colors = ButtonDefaults.buttonColors(
             containerColor = AconTheme.color.White,
             contentColor = AconTheme.color.Gray500
         ),
-        modifier = modifier.fillMaxWidth(),
-        onClick = onClick
+        modifier = modifier.heightIn(min = 54.dp),
+        onClick = {
+            val currentTime = System.currentTimeMillis()
+            if (currentTime - lastClickTime >= throttleTime) {
+                lastClickTime = currentTime
+                onClick()
+            }
+        }
     ) {
         Box(
             modifier = Modifier.fillMaxWidth()
@@ -66,8 +80,8 @@ private fun PreviewAconGoogleLoginButton() {
             modifier = Modifier.background(AconTheme.color.Black)
         ) {
             AconGoogleLoginButton(
-                modifier = Modifier,
                 onClick = {},
+                modifier = Modifier,
             )
         }
     }
