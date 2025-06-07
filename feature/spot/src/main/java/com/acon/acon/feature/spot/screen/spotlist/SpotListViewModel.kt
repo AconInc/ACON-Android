@@ -224,7 +224,6 @@ class SpotListViewModel @Inject constructor(
             longitude = location.longitude,
             condition = condition
         ).reduceResult(
-            syntax = this@intent,
             onSuccess = onSuccess,
             onFailure = { e ->
                 if (e is FetchSpotListError.OutOfServiceArea)

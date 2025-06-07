@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import com.acon.feature.common.compose.LocalLocation
 import com.acon.feature.common.coroutine.firstNotNull
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.suspendCancellableCoroutine
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.annotation.OrbitDsl
 import org.orbitmvi.orbit.syntax.Syntax
@@ -30,7 +31,7 @@ abstract class BaseContainerHost<STATE : Any, SIDE_EFFECT : Any>() :
 
     protected open fun onNewLocation(location: Location) {}
 
-    suspend fun getCurrentLocation() : Location {
+    protected suspend fun getCurrentLocation() : Location {
         return liveLocation.firstNotNull()
     }
 
@@ -45,6 +46,22 @@ abstract class BaseContainerHost<STATE : Any, SIDE_EFFECT : Any>() :
                 reduce { onSuccess(it) }
             }.onFailure {
                 reduce { onFailure(it) }
+            }
+        }
+    }
+
+    @OrbitDsl
+    protected suspend inline fun<T> Result<T>.reduceResult(
+        crossinline onSuccess: (T) -> STATE,
+        crossinline onFailure: (Throwable) -> STATE
+    ) : Result<T> {
+        return suspendCancellableCoroutine { continuation ->
+            intent {
+                continuation.resume(this@reduceResult.onSuccess {
+                    reduce { onSuccess(it) }
+                }.onFailure {
+                    reduce { onFailure(it) }
+                }) { _, _, _ -> }
             }
         }
     }
