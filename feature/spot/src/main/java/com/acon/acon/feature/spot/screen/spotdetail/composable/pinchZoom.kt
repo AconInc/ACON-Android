@@ -21,7 +21,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
 private const val minZoomScope = 0.5f
-private const val maxZoomScope = 3f
+private const val maxZoomScope = 2.5f
 
 internal fun Modifier.pinchZoomOverlay(
     zoomState: PinchZoomState

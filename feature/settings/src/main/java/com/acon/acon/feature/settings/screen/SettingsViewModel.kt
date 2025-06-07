@@ -1,13 +1,10 @@
 package com.acon.acon.feature.settings.screen
 
-import androidx.lifecycle.viewModelScope
 import com.acon.feature.common.base.BaseContainerHost
-import com.acon.acon.domain.repository.TokenRepository
 import com.acon.acon.domain.repository.UserRepository
 import com.acon.acon.domain.type.UserType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.viewmodel.container
 import javax.inject.Inject
@@ -15,7 +12,6 @@ import javax.inject.Inject
 @OptIn(OrbitExperimental::class)
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
-    private val tokenRepository: TokenRepository,
     private val userRepository: UserRepository
 ) : BaseContainerHost<SettingsUiState, SettingsSideEffect>() {
 
@@ -31,20 +27,14 @@ class SettingsViewModel @Inject constructor(
         }
 
     fun onSignOut() = intent {
-        tokenRepository.getRefreshToken().onSuccess { refreshToken ->
-            viewModelScope.launch {
-                refreshToken?.let {
-                    userRepository.logout(it)
-                }
-                ?.onSuccess {
-                    postSideEffect(SettingsSideEffect.NavigateToSignIn)
-                }
-                ?.onFailure {
-                    onLogoutDialogShowStateChange(false)
-                    postSideEffect(SettingsSideEffect.ShowToastMessage)
-                }
+        onLogoutDialogShowStateChange(false)
+        userRepository.logout()
+            .onSuccess {
+                postSideEffect(SettingsSideEffect.NavigateToSignIn)
             }
-        }
+            .onFailure {
+                postSideEffect(SettingsSideEffect.ShowToastMessage)
+            }
     }
 
     fun onLogoutDialogShowStateChange(show: Boolean) = intent {
@@ -83,7 +73,7 @@ class SettingsViewModel @Inject constructor(
     }
 }
 
-sealed interface SettingsUiState{
+sealed interface SettingsUiState {
     data class User(
         val showLogOutDialog: Boolean = false
     ) : SettingsUiState

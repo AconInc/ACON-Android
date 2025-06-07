@@ -37,7 +37,7 @@ import com.acon.acon.core.designsystem.animation.defaultExitTransition
 import com.acon.acon.core.designsystem.animation.defaultPopEnterTransition
 import com.acon.acon.core.designsystem.animation.defaultPopExitTransition
 import com.acon.acon.core.designsystem.component.bottomsheet.LoginBottomSheet
-import com.acon.acon.core.designsystem.component.toast.AconToastPopup
+import com.acon.acon.core.designsystem.component.popup.AconToastPopup
 import com.acon.acon.core.designsystem.effect.LocalHazeState
 import com.acon.acon.core.designsystem.effect.defaultHazeEffect
 import com.acon.acon.core.designsystem.effect.rememberHazeState
@@ -144,6 +144,7 @@ fun AconNavigation(
                     hostState = snackbarHostState
                 ) { snackbarData: SnackbarData ->
                     AconToastPopup(
+                        minHeight = 56.dp,
                         shape = RoundedCornerShape(8.dp),
                         content = {
                             Text(

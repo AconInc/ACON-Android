@@ -3,6 +3,7 @@ package com.acon.acon.core.designsystem.component.tag
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
@@ -27,10 +28,11 @@ fun AconTag(
 ) {
     Row(
         modifier = modifier
+            .heightIn(min = 24.dp)
             .background(
                 color = backgroundColor,
                 shape = shape
-            ).padding(contentPadding),
+            ).padding(contentPadding)
     ) {
         Text(
             text = text,

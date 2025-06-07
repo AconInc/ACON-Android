@@ -1,7 +1,7 @@
 package com.acon.acon.feature.withdraw.type
 
 import androidx.annotation.StringRes
-import com.acon.acon.feature.settings.R
+import com.acon.acon.core.designsystem.R
 
 enum class DeleteReasonType(
     @StringRes val reason: Int,

@@ -12,51 +12,32 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.acon.acon.core.designsystem.theme.AconTheme
 
 @Composable
 fun AconRadioButton(
     selected: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    enabled: Boolean = true,
+    colors: AconRadioButtonColors = AconRadioButtonColors.DeleteAccountRadioButtonColors()
 ) {
-    val borderColor = if (enabled.not()) {
-        Color.Transparent
-    } else {
-        if (selected)
-            Color.Transparent
-        else AconTheme.color.Gray5
-    }
-
-    val containerColor = if (enabled.not()) {
-        AconTheme.color.Gray8
-    } else {
-        if (selected)
-            AconTheme.color.Main_org35
-        else AconTheme.color.Gray9
-    }
-
-    val contentColor = if (enabled.not()) {
-        AconTheme.color.Gray7
-    } else {
-        if (selected)
-            AconTheme.color.Main_org1
-        else Color.Transparent
-    }
+    val containerColor =
+        if (selected) colors.selectedContainerColor else colors.unselectedContainerColor
+    val contentColor = if (selected) colors.selectedContentColor else colors.unselectedContentColor
+    val borderColor = colors.borderColor
 
     Box(
         modifier = modifier
-            .size(22.dp)
+            .size(20.dp)
             .clip(CircleShape)
             .border(
                 shape = CircleShape,
                 width = 1.dp,
                 color = borderColor
-            ).background(containerColor).clickable {
+            )
+            .background(containerColor)
+            .clickable {
                 onClick()
             },
         contentAlignment = Alignment.Center
@@ -94,7 +75,6 @@ private fun AconSelectedRadioButtonPreview() {
 private fun AconDisabledRadioButtonPreview() {
     AconRadioButton(
         selected = false,
-        onClick = {},
-        enabled = false
+        onClick = {}
     )
 }

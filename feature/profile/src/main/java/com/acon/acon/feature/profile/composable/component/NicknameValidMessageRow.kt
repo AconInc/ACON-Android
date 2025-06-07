@@ -25,12 +25,13 @@ fun NicknameValidMessageRow(
 ){
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.padding(horizontal = 8.dp, vertical = 1.dp)
+        modifier = Modifier.padding(horizontal = 8.dp)
     ) {
         Icon(
             imageVector = ImageVector.vectorResource(iconRes),
             contentDescription = stringResource(validContentDescription),
-            tint = color
+            tint = color,
+            modifier = Modifier.padding(vertical = 1.dp)
         )
         Text(
             text = stringResource(validMessage),

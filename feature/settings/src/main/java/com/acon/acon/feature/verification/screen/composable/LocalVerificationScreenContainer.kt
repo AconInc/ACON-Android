@@ -3,7 +3,10 @@ package com.acon.acon.feature.verification.screen.composable
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.acon.acon.core.designsystem.R
+import com.acon.acon.core.utils.feature.toast.showToast
 import com.acon.acon.feature.verification.screen.LocalVerificationSideEffect
 import com.acon.acon.feature.verification.screen.LocalVerificationViewModel
 import org.orbitmvi.orbit.compose.collectAsState
@@ -17,6 +20,7 @@ fun LocalVerificationScreenContainer(
     navigateToAreaVerificationToEdit: (String) -> Unit = {},
     viewModel: LocalVerificationViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
     val state by viewModel.collectAsState()
 
     LocalVerificationScreen(
@@ -26,16 +30,22 @@ fun LocalVerificationScreenContainer(
         onclickAddArea = viewModel::onNavigateToAreaVerificationAdd,
         onclickEditArea = viewModel::onNavigateToAreaVerificationEdit,
         onDeleteVerifiedAreaChip = viewModel::deleteVerifiedArea,
-        onShowEditVerifiedAreaChipDialog = viewModel::onShowEditVerifiedAreaChipDialog,
-        onShowDeleteVerifiedAreaChipDialog = viewModel::onShowDeleteVerifiedAreaChipDialog,
+        onShowEditAreaDialog = viewModel::showEditAreaDialog,
+        onDismissEditAreaDialog = viewModel::dismissEditAreaDialog,
+        onDismissDeleteFailDialog = viewModel::dismissAreaDeleteFailDialog
     )
 
     viewModel.collectSideEffect {
-        when(it) {
+        when (it) {
+            is LocalVerificationSideEffect.ShowUnKnownErrorToast -> {
+                context.showToast(R.string.unknown_error)
+            }
+
             is LocalVerificationSideEffect.NavigateToSettingsScreen -> navigateToSettingsScreen()
             is LocalVerificationSideEffect.NavigateToAreaVerificationToAdd -> navigateToAreaVerificationToAdd()
-            is LocalVerificationSideEffect.NavigateToAreaVerificationToEdit -> navigateToAreaVerificationToEdit(it.area)
+            is LocalVerificationSideEffect.NavigateToAreaVerificationToEdit -> navigateToAreaVerificationToEdit(
+                it.area
+            )
         }
     }
-
 }

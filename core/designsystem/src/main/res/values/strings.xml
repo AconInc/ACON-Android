@@ -9,6 +9,7 @@
     <string name="exit">나가기</string>
     <string name="save">저장</string>
     <string name="select">선택</string>
+    <string name="submit">제출하기</string>
     <string name="continue_writing">계속 작성</string>
     <string name="title_spot">추천</string>
     <string name="title_upload">업로드</string>
@@ -16,13 +17,14 @@
     <string name="network_error_title">네트워크 연결에 문제가 발생했습니다</string>
     <string name="network_error_content">네트워크 연결상태를 확인하고\n다시 시도해주세요</string>
     <string name="network_retry">다시 시도하기</string>
-
+    <string name="unknown_error">알 수 없는 오류가 발생했습니다</string>
 
     <!-- Button component -->
     <string name="login_btn_preview_content">button</string>
     <string name="google_login_btn_description">구글 로그인 버튼</string>
     <string name="google_login_btn_content">Google로 계속하기</string>
     <string name="area_verification_btn_content">인증완료</string>
+    <string name="btn_change">변경하기</string>
 
     <!-- Content Description -->
     <string name="location_content_description">위치</string>
@@ -52,6 +54,7 @@
     <string name="content_description_duplicate_nickname">닉네임 중복</string>
     <string name="content_description_invalid_language">지원하지 않는 언어</string>
     <string name="content_description_invalid_birthday">잘못된 생년월일</string>
+    <string name="content_description_delete_area">인증 지역 삭제</string>
 
     <!-- login BottomSheet -->
     <string name="login_bottom_sheet_title">Acon에 로그인</string>
@@ -83,10 +86,9 @@
     <string name="photo_permission_alert_right_btn">설정으로 가기</string>
     <string name="profile_mod_exit_title">변경사항이 저장되지 않았습니다.</string>
     <string name="profile_mod_exit_content">지금 나가면 변경한 내용이 삭제돼요</string>
-
-    <string name="delete_area_alert_title">\'%s\'을 삭제할까요?</string>
-    <string name="delete_area_alert_left_btn">취소</string>
-    <string name="delete_area_alert_right_btn">삭제하기</string>
+    <string name="delete_area_dialog_fail_title">지역 삭제 불가</string>
+    <string name="delete_area_dialog_fail_content">인증한지 1주일이 지난 지역은\n3개월 간 삭제가 불가능해요.</string>
+    <string name="delete_area_dialog_edit_content">지역은 최소 1개 이상을 등록해야 해요.\n현재 설정된 지역을 변경할까요?</string>
 
     <!-- SpotList -->
     <string name="acorn_count_content_description">도토리 개수</string>
@@ -142,6 +144,7 @@
     <string name="store_tag_new">NEW</string>
     <string name="store_tag_local">LOCAL</string>
     <string name="store_tag_ranking">TOP %d</string>
+    <string name="over_max_acon_count">9999+</string>
 
     <!-- Upload -->
     <string name="close_upload">리뷰 그만두기</string>
@@ -207,4 +210,43 @@
     <string name="upload_photo_from_album">앨범에서 사진 업로드</string>
     <string name="set_default_profile_image">기본 이미지로 변경</string>
     <string name="selected_image">선택 이미지</string>
+
+    <!-- setting -->
+    <string name="settings_screen_topbar">설정</string>
+    <string name="settings_title_version_info">버전 정보</string>
+    <string name="settings_title_terms_and_policies">약관 및 정책</string>
+    <string name="settings_title_service_settings">서비스 설정</string>
+    <string name="settings_title_login_and_delete_account">로그인/탈퇴</string>
+    <string name="toast_logout_failed">로그아웃에 실패했습니다</string>-->
+    <string name="toast_delete_account_failed">서비스 탈퇴에 실패했습니다</string>
+    <string name="settings_section_current_version">현재 버전</string>
+    <string name="latest_version">최신버전</string>
+    <string name="do_update">업데이트 하기</string>
+    <string name="settings_section_term_of_use">이용약관</string>
+    <string name="settings_section_private_policy">개인정보처리방침</string>
+    <string name="settings_section_retry_onboarding">취향탐색 다시하기</string>
+    <string name="settings_section_verify_area">지역 인증하기</string>
+    <string name="settings_section_logout">로그아웃하기</string>
+    <string name="settings_section_delete_account">서비스 탈퇴</string>
+    <string name="logout_dialog_title">로그아웃 하시겠어요?</string>
+
+    <!-- Delete Account -->
+    <string name="settings_delete_account_topbar">서비스 탈퇴</string>
+    <string name="settings_delete_account_title">이별의 순간이 왔네요…\n떠나시려는 이유가 있을까요?</string>
+    <string name="settings_delete_account_content">지금까지 저희 서비스를 사용해주셔서 감사해요.\n마음에 들지 않았던 서비스에 대해 알려주시면\n더 성장해서 찾아올게요.</string>
+    <string name="reason_other_placeholder">탈퇴하려는 이유를 적어주세요</string>
+    <string name="delete_account_bottom_sheet_title">지금 탈퇴를 진행할까요?</string>
+    <string name="delete_account_bottom_sheet_content">탈퇴하면 취향정보, 리뷰 등\n모든 데이터는 영구적으로 삭제되며 복구할 수 없어요.</string>
+    <string name="delete_account_btn_content">아쉽지만 탈퇴하기</string>
+    <string name="reason_few_restaurants">다양한 맛집이 없어요</string>
+    <string name="reason_unsatisfied_recommendations">추천 결과가 만족스럽지 않아요</string>
+    <string name="reason_fake_reviews">거짓 리뷰를 봤어요</string>
+    <string name="reason_other">기타</string>
+    <string name="reason_max_length">50</string>
+
+    <!-- settings - AreaVerification-->
+    <string name="settings_area_verification_topbar">지역 인증</string>
+    <string name="settings_area_verification_title">인증 지역</string>
+    <string name="settings_area_verification_content">등록한 지 1주일 이내 지역은 수정이 가능하며 이후 3개월 동안 변경이 불가해요.</string>
+    <string name="settings_area_verification_add_area">지역 추가하기</string>
 </resources>

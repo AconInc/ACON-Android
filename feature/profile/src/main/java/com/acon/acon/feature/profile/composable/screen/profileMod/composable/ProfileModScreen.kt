@@ -58,7 +58,6 @@ import com.acon.acon.feature.profile.composable.type.NicknameValidationStatus
 import com.acon.acon.feature.profile.composable.type.contentDescriptionResId
 import com.acon.acon.feature.profile.composable.type.validMessageResId
 import com.acon.acon.feature.profile.composable.utils.BirthdayTransformation
-import com.acon.acon.feature.profile.composable.utils.limitedNicknameTextFieldValue
 import dev.chrisbanes.haze.hazeSource
 
 @Composable
@@ -105,10 +104,6 @@ internal fun ProfileModScreen(
                 stateSaver = TextFieldValue.Saver
             ) {
                 mutableStateOf(TextFieldValue(state.fetchedNickname))
-            }
-
-            val limitedTextFieldValue = remember(nicknameTextFieldValue) {
-                nicknameTextFieldValue.limitedNicknameTextFieldValue()
             }
 
             if (state.requestPhotoPermission) {
@@ -267,13 +262,14 @@ internal fun ProfileModScreen(
                                 status = state.nicknameFieldStatus,
                                 focusType = FocusType.Nickname,
                                 focusRequester = nickNameFocusRequester,
-                                value = limitedTextFieldValue,
+                                value = nicknameTextFieldValue,
                                 placeholder = stringResource(R.string.nickname_placeholder),
                                 isTyping = (state.nicknameValidationStatus == NicknameValidationStatus.Typing),
                                 onValueChange = { fieldValue ->
-                                    if (fieldValue.text.length <= 14) {
-                                        nicknameTextFieldValue = fieldValue
-                                        onNicknameChanged(fieldValue.text)
+                                    val lowerCaseText = fieldValue.text.lowercase()
+                                    if (lowerCaseText.length <= 14) {
+                                        nicknameTextFieldValue = fieldValue.copy(text = lowerCaseText)
+                                        onNicknameChanged(lowerCaseText)
                                     }
                                 },
                                 onFocusChanged = onFocusChanged,
@@ -291,40 +287,45 @@ internal fun ProfileModScreen(
                                     verticalArrangement = Arrangement.Top,
                                     horizontalAlignment = Alignment.Start
                                 ) {
-                                    when (state.nicknameValidationStatus) {
-                                        is NicknameValidationStatus.Empty -> {
-                                            NicknameValidMessageRow(
-                                                validMessage = R.string.nickname_error_empty,
-                                                iconRes = R.drawable.ic_error,
-                                                validContentDescription = R.string.content_description_empty_nickname,
-                                                color = AconTheme.color.Danger
-                                            )
-                                        }
+                                    Box(
+                                        Modifier.height(24.dp)
+                                    ) {
+                                        when (state.nicknameValidationStatus) {
+                                            is NicknameValidationStatus.Empty -> {
+                                                NicknameValidMessageRow(
+                                                    validMessage = R.string.nickname_error_empty,
+                                                    iconRes = R.drawable.ic_error,
+                                                    validContentDescription = R.string.content_description_empty_nickname,
+                                                    color = AconTheme.color.Danger
+                                                )
+                                            }
 
-                                        is NicknameValidationStatus.Error -> {
-                                            val validState = state.nicknameValidationStatus
-                                            NicknameValidMessageRow(
-                                                validMessage = validState.errorTypes.validMessageResId(),
-                                                iconRes = R.drawable.ic_error,
-                                                validContentDescription = validState.errorTypes.contentDescriptionResId(),
-                                                color = AconTheme.color.Danger
-                                            )
-                                        }
+                                            is NicknameValidationStatus.Error -> {
+                                                val validState = state.nicknameValidationStatus
+                                                NicknameValidMessageRow(
+                                                    validMessage = validState.errorTypes.validMessageResId(),
+                                                    iconRes = R.drawable.ic_error,
+                                                    validContentDescription = validState.errorTypes.contentDescriptionResId(),
+                                                    color = AconTheme.color.Danger
+                                                )
+                                            }
 
-                                        is NicknameValidationStatus.Valid -> {
-                                            NicknameValidMessageRow(
-                                                validMessage = R.string.nickname_valid,
-                                                iconRes = R.drawable.ic_valid,
-                                                validContentDescription = R.string.content_description_valid_nickname,
-                                                color = AconTheme.color.Success
-                                            )
-                                        }
+                                            is NicknameValidationStatus.Valid -> {
+                                                NicknameValidMessageRow(
+                                                    validMessage = R.string.nickname_valid,
+                                                    iconRes = R.drawable.ic_valid,
+                                                    validContentDescription = R.string.content_description_valid_nickname,
+                                                    color = AconTheme.color.Success
+                                                )
+                                            }
 
-                                        else -> Unit
+                                            else -> Unit
+                                        }
                                     }
                                 }
 
                                 Row(
+                                    modifier = Modifier.padding(top = 5.dp, end = 8.dp),
                                     horizontalArrangement = Arrangement.End
                                 ) {
                                     Text(
