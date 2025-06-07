@@ -108,6 +108,7 @@ fun AconNavigation(
                         socialRepository.googleLogin()
                             .onSuccess {
                                 if (it.hasVerifiedArea) {
+                                    userRepository.updateLocalVerificationType(true)
                                     showLoginBottomSheet = false
                                     navController.navigate(SpotRoute.SpotList) {
                                         popUpTo<AreaVerificationRoute.Graph> {
@@ -115,6 +116,7 @@ fun AconNavigation(
                                         }
                                     }
                                 } else {
+                                    userRepository.updateLocalVerificationType(false)
                                     showLoginBottomSheet = false
                                     navController.navigate(
                                         AreaVerificationRoute.AreaVerification(
