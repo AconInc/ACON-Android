@@ -28,6 +28,7 @@
 
     <!-- Content Description -->
     <string name="splash_animation_content_description">스플래시 애니메이션</string>
+    <string name="splash_image_content_description">스플래시 이미지</string>
     <string name="location_content_description">위치</string>
     <string name="map_content_description">지도</string>
     <string name="dismiss_content_description">닫기</string>
