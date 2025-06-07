@@ -4,12 +4,14 @@ import android.app.Activity
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
@@ -22,18 +24,22 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.button.AconGoogleLoginButton
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.feature.signin.R
 import com.acon.acon.feature.signin.amplitude.amplitudeSignIn
 import com.acon.acon.feature.signin.screen.component.SignInTopBar
+import com.acon.acon.feature.signin.utils.SplashAudioManager
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
@@ -52,60 +58,87 @@ fun SignInScreen(
     val context = LocalContext.current
     val activity = context as? Activity
 
-    BackHandler(enabled = true) { activity?.finish() }
+    val splashAudioManager = remember { SplashAudioManager(context) }
+
+    val configuration = LocalConfiguration.current
+    val screenWidth = configuration.screenWidthDp
+    val screenHeight = configuration.screenHeightDp
+    val lottieTopPadding = ((screenHeight * 0.25f) - 52).coerceAtLeast(0f).dp
+
+    BackHandler(enabled = true) {
+        activity?.finishAffinity()
+    }
 
     when(state) {
         is SignInUiState.Loading -> {
             Column(
                 modifier = modifier
-                    .background(AconTheme.color.Gray9),
+                    .background(AconTheme.color.Gray900)
+                    .navigationBarsPadding(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                var isEndShowImage by remember { mutableStateOf(false) }
+
                 val composition by rememberLottieComposition(
-                    LottieCompositionSpec.Asset("acon_splash_lottie.json")
+                    LottieCompositionSpec.Asset("acon_splash_lottie_json_v2.json")
                 )
-                var startAnimation by remember { mutableStateOf(false) }
-                LaunchedEffect(Unit) {
-                    delay(1000)
-                    startAnimation = true
-                }
-                val logoAnimationState = animateLottieCompositionAsState(
-                    composition = if (startAnimation) composition else null
-                )
+                val logoAnimationState = animateLottieCompositionAsState(composition = composition)
+
                 val alpha by animateFloatAsState(
-                    targetValue = if (logoAnimationState.value >= .99f) 1f else 0f,
-                    animationSpec = tween(1000),
-                    label = stringResource(R.string.splash_text_animation_label)
+                    targetValue = if (isEndShowImage && logoAnimationState.value >= .99f) 1f else 0f,
+                    animationSpec = tween(400),
+                    label = stringResource(R.string.splash_animation_content_description)
                 )
+
+                LaunchedEffect(logoAnimationState.isPlaying) {
+                    if (logoAnimationState.isPlaying) {
+                        delay(900)
+                        isEndShowImage = true
+                    }
+                }
+
+                LaunchedEffect(logoAnimationState.isPlaying) {
+                    if (logoAnimationState.isPlaying) {
+                        splashAudioManager.playSplashSoundIfAllowed()
+                    } else {
+                        splashAudioManager.release()
+                    }
+                }
 
                 SignInTopBar(
                     modifier = Modifier
                         .padding(top = 42.dp)
                         .alpha(alpha),
-                    onClickText = { if (alpha >= 0.75f) navigateToSpotListView() }
+                    onClickText = {
+                        if (alpha >= 0.75f) {
+                            navigateToSpotListView()
+                        }
+                    }
                 )
 
-                Box(
+                Spacer(modifier = Modifier.height(lottieTopPadding))
+                LottieAnimation(
+                    composition = composition,
+                    progress = {
+                        logoAnimationState.progress
+                    },
                     modifier = Modifier
-                        .fillMaxSize()
-                        .weight(1f)
-                        .padding(bottom = 200.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    LottieAnimation(
-                        composition = composition,
-                        progress = {
-                            logoAnimationState.progress
-                        },
-                        modifier = Modifier
-                            .width(width = 320.dp)
+                        .width(width = (screenWidth * (240f / 360f)).dp)
+                )
+
+                Spacer(Modifier.height(60.dp))
+                if (isEndShowImage) {
+                    Image(
+                        painter = painterResource(R.drawable.ic_splash_shadow),
+                        contentDescription = stringResource(R.string.splash_animation_content_description),
                     )
                 }
 
+                Spacer(Modifier.weight(1f))
                 AconGoogleLoginButton(
                     modifier = Modifier
+                        .fillMaxWidth()
                         .padding(horizontal = 20.dp)
-                        .padding(top = 16.dp)
                         .alpha(alpha),
                     onClick = {
                         if (alpha >= 0.75f) {
@@ -114,39 +147,53 @@ fun SignInScreen(
                         }
                     }
                 )
+
+                Spacer(Modifier.height(24.dp))
                 Text(
                     text = stringResource(R.string.signin_policy),
-                    style = AconTheme.typography.body2_14_reg,
-                    color = AconTheme.color.Gray3,
+                    style = AconTheme.typography.Caption1,
+                    color = AconTheme.color.White,
                     textAlign = TextAlign.Center,
                     modifier = Modifier
-                        .padding(horizontal = 24.dp, vertical = 8.dp)
+                        .padding(horizontal = 20.dp)
                         .alpha(alpha)
                 )
+
                 Row(
                     modifier = Modifier
-                        .padding(bottom = 76.dp),
+                        .padding(top = 2.dp, bottom = 32.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
                         text = stringResource(R.string.signin_terms_of_service),
-                        style = AconTheme.typography.body2_14_reg,
-                        color = AconTheme.color.Gray5,
+                        color = AconTheme.color.White,
+                        style = AconTheme.typography.Caption1,
+                        fontWeight = FontWeight.SemiBold,
                         textAlign = TextAlign.Center,
                         textDecoration = TextDecoration.Underline,
                         modifier = Modifier
-                            .noRippleClickable { if (alpha >= 0.75f) onClickTermsOfUse() }
+                            .noRippleClickable {
+                                if (alpha >= 0.75f) {
+                                    onClickTermsOfUse()
+                                }
+                            }
                             .alpha(alpha)
                     )
+
                     Spacer(modifier = Modifier.width(16.dp))
                     Text(
                         text = stringResource(R.string.signin_privacy_policy),
-                        style = AconTheme.typography.body2_14_reg,
-                        color = AconTheme.color.Gray5,
+                        color = AconTheme.color.White,
+                        style = AconTheme.typography.Caption1,
+                        fontWeight = FontWeight.SemiBold,
                         textAlign = TextAlign.Center,
                         textDecoration = TextDecoration.Underline,
                         modifier = Modifier
-                            .noRippleClickable { if (alpha >= 0.75f) onClickPrivacyPolicy() }
+                            .noRippleClickable {
+                                if (alpha >= 0.75f) {
+                                    onClickPrivacyPolicy()
+                                }
+                            }
                             .alpha(alpha)
                     )
                 }
