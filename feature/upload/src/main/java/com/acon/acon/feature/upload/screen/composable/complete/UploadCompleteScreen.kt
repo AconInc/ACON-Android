@@ -3,20 +3,17 @@ package com.acon.acon.feature.upload.screen.composable.complete
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.button.v2.AconFilledTextButton
@@ -24,9 +21,6 @@ import com.acon.acon.core.designsystem.theme.AconTheme
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.rememberLottieComposition
-import kotlinx.coroutines.delay
-
-private const val SCREEN_CLOSE_SECONDS = 300
 
 @Composable
 internal fun UploadCompleteScreen(
@@ -44,7 +38,6 @@ internal fun UploadCompleteScreen(
     } else {
         spotName
     }
-    var closeInSeconds by remember { mutableIntStateOf(SCREEN_CLOSE_SECONDS) }
 
     Column(
         modifier = modifier,
@@ -65,23 +58,17 @@ internal fun UploadCompleteScreen(
             fontWeight = FontWeight.W400,
             modifier = Modifier.padding(top = 12.dp)
         )
-            LottieAnimation(
-                composition = rememberLottieComposition(
-                    spec = LottieCompositionSpec.RawRes(R.raw.upload_success)
-                ).value,
-                modifier = Modifier
-                    .padding(top = 54.dp)
-                    .fillMaxWidth(.8f),
-                iterations = 1,
-                isPlaying = true
-            )
-        Spacer(Modifier.weight(1f))
-        Text(
-            text = stringResource(R.string.tab_closed_in_seconds, closeInSeconds),
-            style = AconTheme.typography.Body1,
-            color = AconTheme.color.Gray500,
-            fontWeight = FontWeight.W400,
+        LottieAnimation(
+            composition = rememberLottieComposition(
+                spec = LottieCompositionSpec.RawRes(R.raw.upload_success)
+            ).value,
+            modifier = Modifier
+                .padding(top = 54.dp)
+                .fillMaxWidth(.8f),
+            iterations = 1,
+            isPlaying = true
         )
+        Spacer(Modifier.weight(1f))
         AconFilledTextButton(
             text = stringResource(R.string.done),
             onClick = onComplete,
@@ -90,12 +77,14 @@ internal fun UploadCompleteScreen(
                 .padding(horizontal = 16.dp, vertical = 16.dp),
         )
     }
+}
 
-    LaunchedEffect(Unit) {
-        while (closeInSeconds > 0) {
-            delay(1_000)
-            --closeInSeconds
-        }
-        onComplete()
-    }
+@Composable
+@Preview
+private fun UploadCompleteScreenPreview() {
+    UploadCompleteScreen(
+        spotName = "장소명",
+        onComplete = {},
+        modifier = Modifier.fillMaxSize()
+    )
 }

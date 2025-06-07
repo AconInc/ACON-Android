@@ -35,21 +35,21 @@ import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.rememberLottieComposition
 
-private const val MAX_DOTORI_COUNT = 5
+private const val MAX_ACORN_COUNT = 5
 
 @Composable
 internal fun UploadReviewScreen(
     state: UploadReviewUiState,
     onBackAction: () -> Unit,
     onCompleteAction: () -> Unit,
-    onDotoriClick: (count: Int) -> Unit,
+    onAcornClick: (count: Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     require(state is UploadReviewUiState.Success)
 
     val isCompleteButtonEnabled by remember(state) {
         derivedStateOf {
-            state.selectedDotoriCount in 1..MAX_DOTORI_COUNT
+            state.selectedAcornCount in 1..MAX_ACORN_COUNT
         }
     }
 
@@ -83,7 +83,7 @@ internal fun UploadReviewScreen(
         }
 
         Text(
-            text = stringResource(R.string.introduce_drop_dotori),
+            text = stringResource(R.string.introduce_drop_acorn),
             style = AconTheme.typography.Title2,
             color = AconTheme.color.White,
             fontWeight = FontWeight.SemiBold,
@@ -91,18 +91,18 @@ internal fun UploadReviewScreen(
         )
 
         Row(modifier = Modifier.padding(top = 24.dp)) {
-            for(i in 1..MAX_DOTORI_COUNT) {
-                DotoriIndicator(
-                    isSelected = state.selectedDotoriCount >= i,
+            for(i in 1..MAX_ACORN_COUNT) {
+                AcornIndicator(
+                    isSelected = state.selectedAcornCount >= i,
                     onClick = {
-                        onDotoriClick(i)
+                        onAcornClick(i)
                     },
                 )
             }
         }
 
         Text(
-            text = stringResource(R.string.introduce_click_dotori),
+            text = stringResource(R.string.introduce_click_acorn),
             style = AconTheme.typography.Body1,
             color = AconTheme.color.Gray500,
             fontWeight = FontWeight.W400,
@@ -110,7 +110,7 @@ internal fun UploadReviewScreen(
         )
 
         Text(
-            text = "${state.selectedDotoriCount}/$MAX_DOTORI_COUNT",
+            text = "${state.selectedAcornCount}/$MAX_ACORN_COUNT",
             style = AconTheme.typography.Body1,
             color = AconTheme.color.Gray500,
             fontWeight = FontWeight.SemiBold,
@@ -125,12 +125,12 @@ internal fun UploadReviewScreen(
             contentAlignment = Alignment.Center
         ) {
 
-            when(state.selectedDotoriCount) {
-                1 -> DotoriLottieAnimation(1)
-                2 -> DotoriLottieAnimation(2)
-                3 -> DotoriLottieAnimation(3)
-                4 -> DotoriLottieAnimation(4)
-                5 -> DotoriLottieAnimation(5)
+            when(state.selectedAcornCount) {
+                1 -> AcornLottieAnimation(1)
+                2 -> AcornLottieAnimation(2)
+                3 -> AcornLottieAnimation(3)
+                4 -> AcornLottieAnimation(4)
+                5 -> AcornLottieAnimation(5)
             }
         }
 
@@ -143,7 +143,7 @@ internal fun UploadReviewScreen(
                     .fillMaxHeight()
                     .width(150.dp)
                     .then(
-                        if (state.selectedDotoriCount > 0) Modifier.fogBackground(
+                        if (state.selectedAcornCount > 0) Modifier.fogBackground(
                             glowColor = AconTheme.color.PrimaryDefault,
                             glowAlpha = .4f,
                             glowRadius = 300f
@@ -152,7 +152,7 @@ internal fun UploadReviewScreen(
             )
 
             AconFilledTextButton(
-                text = stringResource(R.string.complete_drop_dotori),
+                text = stringResource(R.string.complete_drop_acorn),
                 onClick = onCompleteAction,
                 enabled = isCompleteButtonEnabled,
                 modifier = Modifier
@@ -164,18 +164,18 @@ internal fun UploadReviewScreen(
 }
 
 @Composable
-private fun DotoriLottieAnimation(
-    dotoriCount: Int,
+private fun AcornLottieAnimation(
+    acornCount: Int,
 ) {
     LottieAnimation(
         composition = rememberLottieComposition(
             spec = LottieCompositionSpec.RawRes(
-                when (dotoriCount) {
-                    1 -> R.raw.dotori1
-                    2 -> R.raw.dotori2
-                    3 -> R.raw.dotori3
-                    4 -> R.raw.dotori4
-                    5 -> R.raw.dotori5
+                when (acornCount) {
+                    1 -> R.raw.acorn1
+                    2 -> R.raw.acorn2
+                    3 -> R.raw.acorn3
+                    4 -> R.raw.acorn4
+                    5 -> R.raw.acorn5
                     else -> 0
                 }
             )

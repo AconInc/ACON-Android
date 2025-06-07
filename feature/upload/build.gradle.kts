@@ -16,6 +16,7 @@ dependencies {
     implementation(projects.core.designsystem)
     implementation(projects.core.utils.feature)
     implementation(projects.core.map)
+    implementation(projects.core.common)
     implementation(projects.feature.common)
 
     implementation(libs.lottie.compose)

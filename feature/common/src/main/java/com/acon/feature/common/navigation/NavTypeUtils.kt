@@ -2,13 +2,13 @@ package com.acon.feature.common.navigation
 
 import android.os.Bundle
 import androidx.navigation.NavType
-import com.acon.acon.domain.model.upload.v2.SearchedSpot
+import com.acon.acon.domain.model.spot.SimpleSpot
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlin.reflect.typeOf
 
-val searchedSpotNavType by lazy {
-    typeOf<SearchedSpot>() to createNavType<SearchedSpot>()
+val simpleSpotNavType by lazy {
+    typeOf<SimpleSpot>() to createNavType<SimpleSpot>()
 }
 
 inline fun <reified T : Any> createNavType(

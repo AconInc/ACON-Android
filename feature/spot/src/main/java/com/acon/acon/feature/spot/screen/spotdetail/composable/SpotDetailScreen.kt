@@ -159,7 +159,7 @@ internal fun SpotDetailScreen(
                         ) {
                             Image(
                                 imageVector = ImageVector.vectorResource(R.drawable.acon_line),
-                                contentDescription = stringResource(R.string.dotori_count_content_description),
+                                contentDescription = stringResource(R.string.acorn_count_content_description),
                                 modifier = Modifier.size(36.dp)
                             )
 
@@ -221,7 +221,7 @@ internal fun SpotDetailScreen(
                         Spacer(Modifier.weight(1f))
                         Icon(
                             imageVector = ImageVector.vectorResource(R.drawable.acon_line),
-                            contentDescription = stringResource(R.string.dotori_count_content_description),
+                            contentDescription = stringResource(R.string.acorn_count_content_description),
                             tint = AconTheme.color.Gray50
                         )
 
