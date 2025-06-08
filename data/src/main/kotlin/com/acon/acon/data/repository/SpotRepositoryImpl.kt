@@ -7,14 +7,14 @@ import com.acon.acon.data.dto.request.RecentNavigationLocationRequest
 import com.acon.acon.data.dto.request.SpotListRequest
 import com.acon.acon.data.error.runCatchingWith
 import com.acon.acon.domain.error.area.GetLegalDongError
+import com.acon.acon.domain.error.spot.FetchMenuBoardsError
 import com.acon.acon.domain.error.spot.FetchRecentNavigationLocationError
 import com.acon.acon.domain.error.spot.FetchSpotListError
 import com.acon.acon.domain.error.spot.GetSpotDetailInfoError
-import com.acon.acon.domain.error.spot.GetSpotMenuListError
 import com.acon.acon.domain.model.area.LegalArea
 import com.acon.acon.domain.model.spot.Condition
+import com.acon.acon.domain.model.spot.MenuBoardList
 import com.acon.acon.domain.model.spot.SpotDetailInfo
-import com.acon.acon.domain.model.spot.SpotDetailMenu
 import com.acon.acon.domain.model.spot.v2.SpotList
 import com.acon.acon.domain.repository.SpotRepository
 import javax.inject.Inject
@@ -65,18 +65,17 @@ class SpotRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getSpotMenuList(
-        spotId: Long
-    ): Result<List<SpotDetailMenu>> {
-        return runCatchingWith(*GetSpotMenuListError.createErrorInstances()) {
-            spotRemoteDataSource.getSpotMenuList(spotId).menuList.map { it.toSpotDetailMenu() }
-        }
-    }
-
     override suspend fun getLegalDong(latitude: Double, longitude: Double): Result<LegalArea> {
         return runCatchingWith(*GetLegalDongError.createErrorInstances()) {
             spotRemoteDataSource.getLegalDong(latitude, longitude).toLegalArea()
         }
     }
 
+    override suspend fun fetchMenuBoards(
+        spotId: Long
+    ): Result<MenuBoardList> {
+        return runCatchingWith(*FetchMenuBoardsError.createErrorInstances()) {
+            spotRemoteDataSource.fetchMenuBoards(spotId).toMenuBoardList()
+        }
+    }
 }

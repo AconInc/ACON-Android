@@ -4,11 +4,10 @@ import android.location.Location
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
-import com.acon.feature.common.base.BaseContainerHost
 import com.acon.acon.domain.model.spot.SpotDetailInfo
-import com.acon.acon.domain.model.spot.SpotDetailMenu
 import com.acon.acon.domain.repository.SpotRepository
 import com.acon.acon.feature.spot.SpotRoute
+import com.acon.feature.common.base.BaseContainerHost
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import org.orbitmvi.orbit.annotation.OrbitExperimental
@@ -30,28 +29,47 @@ class SpotDetailViewModel @Inject constructor(
             val spotDetailInfoDeferred = viewModelScope.async {
                 spotRepository.getSpotDetailInfo(spotId)
             }
-            val spotDetailMenuDeferred = viewModelScope.async {
-                spotRepository.getSpotMenuList(spotId)
-            }
 
             val spotDetailInfoResult = spotDetailInfoDeferred.await()
-            val spotDetailMenuResult = spotDetailMenuDeferred.await()
-
+            fetchMenuBoardList() //TODO - 장소 상세 api 배포되면 위치 수정
             reduce {
                 if (spotDetailInfoResult.getOrNull() == null) {
-                    SpotDetailUiState.LoadFailed
-                }
-                else if (spotDetailMenuResult.getOrNull() == null) {
                     SpotDetailUiState.LoadFailed
                 }
                 else {
                     SpotDetailUiState.Success(
                         spotDetailInfo = spotDetailInfoResult.getOrNull()!!,
-                        spotDetailMenuList = spotDetailMenuResult.getOrNull()!!
                     )
                 }
             }
         }
+
+    fun fetchMenuBoardList() = intent {
+        runOn<SpotDetailUiState.Success> {
+            // TODO - SpotDetailInfo -> hasMenuboardImage == true/false
+            if(true) {
+                spotRepository.fetchMenuBoards(spotId).onSuccess {
+                    reduce {
+                        state.copy(
+                            menuBoardList = it.menuBoardImageList,
+                            menuBoardListLoad = true
+                        )
+                    }
+                }.onFailure {
+                    // TODO - 메뉴 이미지 로딩 실패 UI
+                    reduce {
+                        state.copy(menuBoardListLoad = false)
+                    }
+                }
+            } else {
+                reduce {
+                    state.copy(
+                        menuBoardList = emptyList()
+                    )
+                }
+            }
+        }
+    }
 
     fun fetchRecentNavigationLocation() = intent {
         spotRepository.fetchRecentNavigationLocation(1).onSuccess {
@@ -138,7 +156,8 @@ sealed interface SpotDetailUiState {
     @Immutable
     data class Success(
         val spotDetailInfo: SpotDetailInfo,
-        val spotDetailMenuList: List<SpotDetailMenu>,
+        val menuBoardList: List<String> = emptyList(),
+        val menuBoardListLoad: Boolean = false,
         val showMenuBoardDialog: Boolean = false,
         val showReportErrorModal: Boolean = false,
         val showFindWayModal: Boolean = false
