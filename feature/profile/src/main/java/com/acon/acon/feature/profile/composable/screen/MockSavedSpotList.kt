@@ -8,7 +8,7 @@ data class MockSavedSpot(
     val name: String
 )
 
-val mockSpotList = immutableListOf(
+internal val mockSpotList = immutableListOf(
     MockSavedSpot(
         id = 1,
         image = "https://acon-bucket.s3.ap-northeast-2.amazonaws.com/members/profile-images/e6547003-b4df-42fe-9275-9d9c5a008e79.jpg",
