@@ -8,8 +8,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.acon.acon.core.common.UrlConstants
 import com.acon.acon.core.designsystem.R
-import com.acon.acon.core.utils.feature.constants.AppURL
 import com.acon.acon.core.utils.feature.toast.showToast
 import com.acon.acon.domain.repository.SocialRepository
 import org.orbitmvi.orbit.compose.collectAsState
@@ -44,16 +44,15 @@ fun SignInScreenContainer(
             is SignInSideEffect.NavigateToSpotListView -> { navigateToSpotListView() }
             is SignInSideEffect.NavigateToAreaVerification -> { navigateToAreaVerification() }
             is SignInSideEffect.OnClickTermsOfUse -> {
-                val url = AppURL.TERM_OF_USE
+                val url = UrlConstants.TERM_OF_USE
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
                 context.startActivity(intent)
             }
             is SignInSideEffect.OnClickPrivacyPolicy -> {
-                val url = AppURL.PRIVATE_POLICY
+                val url = UrlConstants.PRIVATE_POLICY
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
                 context.startActivity(intent)
             }
         }
     }
-
 }

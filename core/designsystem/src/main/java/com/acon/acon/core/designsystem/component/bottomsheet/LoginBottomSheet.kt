@@ -22,6 +22,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.acon.acon.core.common.UrlConstants
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.button.AconGoogleLoginButton
 import com.acon.acon.core.designsystem.theme.AconTheme
@@ -82,8 +83,7 @@ fun LoginBottomSheet(
                     color = AconTheme.color.White,
                     textDecoration = TextDecoration.Underline,
                     modifier = Modifier.clickable {
-                        val url = "https://stripe-shoemaker-907.notion.site/1e1856d5371b8014aaf5eec52d0442f3"
-                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(UrlConstants.TERM_OF_USE))
                         context.startActivity(intent)
                     }
                 )
@@ -94,8 +94,7 @@ fun LoginBottomSheet(
                     color = AconTheme.color.White,
                     textDecoration = TextDecoration.Underline,
                     modifier = Modifier.clickable {
-                        val url = "https://stripe-shoemaker-907.notion.site/1e1856d5371b8017b22bd1a0dad59228"
-                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(UrlConstants.PRIVATE_POLICY))
                         context.startActivity(intent)
                     }
                 )

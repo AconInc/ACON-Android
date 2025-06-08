@@ -30,7 +30,7 @@ import com.acon.acon.core.utils.feature.action.BackOnPressed
 
 @Composable
 internal fun AreaVerificationScreen(
-    state: AreaVerificationHomeUiState,
+    state: AreaVerificationUiState,
     route: String,
     onNextButtonClick: () -> Unit,
     onPermissionSettingClick: () -> Unit,
@@ -108,7 +108,7 @@ internal fun AreaVerificationScreen(
 private fun AreaVerificationHomeScreenPreview() {
     AconTheme {
         AreaVerificationScreen(
-            state = AreaVerificationHomeUiState(),
+            state = AreaVerificationUiState(),
             route = "",
             onPermissionSettingClick = {},
             onNextButtonClick = {}

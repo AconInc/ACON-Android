@@ -16,6 +16,7 @@ import com.acon.acon.domain.repository.SocialRepository
 import com.acon.acon.feature.SettingsRoute
 import com.acon.acon.feature.areaverification.AreaVerificationRoute
 import com.acon.acon.feature.profile.composable.ProfileRoute
+import com.acon.acon.feature.profile.composable.screen.bookmark.composable.BookmarkScreenContainer
 import com.acon.acon.feature.profile.composable.screen.galleryGrid.composable.GalleryGridContainer
 import com.acon.acon.feature.profile.composable.screen.galleryList.composable.GalleryListContainer
 import com.acon.acon.feature.profile.composable.screen.photoCrop.composable.PhotoCropContainer
@@ -28,7 +29,6 @@ internal fun NavGraphBuilder.profileNavigation(
     socialRepository: SocialRepository,
     snackbarHostState: SnackbarHostState
 ) {
-
     navigation<ProfileRoute.Graph>(
         startDestination = ProfileRoute.Profile,
         enterTransition = { EnterTransition.None },
@@ -39,6 +39,9 @@ internal fun NavGraphBuilder.profileNavigation(
                 socialRepository = socialRepository,
                 snackbarHostState = snackbarHostState,
                 modifier = Modifier.fillMaxSize(),
+                onNavigateToBookMark = {
+                    navController.navigate(ProfileRoute.Bookmark)
+                },
                 onNavigateToSpotListScreen = {
                     navController.navigate(SpotRoute.SpotList) {
                         popUpTo(ProfileRoute.Graph) {
@@ -81,6 +84,18 @@ internal fun NavGraphBuilder.profileNavigation(
                 },
                 onNavigateToCustomGallery = {
                     navController.navigate(ProfileRoute.GalleryList)
+                }
+            )
+        }
+
+        composable<ProfileRoute.Bookmark> {
+            BookmarkScreenContainer(
+                modifier = Modifier.fillMaxSize(),
+                onNavigateToBack = {
+                    navController.popBackStack()
+                },
+                onNavigateToSpotDetailScreen = {
+                    // TODO - 장소상세로 이동
                 }
             )
         }

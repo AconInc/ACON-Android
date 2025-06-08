@@ -5,7 +5,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.net.Uri
-import com.acon.acon.core.utils.feature.constants.AppURL
+import com.acon.acon.core.common.UrlConstants
 
 internal fun openNaverMap(
     context: Context,
@@ -14,7 +14,7 @@ internal fun openNaverMap(
     destinationLng: Double,
     destinationName: String
 ) {
-    val url = AppURL.getNaverMapRouteURL(
+    val url = UrlConstants.getNaverMapRouteURL(
         location.latitude, location.longitude,
         destinationLat, destinationLng, destinationName
     )
@@ -29,7 +29,7 @@ internal fun openNaverMap(
     if (resolveInfoList.isEmpty()) {
         val playStoreIntent = Intent(
             Intent.ACTION_VIEW,
-            Uri.parse(AppURL.NAVER_MAP)
+            Uri.parse(UrlConstants.NAVER_MAP)
         )
         context.startActivity(playStoreIntent)
     } else {

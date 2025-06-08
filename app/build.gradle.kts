@@ -47,6 +47,7 @@ dependencies {
     implementation(projects.feature.settings)
     implementation(projects.feature.profile)
 
+    implementation(libs.google.services.ads)
     implementation(libs.play.services.location)
 
     implementation(libs.androidx.core.splashscreen)

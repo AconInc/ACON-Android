@@ -27,6 +27,8 @@ import com.acon.acon.domain.repository.SocialRepository
 import com.acon.acon.domain.repository.UserRepository
 import com.acon.acon.navigation.AconNavigation
 import com.acon.feature.common.compose.LocalLocation
+import com.google.android.gms.ads.MobileAds
+import com.google.android.gms.ads.RequestConfiguration
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -105,6 +107,11 @@ class MainActivity : ComponentActivity() {
             installSplashScreen()
         }
         super.onCreate(savedInstanceState)
+
+        // TODO - 현재 기기를 테스트 디바이스로 등록 -> 테스트 광고 노출
+        val testDevices = listOf("559854319F9393CE36A962FE0E09E02B", "2470BB3FFC6EB2D0A79866A27F78FBCD")
+        val configuration = RequestConfiguration.Builder().setTestDeviceIds(testDevices).build()
+        MobileAds.setRequestConfiguration(configuration)
 
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
