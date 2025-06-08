@@ -210,7 +210,6 @@
     <string name="max_nickname_count">/14</string>
     <string name="nickname_textfield_title">닉네임</string>
     <string name="nickname_birthday_title">생년월일</string>
-    <string name="nickname_placeholder">닉네임을 입력해주세요.</string>
     <string name="birthday_placeholder">2025.01.01</string>
     <string name="nickname_valid">사용할 수 있는 닉네임이에요.</string>
     <string name="nickname_error_empty">닉네임을 입력해주세요.</string>

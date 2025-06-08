@@ -262,7 +262,6 @@ internal fun ProfileModScreen(
                                 focusType = FocusType.Nickname,
                                 focusRequester = nickNameFocusRequester,
                                 value = nicknameTextFieldValue,
-                                placeholder = stringResource(R.string.nickname_placeholder),
                                 isTyping = (state.nicknameValidationStatus == NicknameValidationStatus.Typing),
                                 onValueChange = { fieldValue ->
                                     val lowerCaseText = fieldValue.text.lowercase()
