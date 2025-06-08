@@ -5,15 +5,17 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -53,9 +55,9 @@ fun BookmarkScreen(
         BookmarkUiState.Loading -> {
             Box(
                 modifier = modifier
-                    .fillMaxSize()
                     .background(AconTheme.color.Gray900)
                     .statusBarsPadding()
+                    .fillMaxSize()
             ) {
                 AconTopBar(
                     paddingValues = PaddingValues(0.dp),
@@ -93,34 +95,39 @@ fun BookmarkScreen(
                         .padding(top = 72.dp)
                         .padding(horizontal = 16.dp)
                         .navigationBarsPadding()
+                        .verticalScroll(rememberScrollState())
                         .hazeSource(LocalHazeState.current)
                 ) {
-                    LazyVerticalGrid(
-                        columns = GridCells.Fixed(2),
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        items(
-                           mockSpotList
-                        ) { spot ->
-                            BookmarkSkeletonItem(
-                                skeletonHeight = skeletonHeight,
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .aspectRatio(160f / 231f)
-                            )
+                    mockSpotList.chunked(2).forEach { rowItems ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 8.dp),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            rowItems.forEach { spot ->
+                                BookmarkSkeletonItem(
+                                    skeletonHeight = skeletonHeight,
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .aspectRatio(160f / 231f)
+                                )
+                            }
+                            if (rowItems.size < 2) {
+                                Spacer(modifier = Modifier.weight(1f))
+                            }
                         }
                     }
+                    Spacer(modifier = Modifier.height(16.dp))
                 }
             }
         }
         BookmarkUiState.Success -> {
             Box(
                 modifier = modifier
-                    .fillMaxSize()
                     .background(AconTheme.color.Gray900)
                     .statusBarsPadding()
+                    .fillMaxSize()
             ) {
                 AconTopBar(
                     paddingValues = PaddingValues(0.dp),
@@ -158,26 +165,31 @@ fun BookmarkScreen(
                         .padding(top = 72.dp)
                         .padding(horizontal = 16.dp)
                         .navigationBarsPadding()
+                        .verticalScroll(rememberScrollState())
                         .hazeSource(LocalHazeState.current)
                 ) {
-                    LazyVerticalGrid(
-                        columns = GridCells.Fixed(2),
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        items(
-                            mockSpotList
-                        ) { spot ->
-                            BookmarkItem(
-                                spot = spot,
-                                onClickSpotItem = { onSpotClick(1) },
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .aspectRatio(160f / 231f)
-                            )
+                    mockSpotList.chunked(2).forEach { rowItems ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 8.dp),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            rowItems.forEach { spot ->
+                                BookmarkItem(
+                                    spot = spot,
+                                    onClickSpotItem = { onSpotClick(1) },
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .aspectRatio(160f / 231f)
+                                )
+                            }
+                            if (rowItems.size < 2) {
+                                Spacer(modifier = Modifier.weight(1f))
+                            }
                         }
                     }
+                    Spacer(modifier = Modifier.height(16.dp))
                 }
             }
         }
