@@ -98,8 +98,8 @@ internal fun NavGraphBuilder.profileNavigation(
                     navController.popBackStack()
                 },
                 onNavigateToSpotDetailScreen = {
-                    // TODO - 장소상세로 이동
-                }
+                    navController.navigate(SpotRoute.SpotDetail(it))
+                },
             )
         }
 

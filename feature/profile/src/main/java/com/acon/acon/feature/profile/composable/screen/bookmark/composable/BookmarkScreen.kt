@@ -32,6 +32,7 @@ import com.acon.acon.core.designsystem.component.topbar.AconTopBar
 import com.acon.acon.core.designsystem.effect.LocalHazeState
 import com.acon.acon.core.designsystem.effect.defaultHazeEffect
 import com.acon.acon.core.designsystem.effect.imageGradientLayer
+import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.feature.profile.composable.screen.bookmark.BookmarkUiState
 import com.acon.acon.feature.profile.composable.screen.mockSpotList
@@ -43,7 +44,7 @@ import dev.chrisbanes.haze.hazeSource
 fun BookmarkScreen(
     state: BookmarkUiState,
     modifier: Modifier = Modifier,
-    onSpotClick: () -> Unit = {},
+    onSpotClick: (Long) -> Unit = {},
     onNavigateToBack: () -> Unit = {}
 ) {
     val configuration = LocalConfiguration.current
@@ -172,7 +173,7 @@ fun BookmarkScreen(
                         ) { spot ->
                             BookmarkItem(
                                 spot = spot,
-                                onClickSpotItem = {},
+                                onClickSpotItem = { onSpotClick(1) },
                                 modifier = Modifier
                                     .weight(1f)
                                     .aspectRatio(160f / 231f)

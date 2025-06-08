@@ -13,7 +13,7 @@ class BookmarkViewModel @Inject constructor(
     private val profileRepository: ProfileRepository,
 ) : BaseContainerHost<BookmarkUiState, BookmarkUiSideEffect>() {
 
-    override val container =  container<BookmarkUiState, BookmarkUiSideEffect>(BookmarkUiState.Loading) {
+    override val container =  container<BookmarkUiState, BookmarkUiSideEffect>(BookmarkUiState.Success) {
         // TODO
     }
 
@@ -22,8 +22,8 @@ class BookmarkViewModel @Inject constructor(
     }
 
     // TODO - 정보 담아서 보내야 함
-    fun onSpotClicked() = intent {
-        postSideEffect(BookmarkUiSideEffect.OnNavigateToSpotDetailScreen)
+    fun onSpotClicked(spotId: Long) = intent {
+        postSideEffect(BookmarkUiSideEffect.OnNavigateToSpotDetailScreen(spotId))
     }
 }
 
@@ -34,6 +34,6 @@ sealed interface BookmarkUiState {
 }
 
 sealed interface BookmarkUiSideEffect {
-    data object OnNavigateToSpotDetailScreen : BookmarkUiSideEffect
+    data class OnNavigateToSpotDetailScreen(val spotId: Long) : BookmarkUiSideEffect
     data object OnNavigateToBack : BookmarkUiSideEffect
 }
