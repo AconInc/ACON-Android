@@ -139,6 +139,8 @@ fun ProfileScreen(
                     }
                 }
 
+                // TODO - saveSpot = isEmpty -> 저장한 장소가 없어요.
+
                 Spacer(Modifier.height(42.dp))
                 Row(
                     modifier = Modifier
