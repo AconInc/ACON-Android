@@ -64,15 +64,17 @@ class ProfileModViewModel @Inject constructor(
     private fun fetchUserProfileInfo() = intent {
         profileRepository.fetchProfile().onSuccess { profile ->
             val cleanedBirthday = profile.birthDate?.filter { it.isDigit() } ?: ""
+            val limitedNickname = profile.nickname.lowercase().take(14)
+
             reduce {
                 ProfileModState.Success(
-                    fetchedNickname = profile.nickname,
+                    fetchedNickname = limitedNickname,
                     fetchedBirthday = cleanedBirthday,
                     birthdayTextFieldValue = TextFieldValue(cleanedBirthday),
                     fetchedPhotoUri = profile.image,
                 )
             }
-            onNicknameChanged(profile.nickname, delayValidation = true)
+            onNicknameChanged(limitedNickname, delayValidation = true)
             onBirthdayChanged(TextFieldValue(cleanedBirthday))
         }
     }
