@@ -36,6 +36,7 @@ import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.feature.profile.composable.screen.bookmark.BookmarkUiState
 import com.acon.acon.feature.profile.composable.screen.mockSpotList
 import com.acon.acon.feature.profile.composable.screen.profile.composable.BookmarkItem
+import com.acon.acon.feature.profile.composable.screen.profile.composable.BookmarkSkeletonItem
 import dev.chrisbanes.haze.hazeSource
 
 @Composable
@@ -47,7 +48,7 @@ fun BookmarkScreen(
 ) {
     val configuration = LocalConfiguration.current
     val screenHeightDp = configuration.screenHeightDp
-    val boxHeight = (screenHeightDp * (60f / 740f))
+    val skeletonHeight = (screenHeightDp * 0.07f).dp
 
     when(state) {
         BookmarkUiState.Loading -> {
@@ -104,6 +105,71 @@ fun BookmarkScreen(
                         items(
                            mockSpotList
                         ) { spot ->
+                            BookmarkSkeletonItem(
+                                skeletonHeight = skeletonHeight,
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .aspectRatio(160f / 231f)
+                            )
+                        }
+                    }
+                }
+            }
+        }
+        BookmarkUiState.Success -> {
+            Box(
+                modifier = modifier
+                    .fillMaxSize()
+                    .background(AconTheme.color.Gray900)
+                    .statusBarsPadding()
+            ) {
+                AconTopBar(
+                    paddingValues = PaddingValues(0.dp),
+                    leadingIcon = {
+                        IconButton(
+                            onClick = onNavigateToBack
+                        ) {
+                            Icon(
+                                imageVector = ImageVector.vectorResource(R.drawable.ic_topbar_arrow_left),
+                                contentDescription = stringResource(R.string.back),
+                                tint = AconTheme.color.White
+                            )
+                        }
+                    },
+                    content = {
+                        Text(
+                            text = stringResource(R.string.saved_store),
+                            style = AconTheme.typography.Title4,
+                            fontWeight = FontWeight.SemiBold,
+                            color = AconTheme.color.White
+                        )
+                    },
+                    modifier = Modifier
+                        .imageGradientLayer()
+                        .defaultHazeEffect(
+                            hazeState = LocalHazeState.current,
+                            tintColor = AconTheme.color.Gray900,
+                            blurRadius = 20.dp,
+                        )
+                        .zIndex(1f)
+                )
+
+                Column(
+                    modifier = Modifier
+                        .padding(top = 72.dp)
+                        .padding(horizontal = 16.dp)
+                        .navigationBarsPadding()
+                        .hazeSource(LocalHazeState.current)
+                ) {
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(2),
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        items(
+                            mockSpotList
+                        ) { spot ->
                             BookmarkItem(
                                 spot = spot,
                                 onClickSpotItem = {},
@@ -116,7 +182,6 @@ fun BookmarkScreen(
                 }
             }
         }
-        BookmarkUiState.Success -> {}
         BookmarkUiState.LoadFailed -> {}
     }
 }
