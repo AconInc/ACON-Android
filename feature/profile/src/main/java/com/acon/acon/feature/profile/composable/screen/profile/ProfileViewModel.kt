@@ -51,6 +51,10 @@ class ProfileViewModel @Inject constructor(
             }
     }
 
+    fun onSpotDetail(spotId: Long) = intent {
+        postSideEffect(ProfileUiSideEffect.OnNavigateToSpotDetailScreen(spotId))
+    }
+
     fun onBookmark() = intent {
         postSideEffect(ProfileUiSideEffect.OnNavigateToBookmarkScreen)
     }
@@ -80,6 +84,7 @@ sealed interface ProfileUiState {
 }
 
 sealed interface ProfileUiSideEffect {
+    data class OnNavigateToSpotDetailScreen(val spotId: Long) : ProfileUiSideEffect
     data object OnNavigateToBookmarkScreen : ProfileUiSideEffect
     data object OnNavigateToSpotListScreen : ProfileUiSideEffect
     data object OnNavigateToSettingsScreen : ProfileUiSideEffect

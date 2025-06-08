@@ -30,7 +30,6 @@ import com.acon.acon.core.common.UrlConstants
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.effect.fog.fogBackground
 import com.acon.acon.core.designsystem.noRippleClickable
-import com.acon.acon.core.designsystem.size.getScreenHeight
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.core.utils.feature.toast.showToast
 import com.acon.acon.domain.model.spot.v2.Spot
@@ -38,6 +37,7 @@ import com.acon.acon.domain.type.TransportMode
 import com.acon.acon.domain.type.UserType
 import com.acon.acon.feature.spot.mock.spotListUiStateRestaurantMock
 import com.acon.feature.common.compose.LocalRequestSignIn
+import com.acon.feature.common.compose.getScreenHeight
 import com.acon.feature.common.compose.toDp
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList

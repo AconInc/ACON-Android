@@ -2,6 +2,7 @@ package com.acon.acon.feature.profile.composable.screen.profile.composable
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -35,19 +36,20 @@ import com.acon.acon.core.designsystem.component.bottombar.AconBottomBar
 import com.acon.acon.core.designsystem.component.bottombar.BottomNavType
 import com.acon.acon.core.designsystem.component.topbar.AconTopBar
 import com.acon.acon.core.designsystem.noRippleClickable
-import com.acon.acon.core.designsystem.size.getScreenHeight
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.domain.type.UserType
 import com.acon.acon.feature.profile.composable.screen.mockSpotList
 import com.acon.acon.feature.profile.composable.screen.profile.ProfileUiState
 import com.acon.feature.common.compose.LocalRequestSignIn
 import com.acon.feature.common.compose.LocalUserType
+import com.acon.feature.common.compose.getScreenHeight
 
 @SuppressLint("ConfigurationScreenWidthHeight")
 @Composable
 fun ProfileScreen(
     state: ProfileUiState,
     modifier: Modifier = Modifier,
+    onSpotDetail: (Long) -> Unit = {},
     onBookmark: () -> Unit = {},
     onSettings: () -> Unit = {},
     onEditProfile: () -> Unit = {},
@@ -62,11 +64,14 @@ fun ProfileScreen(
     val userType = LocalUserType.current
     val onSignInRequired = LocalRequestSignIn.current
 
-    Column(modifier = modifier) {
+    Column(
+        modifier = modifier
+    ) {
         when (state) {
             is ProfileUiState.Success -> {
                 Column(
                     modifier = Modifier
+                        .background(AconTheme.color.Gray900)
                         .padding(horizontal = 16.dp)
                 ) {
                     Spacer(Modifier.height(40.dp))
@@ -93,7 +98,7 @@ fun ProfileScreen(
                     )
 
                     Row(
-                        modifier = Modifier.padding(top = 40.dp)
+                        modifier = Modifier.padding(top = 26.dp)
                     ) {
                         if (state.profileImage.isEmpty()) {
                             Image(
@@ -144,6 +149,8 @@ fun ProfileScreen(
                         }
                     }
 
+                    // TODO - saveSpot = isEmpty -> 저장한 장소가 없어요.
+
                     Spacer(Modifier.height(42.dp))
                     Row(
                         modifier = Modifier
@@ -183,7 +190,7 @@ fun ProfileScreen(
                         ) { spot ->
                             BookmarkItem(
                                 spot = spot,
-                                onClickSpotItem = {}, // TODO - 장소 상세로 이동
+                                onClickSpotItem = { onSpotDetail(1) }, // TODO - 장소 상세로 이동
                                 modifier = Modifier.aspectRatio(150f / 217f)
                             )
                         }
@@ -202,6 +209,7 @@ fun ProfileScreen(
             is ProfileUiState.Guest -> {
                 Column(
                     modifier = Modifier
+                        .background(AconTheme.color.Gray900)
                         .padding(horizontal = 16.dp)
                 ) {
                     Spacer(Modifier.height(40.dp))
@@ -229,7 +237,7 @@ fun ProfileScreen(
 
                     Row(
                         modifier = Modifier
-                            .padding(vertical = 40.dp)
+                            .padding(top = 26.dp)
                     ) {
                         Image(
                             imageVector = ImageVector.vectorResource(R.drawable.ic_default_profile),
@@ -246,14 +254,12 @@ fun ProfileScreen(
                             modifier = Modifier
                                 .padding(start = 16.dp)
                                 .padding(vertical = 16.dp)
-                                .noRippleClickable {
-                                    onSignInRequired()
-                                }
+                                .noRippleClickable { onSignInRequired() }
                         )
 
                         Icon(
                             imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_right_24),
-                            contentDescription = stringResource(R.string.content_description_edit_profile),
+                            contentDescription = stringResource(R.string.content_description_go_sign_in),
                             modifier = Modifier
                                 .padding(start = 4.dp)
                                 .padding(vertical = 16.dp)

@@ -44,7 +44,10 @@ internal fun NavGraphBuilder.profileNavigation(
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
                     .background(AconTheme.color.Gray900),
-                onNavigateToBookMark = {
+                onNavigateToSpotDetailScreen = {
+                    navController.navigate(SpotRoute.SpotDetail(it))
+                },
+                onNavigateToBookMarkScreen = {
                     navController.navigate(ProfileRoute.Bookmark)
                 },
                 onNavigateToSpotListScreen = {
@@ -102,8 +105,8 @@ internal fun NavGraphBuilder.profileNavigation(
                     navController.popBackStack()
                 },
                 onNavigateToSpotDetailScreen = {
-                    // TODO - 장소상세로 이동
-                }
+                    navController.navigate(SpotRoute.SpotDetail(it))
+                },
             )
         }
 
