@@ -1,7 +1,5 @@
 package com.acon.acon.feature.spot.screen.spotlist.composable
 
-import android.app.Activity
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -28,7 +26,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -74,8 +71,6 @@ internal fun SpotListScreen(
     onNavigateToUploadScreen: () -> Unit = {},
     onNavigateToProfileScreen: () -> Unit = {},
 ) {
-    val context = LocalContext.current
-    val activity = context as? Activity
     val screenHeightDp = getScreenHeight()
     val screenHeightPx = with(LocalDensity.current) {
         screenHeightDp.toPx()
@@ -107,7 +102,7 @@ internal fun SpotListScreen(
                 .statusBarsPadding()
         ) {
             SpotTypeToggle(
-                selectedType = (state as? SpotListUiStateV2.Success)?.selectedSpotType ?: SpotType.RESTAURANT,
+                selectedType = state.selectedSpotType,
                 onSwitched = {
                     if (userType == UserType.GUEST)
                         onLoginRequired()
@@ -150,9 +145,11 @@ internal fun SpotListScreen(
             )
         }
 
-        Box(Modifier
-            .weight(1f)
-            .fillMaxWidth()) {
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth()
+        ) {
             when (state) {
                 is SpotListUiStateV2.Success -> {
                     Box(Modifier.fillMaxSize()) {
@@ -166,6 +163,7 @@ internal fun SpotListScreen(
                                         selectedItems = state.selectedRestaurantFilters.values.flatten()
                                             .toImmutableSet(),
                                         onComplete = onRestaurantFilterSaved,
+                                        onReset = LocalOnRetry.current,
                                         onDismissRequest = onFilterModalDismissRequest
                                     )
                                 }
@@ -189,6 +187,7 @@ internal fun SpotListScreen(
                                         selectedItems = state.selectedCafeFilters.values.flatten()
                                             .toImmutableSet(),
                                         onComplete = onCafeFilterSaved,
+                                        onReset = LocalOnRetry.current,
                                         onDismissRequest = onFilterModalDismissRequest
                                     )
                                 }
@@ -292,7 +291,7 @@ private fun SpotListScreenV2Preview() {
 @Preview
 private fun SpotListScreenV2LoadingPreview() {
     SpotListScreen(
-        state = SpotListUiStateV2.Loading,
+        state = SpotListUiStateV2.Loading(SpotType.RESTAURANT),
         modifier = Modifier
             .fillMaxWidth()
             .background(AconTheme.color.Gray900)

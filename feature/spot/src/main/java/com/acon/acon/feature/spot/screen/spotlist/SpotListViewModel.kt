@@ -30,7 +30,7 @@ class SpotListViewModel @Inject constructor(
 ) : BaseContainerHost<SpotListUiStateV2, SpotListSideEffectV2>() {
 
     override val container =
-        container<SpotListUiStateV2, SpotListSideEffectV2>(SpotListUiStateV2.Loading)
+        container<SpotListUiStateV2, SpotListSideEffectV2>(SpotListUiStateV2.Loading(SpotType.RESTAURANT))
 
     private lateinit var initialLocation: Location
 
@@ -188,16 +188,16 @@ class SpotListViewModel @Inject constructor(
             onSuccess = onSuccess,
             onFailure = { e ->
                 if (e is FetchSpotListError.OutOfServiceArea)
-                    SpotListUiStateV2.OutOfServiceArea
+                    SpotListUiStateV2.OutOfServiceArea(state.selectedSpotType)
                 else
-                    SpotListUiStateV2.LoadFailed
+                    SpotListUiStateV2.LoadFailed(state.selectedSpotType)
             }
         )
     }
 
     fun retry() = intent {
         reduce {
-            SpotListUiStateV2.Loading
+            SpotListUiStateV2.Loading(state.selectedSpotType)
         }
     }
 
@@ -233,21 +233,32 @@ class SpotListViewModel @Inject constructor(
 }
 
 sealed interface SpotListUiStateV2 {
+    val selectedSpotType: SpotType
+
     @Immutable
     data class Success(
+        override val selectedSpotType: SpotType,
         val transportMode: TransportMode,
         val spotList: List<Spot>,
         val headTitle: String,
-        val selectedSpotType: SpotType,
         val currentLocation: Location,
         val selectedRestaurantFilters: Map<FilterDetailKey, Set<RestaurantFilterType>> = emptyMap(),
         val selectedCafeFilters: Map<FilterDetailKey, Set<CafeFilterType>> = emptyMap(),
         val showFilterModal: Boolean = false,
-        val showRefreshPopup: Boolean = false,
+        val showRefreshPopup: Boolean = false
     ) : SpotListUiStateV2
-    data object Loading : SpotListUiStateV2
-    data object LoadFailed : SpotListUiStateV2
-    data object OutOfServiceArea: SpotListUiStateV2
+
+    data class Loading(
+        override val selectedSpotType: SpotType,
+    ) : SpotListUiStateV2
+
+    data class LoadFailed(
+        override val selectedSpotType: SpotType,
+    ) : SpotListUiStateV2
+
+    data class OutOfServiceArea(
+        override val selectedSpotType: SpotType,
+    ) : SpotListUiStateV2
 }
 
 sealed interface SpotListSideEffectV2 {
