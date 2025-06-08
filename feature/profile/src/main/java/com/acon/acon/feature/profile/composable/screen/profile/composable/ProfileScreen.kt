@@ -87,7 +87,7 @@ fun ProfileScreen(
                 )
 
                 Row(
-                    modifier = Modifier.padding(top = 40.dp)
+                    modifier = Modifier.padding(top = 26.dp)
                 ) {
                     if (state.profileImage.isEmpty()) {
                         Image(
@@ -234,7 +234,7 @@ fun ProfileScreen(
 
                 Row(
                     modifier = Modifier
-                        .padding(vertical = 40.dp)
+                        .padding(top = 26.dp)
                 ) {
                     Image(
                         imageVector = ImageVector.vectorResource(R.drawable.ic_default_profile),
@@ -256,7 +256,7 @@ fun ProfileScreen(
 
                     Icon(
                         imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_right_24),
-                        contentDescription = stringResource(R.string.content_description_edit_profile),
+                        contentDescription = stringResource(R.string.content_description_go_login),
                         modifier = Modifier
                             .padding(start = 4.dp)
                             .padding(vertical = 16.dp)
