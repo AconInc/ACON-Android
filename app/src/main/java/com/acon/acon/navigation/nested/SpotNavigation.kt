@@ -9,9 +9,11 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import com.acon.acon.feature.profile.composable.ProfileRoute
 import com.acon.acon.feature.spot.SpotRoute
 import com.acon.acon.feature.spot.screen.spotdetail.composable.SpotDetailScreenContainer
 import com.acon.acon.feature.spot.screen.spotlist.composable.SpotListScreenContainer
+import com.acon.acon.feature.upload.UploadRoute
 import com.acon.feature.common.intent.openMapNavigation
 
 internal fun NavGraphBuilder.spotNavigation(
@@ -27,6 +29,12 @@ internal fun NavGraphBuilder.spotNavigation(
         ) {
             val context = LocalContext.current
             SpotListScreenContainer(
+                onNavigateToUploadScreen = {
+                    navController.navigate(UploadRoute.Graph)
+                },
+                onNavigateToProfileScreen = {
+                    navController.navigate(ProfileRoute.Graph)
+                },
                 onNavigateToSpotDetailScreen = {
                     navController.navigate(SpotRoute.SpotDetail(it.id))
                 },

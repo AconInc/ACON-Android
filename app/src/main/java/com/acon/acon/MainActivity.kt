@@ -20,6 +20,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -27,12 +31,28 @@ import androidx.core.view.WindowCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.rememberNavController
+import com.acon.acon.amplitude.bottomAmplitudeSignIn
+import com.acon.acon.core.designsystem.R
+import com.acon.acon.core.designsystem.component.bottomsheet.LoginBottomSheet
+import com.acon.acon.core.designsystem.component.dialog.v2.AconDefaultDialog
+import com.acon.acon.core.designsystem.component.dialog.v2.AconTwoActionDialog
+import com.acon.acon.core.designsystem.effect.LocalHazeState
+import com.acon.acon.core.designsystem.effect.rememberHazeState
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.domain.repository.AconAppRepository
 import com.acon.acon.domain.repository.SocialRepository
 import com.acon.acon.domain.repository.UserRepository
+import com.acon.acon.domain.type.UserType
+import com.acon.acon.feature.areaverification.AreaVerificationRoute
+import com.acon.acon.feature.spot.SpotRoute
 import com.acon.acon.navigation.AconNavigation
 import com.acon.feature.common.compose.LocalLocation
+import com.acon.feature.common.compose.LocalNavController
+import com.acon.feature.common.compose.LocalRequestLogin
+import com.acon.feature.common.compose.LocalSnackbarHostState
+import com.acon.feature.common.compose.LocalUserType
+import com.acon.feature.common.coroutine.firstNotNull
+import com.acon.feature.common.intent.launchPlayStore
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -42,7 +62,9 @@ import com.google.android.gms.location.LocationSettingsRequest
 import com.google.android.gms.location.Priority
 import com.google.android.gms.location.SettingsClient
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
+import com.google.android.play.core.appupdate.AppUpdateOptions
 import com.google.android.play.core.install.InstallStateUpdatedListener
+import com.google.android.play.core.install.model.ActivityResult
 import com.google.android.play.core.install.model.AppUpdateType
 import com.google.android.play.core.install.model.InstallStatus
 import com.google.android.play.core.install.model.UpdateAvailability
@@ -57,14 +79,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 import javax.inject.Inject
-import com.acon.acon.core.designsystem.R
-import com.acon.acon.core.designsystem.component.dialog.v2.AconDefaultDialog
-import com.acon.acon.core.designsystem.component.dialog.v2.AconTwoActionDialog
-import com.acon.feature.common.compose.LocalSnackbarHostState
-import com.acon.feature.common.coroutine.firstNotNull
-import com.acon.feature.common.intent.launchPlayStore
-import com.google.android.play.core.appupdate.AppUpdateOptions
-import com.google.android.play.core.install.model.ActivityResult
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -82,7 +96,17 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private val appUpdateManager = AppUpdateManagerFactory.create(application)
+    private val userType by lazy {
+        userRepository.getUserType().stateIn(
+            scope = lifecycleScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = UserType.GUEST
+        )
+    }
+
+    private val appUpdateManager by lazy {
+        AppUpdateManagerFactory.create(application)
+    }
     private val appUpdateInfo = flow {
         emit(appUpdateManager.appUpdateInfo.await())
     }.stateIn(
@@ -208,23 +232,64 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             AconTheme {
+                val scope = rememberCoroutineScope()
                 val currentLocation by currentLocationFlow.collectAsStateWithLifecycle()
+                val navController = rememberNavController()
+                val hazeState = rememberHazeState()
+                val userType by this.userType.collectAsStateWithLifecycle()
+                var showLoginBottomSheet by remember { mutableStateOf(false) }
 
                 CheckAndRequireUpdate()
 
                 CompositionLocalProvider(
                     LocalLocation provides currentLocation,
-                    LocalSnackbarHostState provides snackbarHostState
+                    LocalSnackbarHostState provides snackbarHostState,
+                    LocalNavController provides navController,
+                    LocalHazeState provides hazeState,
+                    LocalUserType provides userType,
+                    LocalRequestLogin provides { showLoginBottomSheet = true }
                 ) {
                     AconNavigation(
                         modifier = Modifier
                             .fillMaxSize()
                             .background(AconTheme.color.Gray900),
-                        navController = rememberNavController(),
-                        userRepository = userRepository
                     )
                 }
 
+                if (showLoginBottomSheet) {
+                    LoginBottomSheet(
+                        onDismissRequest = { showLoginBottomSheet = false },
+                        onGoogleSignIn = {
+                            scope.launch {
+                                bottomAmplitudeSignIn()
+                                socialRepository.googleLogin()
+                                    .onSuccess {
+                                        showLoginBottomSheet = false
+                                        if (it.hasVerifiedArea) {
+                                            navController.navigate(SpotRoute.SpotList) {
+                                                popUpTo<AreaVerificationRoute.Graph> {
+                                                    inclusive = true
+                                                }
+                                            }
+                                        } else {
+                                            navController.navigate(
+                                                AreaVerificationRoute.AreaVerification(
+                                                    "onboarding"
+                                                )
+                                            ) {
+                                                popUpTo<AreaVerificationRoute.Graph> {
+                                                    inclusive = true
+                                                }
+                                            }
+                                        }
+                                    }
+                                    .onFailure {
+                                        showLoginBottomSheet = false
+                                    }
+                            }
+                        },
+                    )
+                }
             }
         }
     }

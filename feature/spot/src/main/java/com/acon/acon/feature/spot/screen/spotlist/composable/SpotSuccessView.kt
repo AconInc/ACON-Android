@@ -42,6 +42,7 @@ import com.acon.acon.domain.model.spot.v2.Spot
 import com.acon.acon.domain.type.TransportMode
 import com.acon.acon.domain.type.UserType
 import com.acon.acon.feature.spot.screen.spotlist.SpotListUiStateV2
+import com.acon.feature.common.compose.LocalRequestLogin
 import com.acon.feature.common.compose.toDp
 import dev.chrisbanes.haze.hazeSource
 import kotlinx.collections.immutable.toImmutableList
@@ -55,19 +56,18 @@ internal fun SpotListSuccessView(
     state: SpotListUiStateV2.Success,
     userType: UserType,
     onSpotClick: (Spot) -> Unit,
-    onGuestItemClick: () -> Unit,
     onTryFindWay: (Spot) -> Unit,
     itemHeightPx: Float,
     modifier: Modifier = Modifier,
 ) {
 
     val context = LocalContext.current
+    val onLoginRequired = LocalRequestLogin.current
 
     if (state.transportMode == TransportMode.BIKING) {
         SpotEmptyView(
             userType = userType,
             otherSpots = state.spotList.toImmutableList(),
-            onGuestItemClick = onGuestItemClick,
             onSpotClick = onSpotClick,
             onTryFindWay = onTryFindWay,
             modifier = modifier
@@ -143,7 +143,7 @@ internal fun SpotListSuccessView(
                                 color = AconTheme.color.GlassBlackDefault
                             )
                             .clickable {
-                                onGuestItemClick()
+                                onLoginRequired()
                             }
                             .fogBackground(
                                 glowColor = AconTheme.color.White,

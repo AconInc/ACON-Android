@@ -1,6 +1,5 @@
 package com.acon.acon.feature.spot.screen.spotlist.composable
 
-import android.annotation.SuppressLint
 import android.location.Location
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -11,7 +10,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.acon.acon.domain.model.spot.v2.Spot
 import com.acon.acon.feature.spot.screen.spotlist.SpotListSideEffectV2
 import com.acon.acon.feature.spot.screen.spotlist.SpotListViewModel
@@ -20,9 +18,10 @@ import com.acon.feature.common.permission.LocationPermissionRequester
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
-@SuppressLint("MissingPermission")  // Location permission is handled in the LocationPermissionRequester
 @Composable
 fun SpotListScreenContainer(
+    onNavigateToUploadScreen: () -> Unit,
+    onNavigateToProfileScreen: () -> Unit,
     onNavigateToSpotDetailScreen: (Spot) -> Unit,
     onNavigateToExternalMap: (start: Location, destination: Location) -> Unit,
     modifier: Modifier = Modifier,
@@ -30,7 +29,6 @@ fun SpotListScreenContainer(
 ) {
 
     val state by viewModel.collectAsState()
-    val userType by viewModel.userType.collectAsStateWithLifecycle()
 
     var isPermissionGranted by remember {
         mutableStateOf(false)
@@ -45,7 +43,6 @@ fun SpotListScreenContainer(
     CompositionLocalProvider(LocalOnRetry provides viewModel::retry) {
         SpotListScreen(
             state = state,
-            userType = userType,
             onSpotTypeChanged = viewModel::onSpotTypeClicked,
             onSpotClick = viewModel::onSpotClicked,
             onTryFindWay = viewModel::onTryFindWay,
@@ -53,12 +50,13 @@ fun SpotListScreenContainer(
             onFilterModalDismissRequest = viewModel::onFilterModalDismissed,
             onRestaurantFilterSaved = viewModel::onRestaurantFilterSaved,
             onCafeFilterSaved = viewModel::onCafeFilterSaved,
-            onGuestItemClick = viewModel::onRequestLogin,
-            onGuestModalDismissRequest = viewModel::onDismissLoginModal,
             modifier = modifier.fillMaxSize(),
+            onNavigateToUploadScreen = onNavigateToUploadScreen,
+            onNavigateToProfileScreen = onNavigateToProfileScreen
         )
     }
 
+    viewModel.emitUserType()
     viewModel.emitLiveLocation()
     viewModel.collectSideEffect {
         when (it) {
