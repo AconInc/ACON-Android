@@ -42,7 +42,7 @@ import com.acon.acon.domain.model.spot.v2.Spot
 import com.acon.acon.domain.type.TransportMode
 import com.acon.acon.domain.type.UserType
 import com.acon.acon.feature.spot.screen.spotlist.SpotListUiStateV2
-import com.acon.feature.common.compose.LocalRequestLogin
+import com.acon.feature.common.compose.LocalRequestSignIn
 import com.acon.feature.common.compose.toDp
 import dev.chrisbanes.haze.hazeSource
 import kotlinx.collections.immutable.toImmutableList
@@ -62,7 +62,7 @@ internal fun SpotListSuccessView(
 ) {
 
     val context = LocalContext.current
-    val onLoginRequired = LocalRequestLogin.current
+    val onLoginRequired = LocalRequestSignIn.current
 
     if (state.transportMode == TransportMode.BIKING) {
         SpotEmptyView(

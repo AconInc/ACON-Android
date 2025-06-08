@@ -11,13 +11,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.acon.acon.core.common.UrlConstants
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.utils.feature.toast.showToast
-import com.acon.acon.domain.repository.SocialRepository
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
 fun SignInScreenContainer(
-    socialRepository: SocialRepository,
     navigateToSpotListView: () -> Unit,
     navigateToAreaVerification: () -> Unit,
     modifier: Modifier = Modifier,
@@ -32,12 +30,10 @@ fun SignInScreenContainer(
         navigateToSpotListView = viewModel::navigateToSpotListView,
         onClickTermsOfUse = viewModel::onClickTermsOfUse,
         onClickPrivacyPolicy = viewModel::onClickPrivacyPolicy,
-        onClickLoginGoogle = {
-            viewModel.googleLogin(socialRepository)
-        },
-        onAnimationEnd = viewModel::autoSignIn
+        onAnimationEnd = viewModel::signIn,
     )
 
+    viewModel.emitUserType()
     viewModel.collectSideEffect { sideEffect ->
         when(sideEffect) {
             is SignInSideEffect.ShowToastMessage -> { context.showToast(R.string.signin_login_failed_toast) }

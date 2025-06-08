@@ -37,7 +37,7 @@ import com.acon.acon.domain.model.spot.v2.Spot
 import com.acon.acon.domain.type.TransportMode
 import com.acon.acon.domain.type.UserType
 import com.acon.acon.feature.spot.mock.spotListUiStateRestaurantMock
-import com.acon.feature.common.compose.LocalRequestLogin
+import com.acon.feature.common.compose.LocalRequestSignIn
 import com.acon.feature.common.compose.toDp
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
@@ -61,7 +61,7 @@ internal fun SpotEmptyView(
         mutableFloatStateOf(screenHeightPx * .3f)
     }
 
-    val onLoginRequired = LocalRequestLogin.current
+    val onLoginRequired = LocalRequestSignIn.current
 
     Column(
         modifier = modifier,

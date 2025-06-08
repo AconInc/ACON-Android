@@ -10,7 +10,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.acon.acon.core.designsystem.R
-import com.acon.acon.domain.repository.SocialRepository
 import com.acon.acon.domain.type.UpdateProfileType
 import com.acon.acon.feature.profile.composable.screen.profile.ProfileUiSideEffect
 import com.acon.acon.feature.profile.composable.screen.profile.ProfileViewModel
@@ -21,7 +20,6 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
 fun ProfileScreenContainer(
-    socialRepository: SocialRepository,
     snackbarHostState: SnackbarHostState,
     modifier: Modifier = Modifier,
     onNavigateToBookMark: () -> Unit = {},
@@ -62,8 +60,6 @@ fun ProfileScreenContainer(
         onBookmark = viewModel::onBookmark,
         onSettings = viewModel::onSettings,
         onEditProfile = viewModel::onEditProfile,
-        onGoogleSignIn = { viewModel.googleLogin(socialRepository) },
-        onBottomSheetShowStateChange = viewModel::onBottomSheetShowStateChange,
         onNavigateToSpotListScreen = onNavigateToSpotListScreen,
         onNavigateToUploadScreen = onNavigateToUploadScreen
     )

@@ -48,7 +48,7 @@ import com.acon.acon.feature.spot.SpotRoute
 import com.acon.acon.navigation.AconNavigation
 import com.acon.feature.common.compose.LocalLocation
 import com.acon.feature.common.compose.LocalNavController
-import com.acon.feature.common.compose.LocalRequestLogin
+import com.acon.feature.common.compose.LocalRequestSignIn
 import com.acon.feature.common.compose.LocalSnackbarHostState
 import com.acon.feature.common.compose.LocalUserType
 import com.acon.feature.common.coroutine.firstNotNull
@@ -254,7 +254,7 @@ class MainActivity : ComponentActivity() {
                     LocalNavController provides navController,
                     LocalHazeState provides hazeState,
                     LocalUserType provides userType,
-                    LocalRequestLogin provides { showLoginBottomSheet = true }
+                    LocalRequestSignIn provides { showLoginBottomSheet = true }
                 ) {
                     AconNavigation(
                         modifier = Modifier
@@ -268,7 +268,6 @@ class MainActivity : ComponentActivity() {
                         onDismissRequest = { showLoginBottomSheet = false },
                         onGoogleSignIn = {
                             scope.launch {
-                                bottomAmplitudeSignIn()
                                 socialRepository.googleLogin()
                                     .onSuccess {
                                         showLoginBottomSheet = false

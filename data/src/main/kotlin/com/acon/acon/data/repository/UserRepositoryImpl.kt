@@ -9,8 +9,10 @@ import com.acon.acon.data.dto.request.DeleteAccountRequest
 import com.acon.acon.data.dto.request.LoginRequest
 import com.acon.acon.data.dto.request.LogoutRequest
 import com.acon.acon.data.error.runCatchingWith
+import com.acon.acon.domain.error.area.DeleteVerifiedAreaError
 import com.acon.acon.domain.error.user.PostLoginError
 import com.acon.acon.domain.error.user.PostLogoutError
+import com.acon.acon.domain.model.area.Area
 import com.acon.acon.domain.model.user.VerificationStatus
 import com.acon.acon.domain.repository.UserRepository
 import com.acon.acon.domain.type.LocalVerificationType
@@ -29,14 +31,6 @@ class UserRepositoryImpl @Inject constructor(
         return sessionManager.getUserType()
     }
 
-    override fun getLocalVerificationType(): Flow<LocalVerificationType> {
-        return sessionManager.getLocalVerificationType()
-    }
-
-    override suspend fun updateLocalVerificationType(isVerified: Boolean) {
-        sessionManager.updateLocalVerificationType(isVerified)
-    }
-
     override suspend fun login(
         socialType: SocialType,
         idToken: String
@@ -51,8 +45,6 @@ class UserRepositoryImpl @Inject constructor(
 
             sessionManager.saveAccessToken(loginResponse.accessToken.orEmpty())
             tokenLocalDataSource.saveRefreshToken(loginResponse.refreshToken.orEmpty())
-
-            sessionManager.updateLocalVerificationType(loginResponse.hasVerifiedArea)
 
             AconAmplitude.setUserProperty(loginResponse.externalUUID)
             AconAmplitude.setUserId(loginResponse.externalUUID)
@@ -86,6 +78,29 @@ class UserRepositoryImpl @Inject constructor(
             )
         }.onSuccess {
             sessionManager.clearSession()
+        }
+    }
+
+    override suspend fun verifyArea(
+        latitude: Double,
+        longitude: Double
+    ): Result<Area> = runCatchingWith() {
+        userRemoteDataSource.verifyArea(
+            latitude = latitude,
+            longitude = longitude
+        ).toArea()
+    }
+
+    override suspend fun fetchVerifiedAreaList(): Result<List<Area>> {
+        return runCatchingWith() {
+            userRemoteDataSource.fetchVerifiedAreaList().verifiedAreaList
+                .map { it.toVerifiedArea() }
+        }
+    }
+
+    override suspend fun deleteVerifiedArea(verifiedAreaId: Long): Result<Unit> {
+        return runCatchingWith(*DeleteVerifiedAreaError.createErrorInstances()) {
+            userRemoteDataSource.deleteVerifiedArea(verifiedAreaId)
         }
     }
 }

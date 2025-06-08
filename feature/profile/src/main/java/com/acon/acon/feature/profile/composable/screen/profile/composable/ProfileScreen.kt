@@ -33,16 +33,14 @@ import coil3.compose.AsyncImage
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.bottombar.AconBottomBar
 import com.acon.acon.core.designsystem.component.bottombar.BottomNavType
-import com.acon.acon.core.designsystem.component.bottomsheet.LoginBottomSheet
 import com.acon.acon.core.designsystem.component.topbar.AconTopBar
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.size.getScreenHeight
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.domain.type.UserType
-import com.acon.acon.feature.profile.composable.amplitude.profileAmplitude
 import com.acon.acon.feature.profile.composable.screen.mockSpotList
 import com.acon.acon.feature.profile.composable.screen.profile.ProfileUiState
-import com.acon.feature.common.compose.LocalRequestLogin
+import com.acon.feature.common.compose.LocalRequestSignIn
 import com.acon.feature.common.compose.LocalUserType
 
 @SuppressLint("ConfigurationScreenWidthHeight")
@@ -53,8 +51,6 @@ fun ProfileScreen(
     onBookmark: () -> Unit = {},
     onSettings: () -> Unit = {},
     onEditProfile: () -> Unit = {},
-    onGoogleSignIn: () -> Unit = {},
-    onBottomSheetShowStateChange: (Boolean) -> Unit = {},
     onNavigateToSpotListScreen: () -> Unit = {},
     onNavigateToUploadScreen: () -> Unit = {},
 ) {
@@ -64,7 +60,7 @@ fun ProfileScreen(
     val savedStoreHeight = (screenHeightDp * (200f / 740f))
 
     val userType = LocalUserType.current
-    val onLoginRequired = LocalRequestLogin.current
+    val onLoginRequired = LocalRequestSignIn.current
 
     Column(modifier = modifier) {
         when (state) {
@@ -204,18 +200,8 @@ fun ProfileScreen(
             is ProfileUiState.LoadFailed -> {}
 
             is ProfileUiState.Guest -> {
-                if (state.showLoginBottomSheet) {
-                    LoginBottomSheet(
-                        onDismissRequest = { onBottomSheetShowStateChange(false) },
-                        onGoogleSignIn = {
-                            onGoogleSignIn()
-                            profileAmplitude()
-                        }
-                    )
-                }
-
                 Column(
-                    modifier = modifier
+                    modifier = Modifier
                         .padding(horizontal = 16.dp)
                 ) {
                     Spacer(Modifier.height(40.dp))
@@ -260,7 +246,9 @@ fun ProfileScreen(
                             modifier = Modifier
                                 .padding(start = 16.dp)
                                 .padding(vertical = 16.dp)
-                                .noRippleClickable { onBottomSheetShowStateChange(true) }
+                                .noRippleClickable {
+                                    onLoginRequired()
+                                }
                         )
 
                         Icon(
@@ -269,7 +257,7 @@ fun ProfileScreen(
                             modifier = Modifier
                                 .padding(start = 4.dp)
                                 .padding(vertical = 16.dp)
-                                .noRippleClickable { onBottomSheetShowStateChange(true) },
+                                .noRippleClickable { onLoginRequired() },
                             tint = AconTheme.color.White
                         )
                     }
@@ -313,7 +301,7 @@ fun ProfileScreen(
 private fun ProfileScreenPreview() {
     AconTheme {
         ProfileScreen(
-            state = ProfileUiState.Guest()
+            state = ProfileUiState.Guest
         )
     }
 }

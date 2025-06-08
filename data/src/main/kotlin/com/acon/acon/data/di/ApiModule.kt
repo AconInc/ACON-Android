@@ -1,18 +1,17 @@
 package com.acon.acon.data.di
 
-import com.acon.acon.data.api.remote.AreaVerificationApi
-import com.acon.acon.data.api.remote.UserApi
-import com.acon.acon.data.api.remote.MapApi
-import com.acon.acon.data.api.remote.OnboardingApi
-import com.acon.acon.data.api.remote.ReissueTokenApi
-import com.acon.acon.data.api.remote.SpotNoAuthApi
-import com.acon.acon.data.api.remote.UploadApi
 import com.acon.acon.core.common.Auth
 import com.acon.acon.core.common.Naver
 import com.acon.acon.core.common.NoAuth
 import com.acon.acon.data.api.remote.AconAppApi
+import com.acon.acon.data.api.remote.MapApi
+import com.acon.acon.data.api.remote.OnboardingApi
 import com.acon.acon.data.api.remote.ProfileApi
+import com.acon.acon.data.api.remote.ReissueTokenApi
 import com.acon.acon.data.api.remote.SpotAuthApi
+import com.acon.acon.data.api.remote.SpotNoAuthApi
+import com.acon.acon.data.api.remote.UploadApi
+import com.acon.acon.data.api.remote.UserApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -68,14 +67,6 @@ internal object ApiModule {
         @Auth retrofit: Retrofit
     ): UploadApi {
         return retrofit.create(UploadApi::class.java)
-    }
-
-    @Singleton
-    @Provides
-    fun providesAreaVerificationApi(
-        @Auth retrofit: Retrofit
-    ): AreaVerificationApi {
-        return retrofit.create(AreaVerificationApi::class.java)
     }
 
     @Singleton

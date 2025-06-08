@@ -3,7 +3,7 @@ package com.acon.acon.feature.verification.screen
 import com.acon.acon.domain.error.area.DeleteVerifiedAreaError
 import com.acon.feature.common.base.BaseContainerHost
 import com.acon.acon.domain.model.area.Area
-import com.acon.acon.domain.repository.AreaVerificationRepository
+import com.acon.acon.domain.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.annotation.OrbitExperimental
@@ -14,7 +14,7 @@ import javax.inject.Inject
 @OptIn(OrbitExperimental::class)
 @HiltViewModel
 class LocalVerificationViewModel @Inject constructor(
-    private val areaVerificationRepository: AreaVerificationRepository
+    private val userRepository: UserRepository
 ) : BaseContainerHost<LocalVerificationUiState, LocalVerificationSideEffect>() {
 
     override val container: Container<LocalVerificationUiState, LocalVerificationSideEffect> =
@@ -23,7 +23,7 @@ class LocalVerificationViewModel @Inject constructor(
         }
 
     private fun fetchVerifiedAreaList() = intent {
-        areaVerificationRepository.fetchVerifiedAreaList()
+        userRepository.fetchVerifiedAreaList()
             .onSuccess {
                 reduce {
                     LocalVerificationUiState.Success(verificationAreaList = it)
@@ -67,7 +67,7 @@ class LocalVerificationViewModel @Inject constructor(
     }
 
     fun deleteVerifiedArea(verifiedAreaId: Long) = intent {
-        areaVerificationRepository.deleteVerifiedArea(verifiedAreaId)
+        userRepository.deleteVerifiedArea(verifiedAreaId)
             .onSuccess {
                 fetchVerifiedAreaList()
             }

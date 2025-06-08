@@ -8,7 +8,6 @@ import android.location.LocationManager
 import androidx.core.app.ActivityCompat
 import com.acon.feature.common.base.BaseContainerHost
 import com.acon.acon.domain.model.area.Area
-import com.acon.acon.domain.repository.AreaVerificationRepository
 import com.acon.acon.domain.repository.UserRepository
 import com.acon.acon.feature.areaverification.amplitude.amplitudeClickNext
 import com.acon.acon.feature.areaverification.amplitude.amplitudeCompleteArea
@@ -21,7 +20,6 @@ import javax.inject.Inject
 class AreaVerificationViewModel @Inject constructor(
     private val application: Application,
     private val userRepository: UserRepository,
-    private val areaVerificationRepository: AreaVerificationRepository
 ) : BaseContainerHost<AreaVerificationUiState, AreaVerificationSideEffect>() {
 
     override val container = container<AreaVerificationUiState, AreaVerificationSideEffect>(
@@ -95,8 +93,7 @@ class AreaVerificationViewModel @Inject constructor(
             )
         }
 
-        val verifiedAreaList =
-            areaVerificationRepository.fetchVerifiedAreaList().getOrElse { emptyList() }
+        val verifiedAreaList = userRepository.fetchVerifiedAreaList().getOrElse { emptyList() }
         val verifiedAreaId = verifiedAreaList[0].verifiedAreaId
 
         if(verifiedAreaList[0].name == area) {
@@ -106,10 +103,10 @@ class AreaVerificationViewModel @Inject constructor(
                 )
             }
         } else {
-            areaVerificationRepository.verifyArea(latitude, longitude)
+            userRepository.verifyArea(latitude, longitude)
                 .onSuccess { newVerifiedArea ->
                     if (verifiedAreaId != newVerifiedArea.verifiedAreaId) {
-                        areaVerificationRepository.deleteVerifiedArea(verifiedAreaId)
+                        userRepository.deleteVerifiedArea(verifiedAreaId)
                             .onSuccess {
                                 reduce {
                                     state.copy(
@@ -175,7 +172,7 @@ class AreaVerificationViewModel @Inject constructor(
             )
         }
 
-        areaVerificationRepository.verifyArea(latitude, longitude)
+        userRepository.verifyArea(latitude, longitude)
             .onSuccess { area ->
                 reduce {
                     state.copy(
@@ -184,7 +181,6 @@ class AreaVerificationViewModel @Inject constructor(
                         isVerifySuccess = true
                     )
                 }
-                userRepository.updateLocalVerificationType(true)
                 amplitudeCompleteArea()
             }
             .onFailure { throwable ->

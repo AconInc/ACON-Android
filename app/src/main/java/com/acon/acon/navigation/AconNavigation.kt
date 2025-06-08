@@ -28,13 +28,11 @@ import com.acon.acon.navigation.nested.spotNavigation
 import com.acon.acon.navigation.nested.uploadNavigation
 import com.acon.feature.common.compose.LocalNavController
 import com.acon.feature.common.compose.LocalSnackbarHostState
-import com.acon.feature.common.remember.rememberSocialRepository
 
 @Composable
 fun AconNavigation(
     modifier: Modifier = Modifier,
 ) {
-    val socialRepository = rememberSocialRepository()
     val navController = LocalNavController.current
     val snackbarHostState = LocalSnackbarHostState.current
 
@@ -78,7 +76,7 @@ fun AconNavigation(
                 defaultPopExitTransition()
             }
         ) {
-            signInNavigationNavigation(navController, socialRepository)
+            signInNavigationNavigation(navController)
 
             areaVerificationNavigation(navController)
 
@@ -88,7 +86,7 @@ fun AconNavigation(
 
             uploadNavigation(navController)
 
-            profileNavigation(navController, socialRepository, snackbarHostState)
+            profileNavigation(navController, snackbarHostState)
 
             settingsNavigation(navController)
         }

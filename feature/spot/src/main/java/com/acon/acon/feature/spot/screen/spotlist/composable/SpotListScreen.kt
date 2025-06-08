@@ -51,7 +51,7 @@ import com.acon.acon.feature.spot.screen.component.SpotTypeToggle
 import com.acon.acon.feature.spot.screen.spotlist.FilterDetailKey
 import com.acon.acon.feature.spot.screen.spotlist.SpotListUiStateV2
 import com.acon.feature.common.compose.LocalOnRetry
-import com.acon.feature.common.compose.LocalRequestLogin
+import com.acon.feature.common.compose.LocalRequestSignIn
 import com.acon.feature.common.compose.LocalUserType
 import dev.chrisbanes.haze.hazeSource
 import kotlinx.collections.immutable.toImmutableSet
@@ -84,7 +84,7 @@ internal fun SpotListScreen(
     val scope = rememberCoroutineScope()
 
     val userType = LocalUserType.current
-    val onLoginRequired = LocalRequestLogin.current
+    val onLoginRequired = LocalRequestSignIn.current
 
     Column(
         modifier = modifier

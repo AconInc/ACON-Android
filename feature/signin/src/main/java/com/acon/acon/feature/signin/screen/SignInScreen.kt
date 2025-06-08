@@ -23,6 +23,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -43,6 +44,7 @@ import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.feature.signin.amplitude.amplitudeSignIn
 import com.acon.acon.feature.signin.screen.component.SignInTopBar
 import com.acon.acon.feature.signin.utils.SplashAudioManager
+import com.acon.feature.common.compose.LocalRequestSignIn
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
@@ -56,9 +58,10 @@ fun SignInScreen(
     navigateToSpotListView: () -> Unit,
     onClickTermsOfUse: () -> Unit,
     onClickPrivacyPolicy: () -> Unit,
-    onClickLoginGoogle: () -> Unit,
-    onAnimationEnd:() -> Unit
+    onAnimationEnd:() -> Unit,
 ) {
+    val onSignInRequired = LocalRequestSignIn.current
+
     val context = LocalContext.current
     val activity = context as? Activity
     val splashAudioManager = remember { SplashAudioManager(context) }
@@ -71,20 +74,17 @@ fun SignInScreen(
         LottieCompositionSpec.Asset("acon_splash_lottie_json_v2.json")
     )
     val logoAnimationState = animateLottieCompositionAsState(composition = composition)
-    val alpha by animateFloatAsState(
-        targetValue = if (isEndShowImage && logoAnimationState.value >= .99f) 1f else 0f,
-        animationSpec = tween(400),
-        label = stringResource(R.string.splash_animation_content_description)
-    )
+
+    LaunchedEffect(Unit) {
+        snapshotFlow { logoAnimationState.value }
+            .collect {
+                if (it == 1f)
+                    onAnimationEnd()
+            }
+    }
 
     BackHandler(enabled = true) {
         activity?.finishAffinity()
-    }
-
-    LaunchedEffect(alpha) {
-        if (alpha == 1f) {
-            onAnimationEnd()
-        }
     }
 
     LaunchedEffect(logoAnimationState.isPlaying) {
@@ -104,22 +104,30 @@ fun SignInScreen(
 
     when(state) {
         is SignInUiState.SignIn -> {
+            val alpha by animateFloatAsState(
+                targetValue = if (state.showSignInInfo) 1f else 0f,
+                animationSpec = tween(400),
+                label = stringResource(R.string.splash_animation_content_description)
+            )
+
             Box(
                 modifier = modifier
                     .fillMaxSize()
                     .background(AconTheme.color.Gray900)
                     .navigationBarsPadding()
             ) {
-                SignInTopBar(
-                    modifier = Modifier
-                        .padding(top = 42.dp)
-                        .alpha(alpha),
-                    onClickText = {
-                        if (alpha >= 0.75f) {
-                            navigateToSpotListView()
+                if (state.showSignInInfo) {
+                    SignInTopBar(
+                        modifier = Modifier
+                            .padding(top = 42.dp)
+                            .alpha(alpha),
+                        onClickText = {
+                            if (alpha >= 0.75f) {
+                                navigateToSpotListView()
+                            }
                         }
-                    }
-                )
+                    )
+                }
 
                 Column(
                     modifier = modifier
@@ -145,67 +153,69 @@ fun SignInScreen(
                     }
 
                     Spacer(Modifier.weight(1f))
-                    AconGoogleLoginButton(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 20.dp)
-                            .alpha(alpha),
-                        onClick = {
-                            if (alpha >= 0.75f) {
-                                onClickLoginGoogle()
-                                amplitudeSignIn()
+                    if (state.showSignInInfo) {
+                        AconGoogleLoginButton(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 20.dp)
+                                .alpha(alpha),
+                            onClick = {
+                                if (alpha >= 0.75f) {
+                                    onSignInRequired()
+                                    amplitudeSignIn()
+                                }
                             }
+                        )
+
+                        Spacer(Modifier.height(24.dp))
+                        Text(
+                            text = stringResource(R.string.signin_policy),
+                            style = AconTheme.typography.Caption1,
+                            color = AconTheme.color.White,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier
+                                .padding(horizontal = 20.dp)
+                                .alpha(alpha)
+                        )
+
+                        Row(
+                            modifier = Modifier
+                                .padding(top = 2.dp, bottom = 32.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = stringResource(R.string.signin_terms_of_service),
+                                color = AconTheme.color.White,
+                                style = AconTheme.typography.Caption1,
+                                fontWeight = FontWeight.SemiBold,
+                                textAlign = TextAlign.Center,
+                                textDecoration = TextDecoration.Underline,
+                                modifier = Modifier
+                                    .noRippleClickable {
+                                        if (alpha >= 0.75f) {
+                                            onClickTermsOfUse()
+                                        }
+                                    }
+                                    .alpha(alpha)
+                            )
+
+                            Spacer(modifier = Modifier.width(16.dp))
+                            Text(
+                                text = stringResource(R.string.signin_privacy_policy),
+                                color = AconTheme.color.White,
+                                style = AconTheme.typography.Caption1,
+                                fontWeight = FontWeight.SemiBold,
+                                textAlign = TextAlign.Center,
+                                textDecoration = TextDecoration.Underline,
+                                modifier = Modifier
+                                    .noRippleClickable {
+                                        if (alpha >= 0.75f) {
+                                            onClickPrivacyPolicy()
+                                        }
+                                    }
+                                    .alpha(alpha)
+                            )
                         }
-                    )
-
-                    Spacer(Modifier.height(24.dp))
-                    Text(
-                        text = stringResource(R.string.signin_policy),
-                        style = AconTheme.typography.Caption1,
-                        color = AconTheme.color.White,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier
-                            .padding(horizontal = 20.dp)
-                            .alpha(alpha)
-                    )
-
-                    Row(
-                        modifier = Modifier
-                            .padding(top = 2.dp, bottom = 32.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = stringResource(R.string.signin_terms_of_service),
-                            color = AconTheme.color.White,
-                            style = AconTheme.typography.Caption1,
-                            fontWeight = FontWeight.SemiBold,
-                            textAlign = TextAlign.Center,
-                            textDecoration = TextDecoration.Underline,
-                            modifier = Modifier
-                                .noRippleClickable {
-                                    if (alpha >= 0.75f) {
-                                        onClickTermsOfUse()
-                                    }
-                                }
-                                .alpha(alpha)
-                        )
-
-                        Spacer(modifier = Modifier.width(16.dp))
-                        Text(
-                            text = stringResource(R.string.signin_privacy_policy),
-                            color = AconTheme.color.White,
-                            style = AconTheme.typography.Caption1,
-                            fontWeight = FontWeight.SemiBold,
-                            textAlign = TextAlign.Center,
-                            textDecoration = TextDecoration.Underline,
-                            modifier = Modifier
-                                .noRippleClickable {
-                                    if (alpha >= 0.75f) {
-                                        onClickPrivacyPolicy()
-                                    }
-                                }
-                                .alpha(alpha)
-                        )
                     }
                 }
             }
@@ -218,12 +228,11 @@ fun SignInScreen(
 private fun PreviewSignInScreen() {
     AconTheme {
         SignInScreen(
-            state = SignInUiState.SignIn,
+            state = SignInUiState.SignIn(),
             navigateToSpotListView = {},
             onClickTermsOfUse = {},
             onClickPrivacyPolicy = {},
-            onClickLoginGoogle = {},
-            onAnimationEnd = {}
+            onAnimationEnd = {},
         )
     }
 }

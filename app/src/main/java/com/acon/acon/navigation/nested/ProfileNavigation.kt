@@ -10,15 +10,12 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.navigation
 import androidx.navigation.toRoute
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.domain.repository.SocialRepository
 import com.acon.acon.feature.SettingsRoute
 import com.acon.acon.feature.areaverification.AreaVerificationRoute
 import com.acon.acon.feature.profile.composable.ProfileRoute
@@ -33,7 +30,6 @@ import com.acon.acon.feature.upload.UploadRoute
 
 internal fun NavGraphBuilder.profileNavigation(
     navController: NavHostController,
-    socialRepository: SocialRepository,
     snackbarHostState: SnackbarHostState
 ) {
     navigation<ProfileRoute.Graph>(
@@ -43,7 +39,6 @@ internal fun NavGraphBuilder.profileNavigation(
     ) {
         composable<ProfileRoute.Profile> {
             ProfileScreenContainer(
-                socialRepository = socialRepository,
                 snackbarHostState = snackbarHostState,
                 modifier = Modifier
                     .fillMaxSize()

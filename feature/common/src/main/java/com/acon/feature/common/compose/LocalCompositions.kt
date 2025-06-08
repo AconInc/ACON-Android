@@ -27,6 +27,6 @@ val LocalUserType = compositionLocalOf {
     UserType.GUEST
 }
 
-val LocalRequestLogin = staticCompositionLocalOf {
+val LocalRequestSignIn = staticCompositionLocalOf {
     {}
 }
