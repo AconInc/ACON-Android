@@ -1,5 +1,6 @@
 package com.acon.acon.feature.spot.screen.spotlist
 
+import android.content.Context
 import android.location.Location
 import androidx.compose.runtime.Immutable
 import com.acon.acon.domain.error.spot.FetchSpotListError
@@ -14,9 +15,10 @@ import com.acon.acon.domain.type.RestaurantFilterType
 import com.acon.acon.domain.type.SpotType
 import com.acon.acon.domain.type.TransportMode
 import com.acon.acon.domain.usecase.IsDistanceExceededUseCase
-import com.acon.acon.feature.spot.mock.spotListUiStateRestaurantMock
 import com.acon.feature.common.base.BaseContainerHost
+import com.acon.feature.common.location.isInKorea
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.viewmodel.container
 import javax.inject.Inject
@@ -25,6 +27,7 @@ import kotlin.reflect.KClass
 @HiltViewModel
 @OptIn(OrbitExperimental::class)
 class SpotListViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val spotRepository: SpotRepository,
     private val isDistanceExceededUseCase: IsDistanceExceededUseCase
 ) : BaseContainerHost<SpotListUiStateV2, SpotListSideEffectV2>() {
@@ -55,24 +58,21 @@ class SpotListViewModel @Inject constructor(
 
             runOn<SpotListUiStateV2.Loading> {
                 initialLocation = location
-                reduce {
-                    spotListUiStateRestaurantMock
+                if (location.isInKorea(context)) {
+                    fetchSpotList(location, Condition(SpotType.RESTAURANT, emptyList())) {
+                        SpotListUiStateV2.Success(
+                            transportMode = it.transportMode,
+                            spotList = it.spots,
+                            headTitle = "최고의 선택.",
+                            selectedSpotType = SpotType.RESTAURANT,
+                            currentLocation = location
+                        )
+                    }
+                } else {
+                    reduce {
+                        SpotListUiStateV2.OutOfServiceArea(state.selectedSpotType)
+                    }
                 }
-//                if (location.isInKorea(context)) {
-//                    fetchSpotList(location, Condition(SpotType.RESTAURANT, emptyList())) {
-//                        SpotListUiStateV2.Success(
-//                            transportMode = it.transportMode,
-//                            spotList = it.spots,
-//                            headTitle = "최고의 선택.",
-//                            selectedSpotType = SpotType.RESTAURANT,
-//                            currentLocation = location
-//                        )
-//                    }
-//                } else {
-//                    reduce {
-//                        SpotListUiStateV2.OutOfServiceArea
-//                    }
-//                }
             }
         }
     }
