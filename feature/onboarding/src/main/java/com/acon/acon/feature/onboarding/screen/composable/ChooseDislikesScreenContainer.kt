@@ -6,8 +6,11 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.acon.acon.core.utils.feature.toast.showToast
+import com.acon.acon.core.designsystem.R
 import com.acon.acon.feature.onboarding.screen.ChooseDislikesSideEffect
 import com.acon.acon.feature.onboarding.screen.ChooseDislikesViewModel
 import org.orbitmvi.orbit.compose.collectAsState
@@ -19,6 +22,8 @@ fun ChooseDislikesScreenContainer(
     modifier: Modifier = Modifier,
     viewModel: ChooseDislikesViewModel = hiltViewModel()
 ) {
+
+    val context = LocalContext.current
 
     val state by viewModel.collectAsState()
 
@@ -36,6 +41,7 @@ fun ChooseDislikesScreenContainer(
     viewModel.collectSideEffect { effect ->
         when (effect) {
             is ChooseDislikesSideEffect.NavigateToHome -> onNavigateToHome()
+            is ChooseDislikesSideEffect.ShowErrorToast -> context.showToast(R.string.unknown_error_message)
         }
     }
 }

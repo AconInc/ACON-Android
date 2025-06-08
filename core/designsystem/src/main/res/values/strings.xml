@@ -19,6 +19,7 @@
     <string name="network_retry">다시 시도하기</string>
     <string name="unknown_error">알 수 없는 오류가 발생했습니다</string>
     <string name="advertisement">광고</string>
+    <string name="unknown_error_message">알 수 없는 오류가 발생했어요</string>
 
     <!-- Button component -->
     <string name="login_btn_preview_content">button</string>
