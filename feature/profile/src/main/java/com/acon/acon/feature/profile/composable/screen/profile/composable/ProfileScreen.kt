@@ -34,11 +34,11 @@ import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.bottomsheet.LoginBottomSheet
 import com.acon.acon.core.designsystem.component.topbar.AconTopBar
 import com.acon.acon.core.designsystem.noRippleClickable
-import com.acon.acon.core.designsystem.size.getScreenHeight
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.feature.profile.composable.amplitude.profileAmplitude
 import com.acon.acon.feature.profile.composable.screen.mockSpotList
 import com.acon.acon.feature.profile.composable.screen.profile.ProfileUiState
+import com.acon.feature.common.compose.getScreenHeight
 
 @SuppressLint("ConfigurationScreenWidthHeight")
 @Composable

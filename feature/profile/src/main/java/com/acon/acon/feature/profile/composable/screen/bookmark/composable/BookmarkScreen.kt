@@ -20,7 +20,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -32,12 +31,12 @@ import com.acon.acon.core.designsystem.component.topbar.AconTopBar
 import com.acon.acon.core.designsystem.effect.LocalHazeState
 import com.acon.acon.core.designsystem.effect.defaultHazeEffect
 import com.acon.acon.core.designsystem.effect.imageGradientLayer
-import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.feature.profile.composable.screen.bookmark.BookmarkUiState
 import com.acon.acon.feature.profile.composable.screen.mockSpotList
 import com.acon.acon.feature.profile.composable.screen.profile.composable.BookmarkItem
 import com.acon.acon.feature.profile.composable.screen.profile.composable.BookmarkSkeletonItem
+import com.acon.feature.common.compose.getScreenHeight
 import dev.chrisbanes.haze.hazeSource
 
 @Composable
@@ -47,9 +46,8 @@ fun BookmarkScreen(
     onSpotClick: (Long) -> Unit = {},
     onNavigateToBack: () -> Unit = {}
 ) {
-    val configuration = LocalConfiguration.current
-    val screenHeightDp = configuration.screenHeightDp
-    val skeletonHeight = (screenHeightDp * 0.07f).dp
+    val screenHeightDp = getScreenHeight()
+    val skeletonHeight = (screenHeightDp * 0.07f)
 
     when(state) {
         BookmarkUiState.Loading -> {

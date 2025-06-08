@@ -1,8 +1,10 @@
 package com.acon.feature.common.compose
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 
 /**
  * Px을 Dp로 변환
@@ -23,3 +25,9 @@ fun Dp.toPx(): Float {
         toPx()
     }
 }
+
+@Composable
+fun getScreenWidth(): Dp = LocalConfiguration.current.screenWidthDp.dp
+
+@Composable
+fun getScreenHeight(): Dp = LocalConfiguration.current.screenHeightDp.dp
