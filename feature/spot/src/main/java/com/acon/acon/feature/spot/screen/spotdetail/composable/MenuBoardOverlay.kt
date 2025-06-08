@@ -1,7 +1,5 @@
 package com.acon.acon.feature.spot.screen.spotdetail.composable
 
-import androidx.annotation.DrawableRes
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -22,20 +20,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import coil3.compose.AsyncImage
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
 
 @Composable
 internal fun MenuBoardOverlay(
-    imageList: List<Int>,
+    imageList: List<String>,
     onDismiss: () -> Unit
 ) {
     var currentIndex by rememberSaveable { mutableIntStateOf(0) }
@@ -66,7 +64,7 @@ internal fun MenuBoardOverlay(
 
             PinchToZoomImage(
                 zoomState = zoomState,
-                imageResId = imageList[currentIndex]
+                menuBoardImage = imageList[currentIndex]
             )
 
             Row(
@@ -115,7 +113,7 @@ internal fun MenuBoardOverlay(
 @Composable
 internal fun PinchToZoomImage(
     zoomState: PinchZoomState,
-    @DrawableRes imageResId: Int
+    menuBoardImage: String
 ) {
     Box(
         modifier = Modifier
@@ -124,8 +122,8 @@ internal fun PinchToZoomImage(
             .pinchZoomAndTransform(zoomState),
         contentAlignment = Alignment.Center
     ) {
-        Image(
-            painter = painterResource(imageResId),
+        AsyncImage(
+            model = menuBoardImage,
             contentDescription = stringResource(R.string.menu_board_content_description),
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop
@@ -136,13 +134,9 @@ internal fun PinchToZoomImage(
 @Preview
 @Composable
 private fun MenuBoardOverlayPreview() {
-    val imageList = listOf(
-        R.drawable.ic_launcher_background,
-        R.drawable.ic_error_1_120,
-    )
     AconTheme {
         MenuBoardOverlay(
-            imageList = imageList,
+            imageList = emptyList(),
             onDismiss = {}
         )
     }

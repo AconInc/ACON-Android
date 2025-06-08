@@ -66,14 +66,6 @@ internal fun SpotDetailScreen(
     val context = LocalContext.current
     val indicatorScrollState = rememberLazyListState()
 
-    // TODO - 임시 메뉴판 이미지 리스트
-    val imageList = listOf(
-        R.drawable.ic_launcher_background,
-        R.drawable.ic_error_1_120,
-        R.drawable.ic_launcher_background,
-        R.drawable.ic_error_1_120
-    )
-
     val noStoreText = immutableListOf(
         stringResource(R.string.no_store_image_verified),
         stringResource(R.string.no_store_image_secret),
@@ -118,7 +110,7 @@ internal fun SpotDetailScreen(
 
                 if (state.showMenuBoardDialog) {
                     MenuBoardOverlay(
-                        imageList = imageList,
+                        imageList = state.menuBoardList,
                         onDismiss = { onDismissMenuBoard() }
                     )
                 }
@@ -264,7 +256,7 @@ internal fun SpotDetailScreen(
 
                             Spacer(Modifier.height(12.dp))
                             SignatureMenu(
-                                signatureMenuList = state.spotDetailMenuList // TODO - state.spotDetailInfo.signatureMenuList
+                                signatureMenuList = emptyList() // TODO - state.spotDetailInfo.signatureMenuList
                             )
                         }
 
@@ -293,7 +285,7 @@ internal fun SpotDetailScreen(
                                 //onClickDeleteBookmark()
                                 // TODO - 북마크 ON 상태이면 북마크 삭제 / 북마크 OFF 상태이면 북마크 추가
                             },
-                            isMenuBoarEnabled = true //TODO - state.spotDetailInfo.hasMenuboardImage
+                            isMenuBoarEnabled = state.menuBoardList.isEmpty() //TODO - state.spotDetailInfo.hasMenuboardImage
                         )
                     }
 
