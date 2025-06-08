@@ -1,7 +1,7 @@
 package com.acon.acon.feature.profile.composable.screen.bookmark
 
-import com.acon.acon.core.utils.feature.base.BaseContainerHost
 import com.acon.acon.domain.repository.ProfileRepository
+import com.acon.feature.common.base.BaseContainerHost
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.viewmodel.container
@@ -11,7 +11,7 @@ import javax.inject.Inject
 @HiltViewModel
 class BookmarkViewModel @Inject constructor(
     private val profileRepository: ProfileRepository,
-) :BaseContainerHost<BookmarkUiState, BookmarkUiSideEffect>() {
+) : BaseContainerHost<BookmarkUiState, BookmarkUiSideEffect>() {
 
     override val container =  container<BookmarkUiState, BookmarkUiSideEffect>(BookmarkUiState.Loading) {
         // TODO

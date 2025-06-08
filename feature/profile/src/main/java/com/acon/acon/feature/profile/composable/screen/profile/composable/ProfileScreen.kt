@@ -53,11 +53,8 @@ fun ProfileScreen(
 ) {
     val screenHeightDp = getScreenHeight()
     val boxHeight = (screenHeightDp * (60f / 740f))
-    val configuration = LocalConfiguration.current
-    val screenHeightDp = configuration.screenHeightDp
-    val boxHeight = (screenHeightDp * (60f / 740f)).dp
-    val admobHeight = (screenHeightDp * (165f / 740f)).dp
-    val savedStoreHeight = (screenHeightDp * (200f / 740f)).dp
+    val admobHeight = (screenHeightDp * (165f / 740f))
+    val savedStoreHeight = (screenHeightDp * (200f / 740f))
 
     when (state) {
         is ProfileUiState.Success -> {
