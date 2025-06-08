@@ -56,6 +56,7 @@ internal fun SpotDetailScreen(
     onClickAddBookmark: () -> Unit = {},
     onClickDeleteBookmark: () -> Unit = {},
     onClickMenuBoard: () -> Unit = {},
+    onClickRefreshMenuBoard: () -> Unit = {},
     onDismissMenuBoard: () -> Unit = {},
     onRequestErrorReportModal: () -> Unit = {},
     onDismissErrorReportModal: () -> Unit = {},
@@ -111,6 +112,8 @@ internal fun SpotDetailScreen(
                 if (state.showMenuBoardDialog) {
                     MenuBoardOverlay(
                         imageList = state.menuBoardList,
+                        isMenuBoardLoaded = state.menuBoardListLoad,
+                        refreshMenuBoard = onClickRefreshMenuBoard,
                         onDismiss = { onDismissMenuBoard() }
                     )
                 }
