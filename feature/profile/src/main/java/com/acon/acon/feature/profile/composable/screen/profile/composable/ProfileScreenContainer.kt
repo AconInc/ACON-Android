@@ -1,6 +1,5 @@
 package com.acon.acon.feature.profile.composable.screen.profile.composable
 
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -30,6 +29,7 @@ fun ProfileScreenContainer(
     onNavigateToSettingsScreen: () -> Unit = {},
     onNavigateToProfileEditScreen: () -> Unit = {},
     onNavigateToAreaVerificationScreen: () -> Unit = {},
+    onNavigateToUploadScreen: () -> Unit = {},
     viewModel: ProfileViewModel = hiltViewModel()
 ) {
     val state by viewModel.collectAsState()
@@ -58,12 +58,14 @@ fun ProfileScreenContainer(
 
     ProfileScreen(
         state = state,
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier,
         onBookmark = viewModel::onBookmark,
         onSettings = viewModel::onSettings,
         onEditProfile = viewModel::onEditProfile,
         onGoogleSignIn = { viewModel.googleLogin(socialRepository) },
         onBottomSheetShowStateChange = viewModel::onBottomSheetShowStateChange,
+        onNavigateToSpotListScreen = onNavigateToSpotListScreen,
+        onNavigateToUploadScreen = onNavigateToUploadScreen
     )
 
     viewModel.collectSideEffect {

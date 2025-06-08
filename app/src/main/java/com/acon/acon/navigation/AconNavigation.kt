@@ -1,7 +1,6 @@
 package com.acon.acon.navigation
 
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Scaffold
@@ -9,28 +8,17 @@ import androidx.compose.material3.SnackbarData
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.currentBackStackEntryAsState
-import com.acon.acon.amplitude.bottomAmplitudeSignIn
 import com.acon.acon.core.designsystem.animation.defaultEnterTransition
 import com.acon.acon.core.designsystem.animation.defaultExitTransition
 import com.acon.acon.core.designsystem.animation.defaultPopEnterTransition
 import com.acon.acon.core.designsystem.animation.defaultPopExitTransition
-import com.acon.acon.core.designsystem.component.bottomsheet.LoginBottomSheet
 import com.acon.acon.core.designsystem.component.popup.AconToastPopup
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.feature.areaverification.AreaVerificationRoute
 import com.acon.acon.feature.signin.screen.SignInRoute
-import com.acon.acon.feature.spot.SpotRoute
 import com.acon.acon.navigation.nested.areaVerificationNavigation
 import com.acon.acon.navigation.nested.onboardingNavigationNavigation
 import com.acon.acon.navigation.nested.profileNavigation
@@ -41,7 +29,6 @@ import com.acon.acon.navigation.nested.uploadNavigation
 import com.acon.feature.common.compose.LocalNavController
 import com.acon.feature.common.compose.LocalSnackbarHostState
 import com.acon.feature.common.remember.rememberSocialRepository
-import kotlinx.coroutines.launch
 
 @Composable
 fun AconNavigation(
@@ -91,8 +78,6 @@ fun AconNavigation(
                 defaultPopExitTransition()
             }
         ) {
-            splashNavigationNavigation(navController)
-
             signInNavigationNavigation(navController, socialRepository)
 
             areaVerificationNavigation(navController)

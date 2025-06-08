@@ -279,6 +279,7 @@ private fun SpotItemV2Preview() {
             latitude = 0.0,
             longitude = 0.0,
             tags = emptyList(),
+            closingTime = "23:00"
         ),
         transportMode = TransportMode.WALKING,
         onItemClick = {},
@@ -302,6 +303,7 @@ private fun SpotItemV2EmptyImagePreview() {
             latitude = 0.0,
             longitude = 0.0,
             tags = emptyList(),
+            closingTime = "23:00"
         ),
         transportMode = TransportMode.WALKING,
         onItemClick = {},

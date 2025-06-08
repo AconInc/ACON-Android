@@ -2,16 +2,22 @@ package com.acon.acon.navigation.nested
 
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.navigation
 import androidx.navigation.toRoute
+import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.domain.repository.SocialRepository
 import com.acon.acon.feature.SettingsRoute
 import com.acon.acon.feature.areaverification.AreaVerificationRoute
@@ -23,6 +29,7 @@ import com.acon.acon.feature.profile.composable.screen.photoCrop.composable.Phot
 import com.acon.acon.feature.profile.composable.screen.profile.composable.ProfileScreenContainer
 import com.acon.acon.feature.profile.composable.screen.profileMod.composable.ProfileModScreenContainer
 import com.acon.acon.feature.spot.SpotRoute
+import com.acon.acon.feature.upload.UploadRoute
 
 internal fun NavGraphBuilder.profileNavigation(
     navController: NavHostController,
@@ -38,16 +45,18 @@ internal fun NavGraphBuilder.profileNavigation(
             ProfileScreenContainer(
                 socialRepository = socialRepository,
                 snackbarHostState = snackbarHostState,
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .background(AconTheme.color.Gray900),
                 onNavigateToBookMark = {
                     navController.navigate(ProfileRoute.Bookmark)
                 },
                 onNavigateToSpotListScreen = {
-                    navController.navigate(SpotRoute.SpotList) {
-                        popUpTo(ProfileRoute.Graph) {
-                            inclusive = true
-                        }
-                    }
+                    navController.popBackStack(
+                        route = SpotRoute.SpotList,
+                        inclusive = false
+                    )
                 },
                 onNavigateToSettingsScreen = { navController.navigate(SettingsRoute.Settings) },
                 onNavigateToProfileEditScreen = {
@@ -63,6 +72,9 @@ internal fun NavGraphBuilder.profileNavigation(
                             inclusive = true
                         }
                     }
+                },
+                onNavigateToUploadScreen = {
+                    navController.navigate(UploadRoute.Graph)
                 }
             )
         }

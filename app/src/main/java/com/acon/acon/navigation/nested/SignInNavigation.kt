@@ -26,7 +26,11 @@ internal fun NavGraphBuilder.signInNavigationNavigation(
         ) {
             SignInScreenContainer(
                 navigateToSpotListView = {
-                    navController.navigate(SpotRoute.SpotList)
+                    navController.navigate(SpotRoute.SpotList) {
+                        popUpTo(SignInRoute.Graph) {
+                            inclusive = true
+                        }
+                    }
                 },
                 navigateToAreaVerification = {
                     navController.navigate(
