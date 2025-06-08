@@ -17,7 +17,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalUriHandler
@@ -31,6 +30,7 @@ import com.acon.acon.core.common.UrlConstants
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.effect.fog.fogBackground
 import com.acon.acon.core.designsystem.noRippleClickable
+import com.acon.acon.core.designsystem.size.getScreenHeight
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.core.utils.feature.toast.showToast
 import com.acon.acon.domain.model.spot.v2.Spot
@@ -52,7 +52,7 @@ internal fun SpotEmptyView(
     onTryFindWay: (Spot) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val screenHeightDp = LocalConfiguration.current.screenHeightDp.dp
+    val screenHeightDp = getScreenHeight()
     val screenHeightPx = with(LocalDensity.current) {
         screenHeightDp.toPx()
     }

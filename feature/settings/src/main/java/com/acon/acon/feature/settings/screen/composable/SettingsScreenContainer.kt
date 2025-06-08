@@ -8,9 +8,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.acon.acon.core.utils.feature.constants.AppURL
-import com.acon.acon.core.utils.feature.toast.showToast
+import com.acon.acon.core.common.UrlConstants
 import com.acon.acon.core.designsystem.R
+import com.acon.acon.core.utils.feature.toast.showToast
 import com.acon.acon.feature.settings.screen.SettingsSideEffect
 import com.acon.acon.feature.settings.screen.SettingsViewModel
 import org.orbitmvi.orbit.compose.collectAsState
@@ -57,12 +57,12 @@ fun SettingsScreenContainer(
                 // TODO - 플레이스토어로 이동
             }
             is SettingsSideEffect.OpenTermOfUse -> {
-                val url = AppURL.TERM_OF_USE
+                val url = UrlConstants.TERM_OF_USE
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
                 context.startActivity(intent)
             }
             is SettingsSideEffect.OpenPrivatePolicy -> {
-                val url = AppURL.PRIVATE_POLICY
+                val url = UrlConstants.PRIVATE_POLICY
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
                 context.startActivity(intent)
             }

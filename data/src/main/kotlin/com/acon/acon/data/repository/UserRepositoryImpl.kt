@@ -13,6 +13,7 @@ import com.acon.acon.domain.error.user.PostLoginError
 import com.acon.acon.domain.error.user.PostLogoutError
 import com.acon.acon.domain.model.user.VerificationStatus
 import com.acon.acon.domain.repository.UserRepository
+import com.acon.acon.domain.type.LocalVerificationType
 import com.acon.acon.domain.type.SocialType
 import com.acon.acon.domain.type.UserType
 import kotlinx.coroutines.flow.Flow
@@ -26,6 +27,14 @@ class UserRepositoryImpl @Inject constructor(
 
     override fun getUserType(): Flow<UserType> {
         return sessionManager.getUserType()
+    }
+
+    override fun getLocalVerificationType(): Flow<LocalVerificationType> {
+        return sessionManager.getLocalVerificationType()
+    }
+
+    override suspend fun updateLocalVerificationType(isVerified: Boolean) {
+        sessionManager.updateLocalVerificationType(isVerified)
     }
 
     override suspend fun login(
@@ -43,7 +52,7 @@ class UserRepositoryImpl @Inject constructor(
             sessionManager.saveAccessToken(loginResponse.accessToken.orEmpty())
             tokenLocalDataSource.saveRefreshToken(loginResponse.refreshToken.orEmpty())
 
-            loginResponse.hasVerifiedArea.let { tokenLocalDataSource.saveAreaVerification(it) }
+            sessionManager.updateLocalVerificationType(loginResponse.hasVerifiedArea)
 
             AconAmplitude.setUserProperty(loginResponse.externalUUID)
             AconAmplitude.setUserId(loginResponse.externalUUID)

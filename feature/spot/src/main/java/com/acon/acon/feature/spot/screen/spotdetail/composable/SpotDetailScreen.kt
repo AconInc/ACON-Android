@@ -36,6 +36,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import com.acon.acon.core.common.UrlConstants
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.button.v2.AconFilledButton
 import com.acon.acon.core.designsystem.component.topbar.AconTopBar
@@ -102,9 +103,7 @@ internal fun SpotDetailScreen(
                     ReportErrorBottomSheet(
                         onDismissRequest = { onDismissErrorReportModal() },
                         onClickReportError = {
-                            val url =
-                                "https://walla.my/survey/ekYLYwpJv2d0Eznnijla" // TODO - 구글폼 (주소 나중에 따로 저장하여 불러와야 함)
-                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(UrlConstants.ERROR_REPORT))
                             context.startActivity(intent)
                         }
                     )

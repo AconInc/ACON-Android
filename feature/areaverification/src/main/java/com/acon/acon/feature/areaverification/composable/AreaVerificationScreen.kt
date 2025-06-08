@@ -14,7 +14,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -25,21 +24,21 @@ import androidx.compose.ui.unit.dp
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.button.v2.AconFilledButton
 import com.acon.acon.core.designsystem.component.dialog.AconPermissionDialog
+import com.acon.acon.core.designsystem.size.getScreenHeight
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.core.utils.feature.action.BackOnPressed
 
 @Composable
 internal fun AreaVerificationScreen(
-    state: AreaVerificationHomeUiState,
+    state: AreaVerificationUiState,
     route: String,
     onNextButtonClick: () -> Unit,
     onPermissionSettingClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
-    val configuration = LocalConfiguration.current
-    val screenHeightDp = configuration.screenHeightDp
-    val offsetY = (screenHeightDp * 0.65f).dp
+    val screenHeightDp = getScreenHeight()
+    val offsetY = (screenHeightDp * 0.65f)
 
     if (state.showPermissionDialog) {
         AconPermissionDialog(
@@ -109,7 +108,7 @@ internal fun AreaVerificationScreen(
 private fun AreaVerificationHomeScreenPreview() {
     AconTheme {
         AreaVerificationScreen(
-            state = AreaVerificationHomeUiState(),
+            state = AreaVerificationUiState(),
             route = "",
             onPermissionSettingClick = {},
             onNextButtonClick = {}

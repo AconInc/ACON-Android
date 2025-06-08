@@ -10,6 +10,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.google.services.ads) // TODO - admob Plugin 분리?
     implementation(libs.lottie.compose)
     implementation(libs.palette)
 }

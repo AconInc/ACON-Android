@@ -49,6 +49,7 @@ amplitudeVersion = "1.20.1"
 firebaseBom = "33.12.0"
 firebaseCrashlytics = "3.0.3"
 googleServices = "4.4.2"
+ads = "24.3.0"
 
 ## Naver Map
 naverMapCompose = "1.8.0"
@@ -98,6 +99,9 @@ androidx-credentials-play-services-auth = { module = "androidx.credentials:crede
 androidx-security-crypto-ktx = { module = "androidx.security:security-crypto-ktx", version.ref = "securityCryptoKtx" }
 
 googleid = { module = "com.google.android.libraries.identity.googleid:googleid", version.ref = "googleid" }
+
+# google-services-ads
+google-services-ads = { module = "com.google.android.gms:play-services-ads", version.ref = "ads" }
 
 # Permission
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }

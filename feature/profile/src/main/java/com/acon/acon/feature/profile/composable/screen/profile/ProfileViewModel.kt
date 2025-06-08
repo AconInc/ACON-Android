@@ -18,8 +18,8 @@ import kotlin.coroutines.cancellation.CancellationException
 @OptIn(OrbitExperimental::class)
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
-    private val profileRepository: ProfileRepository,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val profileRepository: ProfileRepository
 ) : BaseContainerHost<ProfileUiState, ProfileUiSideEffect>() {
 
     val updateProfileState = profileRepository.getProfileType()
@@ -41,11 +41,14 @@ class ProfileViewModel @Inject constructor(
     }
 
     fun googleLogin(socialRepository: SocialRepository) = intent {
+        onBottomSheetShowStateChange(false)
         socialRepository.googleLogin()
             .onSuccess {
                 if(it.hasVerifiedArea) {
+                    userRepository.updateLocalVerificationType(true)
                     postSideEffect(ProfileUiSideEffect.OnNavigateToSpotListScreen)
                 } else {
+                    userRepository.updateLocalVerificationType(false)
                     postSideEffect(ProfileUiSideEffect.OnNavigateToAreaVerificationScreen)
                 }
             }.onFailure { error ->
@@ -83,6 +86,10 @@ class ProfileViewModel @Inject constructor(
             }
     }
 
+    fun onBookmark() = intent {
+        postSideEffect(ProfileUiSideEffect.OnNavigateToBookmarkScreen)
+    }
+
     fun onSettings() = intent {
         postSideEffect(ProfileUiSideEffect.OnNavigateToSettingsScreen)
     }
@@ -118,6 +125,7 @@ sealed interface ProfileUiState {
 }
 
 sealed interface ProfileUiSideEffect {
+    data object OnNavigateToBookmarkScreen : ProfileUiSideEffect
     data object OnNavigateToSpotListScreen : ProfileUiSideEffect
     data object OnNavigateToSettingsScreen : ProfileUiSideEffect
     data object OnNavigateToProfileEditScreen : ProfileUiSideEffect

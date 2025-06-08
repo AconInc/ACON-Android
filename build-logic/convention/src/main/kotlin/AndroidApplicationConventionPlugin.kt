@@ -42,6 +42,9 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
                     manifestPlaceholders += mapOf()
                     manifestPlaceholders["naverClientId"] = getPropertyKey("naver_client_id")
 
+                    // TODO - 진짜 admob으로 바꿔야 함
+                    manifestPlaceholders["admobAppUnitId"] = getPropertyKey("admob_app_unit_id")
+
                     applicationId = catalog.findVersion("projectApplicationId").get().toString()
                     targetSdk = catalog.findVersion("projectTargetSdk").get().toString().toInt()
                     versionCode = catalog.findVersion("projectVersionCode").get().toString().toInt()

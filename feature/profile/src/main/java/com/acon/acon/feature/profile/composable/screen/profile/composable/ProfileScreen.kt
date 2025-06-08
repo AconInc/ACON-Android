@@ -1,14 +1,20 @@
 package com.acon.acon.feature.profile.composable.screen.profile.composable
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -18,7 +24,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -29,22 +34,27 @@ import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.bottomsheet.LoginBottomSheet
 import com.acon.acon.core.designsystem.component.topbar.AconTopBar
 import com.acon.acon.core.designsystem.noRippleClickable
+import com.acon.acon.core.designsystem.size.getScreenHeight
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.feature.profile.composable.amplitude.profileAmplitude
+import com.acon.acon.feature.profile.composable.screen.mockSpotList
 import com.acon.acon.feature.profile.composable.screen.profile.ProfileUiState
 
+@SuppressLint("ConfigurationScreenWidthHeight")
 @Composable
 fun ProfileScreen(
     state: ProfileUiState,
     modifier: Modifier = Modifier,
+    onBookmark: () -> Unit = {},
     onSettings: () -> Unit = {},
     onEditProfile: () -> Unit = {},
     onGoogleSignIn: () -> Unit = {},
     onBottomSheetShowStateChange: (Boolean) -> Unit = {}
 ) {
-    val configuration = LocalConfiguration.current
-    val screenHeightDp = configuration.screenHeightDp
+    val screenHeightDp = getScreenHeight()
     val boxHeight = (screenHeightDp * (60f / 740f))
+    val admobHeight = (screenHeightDp * (165f / 740f))
+    val savedStoreHeight = (screenHeightDp * (200f / 740f))
 
     when (state) {
         is ProfileUiState.Success -> {
@@ -52,7 +62,6 @@ fun ProfileScreen(
                 modifier = modifier
                     .background(AconTheme.color.Gray900)
                     .padding(horizontal = 16.dp)
-
             ) {
                 Spacer(Modifier.height(40.dp))
                 AconTopBar(
@@ -78,15 +87,14 @@ fun ProfileScreen(
                 )
 
                 Row(
-                    modifier = Modifier
-                        .padding(vertical = 40.dp)
+                    modifier = Modifier.padding(top = 40.dp)
                 ) {
                     if (state.profileImage.isEmpty()) {
                         Image(
                             imageVector = ImageVector.vectorResource(R.drawable.ic_default_profile),
                             contentDescription = stringResource(R.string.content_description_default_profile_image),
                             modifier = Modifier
-                                .size(boxHeight.dp)
+                                .size(boxHeight)
                                 .clip(CircleShape)
                         )
                     } else {
@@ -94,7 +102,7 @@ fun ProfileScreen(
                             model = state.profileImage,
                             contentDescription = stringResource(R.string.content_description_profile_image),
                             modifier = Modifier
-                                .size(boxHeight.dp)
+                                .size(boxHeight)
                                 .clip(CircleShape),
                             contentScale = ContentScale.Crop
                         )
@@ -129,6 +137,56 @@ fun ProfileScreen(
                         }
                     }
                 }
+
+                Spacer(Modifier.height(42.dp))
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 6.dp)
+                ) {
+                    Text(
+                        text = stringResource(R.string.saved_store),
+                        color = AconTheme.color.White,
+                        style = AconTheme.typography.Title4,
+                        fontWeight = FontWeight.SemiBold
+                    )
+
+                    Spacer(Modifier.weight(1f))
+                    Text(
+                        text = stringResource(R.string.show_saved_all_store),
+                        color = AconTheme.color.Action,
+                        style = AconTheme.typography.Body1,
+                        fontWeight = FontWeight.SemiBold,
+                        modifier = Modifier
+                            .padding(vertical = 2.dp)
+                            .padding(end = 8.dp)
+                            .noRippleClickable { onBookmark() }
+                    )
+                }
+
+                Spacer(Modifier.height(8.dp))
+                LazyRow(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(savedStoreHeight),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    items(
+                        items = mockSpotList,
+                        key = { it.id }
+                    ) { spot ->
+                        BookmarkItem(
+                            spot = spot,
+                            onClickSpotItem = {}, // TODO - 장소 상세로 이동
+                            modifier = Modifier.aspectRatio(150f/217f)
+                        )
+                    }
+                }
+
+                ProfileNativeAd(
+                    screenHeight = admobHeight,
+                    modifier = Modifier.padding(top = 20.dp, bottom = 23.dp)
+                )
             }
         }
 
@@ -171,7 +229,7 @@ fun ProfileScreen(
                                 tint = AconTheme.color.White
                             )
                         }
-                    },
+                    }
                 )
 
                 Row(
@@ -182,7 +240,7 @@ fun ProfileScreen(
                         imageVector = ImageVector.vectorResource(R.drawable.ic_default_profile),
                         contentDescription = stringResource(R.string.content_description_default_profile_image),
                         modifier = Modifier
-                            .size(boxHeight.dp)
+                            .size(boxHeight)
                             .clip(CircleShape)
                     )
 
@@ -206,6 +264,11 @@ fun ProfileScreen(
                         tint = AconTheme.color.White
                     )
                 }
+
+                ProfileNativeAd(
+                    screenHeight = admobHeight,
+                    modifier = Modifier.padding(top = 20.dp)
+                )
             }
         }
     }
@@ -216,7 +279,7 @@ fun ProfileScreen(
 private fun ProfileScreenPreview() {
     AconTheme {
         ProfileScreen(
-            state = ProfileUiState.Guest(),
+            state = ProfileUiState.Guest()
         )
     }
 }

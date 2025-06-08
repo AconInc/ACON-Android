@@ -6,6 +6,7 @@ import com.acon.acon.core.common.Naver
 import com.acon.acon.core.common.NaverAuthInterceptor
 import com.acon.acon.core.common.NoAuth
 import com.acon.acon.core.common.TokenInterceptor
+import com.acon.acon.core.common.UrlConstants
 import com.acon.acon.data.BuildConfig
 import com.acon.acon.data.SessionManager
 import com.acon.acon.data.datasource.local.TokenLocalDataSource
@@ -102,7 +103,7 @@ internal object NetworkModule {
     ): Retrofit {
         val json = Json { ignoreUnknownKeys = true }
         return Retrofit.Builder()
-            .baseUrl("https://naveropenapi.apigw.ntruss.com/")
+            .baseUrl(UrlConstants.NAVER_OPEN_API)
             .client(client)
             .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
             .build()
