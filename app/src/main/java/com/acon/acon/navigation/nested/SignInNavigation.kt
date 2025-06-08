@@ -1,5 +1,7 @@
 package com.acon.acon.navigation.nested
 
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
@@ -16,9 +18,12 @@ internal fun NavGraphBuilder.signInNavigationNavigation(
 ) {
 
     navigation<SignInRoute.Graph>(
-        startDestination = SignInRoute.SignIn,
+        startDestination = SignInRoute.SignIn
     ) {
-        composable<SignInRoute.SignIn> {
+        composable<SignInRoute.SignIn>(
+            enterTransition = { EnterTransition.None },
+            exitTransition = { ExitTransition.None },
+        ) {
             SignInScreenContainer(
                 navigateToSpotListView = {
                     navController.navigate(SpotRoute.SpotList)
@@ -28,7 +33,7 @@ internal fun NavGraphBuilder.signInNavigationNavigation(
                         AreaVerificationRoute.AreaVerification("onboarding")
                     )
                 },
-                socialRepository = socialRepository,
+                socialRepository = socialRepository
             )
         }
     }

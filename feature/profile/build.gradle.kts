@@ -15,6 +15,7 @@ dependencies {
     implementation(libs.google.services.ads) // TODO - admob Plugin 분리?
 
     implementation(projects.domain)
+    implementation(projects.feature.common)
     implementation(projects.core.designsystem)
     implementation(projects.core.utils.feature)
 }

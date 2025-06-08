@@ -1,18 +1,18 @@
 package com.acon.acon.feature.upload.mock
 
-import com.acon.acon.domain.model.upload.v2.SearchedSpot
+import com.acon.acon.domain.model.upload.UploadSpotSuggestion
+import com.acon.acon.domain.model.upload.SearchedSpot
 import com.acon.acon.domain.type.SpotType
 import com.acon.acon.feature.upload.screen.UploadSearchUiState
 
 internal val uploadSearchUiStateMock = UploadSearchUiState.Success(
-    suggestions = listOf(
-        "버거킹",
-        "맘스터치",
-        "롯데리아",
-        "KFC",
-        "맥도날드",
+    uploadSpotSuggestions = listOf(
+        UploadSpotSuggestion(1, "디버그1"),
+        UploadSpotSuggestion(2, "TheBug2"),
+        UploadSpotSuggestion(3, "Debug3"),
+        UploadSpotSuggestion(4, "디벅4"),
+        UploadSpotSuggestion(5, "디Bug5"),
     ),
-    query = "",
     searchedSpots = listOf(
         SearchedSpot(
             spotId = 1L,

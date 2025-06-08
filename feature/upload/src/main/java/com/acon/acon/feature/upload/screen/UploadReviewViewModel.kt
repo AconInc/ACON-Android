@@ -2,10 +2,11 @@ package com.acon.acon.feature.upload.screen
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.toRoute
-import com.acon.acon.core.utils.feature.base.BaseContainerHost
-import com.acon.acon.domain.model.upload.v2.SearchedSpot
+import com.acon.feature.common.base.BaseContainerHost
+import com.acon.acon.domain.model.spot.SimpleSpot
+import com.acon.acon.domain.repository.UploadRepository
 import com.acon.acon.feature.upload.UploadRoute
-import com.acon.feature.common.navigation.searchedSpotNavType
+import com.acon.feature.common.navigation.simpleSpotNavType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.viewmodel.container
@@ -14,15 +15,15 @@ import javax.inject.Inject
 @OptIn(OrbitExperimental::class)
 @HiltViewModel
 class UploadReviewViewModel @Inject constructor(
-    private val savedStateHandle: SavedStateHandle
+    private val uploadRepository: UploadRepository,
+    savedStateHandle: SavedStateHandle
 ) : BaseContainerHost<UploadReviewUiState, UploadReviewSideEffect>() {
 
-    private val typeMap = mapOf(searchedSpotNavType)
-
-    private val searchedSpot = savedStateHandle.toRoute<UploadRoute.Review>(typeMap).searchedSpot
+    private val typeMap = mapOf(simpleSpotNavType)
+    private val spot = savedStateHandle.toRoute<UploadRoute.Review>(typeMap).spot
 
     override val container =
-        container<UploadReviewUiState, UploadReviewSideEffect>(UploadReviewUiState.Success(spot = searchedSpot)) {
+        container<UploadReviewUiState, UploadReviewSideEffect>(UploadReviewUiState.Success(spot = spot)) {
 
         }
 
@@ -32,16 +33,27 @@ class UploadReviewViewModel @Inject constructor(
 
     fun onCompletion() = intent {
         runOn<UploadReviewUiState.Success> {
-            // TODO : 업로드 API 호출
-            postSideEffect(UploadReviewSideEffect.NavigateToComplete(state.spot.name))
+            if (state.selectedAcornCount < 1) {
+                postSideEffect(UploadReviewSideEffect.ShowToast)
+                return@runOn
+            }
+
+            uploadRepository.submitReview(
+                spotId = spot.spotId,
+                acornCount = state.selectedAcornCount
+            ).onSuccess {
+                postSideEffect(UploadReviewSideEffect.NavigateToComplete(state.spot))
+            }.onFailure {
+                postSideEffect(UploadReviewSideEffect.ShowToast)
+            }
         }
     }
 
-    fun onDotoriCountChanged(count: Int) = intent {
+    fun onAcornCountChanged(count: Int) = intent {
         runOn<UploadReviewUiState.Success> {
             reduce {
                 state.copy(
-                    selectedDotoriCount = count
+                    selectedAcornCount = count
                 )
             }
         }
@@ -50,13 +62,14 @@ class UploadReviewViewModel @Inject constructor(
 
 sealed interface UploadReviewUiState {
     data class Success(
-        val spot: SearchedSpot,
-        val selectedDotoriCount: Int = 0,
+        val spot: SimpleSpot,
+        val selectedAcornCount: Int = 0,
     ): UploadReviewUiState
     data object LoadFailed: UploadReviewSideEffect
 }
 
 sealed interface UploadReviewSideEffect {
     data object NavigateBack : UploadReviewSideEffect
-    data class NavigateToComplete(val spotName: String) : UploadReviewSideEffect
+    data object ShowToast : UploadReviewSideEffect
+    data class NavigateToComplete(val spot: SimpleSpot) : UploadReviewSideEffect
 }

@@ -8,7 +8,7 @@ data class Spot(
     val id: Long,
     val image: String,
     val name: String,
-    val dotori: Int,
+    val acorn: Int,
     val tags: List<TagType>,
     val eta: Int,
     val latitude: Double,

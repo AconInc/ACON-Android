@@ -56,7 +56,6 @@ import com.acon.acon.navigation.nested.onboardingNavigationNavigation
 import com.acon.acon.navigation.nested.profileNavigation
 import com.acon.acon.navigation.nested.settingsNavigation
 import com.acon.acon.navigation.nested.signInNavigationNavigation
-import com.acon.acon.navigation.nested.splashNavigationNavigation
 import com.acon.acon.navigation.nested.spotNavigation
 import com.acon.acon.navigation.nested.uploadNavigation
 import com.acon.feature.common.compose.LocalTrigger
@@ -108,6 +107,7 @@ fun AconNavigation(
                         socialRepository.googleLogin()
                             .onSuccess {
                                 if (it.hasVerifiedArea) {
+                                    userRepository.updateLocalVerificationType(true)
                                     showLoginBottomSheet = false
                                     navController.navigate(SpotRoute.SpotList) {
                                         popUpTo<AreaVerificationRoute.Graph> {
@@ -115,6 +115,7 @@ fun AconNavigation(
                                         }
                                     }
                                 } else {
+                                    userRepository.updateLocalVerificationType(false)
                                     showLoginBottomSheet = false
                                     navController.navigate(
                                         AreaVerificationRoute.AreaVerification(
@@ -222,8 +223,6 @@ fun AconNavigation(
                     defaultPopExitTransition()
                 }
             ) {
-                splashNavigationNavigation(navController)
-
                 signInNavigationNavigation(navController, socialRepository)
 
                 areaVerificationNavigation(navController)

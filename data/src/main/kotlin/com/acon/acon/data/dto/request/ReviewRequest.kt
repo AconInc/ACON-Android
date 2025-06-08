@@ -5,8 +5,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class ReviewRequest(
-    @SerialName("spotId")
-    val spotId: Long,
-    @SerialName("acornCount")
-    val acornCount: Int
+    @SerialName("spotId") val spotId: Long,
+    @SerialName("acornCount") val acornCount: Int
 )

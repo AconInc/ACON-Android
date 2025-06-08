@@ -4,7 +4,7 @@ import com.acon.acon.domain.error.ErrorFactory
 import com.acon.acon.domain.error.RootError
 
 sealed class UploadReviewError : RootError() {
-    class NotEnoughDotori : UploadReviewError() {
+    class NotEnoughAcorn : UploadReviewError() {
         override val code: Int = 40098
     }
 
@@ -15,7 +15,7 @@ sealed class UploadReviewError : RootError() {
     companion object : ErrorFactory {
         override fun createErrorInstances(): Array<RootError> {
             return arrayOf(
-                NotEnoughDotori(),
+                NotEnoughAcorn(),
                 NotExistUser()
             )
         }

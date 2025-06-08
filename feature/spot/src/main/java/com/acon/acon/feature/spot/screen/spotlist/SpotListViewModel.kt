@@ -4,7 +4,7 @@ import android.content.Context
 import android.location.Location
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.viewModelScope
-import com.acon.acon.core.utils.feature.base.BaseContainerHost
+import com.acon.feature.common.base.BaseContainerHost
 import com.acon.acon.domain.error.spot.FetchSpotListError
 import com.acon.acon.domain.model.spot.Condition
 import com.acon.acon.domain.model.spot.Filter
@@ -49,39 +49,41 @@ class SpotListViewModel @Inject constructor(
 
     private lateinit var initialLocation: Location
 
-    fun onNewLocationEmitted(location: Location) = intent {
-        runOn<SpotListUiStateV2.Success> {
-            reduce {
-                state.copy(currentLocation = location)
-            }
-            if (isDistanceExceededUseCase(
-                    initialLocation.latitude,
-                    initialLocation.longitude,
-                    location.latitude,
-                    location.longitude
-                )
-            ) {
+    override fun onNewLocation(location: Location) {
+        intent {
+            runOn<SpotListUiStateV2.Success> {
                 reduce {
-                    state.copy(showRefreshPopup = true)
+                    state.copy(currentLocation = location)
                 }
-            }
-        }
-
-        runOn<SpotListUiStateV2.Loading> {
-            initialLocation = location
-            if (location.isInKorea(context)) {
-                fetchSpotList(location, Condition(SpotType.RESTAURANT, emptyList())) {
-                    SpotListUiStateV2.Success(
-                        transportMode = it.transportMode,
-                        spotList = it.spots,
-                        headTitle = "최고의 선택.",
-                        selectedSpotType = SpotType.RESTAURANT,
-                        currentLocation = location
+                if (isDistanceExceededUseCase(
+                        initialLocation.latitude,
+                        initialLocation.longitude,
+                        location.latitude,
+                        location.longitude
                     )
+                ) {
+                    reduce {
+                        state.copy(showRefreshPopup = true)
+                    }
                 }
-            } else {
-                reduce {
-                    SpotListUiStateV2.OutOfServiceArea
+            }
+
+            runOn<SpotListUiStateV2.Loading> {
+                initialLocation = location
+                if (location.isInKorea(context)) {
+                    fetchSpotList(location, Condition(SpotType.RESTAURANT, emptyList())) {
+                        SpotListUiStateV2.Success(
+                            transportMode = it.transportMode,
+                            spotList = it.spots,
+                            headTitle = "최고의 선택.",
+                            selectedSpotType = SpotType.RESTAURANT,
+                            currentLocation = location
+                        )
+                    }
+                } else {
+                    reduce {
+                        SpotListUiStateV2.OutOfServiceArea
+                    }
                 }
             }
         }

@@ -3,7 +3,11 @@ package com.acon.acon.feature.upload.screen.composable.review
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.acon.acon.core.utils.feature.toast.showToast
+import com.acon.acon.domain.model.spot.SimpleSpot
+import com.acon.acon.core.designsystem.R
 import com.acon.acon.feature.upload.screen.UploadReviewSideEffect
 import com.acon.acon.feature.upload.screen.UploadReviewViewModel
 import org.orbitmvi.orbit.compose.collectAsState
@@ -12,24 +16,26 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 @Composable
 fun UploadReviewScreenContainer(
     onNavigateBack: () -> Unit,
-    onComplete: (spotName: String) -> Unit,
+    onComplete: (SimpleSpot) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: UploadReviewViewModel = hiltViewModel()
 ) {
     val state by viewModel.collectAsState()
+    val context = LocalContext.current
 
     UploadReviewScreen(
         state = state,
         onBackAction = viewModel::onBackAction,
         onCompleteAction = viewModel::onCompletion,
-        onDotoriClick = viewModel::onDotoriCountChanged,
+        onAcornClick = viewModel::onAcornCountChanged,
         modifier = modifier
     )
 
     viewModel.collectSideEffect { effect ->
         when (effect) {
             is UploadReviewSideEffect.NavigateBack -> onNavigateBack()
-            is UploadReviewSideEffect.NavigateToComplete -> onComplete(effect.spotName)
+            is UploadReviewSideEffect.NavigateToComplete -> onComplete(effect.spot)
+            is UploadReviewSideEffect.ShowToast -> context.showToast(context.getString(R.string.failed_submit_review))
             else -> Unit
         }
     }

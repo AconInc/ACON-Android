@@ -28,6 +28,8 @@
     <string name="btn_change">변경하기</string>
 
     <!-- Content Description -->
+    <string name="splash_animation_content_description">스플래시 애니메이션</string>
+    <string name="splash_image_content_description">스플래시 이미지</string>
     <string name="location_content_description">위치</string>
     <string name="map_content_description">지도</string>
     <string name="dismiss_content_description">닫기</string>
@@ -74,6 +76,14 @@
     <string name="location_permission_denied_title">\'Acon\'에 대한 위치접근\n권한이 없습니다.</string>
     <string name="location_permission_denied_content">설정에서 위치접근 권한을 허용해주세요.</string>
 
+    <!-- SignIn -->
+    <string name="signin_logo_title_content_description">acon 로고 이미지</string>
+    <string name="signin_policy">가입을 진행할 경우, 아래의 정책에 대해 동의한 것으로 간주합니다.</string>
+    <string name="signin_terms_of_service">이용약관</string>
+    <string name="signin_privacy_policy">개인정보처리방침</string>
+    <string name="signin_topbar_text">건너뛰기</string>
+    <string name="signin_login_failed_toast">로그인에 실패했습니다.</string>
+
     <!-- AreaVerification -->
     <string name="area_verification_settings">settings</string>
     <string name="area_verification_topbar">지역인증</string>
@@ -92,7 +102,7 @@
     <string name="delete_area_dialog_edit_content">지역은 최소 1개 이상을 등록해야 해요.\n현재 설정된 지역을 변경할까요?</string>
 
     <!-- SpotList -->
-    <string name="dotori_count_content_description">도토리 개수</string>
+    <string name="acorn_count_content_description">도토리 개수</string>
     <string name="filter_content_description">필터</string>
     <string name="restaurant">식당</string>
     <string name="cafe">카페</string>
@@ -155,12 +165,15 @@
     <string name="request_new_spot_description1">현재 장소를 바로 등록할 수 있어요</string>
     <string name="request_new_spot_description2">더욱 더 정확하게 추천이 가능해요</string>
     <string name="go_to_register_spot">5초만에 등록하러 가기</string>
-    <string name="introduce_drop_dotori">도토리를 떨어트려\n리뷰를 남겨 볼까요?</string>
-    <string name="introduce_click_dotori">도토리를 선택해보세요</string>
-    <string name="complete_drop_dotori">도토리로 리뷰 남기기</string>
+    <string name="introduce_drop_acorn">도토리를 떨어트려\n리뷰를 남겨 볼까요?</string>
+    <string name="introduce_click_acorn">도토리를 선택해보세요</string>
+    <string name="complete_drop_acorn">도토리로 리뷰 남기기</string>
     <string name="review_complete">%s의\n리뷰 작성을 완료했어요!</string>
     <string name="wish_was_your_spot">당신의 취향이 가득 담긴 장소였길 바래요</string>
-    <string name="tab_closed_in_seconds">%s초 후 탭이 자동으로 닫힙니다</string>
+    <string name="failed_submit_review">리뷰를 남기지 못했어요</string>
+    <string name="failed_verify_location">위치 인식 실패</string>
+    <string name="failed_verify_location_description">현재 위치와 리뷰 등록 장소가\n오차범위 밖에 있습니다.\n좀 더 가까이 이동해보세요.</string>
+    <string name="failed_verify_location_not_in_korea_description">문제가 발생했습니다. 나중에 다시 시도해주세요.</string>
 
     <!-- Onboarding -->
     <string name="request_dislike_food_title">싫어하는 음식을 알려줄 수 있나요?</string>

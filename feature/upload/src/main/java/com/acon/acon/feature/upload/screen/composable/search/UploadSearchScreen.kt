@@ -1,5 +1,6 @@
 package com.acon.acon.feature.upload.screen.composable.search
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,27 +15,39 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
+import com.acon.acon.core.common.UrlConstants
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.chip.AconChip
+import com.acon.acon.core.designsystem.component.dialog.v2.AconDefaultDialog
 import com.acon.acon.core.designsystem.component.textfield.v2.AconSearchTextField
 import com.acon.acon.core.designsystem.effect.defaultHazeEffect
 import com.acon.acon.core.designsystem.effect.rememberHazeState
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.domain.model.upload.v2.SearchedSpot
+import com.acon.acon.core.utils.feature.toast.showToast
+import com.acon.acon.domain.model.upload.UploadSpotSuggestion
+import com.acon.acon.domain.model.upload.SearchedSpot
 import com.acon.acon.feature.upload.mock.uploadSearchUiStateMock
 import com.acon.acon.feature.upload.screen.UploadSearchUiState
 import com.acon.feature.common.type.getNameResId
@@ -47,19 +60,29 @@ import kotlinx.collections.immutable.toImmutableList
 internal fun UploadSearchScreen(
     state: UploadSearchUiState,
     onSearchQueryChanged: (String) -> Unit,
+    onSearchedSpotClick: (SearchedSpot, onSuccess: () -> Unit) -> Unit,
+    onSuggestionSpotClick: (UploadSpotSuggestion, onSuccess: () -> Unit) -> Unit,
+    onVerifyLocationDialogAction: () -> Unit,
     onBackAction: () -> Unit,
     onNextAction: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
 
     val hazeState = rememberHazeState()
-    
-    val isRightActionEnabled by remember(state) {
+
+    var query by rememberSaveable(stateSaver = TextFieldValue.Saver) { mutableStateOf(TextFieldValue("")) }
+    val isNextActionEnabled by remember(state) {
         derivedStateOf {
             when (state) {
-                is UploadSearchUiState.Success -> state.query.isNotEmpty()
+                is UploadSearchUiState.Success -> state.selectedSpot != null
                 else -> false
             }
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        snapshotFlow { query }.collect {
+            onSearchQueryChanged(it.text)
         }
     }
 
@@ -67,7 +90,7 @@ internal fun UploadSearchScreen(
         modifier = modifier,
     ) {
         UploadTopAppBar(
-            isRightActionEnabled = isRightActionEnabled,
+            isRightActionEnabled = isNextActionEnabled,
             onLeftAction = onBackAction,
             onRightAction = onNextAction,
             modifier = Modifier
@@ -77,19 +100,39 @@ internal fun UploadSearchScreen(
 
         when(state) {
             is UploadSearchUiState.Success -> {
+                if (state.showNotAvailableLocationDialog || state.showNotInKoreaDialog) {
+                    AconDefaultDialog(
+                        title = stringResource(R.string.failed_verify_location),
+                        action = stringResource(R.string.ok),
+                        onAction = onVerifyLocationDialogAction,
+                        onDismissRequest = onVerifyLocationDialogAction
+                    ) {
+                        Text(
+                            text = stringResource(
+                                if (state.showNotAvailableLocationDialog)
+                                    R.string.failed_verify_location_description
+                                else
+                                    R.string.failed_verify_location_not_in_korea_description
+                            ),
+                            style = AconTheme.typography.Body1,
+                            color = AconTheme.color.Gray200,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier
+                                .padding(horizontal = 16.dp)
+                                .padding(bottom = 20.dp)
+                        )
+                    }
+                }
                 Column(
                     Modifier.padding(horizontal = 16.dp)
                 ) {
                     AconSearchTextField(
-                        value = TextFieldValue(state.query, TextRange(state.query.length)),
-                        onValueChange = {
-                            onSearchQueryChanged(it.text)
-                        },
+                        value = query,
+                        onValueChange = { query = it },
                         placeholder = stringResource(R.string.search_spot_placeholder),
                         modifier = Modifier.fillMaxWidth()
                     )
                     Box {
-                        // TODO FlowRow
                         FlowRow(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -97,38 +140,47 @@ internal fun UploadSearchScreen(
                             horizontalArrangement = Arrangement.spacedBy(8.dp),
                             verticalArrangement = Arrangement.spacedBy(8.dp),
                         ) {
-                            state.suggestions.fastForEach {
+                            state.uploadSpotSuggestions.fastForEach {
                                 AconChip(
-                                    title = it,
-                                    onClick = { onSearchQueryChanged(it) },
+                                    title = it.name,
+                                    onClick = {
+                                        onSuggestionSpotClick(it) {
+                                            query = TextFieldValue(text = it.name, selection = TextRange(it.name.length))
+                                        }
+                                    },
                                     isSelected = false,
                                     modifier = Modifier.hazeSource(state = hazeState)
                                 )
                             }
                         }
 
-                        if (state.query.isNotEmpty()) {
+                        if (state.showSearchedSpots) {
                             SearchedSpots(
                                 searchedSpots = state.searchedSpots.toImmutableList(),
                                 onItemClick = {
-                                    onSearchQueryChanged(it.name)
+                                    onSearchedSpotClick(it) {
+                                        query = TextFieldValue(text = it.name, selection = TextRange(it.name.length))
+                                    }
                                 },
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(top = 10.dp)
                                     .height(300.dp)
                                     .clip(RoundedCornerShape(16.dp))
-                                    .defaultHazeEffect(
-                                        hazeState = hazeState,
-                                        tintColor = AconTheme.color.Gray700
+                                    .then(
+                                        if (state.uploadSpotSuggestions.isEmpty())
+                                            Modifier.background(AconTheme.color.GlassWhiteLight)
+                                        else Modifier.defaultHazeEffect(
+                                            hazeState = hazeState,
+                                            tintColor = AconTheme.color.Gray800,
+                                            blurRadius = 20.dp,
+                                            alpha = .4f
+                                        )
                                     )
                             )
                         }
                     }
                 }
-            }
-            UploadSearchUiState.LoadFailed -> {
-                // TODO
             }
         }
     }
@@ -140,9 +192,12 @@ private fun SearchedSpots(
     onItemClick: (SearchedSpot) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val uriHandler = LocalUriHandler.current
+    val context = LocalContext.current
+
     Column(modifier = modifier) {
         LazyColumn(
-            modifier = Modifier,
+            modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             if (searchedSpots.isEmpty()) {
@@ -174,7 +229,15 @@ private fun SearchedSpots(
                         style = AconTheme.typography.Body1,
                         color = AconTheme.color.Action,
                         fontWeight = FontWeight.SemiBold,
-                        modifier = Modifier.padding(top = 20.dp)
+                        modifier = Modifier
+                            .padding(top = 20.dp)
+                            .noRippleClickable {
+                                try {
+                                    uriHandler.openUri(UrlConstants.REQUEST_NEW_SPOT_UPLOAD)
+                                } catch (e: Exception) {
+                                    context.showToast("웹사이트 접속에 실패했어요")
+                                }
+                            }
                     )
                 }
             }
@@ -235,6 +298,9 @@ private fun UploadSearchScreenPreview() {
         onSearchQueryChanged = {},
         onBackAction = {},
         onNextAction = {},
+        onSearchedSpotClick = {_, _ ->},
+        onVerifyLocationDialogAction = {},
+        onSuggestionSpotClick = {_, _ ->},
         modifier = Modifier
     )
 }
