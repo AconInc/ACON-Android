@@ -31,9 +31,8 @@ import androidx.core.view.WindowCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.rememberNavController
-import com.acon.acon.amplitude.bottomAmplitudeSignIn
 import com.acon.acon.core.designsystem.R
-import com.acon.acon.core.designsystem.component.bottomsheet.LoginBottomSheet
+import com.acon.acon.core.designsystem.component.bottomsheet.SignInBottomSheet
 import com.acon.acon.core.designsystem.component.dialog.v2.AconDefaultDialog
 import com.acon.acon.core.designsystem.component.dialog.v2.AconTwoActionDialog
 import com.acon.acon.core.designsystem.effect.LocalHazeState
@@ -244,7 +243,7 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 val hazeState = rememberHazeState()
                 val userType by this.userType.collectAsStateWithLifecycle()
-                var showLoginBottomSheet by remember { mutableStateOf(false) }
+                var showSignInBottomSheet by remember { mutableStateOf(false) }
 
                 CheckAndRequireUpdate()
 
@@ -254,7 +253,7 @@ class MainActivity : ComponentActivity() {
                     LocalNavController provides navController,
                     LocalHazeState provides hazeState,
                     LocalUserType provides userType,
-                    LocalRequestSignIn provides { showLoginBottomSheet = true }
+                    LocalRequestSignIn provides { showSignInBottomSheet = true }
                 ) {
                     AconNavigation(
                         modifier = Modifier
@@ -263,14 +262,14 @@ class MainActivity : ComponentActivity() {
                     )
                 }
 
-                if (showLoginBottomSheet) {
-                    LoginBottomSheet(
-                        onDismissRequest = { showLoginBottomSheet = false },
+                if (showSignInBottomSheet) {
+                    SignInBottomSheet(
+                        onDismissRequest = { showSignInBottomSheet = false },
                         onGoogleSignIn = {
                             scope.launch {
-                                socialRepository.googleLogin()
+                                socialRepository.googleSignIn()
                                     .onSuccess {
-                                        showLoginBottomSheet = false
+                                        showSignInBottomSheet = false
                                         if (it.hasVerifiedArea) {
                                             navController.navigate(SpotRoute.SpotList) {
                                                 popUpTo<AreaVerificationRoute.Graph> {
@@ -290,7 +289,7 @@ class MainActivity : ComponentActivity() {
                                         }
                                     }
                                     .onFailure {
-                                        showLoginBottomSheet = false
+                                        showSignInBottomSheet = false
                                     }
                             }
                         },

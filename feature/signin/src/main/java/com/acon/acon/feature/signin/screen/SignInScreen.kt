@@ -36,7 +36,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.acon.acon.core.designsystem.R
-import com.acon.acon.core.designsystem.component.button.AconGoogleLoginButton
+import com.acon.acon.core.designsystem.component.button.AconGoogleSignInButton
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.size.getScreenHeight
 import com.acon.acon.core.designsystem.size.getScreenWidth
@@ -154,7 +154,7 @@ fun SignInScreen(
 
                     Spacer(Modifier.weight(1f))
                     if (state.showSignInInfo) {
-                        AconGoogleLoginButton(
+                        AconGoogleSignInButton(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(horizontal = 20.dp)

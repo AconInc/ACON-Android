@@ -27,7 +27,7 @@ import com.acon.acon.core.designsystem.component.button.v2.AconFilledButton
 import com.acon.acon.core.designsystem.theme.AconTheme
 
 @Composable
-fun AconGoogleLoginButton(
+fun AconGoogleSignInButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -54,14 +54,14 @@ fun AconGoogleLoginButton(
         ) {
             Image(
                 imageVector = ImageVector.vectorResource(R.drawable.ic_google),
-                contentDescription = stringResource(R.string.google_login_btn_description),
+                contentDescription = stringResource(R.string.google_sign_in_btn_description),
                 modifier = Modifier
                     .align(Alignment.CenterStart)
                     .padding(start = 24.dp)
             )
 
             Text(
-                text = stringResource(R.string.google_login_btn_content),
+                text = stringResource(R.string.google_sign_in_btn_content),
                 style = AconTheme.typography.Title4,
                 fontWeight = FontWeight.SemiBold,
                 maxLines = 1,
@@ -74,12 +74,12 @@ fun AconGoogleLoginButton(
 
 @Preview
 @Composable
-private fun PreviewAconGoogleLoginButton() {
+private fun PreviewAconGoogleSignInButton() {
     AconTheme {
         Box(
             modifier = Modifier.background(AconTheme.color.Black)
         ) {
-            AconGoogleLoginButton(
+            AconGoogleSignInButton(
                 onClick = {},
                 modifier = Modifier,
             )

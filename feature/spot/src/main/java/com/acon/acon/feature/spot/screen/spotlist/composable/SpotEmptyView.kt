@@ -61,7 +61,7 @@ internal fun SpotEmptyView(
         mutableFloatStateOf(screenHeightPx * .3f)
     }
 
-    val onLoginRequired = LocalRequestSignIn.current
+    val onSignInRequired = LocalRequestSignIn.current
 
     Column(
         modifier = modifier,
@@ -106,7 +106,7 @@ internal fun SpotEmptyView(
                                 color = AconTheme.color.GlassBlackDefault
                             )
                             .clickable {
-                                onLoginRequired()
+                                onSignInRequired()
                             }
                             .fogBackground(
                                 glowColor = AconTheme.color.White,

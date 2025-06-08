@@ -4,7 +4,7 @@ import com.acon.acon.data.BuildConfig
 import com.acon.acon.data.SessionManager
 import com.acon.acon.data.datasource.local.TokenLocalDataSource
 import com.acon.acon.data.dto.request.DeleteAccountRequest
-import com.acon.acon.data.dto.request.LogoutRequest
+import com.acon.acon.data.dto.request.SignOutRequest
 import com.acon.acon.data.dto.request.RefreshRequest
 import com.acon.acon.data.api.remote.ReissueTokenApi
 import kotlinx.coroutines.runBlocking
@@ -85,8 +85,8 @@ class AuthAuthenticator @Inject constructor(
                         response.request.url.toString().contains("auth/logout") -> {
                             val updatedRefreshToken = tokenLocalDataSource.getRefreshToken() ?: ""
 
-                            val logoutRequestJson = Json.encodeToString(LogoutRequest(updatedRefreshToken))
-                            val requestBody: RequestBody = logoutRequestJson.toRequestBody("application/json".toMediaTypeOrNull())
+                            val signOutRequestJson = Json.encodeToString(SignOutRequest(updatedRefreshToken))
+                            val requestBody: RequestBody = signOutRequestJson.toRequestBody("application/json".toMediaTypeOrNull())
 
                             response.request.newBuilder()
                                 .removeHeader("Authorization")

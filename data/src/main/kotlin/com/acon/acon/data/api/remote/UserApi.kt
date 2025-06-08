@@ -2,9 +2,9 @@ package com.acon.acon.data.api.remote
 
 import com.acon.acon.data.dto.request.AreaVerificationRequest
 import com.acon.acon.data.dto.request.DeleteAccountRequest
-import com.acon.acon.data.dto.request.LoginRequest
-import com.acon.acon.data.dto.request.LogoutRequest
-import com.acon.acon.data.dto.response.LoginResponse
+import com.acon.acon.data.dto.request.SignInRequest
+import com.acon.acon.data.dto.request.SignOutRequest
+import com.acon.acon.data.dto.response.SignInResponse
 import com.acon.acon.data.dto.response.area.AreaVerificationResponse
 import com.acon.acon.data.dto.response.area.VerifiedAreaListResponse
 import retrofit2.http.Body
@@ -16,13 +16,13 @@ import retrofit2.http.Path
 interface UserApi {
 
     @POST("/api/v1/auth/login")
-    suspend fun postLogin(
-        @Body body: LoginRequest
-    ) : LoginResponse
+    suspend fun postSignIn(
+        @Body body: SignInRequest
+    ) : SignInResponse
 
     @POST("/api/v1/auth/logout")
     suspend fun postLogout(
-        @Body body: LogoutRequest
+        @Body body: SignOutRequest
     )
 
     @POST("/api/v1/members/withdrawal")

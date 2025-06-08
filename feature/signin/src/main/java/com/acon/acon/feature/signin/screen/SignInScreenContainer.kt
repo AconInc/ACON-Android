@@ -36,7 +36,7 @@ fun SignInScreenContainer(
     viewModel.emitUserType()
     viewModel.collectSideEffect { sideEffect ->
         when(sideEffect) {
-            is SignInSideEffect.ShowToastMessage -> { context.showToast(R.string.signin_login_failed_toast) }
+            is SignInSideEffect.ShowToastMessage -> { context.showToast(R.string.sign_in_failed_toast) }
             is SignInSideEffect.NavigateToSpotListView -> { navigateToSpotListView() }
             is SignInSideEffect.NavigateToAreaVerification -> { navigateToAreaVerification() }
             is SignInSideEffect.OnClickTermsOfUse -> {

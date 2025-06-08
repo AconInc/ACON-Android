@@ -24,12 +24,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.acon.acon.core.common.UrlConstants
 import com.acon.acon.core.designsystem.R
-import com.acon.acon.core.designsystem.component.button.AconGoogleLoginButton
+import com.acon.acon.core.designsystem.component.button.AconGoogleSignInButton
 import com.acon.acon.core.designsystem.theme.AconTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginBottomSheet(
+fun SignInBottomSheet(
     onDismissRequest: () -> Unit = {},
     onGoogleSignIn: () -> Unit = {}
 ) {
@@ -47,27 +47,27 @@ fun LoginBottomSheet(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = stringResource(R.string.login_bottom_sheet_title),
+                text = stringResource(R.string.sign_in_bottom_sheet_title),
                 style = AconTheme.typography.Headline4,
                 color = AconTheme.color.White
             )
 
             Spacer(Modifier.height(8.dp))
             Text(
-                text = stringResource(R.string.login_bottom_sheet_content),
+                text = stringResource(R.string.sign_in_bottom_sheet_content),
                 style = AconTheme.typography.Body1,
                 color = AconTheme.color.Gray2,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.weight(1f)
             )
 
-            AconGoogleLoginButton(
+            AconGoogleSignInButton(
                 onClick = onGoogleSignIn
             )
 
             Spacer(Modifier.height(24.dp))
             Text(
-                text = stringResource(R.string.login_bottom_sheet_policy_agreement),
+                text = stringResource(R.string.sign_in_bottom_sheet_policy_agreement),
                 style = AconTheme.typography.body2_14_reg,
                 color = AconTheme.color.Gray3,
                 textAlign = TextAlign.Center,
@@ -78,7 +78,7 @@ fun LoginBottomSheet(
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 Text(
-                    text = stringResource(R.string.login_bottom_sheet_term_of_use),
+                    text = stringResource(R.string.sign_in_bottom_sheet_term_of_use),
                     style = AconTheme.typography.Caption1,
                     color = AconTheme.color.White,
                     textDecoration = TextDecoration.Underline,
@@ -89,7 +89,7 @@ fun LoginBottomSheet(
                 )
 
                 Text(
-                    text = stringResource(R.string.login_bottom_sheet_private_policy),
+                    text = stringResource(R.string.sign_in_bottom_sheet_private_policy),
                     style = AconTheme.typography.Caption1,
                     color = AconTheme.color.White,
                     textDecoration = TextDecoration.Underline,
@@ -105,9 +105,9 @@ fun LoginBottomSheet(
 
 @Preview(showBackground = true)
 @Composable
-fun LoginBottomSheetPreview() {
+fun SignInBottomSheetPreview() {
     AconTheme {
-        LoginBottomSheet(
+        SignInBottomSheet(
             onDismissRequest = {},
             onGoogleSignIn = {}
         )

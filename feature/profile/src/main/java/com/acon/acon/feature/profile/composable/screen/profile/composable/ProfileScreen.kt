@@ -60,7 +60,7 @@ fun ProfileScreen(
     val savedStoreHeight = (screenHeightDp * (200f / 740f))
 
     val userType = LocalUserType.current
-    val onLoginRequired = LocalRequestSignIn.current
+    val onSignInRequired = LocalRequestSignIn.current
 
     Column(modifier = modifier) {
         when (state) {
@@ -240,14 +240,14 @@ fun ProfileScreen(
                         )
 
                         Text(
-                            text = stringResource(R.string.you_need_login),
+                            text = stringResource(R.string.you_need_sign_in),
                             style = AconTheme.typography.Headline4,
                             color = AconTheme.color.White,
                             modifier = Modifier
                                 .padding(start = 16.dp)
                                 .padding(vertical = 16.dp)
                                 .noRippleClickable {
-                                    onLoginRequired()
+                                    onSignInRequired()
                                 }
                         )
 
@@ -257,7 +257,7 @@ fun ProfileScreen(
                             modifier = Modifier
                                 .padding(start = 4.dp)
                                 .padding(vertical = 16.dp)
-                                .noRippleClickable { onLoginRequired() },
+                                .noRippleClickable { onSignInRequired() },
                             tint = AconTheme.color.White
                         )
                     }
@@ -280,7 +280,7 @@ fun ProfileScreen(
 
                     BottomNavType.UPLOAD -> {
                         if (userType == UserType.GUEST) {
-                            onLoginRequired()
+                            onSignInRequired()
                         } else {
                             onNavigateToUploadScreen()
                         }

@@ -62,7 +62,7 @@ internal fun SpotListSuccessView(
 ) {
 
     val context = LocalContext.current
-    val onLoginRequired = LocalRequestSignIn.current
+    val onSignInRequired = LocalRequestSignIn.current
 
     if (state.transportMode == TransportMode.BIKING) {
         SpotEmptyView(
@@ -143,7 +143,7 @@ internal fun SpotListSuccessView(
                                 color = AconTheme.color.GlassBlackDefault
                             )
                             .clickable {
-                                onLoginRequired()
+                                onSignInRequired()
                             }
                             .fogBackground(
                                 glowColor = AconTheme.color.White,

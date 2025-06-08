@@ -5,7 +5,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class LoginRequest(
+data class SignInRequest(
     @SerialName("socialType") val socialType: SocialType?,
     @SerialName("idToken") val idToken: String?,
 )

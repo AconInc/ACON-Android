@@ -84,7 +84,7 @@ internal fun SpotListScreen(
     val scope = rememberCoroutineScope()
 
     val userType = LocalUserType.current
-    val onLoginRequired = LocalRequestSignIn.current
+    val onSignInRequired = LocalRequestSignIn.current
 
     Column(
         modifier = modifier
@@ -105,7 +105,7 @@ internal fun SpotListScreen(
                 selectedType = state.selectedSpotType,
                 onSwitched = {
                     if (userType == UserType.GUEST)
-                        onLoginRequired()
+                        onSignInRequired()
                     else
                         onSpotTypeChanged(it)
                 },
@@ -121,7 +121,7 @@ internal fun SpotListScreen(
                     .padding(end = 16.dp)
                     .noRippleClickable {
                         if (userType == UserType.GUEST)
-                            onLoginRequired()
+                            onSignInRequired()
                         else
                             onFilterButtonClick()
                     }
@@ -256,7 +256,7 @@ internal fun SpotListScreen(
                     }
                     BottomNavType.UPLOAD -> {
                         if (userType == UserType.GUEST) {
-                            onLoginRequired()
+                            onSignInRequired()
                         } else {
                             onNavigateToUploadScreen()
                         }

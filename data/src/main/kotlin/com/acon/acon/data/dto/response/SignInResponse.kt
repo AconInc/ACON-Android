@@ -5,7 +5,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class LoginResponse(
+data class SignInResponse(
     @SerialName("externalUUID") val externalUUID: String,
     @SerialName("accessToken") val accessToken: String?,
     @SerialName("refreshToken") val refreshToken: String?,

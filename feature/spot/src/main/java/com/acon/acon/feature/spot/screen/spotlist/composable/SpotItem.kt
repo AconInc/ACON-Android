@@ -250,14 +250,14 @@ fun SpotGuestItem(
             tint = AconTheme.color.GlassWhiteSelected
         )
         Text(
-            text = stringResource(R.string.require_login_for_more),
+            text = stringResource(R.string.require_sign_in_for_more),
             style = AconTheme.typography.Body1,
             fontWeight = FontWeight.W400,
             color = AconTheme.color.White,
             modifier = Modifier.padding(top = 10.dp),
         )
         Text(
-            text = stringResource(R.string.go_to_login),
+            text = stringResource(R.string.go_to_sign_in),
             style = AconTheme.typography.Body1,
             fontWeight = FontWeight.SemiBold,
             color = AconTheme.color.Action,
