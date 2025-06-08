@@ -7,6 +7,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.lifecycle.ViewModel
 import com.acon.acon.domain.type.UserType
 import com.acon.feature.common.compose.LocalLocation
+import com.acon.feature.common.compose.LocalRequestLocationPermission
 import com.acon.feature.common.compose.LocalUserType
 import com.acon.feature.common.coroutine.firstNotNull
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,6 +23,16 @@ abstract class BaseContainerHost<STATE : Any, SIDE_EFFECT : Any>() :
 
     private val _userType = MutableStateFlow(UserType.GUEST)
     protected val userType = _userType.asStateFlow()
+
+    @SuppressLint("ComposableNaming")
+    @Composable
+    fun requestLocationPermission() {
+        val onRequestLocationPermission = LocalRequestLocationPermission.current
+
+        LaunchedEffect(Unit) {
+            onRequestLocationPermission()
+        }
+    }
 
     @SuppressLint("ComposableNaming")
     @Composable

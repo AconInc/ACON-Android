@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.acon.acon.core.utils.feature.permission.checkLocationPermission
+import com.acon.feature.common.compose.LocalRequestLocationPermission
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
@@ -21,19 +22,18 @@ fun AreaVerificationScreenContainer(
 ) {
     val context = LocalContext.current
     val state by viewModel.collectAsState()
+    val onRequestLocationPermission = LocalRequestLocationPermission.current
 
     AreaVerificationScreen(
         state = state,
         route = route,
-        onPermissionSettingClick = { viewModel.onPermissionSettingClick(context.packageName) },
         onNextButtonClick = {
             val hasPermission = context.checkLocationPermission()
-            viewModel.updateLocationPermissionStatus(hasPermission)
 
             if (hasPermission) {
                 viewModel.onNextButtonClick()
             } else {
-                viewModel.showPermissionDialog()
+                onRequestLocationPermission()
             }
         },
         modifier = modifier

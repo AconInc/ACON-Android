@@ -30,3 +30,7 @@ val LocalUserType = compositionLocalOf {
 val LocalRequestSignIn = staticCompositionLocalOf {
     {}
 }
+
+val LocalRequestLocationPermission = staticCompositionLocalOf {
+    {}
+}

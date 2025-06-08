@@ -33,18 +33,11 @@ internal fun AreaVerificationScreen(
     state: AreaVerificationUiState,
     route: String,
     onNextButtonClick: () -> Unit,
-    onPermissionSettingClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
     val screenHeightDp = getScreenHeight()
     val offsetY = (screenHeightDp * 0.65f)
-
-    if (state.showPermissionDialog) {
-        AconPermissionDialog(
-            onPermissionGranted = onPermissionSettingClick
-        )
-    }
 
     if (route != stringResource(R.string.area_verification_settings)) {
         BackOnPressed(context)
@@ -110,7 +103,6 @@ private fun AreaVerificationHomeScreenPreview() {
         AreaVerificationScreen(
             state = AreaVerificationUiState(),
             route = "",
-            onPermissionSettingClick = {},
             onNextButtonClick = {}
         )
     }

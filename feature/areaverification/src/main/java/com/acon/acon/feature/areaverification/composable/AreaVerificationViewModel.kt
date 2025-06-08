@@ -40,21 +40,9 @@ class AreaVerificationViewModel @Inject constructor(
         }
     }
 
-    fun showPermissionDialog() = intent {
-        reduce {
-            state.copy(showPermissionDialog = true)
-        }
-    }
-
     private fun showLocationDialog() = intent {
         reduce {
             state.copy(showLocationDialog = true)
-        }
-    }
-
-    fun updateLocationPermissionStatus(isGranted: Boolean) = intent {
-        reduce {
-            state.copy(hasLocationPermission = isGranted)
         }
     }
 
@@ -66,15 +54,6 @@ class AreaVerificationViewModel @Inject constructor(
             )
         )
         amplitudeClickNext()
-    }
-
-    fun onPermissionSettingClick(packageName: String) = intent {
-        postSideEffect(
-            AreaVerificationSideEffect.NavigateToAppLocationSettings(packageName)
-        )
-        reduce {
-            state.copy(showPermissionDialog = false)
-        }
     }
 
     fun onDeviceGPSSettingClick(packageName: String) = intent {
@@ -199,8 +178,6 @@ class AreaVerificationViewModel @Inject constructor(
 }
 
 data class AreaVerificationUiState(
-    val hasLocationPermission: Boolean = false,
-    var showPermissionDialog: Boolean = false,
     val isGPSEnabled: Boolean = false,
     val showDeviceGPSDialog: Boolean = false,
     val showLocationDialog: Boolean = false,

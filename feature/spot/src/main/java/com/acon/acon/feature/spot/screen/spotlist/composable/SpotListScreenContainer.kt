@@ -5,16 +5,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.acon.acon.domain.model.spot.v2.Spot
 import com.acon.acon.feature.spot.screen.spotlist.SpotListSideEffectV2
 import com.acon.acon.feature.spot.screen.spotlist.SpotListViewModel
 import com.acon.feature.common.compose.LocalOnRetry
-import com.acon.feature.common.permission.LocationPermissionRequester
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
@@ -29,16 +25,6 @@ fun SpotListScreenContainer(
 ) {
 
     val state by viewModel.collectAsState()
-
-    var isPermissionGranted by remember {
-        mutableStateOf(false)
-    }
-
-    LocationPermissionRequester(
-        onPermissionGranted = {
-            isPermissionGranted = true
-        }
-    )
 
     CompositionLocalProvider(LocalOnRetry provides viewModel::retry) {
         SpotListScreen(
@@ -56,6 +42,7 @@ fun SpotListScreenContainer(
         )
     }
 
+    viewModel.requestLocationPermission()
     viewModel.emitUserType()
     viewModel.emitLiveLocation()
     viewModel.collectSideEffect {

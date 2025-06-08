@@ -2,6 +2,7 @@ package com.acon.acon
 
 import android.annotation.SuppressLint
 import android.content.IntentSender
+import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Build
 import android.os.Bundle
@@ -12,6 +13,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.SnackbarHostState
@@ -23,6 +25,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -33,6 +36,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.rememberNavController
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.bottomsheet.SignInBottomSheet
+import com.acon.acon.core.designsystem.component.dialog.AconPermissionDialog
 import com.acon.acon.core.designsystem.component.dialog.v2.AconDefaultDialog
 import com.acon.acon.core.designsystem.component.dialog.v2.AconTwoActionDialog
 import com.acon.acon.core.designsystem.effect.LocalHazeState
@@ -47,6 +51,7 @@ import com.acon.acon.feature.spot.SpotRoute
 import com.acon.acon.navigation.AconNavigation
 import com.acon.feature.common.compose.LocalLocation
 import com.acon.feature.common.compose.LocalNavController
+import com.acon.feature.common.compose.LocalRequestLocationPermission
 import com.acon.feature.common.compose.LocalRequestSignIn
 import com.acon.feature.common.compose.LocalSnackbarHostState
 import com.acon.feature.common.compose.LocalUserType
@@ -72,7 +77,9 @@ import com.google.android.play.core.install.model.UpdateAvailability
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
@@ -87,6 +94,8 @@ class MainActivity : ComponentActivity() {
     @Inject lateinit var userRepository: UserRepository
     @Inject lateinit var aconAppRepository: AconAppRepository
 
+    private val viewModel by viewModels<MainViewModel>()
+
     private val gpsResolutionResultLauncher = registerForActivityResult(
         ActivityResultContracts.StartIntentSenderForResult()
     ) { result ->
@@ -95,14 +104,6 @@ class MainActivity : ComponentActivity() {
         } else {
             Toast.makeText(this, "GPS를 켜주세요.", Toast.LENGTH_SHORT).show()
         }
-    }
-
-    private val userType by lazy {
-        userRepository.getUserType().stateIn(
-            scope = lifecycleScope,
-            started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = UserType.GUEST
-        )
     }
 
     private val appUpdateManager by lazy {
@@ -177,43 +178,64 @@ class MainActivity : ComponentActivity() {
             }
         }
 
+    private val _isLocationPermissionGranted = MutableStateFlow(false)
+    private val isLocationPermissionGranted = _isLocationPermissionGranted.asStateFlow()
+
     @SuppressLint("MissingPermission")
     private val currentLocationFlow = callbackFlow<Location> {
-        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this@MainActivity.applicationContext)
-        trySend(
-            fusedLocationClient.getCurrentLocation(
-                Priority.PRIORITY_HIGH_ACCURACY,
-                null
-            ).await()
-        )
+        isLocationPermissionGranted.collect { granted ->
+            if (granted) {
+                val fusedLocationClient =
+                    LocationServices.getFusedLocationProviderClient(this@MainActivity.applicationContext)
+                trySend(
+                    fusedLocationClient.getCurrentLocation(
+                        Priority.PRIORITY_HIGH_ACCURACY,
+                        null
+                    ).await()
+                )
 
-        val locationRequest = LocationRequest.Builder(3_000).setPriority(
-            Priority.PRIORITY_HIGH_ACCURACY
-        ).build()
+                val locationRequest = LocationRequest.Builder(3_000).setPriority(
+                    Priority.PRIORITY_HIGH_ACCURACY
+                ).build()
 
-        val locationCallback = object : LocationCallback() {
-            override fun onLocationResult(locationResult: LocationResult) {
-                for (location in locationResult.locations) {
-                    Timber.d("새 좌표 획득: [${location.latitude}, ${location.longitude}]")
-                    trySend(location)
+                val locationCallback = object : LocationCallback() {
+                    override fun onLocationResult(locationResult: LocationResult) {
+                        for (location in locationResult.locations) {
+                            Timber.d("새 좌표 획득: [${location.latitude}, ${location.longitude}]")
+                            trySend(location)
+                        }
+                    }
+                }
+
+                fusedLocationClient.requestLocationUpdates(
+                    locationRequest,
+                    locationCallback,
+                    Looper.getMainLooper()
+                )
+
+                awaitClose {
+                    fusedLocationClient.removeLocationUpdates(locationCallback)
                 }
             }
-        }
-
-        fusedLocationClient.requestLocationUpdates(
-            locationRequest,
-            locationCallback,
-            Looper.getMainLooper()
-        )
-
-        awaitClose {
-            fusedLocationClient.removeLocationUpdates(locationCallback)
         }
     }.stateIn(
         scope = lifecycleScope,
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = null
     )
+
+    private var locationPermissionRequestCount = 0
+    private val requestMultiplePermissionsLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+            locationPermissionRequestCount = minOf(locationPermissionRequestCount + 1, 2)
+
+            val allPermissionsGranted = permissions.values.all { it }
+            if (allPermissionsGranted) {
+                _isLocationPermissionGranted.value = true
+            } else {
+                requestLocationPermission()
+            }
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -238,12 +260,11 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             AconTheme {
+                val appState by viewModel.state.collectAsStateWithLifecycle()
                 val scope = rememberCoroutineScope()
                 val currentLocation by currentLocationFlow.collectAsStateWithLifecycle()
                 val navController = rememberNavController()
                 val hazeState = rememberHazeState()
-                val userType by this.userType.collectAsStateWithLifecycle()
-                var showSignInBottomSheet by remember { mutableStateOf(false) }
 
                 CheckAndRequireUpdate()
 
@@ -252,8 +273,9 @@ class MainActivity : ComponentActivity() {
                     LocalSnackbarHostState provides snackbarHostState,
                     LocalNavController provides navController,
                     LocalHazeState provides hazeState,
-                    LocalUserType provides userType,
-                    LocalRequestSignIn provides { showSignInBottomSheet = true }
+                    LocalUserType provides appState.userType,
+                    LocalRequestSignIn provides { viewModel.updateShowSignInBottomSheet(true) },
+                    LocalRequestLocationPermission provides ::requestLocationPermission
                 ) {
                     AconNavigation(
                         modifier = Modifier
@@ -262,14 +284,13 @@ class MainActivity : ComponentActivity() {
                     )
                 }
 
-                if (showSignInBottomSheet) {
+                if (appState.showSignInBottomSheet) {
                     SignInBottomSheet(
-                        onDismissRequest = { showSignInBottomSheet = false },
+                        onDismissRequest = { viewModel.updateShowSignInBottomSheet(false) },
                         onGoogleSignIn = {
                             scope.launch {
                                 socialRepository.googleSignIn()
                                     .onSuccess {
-                                        showSignInBottomSheet = false
                                         if (it.hasVerifiedArea) {
                                             navController.navigate(SpotRoute.SpotList) {
                                                 popUpTo<AreaVerificationRoute.Graph> {
@@ -287,14 +308,20 @@ class MainActivity : ComponentActivity() {
                                                 }
                                             }
                                         }
-                                    }
-                                    .onFailure {
-                                        showSignInBottomSheet = false
-                                    }
+                                    }.onFailure {}
+                                viewModel.updateShowSignInBottomSheet(false)
                             }
                         },
                     )
                 }
+
+                if (appState.showPermissionDialog)
+                    AconPermissionDialog(
+                        onPermissionGranted = {
+                            viewModel.updateShowPermissionDialog(false)
+                            _isLocationPermissionGranted.value = true
+                        }
+                    )
             }
         }
     }
@@ -319,6 +346,35 @@ class MainActivity : ComponentActivity() {
                 } catch (e: IntentSender.SendIntentException) {
 
                 }
+            }
+        }
+    }
+
+    private fun requestLocationPermission() {
+        if (checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+            && checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+        ) return
+
+        if (shouldShowRequestPermissionRationale(android.Manifest.permission.ACCESS_FINE_LOCATION) || shouldShowRequestPermissionRationale(
+                android.Manifest.permission.ACCESS_COARSE_LOCATION
+            )
+        ) {
+            requestMultiplePermissionsLauncher.launch(
+                arrayOf(
+                    android.Manifest.permission.ACCESS_FINE_LOCATION,
+                    android.Manifest.permission.ACCESS_COARSE_LOCATION
+                )
+            )
+        } else {
+            if (locationPermissionRequestCount >= 2) {
+                viewModel.updateShowPermissionDialog(true)
+            } else {
+                requestMultiplePermissionsLauncher.launch(
+                    arrayOf(
+                        android.Manifest.permission.ACCESS_FINE_LOCATION,
+                        android.Manifest.permission.ACCESS_COARSE_LOCATION
+                    )
+                )
             }
         }
     }
