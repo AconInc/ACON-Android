@@ -9,6 +9,7 @@ import androidx.core.app.ActivityCompat
 import com.acon.feature.common.base.BaseContainerHost
 import com.acon.acon.domain.model.area.Area
 import com.acon.acon.domain.repository.AreaVerificationRepository
+import com.acon.acon.domain.repository.UserRepository
 import com.acon.acon.feature.areaverification.amplitude.amplitudeClickNext
 import com.acon.acon.feature.areaverification.amplitude.amplitudeCompleteArea
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,6 +20,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AreaVerificationViewModel @Inject constructor(
     private val application: Application,
+    private val userRepository: UserRepository,
     private val areaVerificationRepository: AreaVerificationRepository
 ) : BaseContainerHost<AreaVerificationHomeUiState, AreaVerificationHomeSideEffect>() {
 
@@ -182,6 +184,7 @@ class AreaVerificationViewModel @Inject constructor(
                         isVerifySuccess = true
                     )
                 }
+                userRepository.updateLocalVerificationType(true)
                 amplitudeCompleteArea()
             }
             .onFailure { throwable ->

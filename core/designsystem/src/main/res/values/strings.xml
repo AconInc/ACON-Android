@@ -27,6 +27,8 @@
     <string name="btn_change">변경하기</string>
 
     <!-- Content Description -->
+    <string name="splash_animation_content_description">스플래시 애니메이션</string>
+    <string name="splash_image_content_description">스플래시 이미지</string>
     <string name="location_content_description">위치</string>
     <string name="map_content_description">지도</string>
     <string name="dismiss_content_description">닫기</string>
@@ -72,6 +74,14 @@
     <string name="location_unsupported_area_content">문제가 발생했습니다.\n나중에 다시 시도해주세요.</string>
     <string name="location_permission_denied_title">\'Acon\'에 대한 위치접근\n권한이 없습니다.</string>
     <string name="location_permission_denied_content">설정에서 위치접근 권한을 허용해주세요.</string>
+
+    <!-- SignIn -->
+    <string name="signin_logo_title_content_description">acon 로고 이미지</string>
+    <string name="signin_policy">가입을 진행할 경우, 아래의 정책에 대해 동의한 것으로 간주합니다.</string>
+    <string name="signin_terms_of_service">이용약관</string>
+    <string name="signin_privacy_policy">개인정보처리방침</string>
+    <string name="signin_topbar_text">건너뛰기</string>
+    <string name="signin_login_failed_toast">로그인에 실패했습니다.</string>
 
     <!-- AreaVerification -->
     <string name="area_verification_settings">settings</string>

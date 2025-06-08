@@ -18,7 +18,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -29,6 +28,7 @@ import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.bottomsheet.LoginBottomSheet
 import com.acon.acon.core.designsystem.component.topbar.AconTopBar
 import com.acon.acon.core.designsystem.noRippleClickable
+import com.acon.acon.core.designsystem.size.getScreenHeight
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.feature.profile.composable.amplitude.profileAmplitude
 import com.acon.acon.feature.profile.composable.screen.profile.ProfileUiState
@@ -42,8 +42,7 @@ fun ProfileScreen(
     onGoogleSignIn: () -> Unit = {},
     onBottomSheetShowStateChange: (Boolean) -> Unit = {}
 ) {
-    val configuration = LocalConfiguration.current
-    val screenHeightDp = configuration.screenHeightDp
+    val screenHeightDp = getScreenHeight()
     val boxHeight = (screenHeightDp * (60f / 740f))
 
     when (state) {
@@ -86,7 +85,7 @@ fun ProfileScreen(
                             imageVector = ImageVector.vectorResource(R.drawable.ic_default_profile),
                             contentDescription = stringResource(R.string.content_description_default_profile_image),
                             modifier = Modifier
-                                .size(boxHeight.dp)
+                                .size(boxHeight)
                                 .clip(CircleShape)
                         )
                     } else {
@@ -94,7 +93,7 @@ fun ProfileScreen(
                             model = state.profileImage,
                             contentDescription = stringResource(R.string.content_description_profile_image),
                             modifier = Modifier
-                                .size(boxHeight.dp)
+                                .size(boxHeight)
                                 .clip(CircleShape),
                             contentScale = ContentScale.Crop
                         )
@@ -182,7 +181,7 @@ fun ProfileScreen(
                         imageVector = ImageVector.vectorResource(R.drawable.ic_default_profile),
                         contentDescription = stringResource(R.string.content_description_default_profile_image),
                         modifier = Modifier
-                            .size(boxHeight.dp)
+                            .size(boxHeight)
                             .clip(CircleShape)
                     )
 

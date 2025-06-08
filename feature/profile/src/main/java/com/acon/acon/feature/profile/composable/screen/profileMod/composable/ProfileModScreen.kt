@@ -29,7 +29,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
@@ -44,6 +43,7 @@ import com.acon.acon.core.designsystem.component.dialog.v2.AconTwoActionDialog
 import com.acon.acon.core.designsystem.component.topbar.AconTopBar
 import com.acon.acon.core.designsystem.effect.LocalHazeState
 import com.acon.acon.core.designsystem.noRippleClickable
+import com.acon.acon.core.designsystem.size.getScreenHeight
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.core.utils.feature.permission.CheckAndRequestPhotoPermission
 import com.acon.acon.feature.profile.composable.component.GallerySelectBottomSheet
@@ -82,8 +82,7 @@ internal fun ProfileModScreen(
     onClickSaveButton: () -> Unit = {},
 ) {
     val context = LocalContext.current
-    val configuration = LocalConfiguration.current
-    val screenHeightDp = configuration.screenHeightDp
+    val screenHeightDp = getScreenHeight()
     val boxHeight = (screenHeightDp * (80f / 740f))
 
     val focusManager = LocalFocusManager.current
@@ -212,7 +211,7 @@ internal fun ProfileModScreen(
                             Spacer(modifier = Modifier.weight(1f))
                             Box(
                                 modifier = Modifier
-                                    .size(boxHeight.dp)
+                                    .size(boxHeight)
                                     .aspectRatio(1f),
                                 contentAlignment = Alignment.Center
                             ) {
