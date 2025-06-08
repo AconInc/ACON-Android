@@ -53,8 +53,9 @@ fun ProfileScreen(
 ) {
     val configuration = LocalConfiguration.current
     val screenHeightDp = configuration.screenHeightDp
-    val boxHeight = (screenHeightDp * (60f / 740f))
-    val savedStoreHeight = (screenHeightDp * (217f / 740f))
+    val boxHeight = (screenHeightDp * (60f / 740f)).dp
+    val admobHeight = (screenHeightDp * (165f / 740f)).dp
+    val savedStoreHeight = (screenHeightDp * (200f / 740f)).dp
 
     when (state) {
         is ProfileUiState.Success -> {
@@ -62,7 +63,6 @@ fun ProfileScreen(
                 modifier = modifier
                     .background(AconTheme.color.Gray900)
                     .padding(horizontal = 16.dp)
-
             ) {
                 Spacer(Modifier.height(40.dp))
                 AconTopBar(
@@ -95,7 +95,7 @@ fun ProfileScreen(
                             imageVector = ImageVector.vectorResource(R.drawable.ic_default_profile),
                             contentDescription = stringResource(R.string.content_description_default_profile_image),
                             modifier = Modifier
-                                .size(boxHeight.dp)
+                                .size(boxHeight)
                                 .clip(CircleShape)
                         )
                     } else {
@@ -103,7 +103,7 @@ fun ProfileScreen(
                             model = state.profileImage,
                             contentDescription = stringResource(R.string.content_description_profile_image),
                             modifier = Modifier
-                                .size(boxHeight.dp)
+                                .size(boxHeight)
                                 .clip(CircleShape),
                             contentScale = ContentScale.Crop
                         )
@@ -169,7 +169,7 @@ fun ProfileScreen(
                 LazyRow(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(savedStoreHeight.dp),
+                        .height(savedStoreHeight),
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
                     items(
@@ -184,8 +184,9 @@ fun ProfileScreen(
                     }
                 }
 
-                ProfileAdmobBanner(
-                    modifier = Modifier.padding(top = 20.dp, bottom = 48.dp)
+                ProfileNativeAd(
+                    screenHeight = admobHeight,
+                    modifier = Modifier.padding(top = 20.dp, bottom = 23.dp)
                 )
             }
         }
@@ -240,7 +241,7 @@ fun ProfileScreen(
                         imageVector = ImageVector.vectorResource(R.drawable.ic_default_profile),
                         contentDescription = stringResource(R.string.content_description_default_profile_image),
                         modifier = Modifier
-                            .size(boxHeight.dp)
+                            .size(boxHeight)
                             .clip(CircleShape)
                     )
 
@@ -265,9 +266,9 @@ fun ProfileScreen(
                     )
                 }
 
-                Spacer(Modifier.weight(1f))
-                ProfileAdmobBanner(
-                    modifier = Modifier.padding(bottom = 48.dp)
+                ProfileNativeAd(
+                    screenHeight = admobHeight,
+                    modifier = Modifier.padding(top = 20.dp)
                 )
             }
         }
@@ -279,7 +280,7 @@ fun ProfileScreen(
 private fun ProfileScreenPreview() {
     AconTheme {
         ProfileScreen(
-            state = ProfileUiState.Guest(),
+            state = ProfileUiState.Guest()
         )
     }
 }
