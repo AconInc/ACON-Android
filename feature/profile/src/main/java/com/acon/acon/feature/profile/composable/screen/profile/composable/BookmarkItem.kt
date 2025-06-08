@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.rememberAsyncImagePainter
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.effect.imageGradientLayer
+import com.acon.acon.core.designsystem.effect.imageGradientTopLayer
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.feature.profile.composable.screen.MockSavedSpot
 
@@ -45,7 +46,7 @@ internal fun BookmarkItem(
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxSize()
-                    .imageGradientLayer(showBottomGradient = false)
+                    .imageGradientTopLayer()
             )
 
             Text(
@@ -66,7 +67,7 @@ internal fun BookmarkItem(
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxSize()
-                    .imageGradientLayer(showBottomGradient = false)
+                    .imageGradientLayer()
             )
 
             Text(
