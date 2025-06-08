@@ -45,6 +45,7 @@ import com.acon.acon.feature.profile.composable.screen.profile.ProfileUiState
 fun ProfileScreen(
     state: ProfileUiState,
     modifier: Modifier = Modifier,
+    onSpotDetail: (Long) -> Unit = {},
     onBookmark: () -> Unit = {},
     onSettings: () -> Unit = {},
     onEditProfile: () -> Unit = {},
@@ -177,7 +178,7 @@ fun ProfileScreen(
                     ) { spot ->
                         BookmarkItem(
                             spot = spot,
-                            onClickSpotItem = {}, // TODO - 장소 상세로 이동
+                            onClickSpotItem = { onSpotDetail(1) }, // TODO - 장소 상세로 이동
                             modifier = Modifier.aspectRatio(150f/217f)
                         )
                     }
