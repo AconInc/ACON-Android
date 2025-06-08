@@ -24,6 +24,7 @@ data class SpotResponse(
     @SerialName("image") val image: String?,
     @SerialName("name") val name: String?,
     @SerialName("acornCount") val acornCount: Int?,
+    @SerialName("closingTime") val closingTime: String?,
     @SerialName("tagList") val tags: List<String>?,
     @SerialName("eta") val walkingTime: Int?,
     @SerialName("latitude") val latitude: Double?,
@@ -48,6 +49,7 @@ data class SpotResponse(
             }
         } ?: emptyList(),
         eta = walkingTime ?: 0,
+        closingTime = closingTime ?: "",
         latitude = latitude ?: 0.0,
         longitude = longitude ?: 0.0,
     )
