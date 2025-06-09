@@ -50,7 +50,7 @@ fun BookmarkScreen(
     val screenHeightDp = configuration.screenHeightDp
     val skeletonHeight = (screenHeightDp * 0.07f).dp
 
-    when(state) {
+    when (state) {
         BookmarkUiState.Loading -> {
             Box(
                 modifier = modifier
@@ -80,6 +80,7 @@ fun BookmarkScreen(
                         )
                     },
                     modifier = Modifier
+                        .padding(vertical = 14.dp)
                         .imageGradientLayer()
                         .defaultHazeEffect(
                             hazeState = LocalHazeState.current,
@@ -103,7 +104,7 @@ fun BookmarkScreen(
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         items(
-                           mockSpotList
+                            mockSpotList
                         ) { spot ->
                             BookmarkSkeletonItem(
                                 skeletonHeight = skeletonHeight,
@@ -116,6 +117,7 @@ fun BookmarkScreen(
                 }
             }
         }
+
         BookmarkUiState.Success -> {
             Box(
                 modifier = modifier
@@ -145,6 +147,7 @@ fun BookmarkScreen(
                         )
                     },
                     modifier = Modifier
+                        .padding(vertical = 14.dp)
                         .imageGradientLayer()
                         .defaultHazeEffect(
                             hazeState = LocalHazeState.current,
@@ -182,6 +185,7 @@ fun BookmarkScreen(
                 }
             }
         }
+
         BookmarkUiState.LoadFailed -> {}
     }
 }

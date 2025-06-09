@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
@@ -58,6 +59,7 @@ fun SettingsScreen(
     Column(
         modifier = modifier
             .background(AconTheme.color.Gray900)
+            .statusBarsPadding()
             .padding(horizontal = 16.dp)
             .verticalScroll(scrollState)
             .hazeSource(hazeState)
@@ -78,20 +80,16 @@ fun SettingsScreen(
                     )
                 }
 
-                Spacer(Modifier.height(42.dp))
                 AconTopBar(
-                    modifier = Modifier
-                        .padding(vertical = 14.dp),
                     paddingValues = PaddingValues(0.dp),
                     leadingIcon = {
                         IconButton(
-                            onClick = navigateBack
+                            onClick = { navigateBack() }
                         ) {
                             Icon(
-                                //TODO - PR 합쳐지면 변경
                                 imageVector = ImageVector.vectorResource(R.drawable.ic_topbar_arrow_left),
                                 contentDescription = stringResource(R.string.back),
-                                tint = AconTheme.color.White
+                                tint = AconTheme.color.Gray50
                             )
                         }
                     },
@@ -103,6 +101,7 @@ fun SettingsScreen(
                             color = AconTheme.color.White
                         )
                     },
+                    modifier = Modifier.padding(vertical = 14.dp)
                 )
 
                 Spacer(Modifier.height(32.dp))
@@ -180,14 +179,11 @@ fun SettingsScreen(
             }
 
             is SettingsUiState.Guest -> {
-                Spacer(Modifier.height(42.dp))
                 AconTopBar(
-                    modifier = Modifier
-                        .padding(vertical = 14.dp),
                     paddingValues = PaddingValues(0.dp),
                     leadingIcon = {
                         IconButton(
-                            onClick = navigateBack
+                            onClick = { navigateBack() }
                         ) {
                             Icon(
                                 imageVector = ImageVector.vectorResource(R.drawable.ic_topbar_arrow_left),
@@ -204,6 +200,7 @@ fun SettingsScreen(
                             color = AconTheme.color.White
                         )
                     },
+                    modifier = Modifier.padding(vertical = 14.dp)
                 )
 
                 Spacer(Modifier.height(32.dp))
@@ -240,7 +237,6 @@ fun SettingsScreen(
             }
         }
     }
-
 }
 
 @Preview

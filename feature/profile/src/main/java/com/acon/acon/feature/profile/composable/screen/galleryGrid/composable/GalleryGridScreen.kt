@@ -8,11 +8,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -42,11 +44,11 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 fun GalleryGridContainer(
     albumId: String,
     albumName: String,
-    modifier : Modifier = Modifier,
+    modifier: Modifier = Modifier,
     viewModel: GalleryGridViewModel = hiltViewModel(),
     onBackClicked: () -> Unit = {},
     onNavigateToPhotoCrop: (String) -> Unit = {}
-){
+) {
     val state by viewModel.collectAsState()
 
     LaunchedEffect(albumId) {
@@ -54,7 +56,7 @@ fun GalleryGridContainer(
     }
 
     viewModel.collectSideEffect {
-        when(it) {
+        when (it) {
             is GalleryGridSideEffect.NavigateToPhotoCropScreen -> {
                 onNavigateToPhotoCrop(it.photoUri)
             }
@@ -90,10 +92,13 @@ internal fun GalleryGridScreen(
 
         AconTopBar(
             leadingIcon = {
-                IconButton(onClick = onBackClicked) {
-                    Image(
+                IconButton(
+                    onClick = { onBackClicked() }
+                ) {
+                    Icon(
                         imageVector = ImageVector.vectorResource(R.drawable.ic_topbar_arrow_left),
-                        contentDescription = stringResource(R.string.back)
+                        contentDescription = stringResource(R.string.back),
+                        tint = AconTheme.color.Gray50
                     )
                 }
             },
@@ -117,7 +122,8 @@ internal fun GalleryGridScreen(
                         }
                     )
                 }
-            }
+            },
+            modifier = Modifier.padding(vertical = 14.dp)
         )
 
         LazyVerticalGrid(
@@ -127,7 +133,7 @@ internal fun GalleryGridScreen(
             horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             items(
-                items =  state.photoList,
+                items = state.photoList,
                 key = { photoUri -> photoUri }
             ) { photoUri ->
                 PhotoItem(
@@ -155,7 +161,7 @@ private fun PhotoItem(
     Box(
         modifier = Modifier
             .size(itemSize.dp)
-            .noRippleClickable{ onClick() }
+            .noRippleClickable { onClick() }
     ) {
         Image(
             painter = rememberAsyncImagePainter(uri),

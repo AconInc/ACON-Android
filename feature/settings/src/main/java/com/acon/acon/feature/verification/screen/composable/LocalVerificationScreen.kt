@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -43,10 +44,10 @@ fun LocalVerificationScreen(
     onDismissDeleteFailDialog: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    when(state) {
+    when (state) {
         is LocalVerificationUiState.Success -> {
-            if(state.showAreaDeleteFailDialog) {
-                AconDefaultDialog (
+            if (state.showAreaDeleteFailDialog) {
+                AconDefaultDialog(
                     title = stringResource(R.string.delete_area_dialog_fail_title),
                     action = stringResource(R.string.ok),
                     onAction = onDismissDeleteFailDialog,
@@ -70,7 +71,7 @@ fun LocalVerificationScreen(
                     onAction1 = onDismissEditAreaDialog,
                     onAction2 = {
                         onDismissEditAreaDialog()
-                        if(state.verificationAreaList.size == 1) {
+                        if (state.verificationAreaList.size == 1) {
                             onclickEditArea(state.verificationAreaList[0].name)
                         }
                     },
@@ -90,21 +91,17 @@ fun LocalVerificationScreen(
             Column(
                 modifier = modifier
                     .background(AconTheme.color.Gray900)
+                    .statusBarsPadding()
                     .padding(horizontal = 16.dp)
             ) {
-                Spacer(Modifier.height(42.dp))
                 AconTopBar(
-                    modifier = Modifier
-                        .padding(vertical = 14.dp),
                     paddingValues = PaddingValues(0.dp),
                     leadingIcon = {
                         IconButton(
-                            onClick = onNavigateBack
+                            onClick = { onNavigateBack() }
                         ) {
                             Icon(
-                                imageVector = ImageVector.vectorResource(
-                                    R.drawable.ic_topbar_arrow_left
-                                ),
+                                imageVector = ImageVector.vectorResource(R.drawable.ic_topbar_arrow_left),
                                 contentDescription = stringResource(R.string.back),
                                 tint = AconTheme.color.White
                             )
@@ -117,7 +114,8 @@ fun LocalVerificationScreen(
                             fontWeight = FontWeight.SemiBold,
                             style = AconTheme.typography.Title4
                         )
-                    }
+                    },
+                    modifier = Modifier.padding(vertical = 14.dp)
                 )
 
                 Spacer(Modifier.height(40.dp))

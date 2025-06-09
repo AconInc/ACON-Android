@@ -15,7 +15,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -97,13 +98,16 @@ internal fun SpotDetailScreen(
             val pagerState = rememberPagerState(initialPage = 0, pageCount = { pageCount })
 
             Box(
-                modifier = modifier.navigationBarsPadding()
+                modifier = modifier
+                    .navigationBarsPadding()
+                    .statusBarsPadding()
             ) {
                 if (state.showReportErrorModal) {
                     ReportErrorBottomSheet(
                         onDismissRequest = { onDismissErrorReportModal() },
                         onClickReportError = {
-                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(UrlConstants.ERROR_REPORT))
+                            val intent =
+                                Intent(Intent.ACTION_VIEW, Uri.parse(UrlConstants.ERROR_REPORT))
                             context.startActivity(intent)
                         }
                     )
@@ -178,9 +182,7 @@ internal fun SpotDetailScreen(
                         .fillMaxSize()
                         .hazeSource(LocalHazeState.current),
                 ) {
-                    Spacer(Modifier.height(20.dp))
                     AconTopBar(
-                        modifier = Modifier.padding(vertical = 16.dp),
                         paddingValues = PaddingValues(0.dp),
                         leadingIcon = {
                             IconButton(
@@ -202,7 +204,8 @@ internal fun SpotDetailScreen(
                                     .padding(end = 16.dp)
                                     .noRippleClickable { onRequestErrorReportModal() }
                             )
-                        }
+                        },
+                        modifier = Modifier.padding(vertical = 14.dp)
                     )
 
                     Row(
@@ -227,12 +230,15 @@ internal fun SpotDetailScreen(
                         Text(
                             text = if (acornCount > 9999) stringResource(R.string.over_max_acon_count) else acornCount.toString(),
                             style = AconTheme.typography.Body1,
-                            fontWeight = FontWeight.W400,
+                            fontWeight = FontWeight.Normal,
                             color = AconTheme.color.White,
                             modifier = Modifier
                                 .padding(start = 2.dp)
-                                .width(
-                                    getTextSizeDp("+9999", AconTheme.typography.Body1).width
+                                .widthIn(
+                                    max = getTextSizeDp(
+                                        "+9999",
+                                        AconTheme.typography.Body1
+                                    ).width
                                 ),
                             textAlign = TextAlign.End
                         )

@@ -3,7 +3,6 @@ package com.acon.acon.feature.areaverification.composable
 import android.app.Activity
 import android.content.Intent
 import android.provider.Settings
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -128,12 +128,13 @@ fun PreferenceMapScreen(
     ) {
         AconTopBar(
             leadingIcon = {
-                IconButton(onClick = onBackClick) {
-                    Image(
-                        imageVector = ImageVector.vectorResource(
-                            id = R.drawable.ic_left
-                        ),
-                        contentDescription = stringResource(R.string.back)
+                IconButton(
+                    onClick = { onBackClick() }
+                ) {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_topbar_arrow_left),
+                        contentDescription = stringResource(R.string.back),
+                        tint = AconTheme.color.Gray50
                     )
                 }
             },
@@ -148,6 +149,7 @@ fun PreferenceMapScreen(
                 .background(
                     color = AconTheme.color.DimDefault.copy(alpha = 0.8f)
                 )
+                .padding(vertical = 14.dp)
         )
 
         Box(
