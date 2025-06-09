@@ -18,7 +18,6 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun AconRadioButton(
     selected: Boolean,
-    onClick: () -> Unit,
     modifier: Modifier = Modifier,
     colors: AconRadioButtonColors = AconRadioButtonColors.DeleteAccountRadioButtonColors()
 ) {
@@ -36,10 +35,7 @@ fun AconRadioButton(
                 width = 1.dp,
                 color = borderColor
             )
-            .background(containerColor)
-            .clickable {
-                onClick()
-            },
+            .background(containerColor),
         contentAlignment = Alignment.Center
     ) {
         Box(
@@ -56,8 +52,7 @@ fun AconRadioButton(
 @Composable
 private fun AconRadioButtonPreview() {
     AconRadioButton(
-        selected = false,
-        onClick = {}
+        selected = false
     )
 }
 
@@ -65,8 +60,7 @@ private fun AconRadioButtonPreview() {
 @Composable
 private fun AconSelectedRadioButtonPreview() {
     AconRadioButton(
-        selected = true,
-        onClick = {}
+        selected = true
     )
 }
 
@@ -74,7 +68,6 @@ private fun AconSelectedRadioButtonPreview() {
 @Composable
 private fun AconDisabledRadioButtonPreview() {
     AconRadioButton(
-        selected = false,
-        onClick = {}
+        selected = false
     )
 }

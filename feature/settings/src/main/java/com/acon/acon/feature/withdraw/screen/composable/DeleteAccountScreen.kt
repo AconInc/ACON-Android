@@ -53,6 +53,7 @@ import com.acon.acon.core.designsystem.effect.LocalHazeState
 import com.acon.acon.core.designsystem.effect.defaultHazeEffect
 import com.acon.acon.core.designsystem.effect.imageGradientLayer
 import com.acon.acon.core.designsystem.keyboard.keyboardAsState
+import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.feature.withdraw.amplitude.deleteAccountAmplitudeExitReason
 import com.acon.acon.feature.withdraw.amplitude.deleteAccountAmplitudeSubmit
@@ -177,14 +178,16 @@ fun DeleteAccountScreen(
                             DeleteReasonType.entries.forEach { reasonType ->
                                 val reason = stringResource(reasonType.reason)
                                 Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .noRippleClickable {
+                                        selectedReason = reasonType
+                                        onUpdateReason(reason)
+                                    },
                                     verticalAlignment = Alignment.CenterVertically,
                                 ) {
                                     AconRadioButton(
-                                        selected = selectedReason == reasonType,
-                                        onClick = {
-                                            selectedReason = reasonType
-                                            onUpdateReason(reason)
-                                        }
+                                        selected = selectedReason == reasonType
                                     )
                                     Text(
                                         text = reason,
