@@ -228,7 +228,7 @@ internal fun SpotDetailScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = if (storeName.length > 9) storeName.take(9) + "…" else storeName,
+                            text = if (storeName.length > 9) storeName.take(9) + stringResource(R.string.ellipsis) else storeName,
                             style = AconTheme.typography.Title4,
                             color = AconTheme.color.White,
                         )

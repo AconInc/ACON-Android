@@ -51,7 +51,7 @@ internal fun BookmarkItem(
             )
 
             Text(
-                text = spot.name,
+                text = if (spot.name.length > 9) spot.name.take(8) + stringResource(R.string.ellipsis) else spot.name,
                 color = AconTheme.color.White,
                 style = AconTheme.typography.Title5,
                 fontWeight = FontWeight.SemiBold,
@@ -72,7 +72,7 @@ internal fun BookmarkItem(
             )
 
             Text(
-                text = spot.name,
+                text =  if (spot.name.length > 9) spot.name.take(8) + stringResource(R.string.ellipsis) else spot.name,
                 color = AconTheme.color.White,
                 style = AconTheme.typography.Title5,
                 fontWeight = FontWeight.SemiBold,
