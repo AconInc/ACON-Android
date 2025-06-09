@@ -21,19 +21,20 @@ import coil3.compose.rememberAsyncImagePainter
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.effect.imageGradientLayer
 import com.acon.acon.core.designsystem.effect.imageGradientTopLayer
+import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.feature.profile.composable.screen.MockSavedSpot
 
 @Composable
 internal fun BookmarkItem(
     spot: MockSavedSpot, // TODO - 서버에서 보내준 값으로 변경 (state)
-    onClickSpotItem:(Long) -> Unit,
+    onClickSpotItem:() -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(
         modifier = modifier
             .clip(RoundedCornerShape(8.dp))
-            //.noRippleClickable { onClickSpotItem(spot.id) }
+            .noRippleClickable { onClickSpotItem() }
     ) {
         if(spot.image?.isEmpty() == true) {
             // TODO - 임시 코드, AsyncImage로 변경 (api 연결 후)

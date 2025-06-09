@@ -34,17 +34,18 @@ import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.bottomsheet.LoginBottomSheet
 import com.acon.acon.core.designsystem.component.topbar.AconTopBar
 import com.acon.acon.core.designsystem.noRippleClickable
-import com.acon.acon.core.designsystem.size.getScreenHeight
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.feature.profile.composable.amplitude.profileAmplitude
 import com.acon.acon.feature.profile.composable.screen.mockSpotList
 import com.acon.acon.feature.profile.composable.screen.profile.ProfileUiState
+import com.acon.feature.common.compose.getScreenHeight
 
 @SuppressLint("ConfigurationScreenWidthHeight")
 @Composable
 fun ProfileScreen(
     state: ProfileUiState,
     modifier: Modifier = Modifier,
+    onSpotDetail: (Long) -> Unit = {},
     onBookmark: () -> Unit = {},
     onSettings: () -> Unit = {},
     onEditProfile: () -> Unit = {},
@@ -87,7 +88,7 @@ fun ProfileScreen(
                 )
 
                 Row(
-                    modifier = Modifier.padding(top = 40.dp)
+                    modifier = Modifier.padding(top = 26.dp)
                 ) {
                     if (state.profileImage.isEmpty()) {
                         Image(
@@ -138,6 +139,8 @@ fun ProfileScreen(
                     }
                 }
 
+                // TODO - saveSpot = isEmpty -> 저장한 장소가 없어요.
+
                 Spacer(Modifier.height(42.dp))
                 Row(
                     modifier = Modifier
@@ -177,7 +180,7 @@ fun ProfileScreen(
                     ) { spot ->
                         BookmarkItem(
                             spot = spot,
-                            onClickSpotItem = {}, // TODO - 장소 상세로 이동
+                            onClickSpotItem = { onSpotDetail(1) }, // TODO - 장소 상세로 이동
                             modifier = Modifier.aspectRatio(150f/217f)
                         )
                     }
@@ -234,7 +237,7 @@ fun ProfileScreen(
 
                 Row(
                     modifier = Modifier
-                        .padding(vertical = 40.dp)
+                        .padding(top = 26.dp)
                 ) {
                     Image(
                         imageVector = ImageVector.vectorResource(R.drawable.ic_default_profile),
@@ -256,7 +259,7 @@ fun ProfileScreen(
 
                     Icon(
                         imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_right_24),
-                        contentDescription = stringResource(R.string.content_description_edit_profile),
+                        contentDescription = stringResource(R.string.content_description_go_login),
                         modifier = Modifier
                             .padding(start = 4.dp)
                             .padding(vertical = 16.dp)
