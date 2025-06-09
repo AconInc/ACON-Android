@@ -157,6 +157,8 @@
     <string name="store_tag_local">LOCAL</string>
     <string name="store_tag_ranking">TOP %d</string>
     <string name="over_max_acon_count">9999+</string>
+    <string name="menu_board_load_failed">이미지 로딩에 실패했어요</string>
+    <string name="retry">재시도</string>
 
     <!-- Upload -->
     <string name="close_upload">리뷰 그만두기</string>

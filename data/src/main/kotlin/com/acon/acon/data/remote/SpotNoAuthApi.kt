@@ -1,8 +1,8 @@
 package com.acon.acon.data.remote
 
 import com.acon.acon.data.dto.request.RecentNavigationLocationRequest
+import com.acon.acon.data.dto.response.MenuBoardListResponse
 import com.acon.acon.data.dto.response.SpotDetailInfoResponse
-import com.acon.acon.data.dto.response.SpotDetailMenuListResponse
 import com.acon.acon.data.dto.response.area.LegalAreaResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -22,14 +22,14 @@ interface SpotNoAuthApi {
         @Path ("spotId") spotId: Long
     ): SpotDetailInfoResponse
 
-    @GET("/api/v1/spots/{spotId}/menus")
-    suspend fun getSpotMenuList(
-        @Path ("spotId") spotId: Long
-    ): SpotDetailMenuListResponse
-
     @GET("api/v1/area")
     suspend fun getLegalDong(
         @Query("latitude") latitude: Double,
         @Query("longitude") longitude: Double
     ) : LegalAreaResponse
+
+    @GET("/api/v1/spots/{spotId}/menuboards")
+    suspend fun fetchMenuBoards(
+        @Path ("spotId") spotId: Long
+    ) : MenuBoardListResponse
 }

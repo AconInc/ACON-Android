@@ -26,6 +26,7 @@ fun SpotDetailScreenContainer(
         onClickDeleteBookmark = {}, //TODO - 북마크 삭제 api
         onNavigateToBack = viewModel::navigateToBack,
         onClickMenuBoard = viewModel::onRequestMenuBoard,
+        onClickRefreshMenuBoard = viewModel::fetchMenuBoardList,
         onDismissMenuBoard = viewModel::onDismissMenuBoard,
         onRequestErrorReportModal = viewModel::onRequestReportErrorModal,
         onDismissErrorReportModal = viewModel::onDismissReportErrorModal,

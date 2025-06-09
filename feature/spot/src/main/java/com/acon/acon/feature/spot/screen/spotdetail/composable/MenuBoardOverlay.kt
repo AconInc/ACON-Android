@@ -1,9 +1,9 @@
 package com.acon.acon.feature.spot.screen.spotdetail.composable
 
-import androidx.annotation.DrawableRes
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -11,10 +11,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -22,20 +26,23 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import coil3.compose.AsyncImage
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
 
 @Composable
 internal fun MenuBoardOverlay(
-    imageList: List<Int>,
+    imageList: List<String>,
+    isMenuBoardLoaded:Boolean,
+    refreshMenuBoard: () -> Unit,
     onDismiss: () -> Unit
 ) {
     var currentIndex by rememberSaveable { mutableIntStateOf(0) }
@@ -66,7 +73,9 @@ internal fun MenuBoardOverlay(
 
             PinchToZoomImage(
                 zoomState = zoomState,
-                imageResId = imageList[currentIndex]
+                menuBoardImage = imageList[currentIndex],
+                isMenuBoardLoaded = isMenuBoardLoaded,
+                refreshMenuBoard = refreshMenuBoard
             )
 
             Row(
@@ -115,34 +124,76 @@ internal fun MenuBoardOverlay(
 @Composable
 internal fun PinchToZoomImage(
     zoomState: PinchZoomState,
-    @DrawableRes imageResId: Int
+    menuBoardImage: String,
+    isMenuBoardLoaded: Boolean,
+    refreshMenuBoard: () -> Unit
 ) {
-    Box(
-        modifier = Modifier
-            .widthIn(max = 230.dp)
-            .aspectRatio(230f / 325f)
-            .pinchZoomAndTransform(zoomState),
-        contentAlignment = Alignment.Center
-    ) {
-        Image(
-            painter = painterResource(imageResId),
-            contentDescription = stringResource(R.string.menu_board_content_description),
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop
-        )
+    var isRefreshing by remember { mutableStateOf(false) }
+
+    if(isMenuBoardLoaded) {
+        Box(
+            modifier = Modifier
+                .widthIn(max = 230.dp)
+                .aspectRatio(230f / 325f)
+                .pinchZoomAndTransform(zoomState),
+            contentAlignment = Alignment.Center
+        ) {
+            AsyncImage(
+                model = menuBoardImage,
+                contentDescription = stringResource(R.string.menu_board_content_description),
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
+            )
+        }
+    } else {
+        Box(
+            modifier = Modifier
+                .background(
+                    color = AconTheme.color.GlassWhiteDefault,
+                    shape = RoundedCornerShape(4.dp)
+                )
+                .widthIn(max = 230.dp)
+                .aspectRatio(230f / 325f),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                if(isRefreshing) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(24.dp)
+                    )
+                } else {
+                    Text(
+                        text = stringResource(R.string.menu_board_load_failed),
+                        color = AconTheme.color.Gray50,
+                        style = AconTheme.typography.Title5,
+                        fontWeight = FontWeight.SemiBold
+                    )
+
+                    Text(
+                        text = stringResource(R.string.retry),
+                        color = AconTheme.color.Action,
+                        style = AconTheme.typography.Body1,
+                        fontWeight = FontWeight.SemiBold,
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .noRippleClickable { refreshMenuBoard() }
+                    )
+                }
+            }
+        }
     }
 }
 
 @Preview
 @Composable
 private fun MenuBoardOverlayPreview() {
-    val imageList = listOf(
-        R.drawable.ic_launcher_background,
-        R.drawable.ic_error_1_120,
-    )
     AconTheme {
         MenuBoardOverlay(
-            imageList = imageList,
+            imageList = emptyList(),
+            isMenuBoardLoaded = false,
+            refreshMenuBoard = {},
             onDismiss = {}
         )
     }
