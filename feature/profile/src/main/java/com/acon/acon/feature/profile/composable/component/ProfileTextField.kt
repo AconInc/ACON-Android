@@ -45,7 +45,7 @@ internal fun ProfileTextField(
     modifier: Modifier = Modifier,
     value: TextFieldValue = TextFieldValue(),
     onValueChange: (TextFieldValue) -> Unit,
-    placeholder: String,
+    placeholder: String? = "",
     isTyping: Boolean = false,
     onFocusChanged: (Boolean, FocusType) -> Unit = { _, _ -> },
     visualTransformation: VisualTransformation = VisualTransformation.None,
@@ -93,11 +93,13 @@ internal fun ProfileTextField(
                         contentAlignment = Alignment.CenterStart
                     ) {
                         if (value.text.isEmpty() && status != TextFieldStatus.Focused) {
-                            Text(
-                                text = placeholder,
-                                style = AconTheme.typography.Body1,
-                                color = AconTheme.color.Gray500
-                            )
+                            if (placeholder != null) {
+                                Text(
+                                    text = placeholder,
+                                    style = AconTheme.typography.Body1,
+                                    color = AconTheme.color.Gray500
+                                )
+                            }
                         }
                         innerTextField()
                     }

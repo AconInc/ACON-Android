@@ -5,22 +5,23 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -37,26 +38,26 @@ import com.acon.acon.feature.profile.composable.screen.bookmark.BookmarkUiState
 import com.acon.acon.feature.profile.composable.screen.mockSpotList
 import com.acon.acon.feature.profile.composable.screen.profile.composable.BookmarkItem
 import com.acon.acon.feature.profile.composable.screen.profile.composable.BookmarkSkeletonItem
+import com.acon.feature.common.compose.getScreenHeight
 import dev.chrisbanes.haze.hazeSource
 
 @Composable
 fun BookmarkScreen(
     state: BookmarkUiState,
     modifier: Modifier = Modifier,
-    onSpotClick: () -> Unit = {},
+    onSpotClick: (Long) -> Unit = {},
     onNavigateToBack: () -> Unit = {}
 ) {
-    val configuration = LocalConfiguration.current
-    val screenHeightDp = configuration.screenHeightDp
-    val skeletonHeight = (screenHeightDp * 0.07f).dp
+    val screenHeightDp = getScreenHeight()
+    val skeletonHeight = (screenHeightDp * 0.07f)
 
     when (state) {
         BookmarkUiState.Loading -> {
             Box(
                 modifier = modifier
-                    .fillMaxSize()
                     .background(AconTheme.color.Gray900)
                     .statusBarsPadding()
+                    .fillMaxSize()
             ) {
                 AconTopBar(
                     paddingValues = PaddingValues(0.dp),
@@ -95,35 +96,39 @@ fun BookmarkScreen(
                         .padding(top = 72.dp)
                         .padding(horizontal = 16.dp)
                         .navigationBarsPadding()
+                        .verticalScroll(rememberScrollState())
                         .hazeSource(LocalHazeState.current)
                 ) {
-                    LazyVerticalGrid(
-                        columns = GridCells.Fixed(2),
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        items(
-                            mockSpotList
-                        ) { spot ->
-                            BookmarkSkeletonItem(
-                                skeletonHeight = skeletonHeight,
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .aspectRatio(160f / 231f)
-                            )
+                    mockSpotList.chunked(2).forEach { rowItems ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 8.dp),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            rowItems.forEach { spot ->
+                                BookmarkSkeletonItem(
+                                    skeletonHeight = skeletonHeight,
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .aspectRatio(160f / 231f)
+                                )
+                            }
+                            if (rowItems.size < 2) {
+                                Spacer(modifier = Modifier.weight(1f))
+                            }
                         }
                     }
+                    Spacer(modifier = Modifier.height(16.dp))
                 }
             }
         }
-
         BookmarkUiState.Success -> {
             Box(
                 modifier = modifier
-                    .fillMaxSize()
                     .background(AconTheme.color.Gray900)
                     .statusBarsPadding()
+                    .fillMaxSize()
             ) {
                 AconTopBar(
                     paddingValues = PaddingValues(0.dp),
@@ -162,30 +167,34 @@ fun BookmarkScreen(
                         .padding(top = 72.dp)
                         .padding(horizontal = 16.dp)
                         .navigationBarsPadding()
+                        .verticalScroll(rememberScrollState())
                         .hazeSource(LocalHazeState.current)
                 ) {
-                    LazyVerticalGrid(
-                        columns = GridCells.Fixed(2),
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        items(
-                            mockSpotList
-                        ) { spot ->
-                            BookmarkItem(
-                                spot = spot,
-                                onClickSpotItem = {},
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .aspectRatio(160f / 231f)
-                            )
+                    mockSpotList.chunked(2).forEach { rowItems ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 8.dp),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            rowItems.forEach { spot ->
+                                BookmarkItem(
+                                    spot = spot,
+                                    onClickSpotItem = { onSpotClick(1) },
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .aspectRatio(160f / 231f)
+                                )
+                            }
+                            if (rowItems.size < 2) {
+                                Spacer(modifier = Modifier.weight(1f))
+                            }
                         }
                     }
+                    Spacer(modifier = Modifier.height(16.dp))
                 }
             }
         }
-
         BookmarkUiState.LoadFailed -> {}
     }
 }

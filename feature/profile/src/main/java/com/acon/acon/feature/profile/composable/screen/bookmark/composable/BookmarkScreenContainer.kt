@@ -13,7 +13,7 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 fun BookmarkScreenContainer(
     modifier: Modifier = Modifier,
     onNavigateToBack: () -> Unit = {},
-    onNavigateToSpotDetailScreen: () -> Unit = {},
+    onNavigateToSpotDetailScreen: (Long) -> Unit = {},
     viewModel: BookmarkViewModel = hiltViewModel()
 ) {
     val state by viewModel.collectAsState()
@@ -27,8 +27,8 @@ fun BookmarkScreenContainer(
 
     viewModel.collectSideEffect {
         when(it) {
-            BookmarkUiSideEffect.OnNavigateToBack -> { onNavigateToBack() }
-            BookmarkUiSideEffect.OnNavigateToSpotDetailScreen -> { onNavigateToSpotDetailScreen() }
+            is BookmarkUiSideEffect.OnNavigateToBack -> { onNavigateToBack() }
+            is BookmarkUiSideEffect.OnNavigateToSpotDetailScreen -> { onNavigateToSpotDetailScreen(it.spotId) }
         }
     }
 }

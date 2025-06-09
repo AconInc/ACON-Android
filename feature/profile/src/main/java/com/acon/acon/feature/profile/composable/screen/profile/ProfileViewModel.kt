@@ -2,12 +2,12 @@ package com.acon.acon.feature.profile.composable.screen.profile
 
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.viewModelScope
-import com.acon.feature.common.base.BaseContainerHost
 import com.acon.acon.domain.model.profile.VerifiedArea
 import com.acon.acon.domain.repository.ProfileRepository
 import com.acon.acon.domain.repository.SocialRepository
 import com.acon.acon.domain.repository.UserRepository
 import com.acon.acon.domain.type.UserType
+import com.acon.feature.common.base.BaseContainerHost
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.annotation.OrbitExperimental
@@ -75,7 +75,7 @@ class ProfileViewModel @Inject constructor(
                 reduce {
                     ProfileUiState.Success(
                         profileImage = profile.image,
-                        nickname = profile.nickname,
+                        nickname = profile.nickname.lowercase(),
                         aconCount = profile.leftAcornCount,
                         verifiedArea = profile.verifiedAreaList
                     )
@@ -84,6 +84,10 @@ class ProfileViewModel @Inject constructor(
             .onFailure {
                 reduce { ProfileUiState.LoadFailed }
             }
+    }
+
+    fun onSpotDetail(spotId: Long) = intent {
+        postSideEffect(ProfileUiSideEffect.OnNavigateToSpotDetailScreen(spotId))
     }
 
     fun onBookmark() = intent {
@@ -125,6 +129,7 @@ sealed interface ProfileUiState {
 }
 
 sealed interface ProfileUiSideEffect {
+    data class OnNavigateToSpotDetailScreen(val spotId: Long) : ProfileUiSideEffect
     data object OnNavigateToBookmarkScreen : ProfileUiSideEffect
     data object OnNavigateToSpotListScreen : ProfileUiSideEffect
     data object OnNavigateToSettingsScreen : ProfileUiSideEffect

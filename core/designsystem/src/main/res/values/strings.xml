@@ -158,6 +158,8 @@
     <string name="store_tag_local">LOCAL</string>
     <string name="store_tag_ranking">TOP %d</string>
     <string name="over_max_acon_count">9999+</string>
+    <string name="menu_board_load_failed">이미지 로딩에 실패했어요</string>
+    <string name="retry">재시도</string>
     <string name="see_more">더보기</string>
 
     <!-- Upload -->
@@ -212,7 +214,6 @@
     <string name="max_nickname_count">/14</string>
     <string name="nickname_textfield_title">닉네임</string>
     <string name="nickname_birthday_title">생년월일</string>
-    <string name="nickname_placeholder">닉네임을 입력해주세요.</string>
     <string name="birthday_placeholder">2025.01.01</string>
     <string name="nickname_valid">사용할 수 있는 닉네임이에요.</string>
     <string name="nickname_error_empty">닉네임을 입력해주세요.</string>
