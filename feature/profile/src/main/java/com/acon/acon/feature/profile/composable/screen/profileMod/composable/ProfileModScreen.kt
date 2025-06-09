@@ -254,6 +254,7 @@ internal fun ProfileModScreen(
                                 Text(
                                     text = stringResource(R.string.star),
                                     style = AconTheme.typography.Title4,
+                                    fontWeight = FontWeight.SemiBold,
                                     color = AconTheme.color.Gray50
                                 )
                             }
@@ -356,7 +357,8 @@ internal fun ProfileModScreen(
                                 Text(
                                     text = stringResource(R.string.nickname_birthday_title),
                                     style = AconTheme.typography.Title4,
-                                    color = AconTheme.color.White
+                                    color = AconTheme.color.White,
+                                    fontWeight = FontWeight.SemiBold
                                 )
                                 Spacer(modifier = Modifier.width(4.dp))
                             }
