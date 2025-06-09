@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -72,11 +73,10 @@ fun ProfileScreen(
                 Column(
                     modifier = Modifier
                         .background(AconTheme.color.Gray900)
+                        .statusBarsPadding()
                         .padding(horizontal = 16.dp)
                 ) {
-                    Spacer(Modifier.height(40.dp))
                     AconTopBar(
-                        modifier = Modifier.padding(vertical = 14.dp),
                         paddingValues = PaddingValues(0.dp),
                         content = {
                             Text(
@@ -87,7 +87,9 @@ fun ProfileScreen(
                             )
                         },
                         trailingIcon = {
-                            IconButton(onClick = onSettings) {
+                            IconButton(
+                                onClick = { onSettings() }
+                            ) {
                                 Icon(
                                     imageVector = ImageVector.vectorResource(R.drawable.ic_setting),
                                     contentDescription = stringResource(R.string.content_description_settings),
@@ -95,10 +97,11 @@ fun ProfileScreen(
                                 )
                             }
                         },
+                        modifier = Modifier.padding(vertical = 14.dp)
                     )
 
                     Row(
-                        modifier = Modifier.padding(top = 26.dp)
+                        modifier = Modifier.padding(top = 40.dp)
                     ) {
                         if (state.profileImage.isEmpty()) {
                             Image(
@@ -210,11 +213,10 @@ fun ProfileScreen(
                 Column(
                     modifier = Modifier
                         .background(AconTheme.color.Gray900)
+                        .statusBarsPadding()
                         .padding(horizontal = 16.dp)
                 ) {
-                    Spacer(Modifier.height(40.dp))
                     AconTopBar(
-                        modifier = Modifier.padding(vertical = 14.dp),
                         paddingValues = PaddingValues(0.dp),
                         content = {
                             Text(
@@ -225,19 +227,22 @@ fun ProfileScreen(
                             )
                         },
                         trailingIcon = {
-                            IconButton(onClick = onSettings) {
+                            IconButton(
+                                onClick = { onSettings() }
+                            ) {
                                 Icon(
                                     imageVector = ImageVector.vectorResource(R.drawable.ic_setting),
                                     contentDescription = stringResource(R.string.content_description_settings),
                                     tint = AconTheme.color.White
                                 )
                             }
-                        }
+                        },
+                        modifier = Modifier.padding(vertical = 14.dp)
                     )
 
                     Row(
                         modifier = Modifier
-                            .padding(top = 26.dp)
+                            .padding(vertical = 40.dp)
                     ) {
                         Image(
                             imageVector = ImageVector.vectorResource(R.drawable.ic_default_profile),

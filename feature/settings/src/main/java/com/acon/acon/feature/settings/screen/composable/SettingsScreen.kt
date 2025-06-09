@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
@@ -23,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.dialog.v2.AconTwoActionDialog
 import com.acon.acon.core.designsystem.component.topbar.AconTopBar
+import com.acon.acon.core.designsystem.effect.rememberHazeState
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.feature.settings.amplitude.settingsAmplitudeSignOut
 import com.acon.acon.feature.settings.component.SettingSectionItem
@@ -30,6 +32,7 @@ import com.acon.acon.feature.settings.component.SettingSectionVersionItem
 import com.acon.acon.feature.settings.screen.SettingsUiState
 import com.acon.acon.feature.settings.type.SettingsType
 import com.acon.acon.feature.withdraw.amplitude.deleteAccountAmplitudeSettingsToWithDraw
+import dev.chrisbanes.haze.hazeSource
 
 @Composable
 fun SettingsScreen(
@@ -50,13 +53,16 @@ fun SettingsScreen(
         navigateBack()
     }
 
+    val hazeState = rememberHazeState()
     val scrollState = rememberScrollState()
 
     Column(
         modifier = modifier
             .background(AconTheme.color.Gray900)
+            .statusBarsPadding()
             .padding(horizontal = 16.dp)
-            .verticalScroll(scrollState),
+            .verticalScroll(scrollState)
+            .hazeSource(hazeState)
     ) {
         when (state) {
             is SettingsUiState.User -> {
@@ -74,20 +80,16 @@ fun SettingsScreen(
                     )
                 }
 
-                Spacer(Modifier.height(42.dp))
                 AconTopBar(
-                    modifier = Modifier
-                        .padding(vertical = 14.dp),
                     paddingValues = PaddingValues(0.dp),
                     leadingIcon = {
                         IconButton(
-                            onClick = navigateBack
+                            onClick = { navigateBack() }
                         ) {
                             Icon(
-                                //TODO - PR 합쳐지면 변경
                                 imageVector = ImageVector.vectorResource(R.drawable.ic_topbar_arrow_left),
                                 contentDescription = stringResource(R.string.back),
-                                tint = AconTheme.color.White
+                                tint = AconTheme.color.Gray50
                             )
                         }
                     },
@@ -99,6 +101,7 @@ fun SettingsScreen(
                             color = AconTheme.color.White
                         )
                     },
+                    modifier = Modifier.padding(vertical = 14.dp)
                 )
 
                 Spacer(Modifier.height(32.dp))
@@ -137,19 +140,19 @@ fun SettingsScreen(
                 Text(
                     text = stringResource(R.string.settings_title_service_settings),
                     style = AconTheme.typography.Body1,
-                    color = AconTheme.color.Gray500
+                    color = AconTheme.color.Gray500,
                 )
 
                 Spacer(Modifier.height(16.dp))
                 SettingSectionItem(
                     settingsType = SettingsType.ONBOARDING_AGAIN,
-                    onClickContinue = onRetryOnBoarding
+                    onClickContinue = onRetryOnBoarding,
                 )
 
                 Spacer(Modifier.height(12.dp))
                 SettingSectionItem(
                     settingsType = SettingsType.AREA_VERIFICATION,
-                    onClickContinue = onAreaVerification
+                    onClickContinue = onAreaVerification,
                 )
 
                 Spacer(Modifier.height(40.dp))
@@ -176,19 +179,16 @@ fun SettingsScreen(
             }
 
             is SettingsUiState.Guest -> {
-                Spacer(Modifier.height(42.dp))
                 AconTopBar(
-                    modifier = Modifier
-                        .padding(vertical = 14.dp),
                     paddingValues = PaddingValues(0.dp),
                     leadingIcon = {
                         IconButton(
-                            onClick = navigateBack
+                            onClick = { navigateBack() }
                         ) {
                             Icon(
-                                imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_left_28),
+                                imageVector = ImageVector.vectorResource(R.drawable.ic_topbar_arrow_left),
                                 contentDescription = stringResource(R.string.back),
-                                tint = AconTheme.color.White
+                                tint = AconTheme.color.Gray50
                             )
                         }
                     },
@@ -200,6 +200,7 @@ fun SettingsScreen(
                             color = AconTheme.color.White
                         )
                     },
+                    modifier = Modifier.padding(vertical = 14.dp)
                 )
 
                 Spacer(Modifier.height(32.dp))
@@ -236,7 +237,6 @@ fun SettingsScreen(
             }
         }
     }
-
 }
 
 @Preview

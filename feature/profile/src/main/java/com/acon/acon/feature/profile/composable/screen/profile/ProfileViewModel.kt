@@ -40,7 +40,7 @@ class ProfileViewModel @Inject constructor(
                 reduce {
                     ProfileUiState.Success(
                         profileImage = profile.image,
-                        nickname = profile.nickname,
+                        nickname = profile.nickname.lowercase(),
                         aconCount = profile.leftAcornCount,
                         verifiedArea = profile.verifiedAreaList
                     )

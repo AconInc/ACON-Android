@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -89,10 +90,13 @@ internal fun GalleryListScreen(
     ) {
         AconTopBar(
             leadingIcon = {
-                IconButton(onClick = onBackClicked) {
-                    Image(
+                IconButton(
+                    onClick = { onBackClicked() }
+                ) {
+                    Icon(
                         imageVector = ImageVector.vectorResource(R.drawable.ic_topbar_arrow_left),
-                        contentDescription = stringResource(R.string.back)
+                        contentDescription = stringResource(R.string.back),
+                        tint = AconTheme.color.Gray50
                     )
                 }
             },
@@ -103,7 +107,8 @@ internal fun GalleryListScreen(
                     fontWeight = FontWeight.SemiBold,
                     color = AconTheme.color.White
                 )
-            }
+            },
+            modifier = Modifier.padding(vertical = 14.dp)
         )
 
         LazyColumn(
