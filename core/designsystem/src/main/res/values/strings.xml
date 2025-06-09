@@ -40,6 +40,7 @@
     <string name="clear_search_content_description">검색어 초기화</string>
     <string name="menu_board_content_description">메뉴판 이미지</string>
     <string name="store_background_image_content_description">가게 사진</string>
+    <string name="complaint_content_description">정보 오류 신고하기</string>
     <string name="no_store_background_image_content_description">가게 사진 없음</string>
     <string name="btn_next_image_content_description">다음 메뉴판 사진</string>
     <string name="btn_previous_background_image_content_description">이전 메뉴판 사진</string>
@@ -157,6 +158,7 @@
     <string name="store_tag_local">LOCAL</string>
     <string name="store_tag_ranking">TOP %d</string>
     <string name="over_max_acon_count">9999+</string>
+    <string name="see_more">더보기</string>
 
     <!-- Upload -->
     <string name="close_upload">리뷰 그만두기</string>
