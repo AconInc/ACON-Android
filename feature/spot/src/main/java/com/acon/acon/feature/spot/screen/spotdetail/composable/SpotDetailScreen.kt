@@ -49,6 +49,24 @@ import com.acon.feature.common.compose.getTextSizeDp
 import dev.chrisbanes.haze.hazeSource
 import okhttp3.internal.immutableListOf
 
+private val testMenuBoardList = listOf(
+    R.drawable.ic_launcher_background,
+    R.drawable.ic_error_1_120,
+    R.drawable.ic_launcher_background
+)
+
+private val testStoreImageList = listOf(
+    R.drawable.ic_launcher_background,
+    R.drawable.ic_error_1_120,
+    R.drawable.ic_launcher_background,
+    R.drawable.ic_error_1_120,
+    R.drawable.ic_launcher_background,
+    R.drawable.ic_error_1_120,
+    R.drawable.ic_launcher_background,
+    R.drawable.ic_error_1_120,
+    R.drawable.ic_launcher_background,
+)
+
 @Composable
 internal fun SpotDetailScreen(
     state: SpotDetailUiState,
@@ -79,7 +97,7 @@ internal fun SpotDetailScreen(
         SpotDetailUiState.Loading -> {}
         is SpotDetailUiState.Success -> {
             val storeName = state.spotDetailInfo.name
-            val storeImageList = state.spotDetailInfo.imageList
+            val storeImageList = testStoreImageList // state.spotDetailInfo.imageList
             val acornCount = 99 //TODO - state.spotDetailInfo.acornCount
             val bottomPadding = if (storeImageList.size <= 1) {
                 34.dp
@@ -87,7 +105,7 @@ internal fun SpotDetailScreen(
                 0.dp
             }
 
-            val pageCount = state.spotDetailInfo.imageList.size
+            val pageCount = testStoreImageList.size //state.spotDetailInfo.imageList.size
             val pagerState = rememberPagerState(initialPage = 0, pageCount = { pageCount })
 
             Box(
@@ -115,7 +133,7 @@ internal fun SpotDetailScreen(
 
                 if (state.showMenuBoardDialog) {
                     MenuBoardOverlay(
-                        imageList = state.menuBoardList,
+                        imageList = testMenuBoardList, //state.menuBoardList,
                         isMenuBoardLoaded = state.menuBoardListLoad,
                         refreshMenuBoard = onClickRefreshMenuBoard,
                         onDismiss = { onDismissMenuBoard() }
@@ -294,7 +312,7 @@ internal fun SpotDetailScreen(
                                 //onClickDeleteBookmark()
                                 // TODO - 북마크 ON 상태이면 북마크 삭제 / 북마크 OFF 상태이면 북마크 추가
                             },
-                            isMenuBoarEnabled = state.menuBoardList.isEmpty() //TODO - state.spotDetailInfo.hasMenuboardImage
+                            isMenuBoarEnabled = true //state.menuBoardList.isEmpty() //TODO - state.spotDetailInfo.hasMenuboardImage
                         )
                     }
 
