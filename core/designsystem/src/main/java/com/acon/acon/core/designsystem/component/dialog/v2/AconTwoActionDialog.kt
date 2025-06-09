@@ -53,16 +53,13 @@ fun AconTwoActionDialog(
     ) {
         Surface(
             shape = RoundedCornerShape(14.dp),
-            color = AconTheme.color.GlassWhiteDefault.copy(alpha = .4f),
+            color = AconTheme.color.Gray4545,
             modifier = Modifier.fillMaxWidth(),
         ) {
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .defaultHazeEffect(
-                        hazeState = LocalHazeState.current,
-                        tintColor = AconTheme.color.GlassWhiteDefault,
-                    ), horizontalAlignment = Alignment.CenterHorizontally
+                    .fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
                     text = title,

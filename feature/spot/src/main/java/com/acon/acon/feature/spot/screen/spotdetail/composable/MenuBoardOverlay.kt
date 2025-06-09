@@ -37,11 +37,8 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.DialogWindowProvider
 import coil3.compose.AsyncImage
 import com.acon.acon.core.designsystem.R
-import com.acon.acon.core.designsystem.effect.LocalHazeState
-import com.acon.acon.core.designsystem.effect.defaultHazeEffect
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
-import dev.chrisbanes.haze.hazeSource
 
 @Composable
 internal fun MenuBoardOverlay(
@@ -63,12 +60,10 @@ internal fun MenuBoardOverlay(
             usePlatformDefaultWidth = false
         )
     ) {
-        dialogWindowProvider?.window?.setDimAmount(0f)
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(AconTheme.color.DimDefault)
-                .hazeSource(LocalHazeState.current),
+                .background(AconTheme.color.Gray4545),
             contentAlignment = Alignment.Center
         ) {
             Icon(
@@ -162,13 +157,8 @@ internal fun PinchToZoomImage(
         Box(
             modifier = Modifier
                 .background(
-                    color = AconTheme.color.GlassWhiteDisabled,
+                    color = AconTheme.color.Gray4545,
                     shape = RoundedCornerShape(4.dp)
-                )
-                .defaultHazeEffect(
-                    hazeState = LocalHazeState.current,
-                    tintColor = AconTheme.color.GlassWhiteDisabled,
-                    backgroundColor = AconTheme.color.DimDefault
                 )
                 .widthIn(max = 230.dp)
                 .aspectRatio(230f / 325f),

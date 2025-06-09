@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
@@ -25,8 +26,8 @@ import com.acon.acon.core.designsystem.theme.AconTheme
 fun AconToastPopup(
     modifier: Modifier = Modifier,
     minHeight: Dp = 40.dp,
-    color: Color = AconTheme.color.GlassBlackDefault,
-    shape: Shape = RoundedCornerShape(100.dp),
+    color: Color = AconTheme.color.Gray4545,
+    shape: Shape = RoundedCornerShape(50),
     content: @Composable() (RowScope.() -> Unit)
 ) {
     Row(
@@ -42,7 +43,8 @@ fun AconToastPopup(
                 color = AconTheme.color.GlassWhiteDefault,
                 shape = shape
             ),
-        horizontalArrangement = Arrangement.Center
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
     ) {
         content()
     }
