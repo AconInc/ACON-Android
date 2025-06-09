@@ -2,12 +2,12 @@ package com.acon.acon.data.datasource.remote
 
 import com.acon.acon.data.dto.request.RecentNavigationLocationRequest
 import com.acon.acon.data.dto.request.SpotListRequest
+import com.acon.acon.data.dto.response.MenuBoardListResponse
 import com.acon.acon.data.dto.response.SpotDetailInfoResponse
-import com.acon.acon.data.dto.response.SpotDetailMenuListResponse
 import com.acon.acon.data.dto.response.SpotListResponse
 import com.acon.acon.data.dto.response.area.LegalAreaResponse
-import com.acon.acon.data.remote.SpotNoAuthApi
 import com.acon.acon.data.remote.SpotAuthApi
+import com.acon.acon.data.remote.SpotNoAuthApi
 import javax.inject.Inject
 
 class SpotRemoteDataSource @Inject constructor(
@@ -27,11 +27,11 @@ class SpotRemoteDataSource @Inject constructor(
         return spotNoAuthApi.getSpotDetailInfo(spotId)
     }
 
-    suspend fun getSpotMenuList(spotId: Long): SpotDetailMenuListResponse {
-        return spotNoAuthApi.getSpotMenuList(spotId)
-    }
-
     suspend fun getLegalDong(latitude: Double, longitude: Double): LegalAreaResponse {
         return spotNoAuthApi.getLegalDong(latitude, longitude)
+    }
+
+    suspend fun fetchMenuBoards(spotId: Long): MenuBoardListResponse {
+        return spotNoAuthApi.fetchMenuBoards(spotId)
     }
 }

@@ -15,17 +15,28 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.domain.model.spot.SpotDetailMenu
 import com.acon.acon.feature.spot.toPriceString
+
+// TODO - api 배포되면 제거
+private data class SignatureMenuData(
+    val name: String,
+    val price: Int
+)
+
+private val mockSignatureMenuList = listOf(
+    SignatureMenuData("만두", 5000),
+    SignatureMenuData("양꼬치", 35000),
+    SignatureMenuData("닭도리탕", 60000)
+)
 
 @Composable
 internal fun SignatureMenu(
-    signatureMenuList: List<SpotDetailMenu>
+    signatureMenuList: List<String>
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
-        signatureMenuList.take(3).forEach { menu -> // TODO - api 변경되면 제거
+        mockSignatureMenuList.take(3).forEach { menu -> // TODO - api 배포되면 수정
             SignatureMenuItem(
                 menuName = menu.name,
                 menuPrice = menu.price.toPriceString()
