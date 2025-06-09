@@ -42,7 +42,6 @@ internal fun NavGraphBuilder.profileNavigation(
                 snackbarHostState = snackbarHostState,
                 modifier = Modifier
                     .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
                     .background(AconTheme.color.Gray900),
                 onNavigateToSpotDetailScreen = {
                     navController.navigate(SpotRoute.SpotDetail(it))

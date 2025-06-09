@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -17,7 +18,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -68,42 +71,188 @@ fun ProfileScreen(
     Column(
         modifier = modifier
     ) {
-        when (state) {
-            is ProfileUiState.Success -> {
-                Column(
-                    modifier = Modifier
-                        .background(AconTheme.color.Gray900)
-                        .statusBarsPadding()
-                        .padding(horizontal = 16.dp)
-                ) {
-                    AconTopBar(
-                        paddingValues = PaddingValues(0.dp),
-                        content = {
-                            Text(
-                                text = stringResource(R.string.profile_topbar),
-                                style = AconTheme.typography.Title4,
-                                fontWeight = FontWeight.SemiBold,
-                                color = AconTheme.color.White
-                            )
-                        },
-                        trailingIcon = {
-                            IconButton(
-                                onClick = { onSettings() }
-                            ) {
-                                Icon(
-                                    imageVector = ImageVector.vectorResource(R.drawable.ic_setting),
-                                    contentDescription = stringResource(R.string.content_description_settings),
-                                    tint = AconTheme.color.White
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+                .verticalScroll(rememberScrollState())
+        ) {
+            when (state) {
+                is ProfileUiState.Success -> {
+                    Column(
+                        modifier = Modifier
+                            .background(AconTheme.color.Gray900)
+                            .statusBarsPadding()
+                            .padding(horizontal = 16.dp)
+                    ) {
+                        AconTopBar(
+                            paddingValues = PaddingValues(0.dp),
+                            content = {
+                                Text(
+                                    text = stringResource(R.string.profile_topbar),
+                                    style = AconTheme.typography.Title4,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = AconTheme.color.White
+                                )
+                            },
+                            trailingIcon = {
+                                IconButton(
+                                    onClick = { onSettings() }
+                                ) {
+                                    Icon(
+                                        imageVector = ImageVector.vectorResource(R.drawable.ic_setting),
+                                        contentDescription = stringResource(R.string.content_description_settings),
+                                        tint = AconTheme.color.White
+                                    )
+                                }
+                            },
+                            modifier = Modifier.padding(vertical = 14.dp)
+                        )
+
+                        Row(
+                            modifier = Modifier.padding(top = 40.dp)
+                        ) {
+                            if (state.profileImage.isEmpty()) {
+                                Image(
+                                    imageVector = ImageVector.vectorResource(R.drawable.ic_default_profile),
+                                    contentDescription = stringResource(R.string.content_description_default_profile_image),
+                                    modifier = Modifier
+                                        .size(boxHeight)
+                                        .clip(CircleShape)
+                                )
+                            } else {
+                                AsyncImage(
+                                    model = state.profileImage,
+                                    contentDescription = stringResource(R.string.content_description_profile_image),
+                                    modifier = Modifier
+                                        .size(boxHeight)
+                                        .clip(CircleShape),
+                                    contentScale = ContentScale.Crop
                                 )
                             }
-                        },
-                        modifier = Modifier.padding(vertical = 14.dp)
-                    )
 
-                    Row(
-                        modifier = Modifier.padding(top = 40.dp)
+                            Column(
+                                modifier = Modifier
+                                    .padding(vertical = 5.dp)
+                                    .padding(start = 16.dp)
+                            ) {
+                                Text(
+                                    text = state.nickname,
+                                    style = AconTheme.typography.Headline4,
+                                    color = AconTheme.color.White
+                                )
+
+                                Spacer(Modifier.height(4.dp))
+                                Row {
+                                    Text(
+                                        text = stringResource(R.string.edit_profile),
+                                        style = AconTheme.typography.Body1,
+                                        color = AconTheme.color.Gray500,
+                                    )
+
+                                    Image(
+                                        imageVector = ImageVector.vectorResource(R.drawable.ic_edit),
+                                        contentDescription = stringResource(R.string.content_description_edit_profile),
+                                        modifier = Modifier
+                                            .padding(start = 4.dp)
+                                            .noRippleClickable { onEditProfile() }
+                                    )
+                                }
+                            }
+                        }
+
+                        // TODO - saveSpot = isEmpty -> 저장한 장소가 없어요.
+
+                        Spacer(Modifier.height(42.dp))
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 6.dp)
+                        ) {
+                            Text(
+                                text = stringResource(R.string.saved_store),
+                                color = AconTheme.color.White,
+                                style = AconTheme.typography.Title4,
+                                fontWeight = FontWeight.SemiBold
+                            )
+
+                            Spacer(Modifier.weight(1f))
+                            Text(
+                                text = stringResource(R.string.show_saved_all_store),
+                                color = AconTheme.color.Action,
+                                style = AconTheme.typography.Body1,
+                                fontWeight = FontWeight.SemiBold,
+                                modifier = Modifier
+                                    .padding(vertical = 2.dp)
+                                    .padding(end = 8.dp)
+                                    .noRippleClickable { onBookmark() }
+                            )
+                        }
+
+                        Spacer(Modifier.height(8.dp))
+                        LazyRow(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(savedStoreHeight),
+                            horizontalArrangement = Arrangement.spacedBy(10.dp)
+                        ) {
+                            items(
+                                items = mockSpotList,
+                                key = { it.id }
+                            ) { spot ->
+                                BookmarkItem(
+                                    spot = spot,
+                                    onClickSpotItem = { onSpotDetail(1) }, // TODO - 장소 상세로 이동
+                                    modifier = Modifier.aspectRatio(150f / 217f)
+                                )
+                            }
+                        }
+
+                        ProfileNativeAd(
+                            screenHeight = admobHeight,
+                            modifier = Modifier.padding(top = 20.dp, bottom = 23.dp)
+                        )
+                    }
+                }
+
+                is ProfileUiState.Loading -> {}
+                is ProfileUiState.LoadFailed -> {}
+
+                is ProfileUiState.Guest -> {
+                    Column(
+                        modifier = Modifier
+                            .background(AconTheme.color.Gray900)
+                            .statusBarsPadding()
+                            .padding(horizontal = 16.dp)
                     ) {
-                        if (state.profileImage.isEmpty()) {
+                        AconTopBar(
+                            paddingValues = PaddingValues(0.dp),
+                            content = {
+                                Text(
+                                    text = stringResource(R.string.profile_topbar),
+                                    style = AconTheme.typography.Title4,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = AconTheme.color.White
+                                )
+                            },
+                            trailingIcon = {
+                                IconButton(
+                                    onClick = { onSettings() }
+                                ) {
+                                    Icon(
+                                        imageVector = ImageVector.vectorResource(R.drawable.ic_setting),
+                                        contentDescription = stringResource(R.string.content_description_settings),
+                                        tint = AconTheme.color.White
+                                    )
+                                }
+                            },
+                            modifier = Modifier.padding(vertical = 14.dp)
+                        )
+
+                        Row(
+                            modifier = Modifier
+                                .padding(vertical = 40.dp)
+                        ) {
                             Image(
                                 imageVector = ImageVector.vectorResource(R.drawable.ic_default_profile),
                                 contentDescription = stringResource(R.string.content_description_default_profile_image),
@@ -111,176 +260,36 @@ fun ProfileScreen(
                                     .size(boxHeight)
                                     .clip(CircleShape)
                             )
-                        } else {
-                            AsyncImage(
-                                model = state.profileImage,
-                                contentDescription = stringResource(R.string.content_description_profile_image),
-                                modifier = Modifier
-                                    .size(boxHeight)
-                                    .clip(CircleShape),
-                                contentScale = ContentScale.Crop
-                            )
-                        }
 
-                        Column(
-                            modifier = Modifier
-                                .padding(vertical = 5.dp)
-                                .padding(start = 16.dp)
-                        ) {
                             Text(
-                                text = state.nickname,
+                                text = stringResource(R.string.you_need_sign_in),
                                 style = AconTheme.typography.Headline4,
-                                color = AconTheme.color.White
+                                color = AconTheme.color.White,
+                                modifier = Modifier
+                                    .padding(start = 16.dp)
+                                    .padding(vertical = 16.dp)
+                                    .noRippleClickable { onSignInRequired() }
                             )
 
-                            Spacer(Modifier.height(4.dp))
-                            Row {
-                                Text(
-                                    text = stringResource(R.string.edit_profile),
-                                    style = AconTheme.typography.Body1,
-                                    color = AconTheme.color.Gray500,
-                                )
-
-                                Image(
-                                    imageVector = ImageVector.vectorResource(R.drawable.ic_edit),
-                                    contentDescription = stringResource(R.string.content_description_edit_profile),
-                                    modifier = Modifier
-                                        .padding(start = 4.dp)
-                                        .noRippleClickable { onEditProfile() }
-                                )
-                            }
-                        }
-                    }
-
-                    // TODO - saveSpot = isEmpty -> 저장한 장소가 없어요.
-
-                    Spacer(Modifier.height(42.dp))
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 6.dp)
-                    ) {
-                        Text(
-                            text = stringResource(R.string.saved_store),
-                            color = AconTheme.color.White,
-                            style = AconTheme.typography.Title4,
-                            fontWeight = FontWeight.SemiBold
-                        )
-
-                        Spacer(Modifier.weight(1f))
-                        Text(
-                            text = stringResource(R.string.show_saved_all_store),
-                            color = AconTheme.color.Action,
-                            style = AconTheme.typography.Body1,
-                            fontWeight = FontWeight.SemiBold,
-                            modifier = Modifier
-                                .padding(vertical = 2.dp)
-                                .padding(end = 8.dp)
-                                .noRippleClickable { onBookmark() }
-                        )
-                    }
-
-                    Spacer(Modifier.height(8.dp))
-                    LazyRow(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(savedStoreHeight),
-                        horizontalArrangement = Arrangement.spacedBy(10.dp)
-                    ) {
-                        items(
-                            items = mockSpotList,
-                            key = { it.id }
-                        ) { spot ->
-                            BookmarkItem(
-                                spot = spot,
-                                onClickSpotItem = { onSpotDetail(1) }, // TODO - 장소 상세로 이동
-                                modifier = Modifier.aspectRatio(150f / 217f)
+                            Icon(
+                                imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_right_24),
+                                contentDescription = stringResource(R.string.content_description_go_sign_in),
+                                modifier = Modifier
+                                    .padding(start = 4.dp)
+                                    .padding(vertical = 16.dp)
+                                    .noRippleClickable { onSignInRequired() },
+                                tint = AconTheme.color.White
                             )
                         }
-                    }
 
-                    ProfileNativeAd(
-                        screenHeight = admobHeight,
-                        modifier = Modifier.padding(top = 20.dp, bottom = 23.dp)
-                    )
-                }
-            }
-
-            is ProfileUiState.Loading -> {}
-            is ProfileUiState.LoadFailed -> {}
-
-            is ProfileUiState.Guest -> {
-                Column(
-                    modifier = Modifier
-                        .background(AconTheme.color.Gray900)
-                        .statusBarsPadding()
-                        .padding(horizontal = 16.dp)
-                ) {
-                    AconTopBar(
-                        paddingValues = PaddingValues(0.dp),
-                        content = {
-                            Text(
-                                text = stringResource(R.string.profile_topbar),
-                                style = AconTheme.typography.Title4,
-                                fontWeight = FontWeight.SemiBold,
-                                color = AconTheme.color.White
-                            )
-                        },
-                        trailingIcon = {
-                            IconButton(
-                                onClick = { onSettings() }
-                            ) {
-                                Icon(
-                                    imageVector = ImageVector.vectorResource(R.drawable.ic_setting),
-                                    contentDescription = stringResource(R.string.content_description_settings),
-                                    tint = AconTheme.color.White
-                                )
-                            }
-                        },
-                        modifier = Modifier.padding(vertical = 14.dp)
-                    )
-
-                    Row(
-                        modifier = Modifier
-                            .padding(vertical = 40.dp)
-                    ) {
-                        Image(
-                            imageVector = ImageVector.vectorResource(R.drawable.ic_default_profile),
-                            contentDescription = stringResource(R.string.content_description_default_profile_image),
-                            modifier = Modifier
-                                .size(boxHeight)
-                                .clip(CircleShape)
-                        )
-
-                        Text(
-                            text = stringResource(R.string.you_need_sign_in),
-                            style = AconTheme.typography.Headline4,
-                            color = AconTheme.color.White,
-                            modifier = Modifier
-                                .padding(start = 16.dp)
-                                .padding(vertical = 16.dp)
-                                .noRippleClickable { onSignInRequired() }
-                        )
-
-                        Icon(
-                            imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_right_24),
-                            contentDescription = stringResource(R.string.content_description_go_sign_in),
-                            modifier = Modifier
-                                .padding(start = 4.dp)
-                                .padding(vertical = 16.dp)
-                                .noRippleClickable { onSignInRequired() },
-                            tint = AconTheme.color.White
+                        ProfileNativeAd(
+                            screenHeight = admobHeight,
+                            modifier = Modifier.padding(top = 20.dp)
                         )
                     }
-
-                    ProfileNativeAd(
-                        screenHeight = admobHeight,
-                        modifier = Modifier.padding(top = 20.dp)
-                    )
                 }
             }
         }
-        Spacer(Modifier.weight(1f))
         AconBottomBar(
             selectedItem = BottomNavType.PROFILE,
             onItemClick = { bottomType ->
