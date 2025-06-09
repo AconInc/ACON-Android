@@ -33,7 +33,11 @@ internal fun NavGraphBuilder.signInNavigationNavigation(
                 navigateToAreaVerification = {
                     navController.navigate(
                         AreaVerificationRoute.AreaVerification("onboarding")
-                    )
+                    ) {
+                        popUpTo(SignInRoute.Graph) {
+                            inclusive = true
+                        }
+                    }
                 },
             )
         }

@@ -37,6 +37,12 @@ class SignInViewModel @Inject constructor(
         )
     }
 
+    fun navigateToAreaVerification() = intent {
+        postSideEffect(
+            SignInSideEffect.NavigateToAreaVerification
+        )
+    }
+
     fun onClickTermsOfUse() = intent {
         postSideEffect(
             SignInSideEffect.OnClickTermsOfUse

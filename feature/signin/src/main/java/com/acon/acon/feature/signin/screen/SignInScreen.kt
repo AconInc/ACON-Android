@@ -22,6 +22,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -42,25 +43,30 @@ import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.feature.signin.amplitude.amplitudeSignIn
 import com.acon.acon.feature.signin.screen.component.SignInTopBar
 import com.acon.acon.feature.signin.utils.SplashAudioManager
+import com.acon.feature.common.compose.LocalNavController
 import com.acon.feature.common.compose.LocalRequestSignIn
 import com.acon.feature.common.compose.getScreenHeight
 import com.acon.feature.common.compose.getScreenWidth
+import com.acon.feature.common.remember.rememberSocialRepository
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun SignInScreen(
     state: SignInUiState,
     modifier: Modifier = Modifier,
     navigateToSpotListView: () -> Unit,
+    navigateToAreaVerification: () -> Unit,
     onClickTermsOfUse: () -> Unit,
     onClickPrivacyPolicy: () -> Unit,
     onAnimationEnd:() -> Unit,
 ) {
-    val onSignInRequired = LocalRequestSignIn.current
+    val scope = rememberCoroutineScope()
+    val socialRepository = rememberSocialRepository()
 
     val context = LocalContext.current
     val activity = context as? Activity
@@ -161,8 +167,16 @@ fun SignInScreen(
                                 .alpha(alpha),
                             onClick = {
                                 if (alpha >= 0.75f) {
-                                    onSignInRequired()
-                                    amplitudeSignIn()
+                                    scope.launch {
+                                        socialRepository.googleSignIn()
+                                            .onSuccess {
+                                                if (it.hasVerifiedArea) {
+                                                    navigateToSpotListView()
+                                                } else {
+                                                    navigateToAreaVerification()
+                                                }
+                                            }.onFailure {}
+                                    }
                                 }
                             }
                         )
@@ -230,6 +244,7 @@ private fun PreviewSignInScreen() {
         SignInScreen(
             state = SignInUiState.SignIn(),
             navigateToSpotListView = {},
+            navigateToAreaVerification = {},
             onClickTermsOfUse = {},
             onClickPrivacyPolicy = {},
             onAnimationEnd = {},

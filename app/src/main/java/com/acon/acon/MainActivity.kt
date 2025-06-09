@@ -81,8 +81,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
@@ -179,7 +182,16 @@ class MainActivity : ComponentActivity() {
         }
 
     private val _isLocationPermissionGranted = MutableStateFlow(false)
-    private val isLocationPermissionGranted = _isLocationPermissionGranted.asStateFlow()
+    private val isLocationPermissionGranted = flow {
+        emit(checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                && checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
+
+        emitAll(_isLocationPermissionGranted.filter { it })
+    }.stateIn(
+        scope = lifecycleScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = false
+    )
 
     @SuppressLint("MissingPermission")
     private val currentLocationFlow = callbackFlow<Location> {
@@ -293,17 +305,15 @@ class MainActivity : ComponentActivity() {
                                     .onSuccess {
                                         if (it.hasVerifiedArea) {
                                             navController.navigate(SpotRoute.SpotList) {
-                                                popUpTo<AreaVerificationRoute.Graph> {
+                                                popUpTo(navController.graph.id) {
                                                     inclusive = true
                                                 }
                                             }
                                         } else {
                                             navController.navigate(
-                                                AreaVerificationRoute.AreaVerification(
-                                                    "onboarding"
-                                                )
+                                                AreaVerificationRoute.AreaVerification("onboarding")
                                             ) {
-                                                popUpTo<AreaVerificationRoute.Graph> {
+                                                popUpTo(navController.graph.id) {
                                                     inclusive = true
                                                 }
                                             }
