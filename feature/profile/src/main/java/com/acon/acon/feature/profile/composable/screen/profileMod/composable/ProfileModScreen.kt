@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -174,14 +175,14 @@ internal fun ProfileModScreen(
                 verticalArrangement = Arrangement.Center
             ) {
                 AconTopBar(
-                    modifier = Modifier.padding(vertical = 14.dp),
                     leadingIcon = {
                         IconButton(
-                            onClick = onRequestExitDialog
+                            onClick = { onRequestExitDialog() }
                         ) {
-                            Image(
+                            Icon(
                                 imageVector = ImageVector.vectorResource(id = R.drawable.ic_topbar_arrow_left),
-                                contentDescription = stringResource(R.string.back)
+                                contentDescription = stringResource(R.string.back),
+                                tint = AconTheme.color.Gray50
                             )
                         }
                     },
@@ -192,7 +193,8 @@ internal fun ProfileModScreen(
                             fontWeight = FontWeight.SemiBold,
                             color = AconTheme.color.White
                         )
-                    }
+                    },
+                    modifier = Modifier.padding(vertical = 14.dp)
                 )
 
                 Box(
@@ -252,6 +254,7 @@ internal fun ProfileModScreen(
                                 Text(
                                     text = stringResource(R.string.star),
                                     style = AconTheme.typography.Title4,
+                                    fontWeight = FontWeight.SemiBold,
                                     color = AconTheme.color.Gray50
                                 )
                             }
@@ -266,7 +269,8 @@ internal fun ProfileModScreen(
                                 onValueChange = { fieldValue ->
                                     val lowerCaseText = fieldValue.text.lowercase()
                                     if (lowerCaseText.length <= 14) {
-                                        nicknameTextFieldValue = fieldValue.copy(text = lowerCaseText)
+                                        nicknameTextFieldValue =
+                                            fieldValue.copy(text = lowerCaseText)
                                         onNicknameChanged(lowerCaseText)
                                     }
                                 },
@@ -352,7 +356,8 @@ internal fun ProfileModScreen(
                                 Text(
                                     text = stringResource(R.string.nickname_birthday_title),
                                     style = AconTheme.typography.Title4,
-                                    color = AconTheme.color.White
+                                    color = AconTheme.color.White,
+                                    fontWeight = FontWeight.SemiBold
                                 )
                                 Spacer(modifier = Modifier.width(4.dp))
                             }

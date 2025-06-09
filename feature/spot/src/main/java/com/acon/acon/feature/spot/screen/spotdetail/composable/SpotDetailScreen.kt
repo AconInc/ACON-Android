@@ -15,7 +15,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -48,6 +49,24 @@ import com.acon.feature.common.compose.getTextSizeDp
 import dev.chrisbanes.haze.hazeSource
 import okhttp3.internal.immutableListOf
 
+private val testMenuBoardList = listOf(
+    R.drawable.ic_launcher_background,
+    R.drawable.ic_error_1_120,
+    R.drawable.ic_launcher_background
+)
+
+private val testStoreImageList = listOf(
+    R.drawable.ic_launcher_background,
+    R.drawable.ic_error_1_120,
+    R.drawable.ic_launcher_background,
+    R.drawable.ic_error_1_120,
+    R.drawable.ic_launcher_background,
+    R.drawable.ic_error_1_120,
+    R.drawable.ic_launcher_background,
+    R.drawable.ic_error_1_120,
+    R.drawable.ic_launcher_background,
+)
+
 @Composable
 internal fun SpotDetailScreen(
     state: SpotDetailUiState,
@@ -78,7 +97,7 @@ internal fun SpotDetailScreen(
         SpotDetailUiState.Loading -> {}
         is SpotDetailUiState.Success -> {
             val storeName = state.spotDetailInfo.name
-            val storeImageList = state.spotDetailInfo.imageList
+            val storeImageList = testStoreImageList // state.spotDetailInfo.imageList
             val acornCount = 99 //TODO - state.spotDetailInfo.acornCount
             val bottomPadding = if (storeImageList.size <= 1) {
                 34.dp
@@ -86,17 +105,20 @@ internal fun SpotDetailScreen(
                 0.dp
             }
 
-            val pageCount = state.spotDetailInfo.imageList.size
+            val pageCount = testStoreImageList.size //state.spotDetailInfo.imageList.size
             val pagerState = rememberPagerState(initialPage = 0, pageCount = { pageCount })
 
             Box(
-                modifier = modifier.navigationBarsPadding()
+                modifier = modifier
+                    .navigationBarsPadding()
+                    .statusBarsPadding()
             ) {
                 if (state.showReportErrorModal) {
                     ReportErrorBottomSheet(
                         onDismissRequest = { onDismissErrorReportModal() },
                         onClickReportError = {
-                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(UrlConstants.ERROR_REPORT))
+                            val intent =
+                                Intent(Intent.ACTION_VIEW, Uri.parse(UrlConstants.ERROR_REPORT))
                             context.startActivity(intent)
                         }
                     )
@@ -111,7 +133,7 @@ internal fun SpotDetailScreen(
 
                 if (state.showMenuBoardDialog) {
                     MenuBoardOverlay(
-                        imageList = state.menuBoardList,
+                        imageList = testMenuBoardList, //state.menuBoardList,
                         isMenuBoardLoaded = state.menuBoardListLoad,
                         refreshMenuBoard = onClickRefreshMenuBoard,
                         onDismiss = { onDismissMenuBoard() }
@@ -173,9 +195,7 @@ internal fun SpotDetailScreen(
                         .fillMaxSize()
                         .hazeSource(LocalHazeState.current),
                 ) {
-                    Spacer(Modifier.height(20.dp))
                     AconTopBar(
-                        modifier = Modifier.padding(vertical = 16.dp),
                         paddingValues = PaddingValues(0.dp),
                         leadingIcon = {
                             IconButton(
@@ -197,7 +217,8 @@ internal fun SpotDetailScreen(
                                     .padding(end = 16.dp)
                                     .noRippleClickable { onRequestErrorReportModal() }
                             )
-                        }
+                        },
+                        modifier = Modifier.padding(vertical = 14.dp)
                     )
 
                     Row(
@@ -222,12 +243,15 @@ internal fun SpotDetailScreen(
                         Text(
                             text = if (acornCount > 9999) stringResource(R.string.over_max_acon_count) else acornCount.toString(),
                             style = AconTheme.typography.Body1,
-                            fontWeight = FontWeight.W400,
+                            fontWeight = FontWeight.Normal,
                             color = AconTheme.color.White,
                             modifier = Modifier
                                 .padding(start = 2.dp)
-                                .width(
-                                    getTextSizeDp("+9999", AconTheme.typography.Body1).width
+                                .widthIn(
+                                    max = getTextSizeDp(
+                                        "+9999",
+                                        AconTheme.typography.Body1
+                                    ).width
                                 ),
                             textAlign = TextAlign.End
                         )
@@ -288,7 +312,7 @@ internal fun SpotDetailScreen(
                                 //onClickDeleteBookmark()
                                 // TODO - 북마크 ON 상태이면 북마크 삭제 / 북마크 OFF 상태이면 북마크 추가
                             },
-                            isMenuBoarEnabled = state.menuBoardList.isEmpty() //TODO - state.spotDetailInfo.hasMenuboardImage
+                            isMenuBoarEnabled = true //state.menuBoardList.isEmpty() //TODO - state.spotDetailInfo.hasMenuboardImage
                         )
                     }
 

@@ -14,7 +14,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.acon.acon.core.designsystem.R
@@ -38,9 +40,10 @@ internal fun ReportErrorBottomSheet(
                 .padding(top = 20.dp, bottom = 70.dp)
         ) {
             Text(
-                text = "더보기",
+                text = stringResource(R.string.see_more),
                 color = AconTheme.color.White,
                 style = AconTheme.typography.Title3,
+                fontWeight = FontWeight.SemiBold,
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             )
 
@@ -54,16 +57,17 @@ internal fun ReportErrorBottomSheet(
             ) {
                 Image(
                     imageVector = ImageVector.vectorResource(
-                        R.drawable.ic_error
+                        R.drawable.ic_error_report
                     ),
-                    contentDescription = "정보 오류 신고하기"
+                    contentDescription = stringResource(R.string.complaint_content_description)
                 )
 
                 Spacer(Modifier.width(12.dp))
                 Text(
-                    text = "정보 오류 신고하기",
+                    text = stringResource(R.string.complaint_content_description),
                     color = AconTheme.color.White,
-                    style = AconTheme.typography.Title4
+                    style = AconTheme.typography.Title4,
+                    fontWeight = FontWeight.Normal
                 )
             }
         }

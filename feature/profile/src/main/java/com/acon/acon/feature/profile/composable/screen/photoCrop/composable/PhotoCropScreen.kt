@@ -13,8 +13,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -35,6 +37,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.rememberAsyncImagePainter
 import com.acon.acon.core.designsystem.R
@@ -90,10 +93,13 @@ internal fun PhotoCropScreen(
 
         AconTopBar(
             leadingIcon = {
-                IconButton(onClick = onCloseClicked) {
-                    Image(
+                IconButton(
+                    onClick = { onCloseClicked() }
+                ) {
+                    Icon(
                         imageVector = ImageVector.vectorResource(R.drawable.ic_topbar_arrow_left),
                         contentDescription = stringResource(R.string.back),
+                        tint = AconTheme.color.Gray50
                     )
                 }
             },
@@ -116,7 +122,8 @@ internal fun PhotoCropScreen(
                         color = AconTheme.color.Action
                     )
                 }
-            }
+            },
+            modifier = Modifier.padding(vertical = 14.dp)
         )
 
         BoxWithConstraints(

@@ -53,6 +53,7 @@ import com.acon.acon.core.designsystem.effect.LocalHazeState
 import com.acon.acon.core.designsystem.effect.defaultHazeEffect
 import com.acon.acon.core.designsystem.effect.imageGradientLayer
 import com.acon.acon.core.designsystem.keyboard.keyboardAsState
+import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.feature.withdraw.amplitude.deleteAccountAmplitudeExitReason
 import com.acon.acon.feature.withdraw.amplitude.deleteAccountAmplitudeSubmit
@@ -110,11 +111,13 @@ fun DeleteAccountScreen(
                 AconTopBar(
                     paddingValues = PaddingValues(0.dp),
                     leadingIcon = {
-                        IconButton(onClick = navigateBack) {
+                        IconButton(
+                            onClick = { navigateBack() }
+                        ) {
                             Icon(
                                 imageVector = ImageVector.vectorResource(R.drawable.ic_topbar_arrow_left),
                                 contentDescription = stringResource(R.string.back),
-                                tint = AconTheme.color.White
+                                tint = AconTheme.color.Gray50
                             )
                         }
                     },
@@ -127,6 +130,7 @@ fun DeleteAccountScreen(
                         )
                     },
                     modifier = Modifier
+                        .padding(vertical = 14.dp)
                         .imageGradientLayer()
                         .defaultHazeEffect(
                             hazeState = LocalHazeState.current,
@@ -140,6 +144,7 @@ fun DeleteAccountScreen(
                     modifier = modifier
                         .fillMaxSize()
                         .background(AconTheme.color.Gray900)
+                        .padding(top = 56.dp)
                         .padding(horizontal = 16.dp)
                         .navigationBarsPadding()
                         .verticalScroll(scrollState)
@@ -152,13 +157,15 @@ fun DeleteAccountScreen(
                             )
                         }
                 ) {
-                    Column {
+                    Column(
+                        modifier = Modifier
+                            .padding(top = 40.dp)
+                    ) {
                         Text(
                             text = stringResource(R.string.settings_delete_account_title),
                             style = AconTheme.typography.Headline4,
                             fontWeight = FontWeight.SemiBold,
                             color = AconTheme.color.White,
-                            modifier = Modifier.padding(top = 56.dp)
                         )
 
                         Spacer(Modifier.height(8.dp))
@@ -177,14 +184,16 @@ fun DeleteAccountScreen(
                             DeleteReasonType.entries.forEach { reasonType ->
                                 val reason = stringResource(reasonType.reason)
                                 Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .noRippleClickable {
+                                            selectedReason = reasonType
+                                            onUpdateReason(reason)
+                                        },
                                     verticalAlignment = Alignment.CenterVertically,
                                 ) {
                                     AconRadioButton(
-                                        selected = selectedReason == reasonType,
-                                        onClick = {
-                                            selectedReason = reasonType
-                                            onUpdateReason(reason)
-                                        }
+                                        selected = selectedReason == reasonType
                                     )
                                     Text(
                                         text = reason,
