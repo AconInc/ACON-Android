@@ -83,7 +83,8 @@ fun LocalVerificationScreen(
                             textAlign = TextAlign.Center,
                             modifier = Modifier.padding(bottom = 22.dp)
                         )
-                    }
+                    },
+                    modifier = Modifier.fillMaxWidth()
                 )
             }
 

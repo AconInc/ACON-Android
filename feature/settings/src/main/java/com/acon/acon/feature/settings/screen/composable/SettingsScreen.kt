@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
@@ -31,6 +32,7 @@ import com.acon.acon.feature.settings.component.SettingSectionVersionItem
 import com.acon.acon.feature.settings.screen.SettingsUiState
 import com.acon.acon.feature.settings.type.SettingsType
 import com.acon.acon.feature.withdraw.amplitude.deleteAccountAmplitudeSettingsToWithDraw
+import com.acon.feature.common.compose.getScreenWidth
 import dev.chrisbanes.haze.hazeSource
 
 @Composable
@@ -48,12 +50,15 @@ fun SettingsScreen(
     onSignOut: () -> Unit = {},
     onDeleteAccountScreen: () -> Unit = {},
 ) {
-    BackHandler {
-        navigateBack()
-    }
+    val screenWidthDp = getScreenWidth()
+    val dialogWidth = (screenWidthDp *  (260f / 360f))
 
     val hazeState = rememberHazeState()
     val scrollState = rememberScrollState()
+
+    BackHandler {
+        navigateBack()
+    }
 
     Column(
         modifier = modifier
@@ -74,7 +79,8 @@ fun SettingsScreen(
                         onAction2 = {
                             onSignOut()
                             settingsAmplitudeSignOut()
-                        }
+                        },
+                        modifier = Modifier.width(dialogWidth)
                     )
                 }
 

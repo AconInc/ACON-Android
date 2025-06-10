@@ -73,7 +73,7 @@ fun AconDefaultDialog(
                         .noRippleClickable {
                             onAction()
                         }
-                        .padding(vertical = 10.dp),
+                        .padding(vertical = 14.dp),
                     textAlign = TextAlign.Center
                 )
             }

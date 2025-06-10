@@ -23,8 +23,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.SecureFlagPolicy
-import com.acon.acon.core.designsystem.effect.LocalHazeState
-import com.acon.acon.core.designsystem.effect.defaultHazeEffect
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
 
@@ -38,6 +36,7 @@ fun AconTwoActionDialog(
     onDismissRequest: () -> Unit,
     action1Color: Color = AconTheme.color.White,
     action2Color: Color = AconTheme.color.Action,
+    modifier: Modifier = Modifier,
     properties: DialogProperties = DialogProperties(
         dismissOnBackPress = true,
         dismissOnClickOutside = true,
@@ -54,7 +53,7 @@ fun AconTwoActionDialog(
         Surface(
             shape = RoundedCornerShape(14.dp),
             color = AconTheme.color.Gray4545,
-            modifier = Modifier.fillMaxWidth(),
+            modifier = modifier
         ) {
             Column(
                 modifier = Modifier
@@ -91,7 +90,7 @@ fun AconTwoActionDialog(
                             .noRippleClickable {
                                 onAction1()
                             }
-                            .padding(vertical = 10.dp),
+                            .padding(vertical = 14.dp),
                         textAlign = TextAlign.Center
                     )
                     VerticalDivider(
@@ -109,7 +108,7 @@ fun AconTwoActionDialog(
                             .noRippleClickable {
                                 onAction2()
                             }
-                            .padding(vertical = 10.dp),
+                            .padding(vertical = 14.dp),
                         textAlign = TextAlign.Center
                     )
                 }
@@ -127,6 +126,6 @@ private fun AconTwoActionDialogPreview() {
         action2 = "Action 2",
         onDismissRequest = {},
         onAction1 = {},
-        onAction2 = {}
+        onAction2 = {},
     )
 }

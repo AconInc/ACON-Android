@@ -59,6 +59,7 @@ import com.acon.acon.feature.profile.composable.type.contentDescriptionResId
 import com.acon.acon.feature.profile.composable.type.validMessageResId
 import com.acon.acon.feature.profile.composable.utils.BirthdayTransformation
 import com.acon.feature.common.compose.getScreenHeight
+import com.acon.feature.common.compose.getScreenWidth
 import dev.chrisbanes.haze.hazeSource
 
 @Composable
@@ -83,8 +84,10 @@ internal fun ProfileModScreen(
     onClickSaveButton: () -> Unit = {},
 ) {
     val context = LocalContext.current
+    val screenWidthDp = getScreenWidth()
     val screenHeightDp = getScreenHeight()
-    val boxHeight = (screenHeightDp * (80f / 740f))
+    val dialogWidth = (screenWidthDp *  (260f / 360f))
+    val profileImageHeight = (screenHeightDp * (80f / 740f))
 
     val focusManager = LocalFocusManager.current
 
@@ -132,7 +135,8 @@ internal fun ProfileModScreen(
                     },
                     onAction2 = {
                         navigateToBack()
-                    }
+                    },
+                    modifier = Modifier.width(dialogWidth)
                 )
             }
 
@@ -144,15 +148,17 @@ internal fun ProfileModScreen(
                     onDismissRequest = { onDisMissPermissionDialog() },
                     onAction1 = { onDisMissPermissionDialog() },
                     onAction2 = { moveToSettings(context.packageName) },
-                ) {
-                    Text(
-                        text = stringResource(R.string.photo_permission_content),
-                        color = AconTheme.color.Gray200,
-                        style = AconTheme.typography.Body1,
-                        maxLines = 1,
-                        modifier = Modifier.padding(bottom = 20.dp)
-                    )
-                }
+                    content = {
+                        Text(
+                            text = stringResource(R.string.photo_permission_content),
+                            color = AconTheme.color.Gray200,
+                            style = AconTheme.typography.Body1,
+                            maxLines = 1,
+                            modifier = Modifier.padding(bottom = 20.dp)
+                        )
+                    },
+                    modifier = Modifier.width(dialogWidth)
+                )
             }
 
             if (state.showPhotoEditModal) {
@@ -213,7 +219,7 @@ internal fun ProfileModScreen(
                             Spacer(modifier = Modifier.weight(1f))
                             Box(
                                 modifier = Modifier
-                                    .size(boxHeight)
+                                    .size(profileImageHeight)
                                     .aspectRatio(1f),
                                 contentAlignment = Alignment.Center
                             ) {
