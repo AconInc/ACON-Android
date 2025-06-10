@@ -3,7 +3,6 @@ package com.acon.acon.feature.settings.screen.composable
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -60,7 +59,6 @@ fun SettingsScreen(
         modifier = modifier
             .background(AconTheme.color.Gray900)
             .statusBarsPadding()
-            .padding(horizontal = 16.dp)
             .verticalScroll(scrollState)
             .hazeSource(hazeState)
     ) {
@@ -81,7 +79,6 @@ fun SettingsScreen(
                 }
 
                 AconTopBar(
-                    paddingValues = PaddingValues(0.dp),
                     leadingIcon = {
                         IconButton(
                             onClick = { navigateBack() }
@@ -104,83 +101,86 @@ fun SettingsScreen(
                     modifier = Modifier.padding(vertical = 14.dp)
                 )
 
-                Spacer(Modifier.height(32.dp))
-                Text(
-                    text = stringResource(R.string.settings_title_version_info),
-                    style = AconTheme.typography.Body1,
-                    color = AconTheme.color.Gray500
-                )
+                Column(
+                    modifier = modifier.padding(horizontal = 16.dp)
+                ) {
+                    Spacer(Modifier.height(32.dp))
+                    Text(
+                        text = stringResource(R.string.settings_title_version_info),
+                        style = AconTheme.typography.Body1,
+                        color = AconTheme.color.Gray500
+                    )
 
-                Spacer(Modifier.height(16.dp))
-                SettingSectionVersionItem(
-                    isLatestVersion = isLatestVersion, // TODO - 버전 분기 처리
-                    onClickContinue = onUpdateVersion
-                )
+                    Spacer(Modifier.height(16.dp))
+                    SettingSectionVersionItem(
+                        isLatestVersion = isLatestVersion, // TODO - 버전 분기 처리
+                        onClickContinue = onUpdateVersion
+                    )
 
-                Spacer(Modifier.height(40.dp))
-                Text(
-                    text = stringResource(R.string.settings_title_terms_and_policies),
-                    style = AconTheme.typography.Body1,
-                    color = AconTheme.color.Gray500
-                )
+                    Spacer(Modifier.height(40.dp))
+                    Text(
+                        text = stringResource(R.string.settings_title_terms_and_policies),
+                        style = AconTheme.typography.Body1,
+                        color = AconTheme.color.Gray500
+                    )
 
-                Spacer(Modifier.height(16.dp))
-                SettingSectionItem(
-                    settingsType = SettingsType.TERM_OF_USE,
-                    onClickContinue = onTermOfUse
-                )
+                    Spacer(Modifier.height(16.dp))
+                    SettingSectionItem(
+                        settingsType = SettingsType.TERM_OF_USE,
+                        onClickContinue = onTermOfUse
+                    )
 
-                Spacer(Modifier.height(12.dp))
-                SettingSectionItem(
-                    settingsType = SettingsType.PRIVACY_POLICY,
-                    onClickContinue = onPrivatePolicy
-                )
+                    Spacer(Modifier.height(12.dp))
+                    SettingSectionItem(
+                        settingsType = SettingsType.PRIVACY_POLICY,
+                        onClickContinue = onPrivatePolicy
+                    )
 
-                Spacer(Modifier.height(40.dp))
-                Text(
-                    text = stringResource(R.string.settings_title_service_settings),
-                    style = AconTheme.typography.Body1,
-                    color = AconTheme.color.Gray500,
-                )
+                    Spacer(Modifier.height(40.dp))
+                    Text(
+                        text = stringResource(R.string.settings_title_service_settings),
+                        style = AconTheme.typography.Body1,
+                        color = AconTheme.color.Gray500,
+                    )
 
-                Spacer(Modifier.height(16.dp))
-                SettingSectionItem(
-                    settingsType = SettingsType.ONBOARDING_AGAIN,
-                    onClickContinue = onRetryOnBoarding,
-                )
+                    Spacer(Modifier.height(16.dp))
+                    SettingSectionItem(
+                        settingsType = SettingsType.ONBOARDING_AGAIN,
+                        onClickContinue = onRetryOnBoarding,
+                    )
 
-                Spacer(Modifier.height(12.dp))
-                SettingSectionItem(
-                    settingsType = SettingsType.AREA_VERIFICATION,
-                    onClickContinue = onAreaVerification,
-                )
+                    Spacer(Modifier.height(12.dp))
+                    SettingSectionItem(
+                        settingsType = SettingsType.AREA_VERIFICATION,
+                        onClickContinue = onAreaVerification,
+                    )
 
-                Spacer(Modifier.height(40.dp))
-                Text(
-                    text = stringResource(R.string.settings_title_login_and_delete_account),
-                    style = AconTheme.typography.Body1,
-                    color = AconTheme.color.Gray500
-                )
+                    Spacer(Modifier.height(40.dp))
+                    Text(
+                        text = stringResource(R.string.settings_title_login_and_delete_account),
+                        style = AconTheme.typography.Body1,
+                        color = AconTheme.color.Gray500
+                    )
 
-                Spacer(Modifier.height(16.dp))
-                SettingSectionItem(
-                    settingsType = SettingsType.LOGOUT,
-                    onClickContinue = { onLogoutDialogShowStateChange(true) }
-                )
+                    Spacer(Modifier.height(16.dp))
+                    SettingSectionItem(
+                        settingsType = SettingsType.LOGOUT,
+                        onClickContinue = { onLogoutDialogShowStateChange(true) }
+                    )
 
-                Spacer(Modifier.height(12.dp))
-                SettingSectionItem(
-                    settingsType = SettingsType.DELETE_ACCOUNT,
-                    onClickContinue = {
-                        onDeleteAccountScreen()
-                        deleteAccountAmplitudeSettingsToWithDraw()
-                    }
-                )
+                    Spacer(Modifier.height(12.dp))
+                    SettingSectionItem(
+                        settingsType = SettingsType.DELETE_ACCOUNT,
+                        onClickContinue = {
+                            onDeleteAccountScreen()
+                            deleteAccountAmplitudeSettingsToWithDraw()
+                        }
+                    )
+                }
             }
 
             is SettingsUiState.Guest -> {
                 AconTopBar(
-                    paddingValues = PaddingValues(0.dp),
                     leadingIcon = {
                         IconButton(
                             onClick = { navigateBack() }
@@ -203,37 +203,41 @@ fun SettingsScreen(
                     modifier = Modifier.padding(vertical = 14.dp)
                 )
 
-                Spacer(Modifier.height(32.dp))
-                Text(
-                    text = stringResource(R.string.settings_title_version_info),
-                    style = AconTheme.typography.Body1,
-                    color = AconTheme.color.Gray500
-                )
+                Column(
+                    modifier = modifier.padding(horizontal = 16.dp)
+                ) {
+                    Spacer(Modifier.height(32.dp))
+                    Text(
+                        text = stringResource(R.string.settings_title_version_info),
+                        style = AconTheme.typography.Body1,
+                        color = AconTheme.color.Gray500
+                    )
 
-                Spacer(Modifier.height(16.dp))
-                SettingSectionVersionItem(
-                    isLatestVersion = isLatestVersion, // TODO - 버전 분기 처리
-                    onClickContinue = onUpdateVersion
-                )
+                    Spacer(Modifier.height(16.dp))
+                    SettingSectionVersionItem(
+                        isLatestVersion = isLatestVersion, // TODO - 버전 분기 처리
+                        onClickContinue = onUpdateVersion
+                    )
 
-                Spacer(Modifier.height(40.dp))
-                Text(
-                    text = stringResource(R.string.settings_title_terms_and_policies),
-                    style = AconTheme.typography.Body1,
-                    color = AconTheme.color.Gray500
-                )
+                    Spacer(Modifier.height(40.dp))
+                    Text(
+                        text = stringResource(R.string.settings_title_terms_and_policies),
+                        style = AconTheme.typography.Body1,
+                        color = AconTheme.color.Gray500
+                    )
 
-                Spacer(Modifier.height(16.dp))
-                SettingSectionItem(
-                    settingsType = SettingsType.TERM_OF_USE,
-                    onClickContinue = onTermOfUse
-                )
+                    Spacer(Modifier.height(16.dp))
+                    SettingSectionItem(
+                        settingsType = SettingsType.TERM_OF_USE,
+                        onClickContinue = onTermOfUse
+                    )
 
-                Spacer(Modifier.height(12.dp))
-                SettingSectionItem(
-                    settingsType = SettingsType.PRIVACY_POLICY,
-                    onClickContinue = onPrivatePolicy
-                )
+                    Spacer(Modifier.height(12.dp))
+                    SettingSectionItem(
+                        settingsType = SettingsType.PRIVACY_POLICY,
+                        onClickContinue = onPrivatePolicy
+                    )
+                }
             }
         }
     }

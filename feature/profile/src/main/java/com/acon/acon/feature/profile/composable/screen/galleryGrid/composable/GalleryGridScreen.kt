@@ -89,7 +89,6 @@ internal fun GalleryGridScreen(
             .statusBarsPadding()
             .navigationBarsPadding()
     ) {
-
         AconTopBar(
             leadingIcon = {
                 IconButton(
