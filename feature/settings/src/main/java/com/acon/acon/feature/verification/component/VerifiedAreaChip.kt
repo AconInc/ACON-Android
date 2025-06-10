@@ -39,6 +39,7 @@ internal fun VerifiedAreaChipRow(
         modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
+        itemVerticalAlignment = Alignment.CenterVertically
     ) {
         areaList.fastForEach { area ->
             LocalAreaChip(
@@ -62,16 +63,14 @@ internal fun VerifiedAreaChipRow(
 private fun LocalAreaChip(
     text: String,
     onClickChip: () -> Unit,
-    minHeight: Dp = 38.dp
 ) {
     Row(
         modifier = Modifier
-            .heightIn(min = minHeight)
             .background(
                 AconTheme.color.GlassWhiteDefault,
                 shape = CircleShape
             )
-            .padding(horizontal = 12.dp, vertical = 9.dp),
+            .padding(horizontal = 12.dp, vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
@@ -108,7 +107,7 @@ private fun AddAreaChip(
                 color = AconTheme.color.GlassWhiteDefault,
                 shape = CircleShape
             )
-            .padding(horizontal = 12.dp, vertical = 10.dp)
+            .padding(horizontal = 12.dp, vertical = 11.dp)
             .noRippleClickable { onClickAddArea() },
         verticalAlignment = Alignment.CenterVertically
     ) {

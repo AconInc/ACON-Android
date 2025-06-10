@@ -40,7 +40,6 @@ fun AconSearchTextField(
     onValueChange: (TextFieldValue) -> Unit,
     placeholder: String,
     modifier: Modifier = Modifier,
-    minHeight: Dp = 38.dp,
     enabled: Boolean = true,
     readOnly: Boolean = false,
     textStyle: TextStyle = AconTheme.typography.Title4.copy(fontWeight = FontWeight.Normal, color = AconTheme.color.White),
@@ -61,7 +60,7 @@ fun AconSearchTextField(
     AconFilledTextField(
         value = value,
         onValueChange = onValueChange,
-        modifier = modifier.heightIn(min = minHeight),
+        modifier = modifier,
         enabled = enabled,
         readOnly = readOnly,
         textStyle = textStyle,

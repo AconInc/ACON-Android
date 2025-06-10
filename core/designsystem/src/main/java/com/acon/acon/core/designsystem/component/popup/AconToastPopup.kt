@@ -3,6 +3,7 @@ package com.acon.acon.core.designsystem.component.popup
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -25,7 +26,6 @@ import com.acon.acon.core.designsystem.theme.AconTheme
 @Composable
 fun AconToastPopup(
     modifier: Modifier = Modifier,
-    minHeight: Dp = 40.dp,
     color: Color = AconTheme.color.Gray4545,
     shape: Shape = RoundedCornerShape(50),
     content: @Composable() (RowScope.() -> Unit)
@@ -33,7 +33,6 @@ fun AconToastPopup(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .heightIn(min = minHeight)
             .background(
                 color = color,
                 shape = shape
@@ -62,7 +61,7 @@ private fun AconToastPopupSquarePreview() {
                     color = AconTheme.color.White,
                     style = AconTheme.typography.Body1,
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.padding(vertical = 16.dp)
+                    modifier = Modifier.padding(vertical = 18.dp)
                 )
             }
         )
@@ -80,7 +79,7 @@ private fun AconToastPopupPreview() {
                     color = AconTheme.color.White,
                     style = AconTheme.typography.Body1,
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.padding(vertical = 10.dp)
+                    modifier = Modifier.padding(vertical = 13.dp)
                 )
             }
         )

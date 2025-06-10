@@ -145,7 +145,6 @@ fun AconNavigation(
                     hostState = snackbarHostState
                 ) { snackbarData: SnackbarData ->
                     AconToastPopup(
-                        minHeight = 56.dp,
                         shape = RoundedCornerShape(8.dp),
                         content = {
                             Text(
@@ -153,7 +152,7 @@ fun AconNavigation(
                                 color = AconTheme.color.White,
                                 style = AconTheme.typography.Body1,
                                 textAlign = TextAlign.Center,
-                                modifier = Modifier.padding(vertical = 16.dp)
+                                modifier = Modifier.padding(vertical = 18.dp)
                             )
                         }
                     )
