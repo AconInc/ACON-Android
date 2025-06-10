@@ -134,7 +134,6 @@ internal fun SpotDetailScreen(
                     MenuBoardOverlay(
                         imageList = testMenuBoardList, //state.menuBoardList,
                         isMenuBoardLoaded = state.menuBoardListLoad,
-                        refreshMenuBoard = onClickRefreshMenuBoard,
                         onDismiss = { onDismissMenuBoard() }
                     )
                 }
