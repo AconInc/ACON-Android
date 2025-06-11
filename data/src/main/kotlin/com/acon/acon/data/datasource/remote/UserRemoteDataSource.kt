@@ -6,6 +6,7 @@ import com.acon.acon.data.dto.request.SignOutRequest
 import com.acon.acon.data.dto.response.SignInResponse
 import com.acon.acon.data.api.remote.UserApi
 import com.acon.acon.data.dto.request.AreaVerificationRequest
+import com.acon.acon.data.dto.request.ReplaceVerifiedAreaRequest
 import com.acon.acon.data.dto.response.area.AreaVerificationResponse
 import com.acon.acon.data.dto.response.area.VerifiedAreaListResponse
 import javax.inject.Inject
@@ -39,6 +40,20 @@ class UserRemoteDataSource @Inject constructor(
 
     suspend fun fetchVerifiedAreaList() : VerifiedAreaListResponse {
         return userApi.fetchVerifiedAreaList()
+    }
+
+    suspend fun replaceVerifiedArea(
+        previousVerifiedAreaId: Long,
+        latitude: Double,
+        longitude: Double
+    ) {
+        return userApi.replaceVerifiedArea(
+            request = ReplaceVerifiedAreaRequest(
+                previousVerifiedAreaId = previousVerifiedAreaId,
+                latitude = latitude,
+                longitude = longitude
+            )
+        )
     }
 
     suspend fun deleteVerifiedArea(verifiedAreaId: Long) {

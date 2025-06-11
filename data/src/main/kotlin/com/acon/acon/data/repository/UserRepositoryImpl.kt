@@ -10,8 +10,9 @@ import com.acon.acon.data.dto.request.SignInRequest
 import com.acon.acon.data.dto.request.SignOutRequest
 import com.acon.acon.data.error.runCatchingWith
 import com.acon.acon.domain.error.area.DeleteVerifiedAreaError
-import com.acon.acon.domain.error.user.PostSignInError
+import com.acon.acon.domain.error.area.ReplaceVerifiedArea
 import com.acon.acon.domain.error.user.PostLogoutError
+import com.acon.acon.domain.error.user.PostSignInError
 import com.acon.acon.domain.model.area.Area
 import com.acon.acon.domain.model.user.VerificationStatus
 import com.acon.acon.domain.repository.UserRepository
@@ -94,6 +95,20 @@ class UserRepositoryImpl @Inject constructor(
         return runCatchingWith() {
             userRemoteDataSource.fetchVerifiedAreaList().verifiedAreaList
                 .map { it.toVerifiedArea() }
+        }
+    }
+
+    override suspend fun replaceVerifiedArea(
+        previousVerifiedAreaId: Long,
+        latitude: Double,
+        longitude: Double
+    ): Result<Unit> {
+        return runCatchingWith(*ReplaceVerifiedArea.createErrorInstances()) {
+            userRemoteDataSource.replaceVerifiedArea(
+                previousVerifiedAreaId = previousVerifiedAreaId,
+                latitude = latitude,
+                longitude = longitude
+            )
         }
     }
 

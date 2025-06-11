@@ -18,5 +18,12 @@ interface UserRepository {
     ): Result<Area>
 
     suspend fun fetchVerifiedAreaList(): Result<List<Area>>
+
+    suspend fun replaceVerifiedArea(
+        previousVerifiedAreaId: Long,
+        latitude: Double,
+        longitude: Double
+    ): Result<Unit>
+
     suspend fun deleteVerifiedArea(verifiedAreaId: Long): Result<Unit>
 }

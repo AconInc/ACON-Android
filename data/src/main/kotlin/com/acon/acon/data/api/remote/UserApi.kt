@@ -2,6 +2,7 @@ package com.acon.acon.data.api.remote
 
 import com.acon.acon.data.dto.request.AreaVerificationRequest
 import com.acon.acon.data.dto.request.DeleteAccountRequest
+import com.acon.acon.data.dto.request.ReplaceVerifiedAreaRequest
 import com.acon.acon.data.dto.request.SignInRequest
 import com.acon.acon.data.dto.request.SignOutRequest
 import com.acon.acon.data.dto.response.SignInResponse
@@ -37,6 +38,11 @@ interface UserApi {
 
     @GET("/api/v1/verified-areas")
     suspend fun fetchVerifiedAreaList() : VerifiedAreaListResponse
+
+    @POST("/api/v1/verified-areas/replacements")
+    suspend fun replaceVerifiedArea(
+        @Body request: ReplaceVerifiedAreaRequest
+    )
 
     @DELETE("/api/v1/verified-areas/{verifiedAreaId}")
     suspend fun deleteVerifiedArea(
