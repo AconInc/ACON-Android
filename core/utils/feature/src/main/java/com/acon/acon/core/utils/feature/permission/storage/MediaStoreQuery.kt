@@ -8,11 +8,8 @@ import android.content.ContentUris
 import android.os.Build
 import android.provider.MediaStore
 import android.provider.MediaStore.Images
-import android.text.format.Formatter
 import androidx.annotation.RequiresPermission
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Divider
@@ -23,11 +20,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
-import coil3.compose.AsyncImage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -74,24 +67,24 @@ fun MediaStoreQueryContent() {
             Divider()
         }
         items(files) { file ->
-            ListItem(
-                leadingContent = {
-                    AsyncImage(
-                        model = file.uri,
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .size(64.dp)
-                            .aspectRatio(1f),
-                    )
-                },
-                headlineContent = {
-                    Text(file.name, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                },
-                supportingContent = { Text(file.mimeType) },
-                trailingContent = { Text(Formatter.formatShortFileSize(context, file.size)) },
-            )
-            Divider()
+//            ListItem(
+//                leadingContent = {
+//                    AsyncImage(
+//                        model = file.uri,
+//                        contentDescription = null,
+//                        contentScale = ContentScale.Crop,
+//                        modifier = Modifier
+//                            .size(64.dp)
+//                            .aspectRatio(1f),
+//                    )
+//                },
+//                headlineContent = {
+//                    Text(file.name, maxLines = 1, overflow = TextOverflow.Ellipsis)
+//                },
+//                supportingContent = { Text(file.mimeType) },
+//                trailingContent = { Text(Formatter.formatShortFileSize(context, file.size)) },
+//            )
+//            Divider()
         }
     }
 }
