@@ -21,6 +21,16 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import kotlinx.coroutines.launch
 
+/**
+ * 포커스를 받은 UI 요소를 스크롤 가능한 영역의 보이는 범위로 자동으로 이동(스크롤)시키는 함수
+ *
+ * onGloballyPositioned 이용해서 현재 UI 요소(composable)의 화면 최상단(root)으로부터의 Y 좌표와
+ * scrollState.value를 더해서 scrollToPosition에 animateScrollTo()에 전달하여 해당 위치로 스크롤 합니다.
+ *
+ * 동작 방식:
+ * 1. UI 요소의 화면상 위치를 추적하여 스크롤 위치를 계산합니다.
+ * 2. 해당 요소가 포커스를 받으면 계산된 위치로 스크롤합니다.
+ **/
 fun Modifier.bringIntoView(
     scrollState: ScrollState
 ): Modifier = composed {
