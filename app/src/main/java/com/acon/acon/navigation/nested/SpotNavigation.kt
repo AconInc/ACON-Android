@@ -2,6 +2,7 @@ package com.acon.acon.navigation.nested
 
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -9,6 +10,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.feature.profile.composable.ProfileRoute
 import com.acon.acon.feature.spot.SpotRoute
 import com.acon.acon.feature.spot.screen.spotdetail.composable.SpotDetailScreenContainer
@@ -39,7 +41,9 @@ internal fun NavGraphBuilder.spotNavigation(
                     navController.navigate(SpotRoute.SpotDetail(it.id))
                 },
                 onNavigateToExternalMap = context::openMapNavigation,
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(AconTheme.color.Gray900)
             )
         }
 

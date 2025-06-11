@@ -117,7 +117,7 @@ private fun AconSearchTextFieldPlaceholderPreview() {
     AconTheme {
         AconSearchTextField(
             value = TextFieldValue(""),
-            onValueChange = { },
+            onValueChange = {},
             placeholder = "장소를 입력해주세요",
             modifier = Modifier.fillMaxWidth(),
         )

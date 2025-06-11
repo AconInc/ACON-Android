@@ -318,7 +318,9 @@ class MainActivity : ComponentActivity() {
                                                 }
                                             }
                                         }
-                                    }.onFailure {}
+                                    }.onFailure {
+
+                                    }
                                 viewModel.updateShowSignInBottomSheet(false)
                             }
                         },

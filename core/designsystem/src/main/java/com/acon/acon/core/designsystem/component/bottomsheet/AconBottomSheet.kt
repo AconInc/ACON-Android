@@ -53,7 +53,7 @@ fun AconBottomSheet(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 10.dp),
+                .padding(vertical = 14.dp),
             horizontalArrangement = Arrangement.Center
         ) {
             Box(
