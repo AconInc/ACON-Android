@@ -85,6 +85,7 @@ class UserRepositoryImpl @Inject constructor(
         latitude: Double,
         longitude: Double
     ): Result<Area> = runCatchingWith() {
+        // TODO - 동네인증 API Error 처리 안됨
         userRemoteDataSource.verifyArea(
             latitude = latitude,
             longitude = longitude
@@ -92,6 +93,7 @@ class UserRepositoryImpl @Inject constructor(
     }
 
     override suspend fun fetchVerifiedAreaList(): Result<List<Area>> {
+        // TODO - 인증 지역 조회 API Error 처리 안됨
         return runCatchingWith() {
             userRemoteDataSource.fetchVerifiedAreaList().verifiedAreaList
                 .map { it.toVerifiedArea() }
