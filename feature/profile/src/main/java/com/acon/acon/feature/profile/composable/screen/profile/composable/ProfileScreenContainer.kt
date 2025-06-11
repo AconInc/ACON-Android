@@ -1,6 +1,5 @@
 package com.acon.acon.feature.profile.composable.screen.profile.composable
 
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -11,7 +10,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.acon.acon.core.designsystem.R
-import com.acon.acon.domain.repository.SocialRepository
 import com.acon.acon.domain.type.UpdateProfileType
 import com.acon.acon.feature.profile.composable.screen.profile.ProfileUiSideEffect
 import com.acon.acon.feature.profile.composable.screen.profile.ProfileViewModel
@@ -22,7 +20,6 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
 fun ProfileScreenContainer(
-    socialRepository: SocialRepository,
     snackbarHostState: SnackbarHostState,
     modifier: Modifier = Modifier,
     onNavigateToSpotDetailScreen: (Long) -> Unit = {},
@@ -31,6 +28,7 @@ fun ProfileScreenContainer(
     onNavigateToSettingsScreen: () -> Unit = {},
     onNavigateToProfileEditScreen: () -> Unit = {},
     onNavigateToAreaVerificationScreen: () -> Unit = {},
+    onNavigateToUploadScreen: () -> Unit = {},
     viewModel: ProfileViewModel = hiltViewModel()
 ) {
     val state by viewModel.collectAsState()
@@ -59,15 +57,15 @@ fun ProfileScreenContainer(
 
     ProfileScreen(
         state = state,
-        modifier = modifier.fillMaxSize(),
-        onSpotDetail = viewModel::onSpotDetail,
+        modifier = modifier,
         onBookmark = viewModel::onBookmark,
         onSettings = viewModel::onSettings,
         onEditProfile = viewModel::onEditProfile,
-        onGoogleSignIn = { viewModel.googleLogin(socialRepository) },
-        onBottomSheetShowStateChange = viewModel::onBottomSheetShowStateChange
+        onNavigateToSpotListScreen = onNavigateToSpotListScreen,
+        onNavigateToUploadScreen = onNavigateToUploadScreen
     )
 
+    viewModel.emitUserType()
     viewModel.collectSideEffect {
         when(it) {
             is ProfileUiSideEffect.OnNavigateToSpotDetailScreen -> { onNavigateToSpotDetailScreen(it.spotId) }

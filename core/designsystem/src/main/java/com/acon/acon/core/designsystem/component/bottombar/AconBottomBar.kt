@@ -1,5 +1,7 @@
-package com.acon.acon.navigation.bottom
+package com.acon.acon.core.designsystem.component.bottombar
 
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,33 +18,42 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
+import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
 
-@Composable
-fun BottomBar(
-    modifier: Modifier = Modifier,
-    selectedItem: BottomNavType = BottomNavType.SPOT,
-    onItemClick: (BottomNavType) -> Unit = {}
+enum class BottomNavType(
+    @StringRes val titleRes: Int,
+    @DrawableRes val selectedIconRes: Int,
+    @DrawableRes val unselectedIconRes: Int
 ) {
+    SPOT(R.string.title_spot, R.drawable.ic_starlight_filled, R.drawable.ic_starlight),
+    UPLOAD(R.string.title_upload, R.drawable.ic_upload , R.drawable.ic_upload),
+    PROFILE(R.string.title_profile, R.drawable.ic_profile_filled, R.drawable.ic_profile)
+}
 
-    Row(
-        modifier = modifier
-    ) {
-        BottomNavType.entries.fastForEach {
+@Composable
+fun AconBottomBar(
+    selectedItem: BottomNavType,
+    onItemClick: (bottomType: BottomNavType) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(modifier = modifier) {
+        BottomNavType.entries.fastForEach { bottomType ->
             BottomBarItem(
-                type = it,
-                isSelected = selectedItem == it,
+                type = bottomType,
+                isSelected = selectedItem == bottomType,
                 modifier = Modifier
                     .weight(1f)
                     .noRippleClickable {
-                        onItemClick(it)
+                        onItemClick(bottomType)
                     }
                     .padding(bottom = 24.dp)
             )
         }
     }
 }
+
 
 @Composable
 private fun BottomBarItem(
@@ -72,8 +83,10 @@ private fun BottomBarItem(
 
 @Preview
 @Composable
-fun BottomBarPreview() {
-    BottomBar(
+private fun BottomBarPreview() {
+    AconBottomBar(
+        selectedItem = BottomNavType.SPOT,
+        onItemClick = {},
         modifier = Modifier
             .fillMaxWidth()
             .background(color = AconTheme.color.Dim_b_30)

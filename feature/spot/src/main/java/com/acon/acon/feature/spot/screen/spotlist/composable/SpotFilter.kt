@@ -74,6 +74,7 @@ private inline fun <reified T> EachFilterSpace(
 internal fun RestaurantFilterBottomSheet(
     selectedItems: ImmutableSet<RestaurantFilterType>,
     onComplete: (Map<FilterDetailKey, Set<RestaurantFilterType>>) -> Unit,
+    onReset: () -> Unit,
     onDismissRequest: () -> Unit,
 ) {
     val selectedRestaurantTypes = remember {
@@ -162,7 +163,7 @@ internal fun RestaurantFilterBottomSheet(
                     textStyle = AconTheme.typography.Body1.copy(
                         fontWeight = FontWeight.SemiBold,
                     ),
-                    onClick = { /* TODO "Reset" */ },
+                    onClick = onReset,
                     modifier = Modifier.weight(3f)
                 )
                 AconFilledTextButton(
@@ -195,6 +196,7 @@ internal fun RestaurantFilterBottomSheet(
 internal fun CafeFilterBottomSheet(
     selectedItems: ImmutableSet<CafeFilterType>,
     onComplete: (Map<FilterDetailKey, Set<CafeFilterType>>) -> Unit,
+    onReset: () -> Unit,
     onDismissRequest: () -> Unit,
 ) {
     val selectedCafeTypes = remember {
@@ -264,7 +266,7 @@ internal fun CafeFilterBottomSheet(
                     textStyle = AconTheme.typography.Body1.copy(
                         fontWeight = FontWeight.SemiBold,
                     ),
-                    onClick = { /* TODO "Reset" */ },
+                    onClick = onReset,
                     modifier = Modifier.weight(3f)
                 )
                 AconFilledTextButton(

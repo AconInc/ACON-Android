@@ -1,56 +1,24 @@
 package com.acon.acon.navigation
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.consumeWindowInsets
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarData
 import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavDestination
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.currentBackStackEntryAsState
-import com.acon.acon.amplitude.bottomAmplitudeSignIn
-import com.acon.acon.amplitude.bottomAmplitudeUpload
 import com.acon.acon.core.designsystem.animation.defaultEnterTransition
 import com.acon.acon.core.designsystem.animation.defaultExitTransition
 import com.acon.acon.core.designsystem.animation.defaultPopEnterTransition
 import com.acon.acon.core.designsystem.animation.defaultPopExitTransition
-import com.acon.acon.core.designsystem.component.bottomsheet.LoginBottomSheet
 import com.acon.acon.core.designsystem.component.popup.AconToastPopup
-import com.acon.acon.core.designsystem.effect.LocalHazeState
-import com.acon.acon.core.designsystem.effect.defaultHazeEffect
-import com.acon.acon.core.designsystem.effect.rememberHazeState
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.domain.repository.UserRepository
-import com.acon.acon.domain.type.UserType
-import com.acon.acon.feature.areaverification.AreaVerificationRoute
-import com.acon.acon.feature.profile.composable.ProfileRoute
 import com.acon.acon.feature.signin.screen.SignInRoute
-import com.acon.acon.feature.spot.SpotRoute
-import com.acon.acon.feature.upload.UploadRoute
-import com.acon.acon.navigation.bottom.BottomBar
-import com.acon.acon.navigation.bottom.BottomNavType
 import com.acon.acon.navigation.nested.areaVerificationNavigation
 import com.acon.acon.navigation.nested.onboardingNavigationNavigation
 import com.acon.acon.navigation.nested.profileNavigation
@@ -58,200 +26,68 @@ import com.acon.acon.navigation.nested.settingsNavigation
 import com.acon.acon.navigation.nested.signInNavigationNavigation
 import com.acon.acon.navigation.nested.spotNavigation
 import com.acon.acon.navigation.nested.uploadNavigation
-import com.acon.feature.common.compose.LocalTrigger
-import com.acon.feature.common.remember.rememberSocialRepository
-import kotlinx.coroutines.launch
+import com.acon.feature.common.compose.LocalNavController
+import com.acon.feature.common.compose.LocalSnackbarHostState
 
 @Composable
 fun AconNavigation(
     modifier: Modifier = Modifier,
-    navController: NavHostController,
-    userRepository: UserRepository
 ) {
-    val socialRepository = rememberSocialRepository()
+    val navController = LocalNavController.current
+    val snackbarHostState = LocalSnackbarHostState.current
 
-    val snackbarHostState = remember { SnackbarHostState() }
-    val backStackEntry by navController.currentBackStackEntryAsState()
-    var selectedBottomNavItem by rememberSaveable { mutableStateOf(BottomNavType.SPOT) }
-    val currentRoute by remember { derivedStateOf { backStackEntry?.destination?.route } }
-
-    val hazeState = rememberHazeState()
-
-    var showLoginBottomSheet by remember { mutableStateOf(false) }
-    val coroutineScope = rememberCoroutineScope()
-
-    val userType by userRepository.getUserType().collectAsStateWithLifecycle(
-        initialValue = UserType.GUEST
-    )
-
-    val shouldShowBottomBar by remember {
-        derivedStateOf {
-            backStackEntry?.destination?.shouldShowBottomNav() == true
-        }
-    }
-
-    var spotScrollTrigger by remember {
-        mutableStateOf(false)
-    }
-
-    CompositionLocalProvider(
-        LocalHazeState provides hazeState,
-        LocalTrigger provides spotScrollTrigger
-    ) {
-        if (showLoginBottomSheet) {
-            LoginBottomSheet(
-                onDismissRequest = { showLoginBottomSheet = false },
-                onGoogleSignIn = {
-                    coroutineScope.launch {
-                        bottomAmplitudeSignIn()
-                        socialRepository.googleLogin()
-                            .onSuccess {
-                                if (it.hasVerifiedArea) {
-                                    userRepository.updateLocalVerificationType(true)
-                                    showLoginBottomSheet = false
-                                    navController.navigate(SpotRoute.SpotList) {
-                                        popUpTo<AreaVerificationRoute.Graph> {
-                                            inclusive = true
-                                        }
-                                    }
-                                } else {
-                                    userRepository.updateLocalVerificationType(false)
-                                    showLoginBottomSheet = false
-                                    navController.navigate(
-                                        AreaVerificationRoute.AreaVerification(
-                                            "onboarding"
-                                        )
-                                    ) {
-                                        popUpTo<AreaVerificationRoute.Graph> {
-                                            inclusive = true
-                                        }
-                                    }
-                                }
-                            }
-                            .onFailure {
-                                showLoginBottomSheet = false
-                            }
+    Scaffold(
+        containerColor = AconTheme.color.Gray9,
+        modifier = modifier,
+        snackbarHost = {
+            SnackbarHost(
+                modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 36.dp),
+                hostState = snackbarHostState
+            ) { snackbarData: SnackbarData ->
+                AconToastPopup(
+                    shape = RoundedCornerShape(8.dp),
+                    content = {
+                        Text(
+                            text = snackbarData.visuals.message,
+                            color = AconTheme.color.White,
+                            style = AconTheme.typography.Body1,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.padding(vertical = 16.dp)
+                        )
                     }
-                },
-            )
-        }
-
-        Scaffold(
-            containerColor = AconTheme.color.Gray9,
-            modifier = modifier,
-            snackbarHost = {
-                SnackbarHost(
-                    modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 36.dp),
-                    hostState = snackbarHostState
-                ) { snackbarData: SnackbarData ->
-                    AconToastPopup(
-                        shape = RoundedCornerShape(8.dp),
-                        content = {
-                            Text(
-                                text = snackbarData.visuals.message,
-                                color = AconTheme.color.White,
-                                style = AconTheme.typography.Body1,
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier.padding(vertical = 18.dp)
-                            )
-                        }
-                    )
-                }
-            },
-            topBar = {
-                Spacer(modifier = Modifier.padding(0.dp))
-            },
-            bottomBar = {
-                if (shouldShowBottomBar) {
-                    BottomBar(
-                        modifier = Modifier
-                            .background(color = AconTheme.color.Black.copy(alpha = .0f))  // TODO Color?
-                            .fillMaxWidth()
-                            .defaultHazeEffect(
-                                hazeState = LocalHazeState.current,
-                                tintColor = AconTheme.color.Dim_b_30
-                            )
-                            .navigationBarsPadding(),
-                        selectedItem = selectedBottomNavItem,
-                        onItemClick = { item ->
-                            if (item == BottomNavType.UPLOAD) {
-                                coroutineScope.launch {
-                                    if (userType != UserType.GUEST) {
-                                        bottomAmplitudeUpload()
-                                        navController.navigate(UploadRoute.Search)
-                                    } else {
-                                        showLoginBottomSheet = true
-                                    }
-                                }
-                            } else {
-                                if (selectedBottomNavItem != item) {
-                                    selectedBottomNavItem = item
-                                    navController.navigate(
-                                        when (item) {
-                                            BottomNavType.SPOT -> SpotRoute.SpotList
-                                            BottomNavType.PROFILE -> ProfileRoute.Profile
-                                            else -> SpotRoute.SpotList
-                                        }
-                                    ) {
-                                        popUpTo(SpotRoute.SpotList) { inclusive = false }
-                                        launchSingleTop = true
-                                    }
-                                } else {
-                                    if (item == BottomNavType.SPOT)
-                                        spotScrollTrigger = !spotScrollTrigger
-                                }
-                            }
-                        }
-                    )
-                } else Spacer(modifier = Modifier.padding(0.dp))
+                )
             }
-        ) { innerPadding ->
-            NavHost(
-                navController = navController,
-                startDestination = SignInRoute.Graph,
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .consumeWindowInsets(innerPadding),
-                enterTransition = {
-                    defaultEnterTransition()
-                }, exitTransition = {
-                    defaultExitTransition()
-                }, popEnterTransition = {
-                    defaultPopEnterTransition()
-                }, popExitTransition = {
-                    defaultPopExitTransition()
-                }
-            ) {
-                signInNavigationNavigation(navController, socialRepository)
-
-                areaVerificationNavigation(navController)
-
-                onboardingNavigationNavigation(navController)
-
-                spotNavigation(navController)
-
-                uploadNavigation(navController)
-
-                profileNavigation(navController, socialRepository, snackbarHostState)
-
-                settingsNavigation(navController)
+        },
+        topBar = { Spacer(modifier = Modifier.padding(0.dp)) },
+        bottomBar = { Spacer(modifier = Modifier.padding(0.dp)) }
+    ) { innerPadding ->
+        NavHost(
+            navController = navController,
+            startDestination = SignInRoute.Graph,
+            modifier = Modifier.padding(innerPadding),
+            enterTransition = {
+                defaultEnterTransition()
+            }, exitTransition = {
+                defaultExitTransition()
+            }, popEnterTransition = {
+                defaultPopEnterTransition()
+            }, popExitTransition = {
+                defaultPopExitTransition()
             }
-        }
-    }
+        ) {
+            signInNavigationNavigation(navController)
 
-    LaunchedEffect(currentRoute) {   // 뒤로가기에 의한 하단 탭 선택 상태 변경 처리
-        selectedBottomNavItem = when (currentRoute) {
-            SpotRoute.SpotList::class.qualifiedName -> BottomNavType.SPOT
-            ProfileRoute.Profile::class.qualifiedName -> BottomNavType.PROFILE
-            else -> BottomNavType.SPOT // TODO : Route
-        }
-    }
-}
+            areaVerificationNavigation(navController)
 
-private fun NavDestination.shouldShowBottomNav(): Boolean {
-    return when (route) {
-        SpotRoute.SpotList::class.qualifiedName -> true
-        ProfileRoute.Profile::class.qualifiedName -> true
-        else -> false
+            onboardingNavigationNavigation(navController)
+
+            spotNavigation(navController)
+
+            uploadNavigation(navController)
+
+            profileNavigation(navController, snackbarHostState)
+
+            settingsNavigation(navController)
+        }
     }
 }

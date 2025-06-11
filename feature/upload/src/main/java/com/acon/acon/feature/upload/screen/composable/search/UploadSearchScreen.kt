@@ -55,7 +55,6 @@ import dev.chrisbanes.haze.hazeSource
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 internal fun UploadSearchScreen(
     state: UploadSearchUiState,

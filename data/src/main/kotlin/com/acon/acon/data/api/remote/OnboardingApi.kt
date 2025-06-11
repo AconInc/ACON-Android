@@ -1,7 +1,6 @@
-package com.acon.acon.data.remote
+package com.acon.acon.data.api.remote
 
 import com.acon.acon.data.dto.request.OnboardingRequest
-import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.PUT
 

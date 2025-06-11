@@ -3,7 +3,7 @@ package com.acon.acon.data.datasource.remote
 import com.acon.acon.data.dto.request.ReviewRequest
 import com.acon.acon.data.dto.response.upload.UploadSpotSuggestionsResponse
 import com.acon.acon.data.dto.response.upload.VerifyLocationResponse
-import com.acon.acon.data.remote.UploadApi
+import com.acon.acon.data.api.remote.UploadApi
 import javax.inject.Inject
 
 class UploadRemoteDataSource @Inject constructor(

@@ -22,10 +22,17 @@
     <string name="unknown_error_message">알 수 없는 오류가 발생했어요</string>
     <string name="ellipsis">…</string>
 
+    <!-- Etc -->
+    <string name="restart">재시작</string>
+    <string name="update">업데이트</string>
+    <string name="update_required_title">필수적인 업데이트가 있습니다</string>
+    <string name="update_available_title">최선 버전 업데이트가 가능합니다</string>
+    <string name="update_complete">최신 버전을 이용할 수 있어요</string>
+
     <!-- Button component -->
-    <string name="login_btn_preview_content">button</string>
-    <string name="google_login_btn_description">구글 로그인 버튼</string>
-    <string name="google_login_btn_content">Google로 계속하기</string>
+    <string name="sign_in_btn_preview_content">button</string>
+    <string name="google_sign_in_btn_description">구글 로그인 버튼</string>
+    <string name="google_sign_in_btn_content">Google로 계속하기</string>
     <string name="area_verification_btn_content">인증완료</string>
     <string name="btn_change">변경하기</string>
 
@@ -54,7 +61,7 @@
     <string name="content_description_default_profile_image">기본 프로필 이미지</string>
     <string name="content_description_edit_profile">프로필 수정</string>
     <string name="content_description_settings">설정 화면 이동</string>
-    <string name="content_description_go_login">로그인 창으로 이동</string>
+    <string name="content_description_go_sign_in">로그인 창으로 이동</string>
     <string name="content_description_valid_nickname">닉네임 사용 가능</string>
     <string name="content_description_empty_nickname">닉네임 미입력</string>
     <string name="content_description_duplicate_nickname">닉네임 중복</string>
@@ -62,13 +69,13 @@
     <string name="content_description_invalid_birthday">잘못된 생년월일</string>
     <string name="content_description_delete_area">인증 지역 삭제</string>
 
-    <!-- login BottomSheet -->
-    <string name="login_bottom_sheet_title">Acon에 로그인</string>
-    <string name="login_bottom_sheet_content">지금 당신의 위치에서\n 최고의 맛집을 추천받아보세요</string>
-    <string name="login_bottom_sheet_google_login">Google로 계속하기</string>
-    <string name="login_bottom_sheet_policy_agreement">가입을 진행할 경우,아래의 정책에 대해 동의한 것으로 간주합니다.</string>
-    <string name="login_bottom_sheet_term_of_use">이용약관</string>
-    <string name="login_bottom_sheet_private_policy">개인정보처리방침</string>
+    <!-- SignIn BottomSheet -->
+    <string name="sign_in_bottom_sheet_title">Acon에 로그인</string>
+    <string name="sign_in_bottom_sheet_content">지금 당신의 위치에서\n 최고의 맛집을 추천받아보세요</string>
+    <string name="sign_in_bottom_sheet_google_sign_in">Google로 계속하기</string>
+    <string name="sign_in_bottom_sheet_policy_agreement">가입을 진행할 경우,아래의 정책에 대해 동의한 것으로 간주합니다.</string>
+    <string name="sign_in_bottom_sheet_term_of_use">이용약관</string>
+    <string name="sign_in_bottom_sheet_private_policy">개인정보처리방침</string>
 
     <!-- dialog -->
     <string name="no_permission_title">Acon을 이용하기 위해\n 위치 권한이 필요해요</string>
@@ -85,7 +92,7 @@
     <string name="signin_terms_of_service">이용약관</string>
     <string name="signin_privacy_policy">개인정보처리방침</string>
     <string name="signin_topbar_text">건너뛰기</string>
-    <string name="signin_login_failed_toast">로그인에 실패했습니다.</string>
+    <string name="sign_in_failed_toast">로그인에 실패했습니다.</string>
 
     <!-- AreaVerification -->
     <string name="area_verification_settings">settings</string>
@@ -133,8 +140,8 @@
     <string name="price">가격</string>
     <string name="reset">초기화</string>
     <string name="see_result">결과 보기</string>
-    <string name="require_login_for_more">더 많은 장소를 보기 위해 로그인이 필요해요</string>
-    <string name="go_to_login">3초만에 로그인 하러 가기</string>
+    <string name="require_sign_in_for_more">더 많은 장소를 보기 위해 로그인이 필요해요</string>
+    <string name="go_to_sign_in">3초만에 로그인 하러 가기</string>
     <string name="no_available_spots">이런…\n딱 맞는 장소가 없어요</string>
     <string name="apologize_for_no_spots">원하시는 결과를 보여드리지 못해 죄송해요</string>
     <string name="recommend_other_spots">대신 여기는 어떠세요?</string>
@@ -208,7 +215,7 @@
     <!-- Profile -->
     <string name="profile_topbar">프로필</string>
     <string name="profile_edit_topbar">프로필 편집</string>
-    <string name="you_need_login">로그인이 필요해요</string>
+    <string name="you_need_sign_in">로그인이 필요해요</string>
     <string name="profile_save_success">프로필이 저장되었습니다</string>
     <string name="edit_profile">프로필 수정하기</string>
     <string name="star">*</string>
@@ -235,7 +242,7 @@
     <string name="settings_title_version_info">버전 정보</string>
     <string name="settings_title_terms_and_policies">약관 및 정책</string>
     <string name="settings_title_service_settings">서비스 설정</string>
-    <string name="settings_title_login_and_delete_account">로그인/탈퇴</string>
+    <string name="settings_title_sign_in_and_delete_account">로그인/탈퇴</string>
     <string name="toast_logout_failed">로그아웃에 실패했습니다</string>-->
     <string name="toast_delete_account_failed">서비스 탈퇴에 실패했습니다</string>
     <string name="settings_section_current_version">현재 버전</string>

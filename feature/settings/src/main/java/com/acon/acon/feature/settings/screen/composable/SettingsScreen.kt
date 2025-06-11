@@ -156,12 +156,12 @@ fun SettingsScreen(
                         onClickContinue = onAreaVerification,
                     )
 
-                    Spacer(Modifier.height(40.dp))
-                    Text(
-                        text = stringResource(R.string.settings_title_login_and_delete_account),
-                        style = AconTheme.typography.Body1,
-                        color = AconTheme.color.Gray500
-                    )
+                Spacer(Modifier.height(40.dp))
+                Text(
+                    text = stringResource(R.string.settings_title_sign_in_and_delete_account),
+                    style = AconTheme.typography.Body1,
+                    color = AconTheme.color.Gray500
+                )
 
                     Spacer(Modifier.height(16.dp))
                     SettingSectionItem(

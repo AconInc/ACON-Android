@@ -4,7 +4,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -93,7 +92,6 @@ internal fun SpotItem(
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun SpotInfo(
     spot: Spot,
@@ -252,14 +250,14 @@ fun SpotGuestItem(
             tint = AconTheme.color.GlassWhiteSelected
         )
         Text(
-            text = stringResource(R.string.require_login_for_more),
+            text = stringResource(R.string.require_sign_in_for_more),
             style = AconTheme.typography.Body1,
             fontWeight = FontWeight.W400,
             color = AconTheme.color.White,
             modifier = Modifier.padding(top = 10.dp),
         )
         Text(
-            text = stringResource(R.string.go_to_login),
+            text = stringResource(R.string.go_to_sign_in),
             style = AconTheme.typography.Body1,
             fontWeight = FontWeight.SemiBold,
             color = AconTheme.color.Action,
@@ -281,6 +279,7 @@ private fun SpotItemV2Preview() {
             latitude = 0.0,
             longitude = 0.0,
             tags = emptyList(),
+            closingTime = "23:00"
         ),
         transportMode = TransportMode.WALKING,
         onItemClick = {},
@@ -304,6 +303,7 @@ private fun SpotItemV2EmptyImagePreview() {
             latitude = 0.0,
             longitude = 0.0,
             tags = emptyList(),
+            closingTime = "23:00"
         ),
         transportMode = TransportMode.WALKING,
         onItemClick = {},

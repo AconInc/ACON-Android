@@ -3,7 +3,7 @@ package com.acon.acon.data.datasource.remote
 import com.acon.acon.data.dto.request.UpdateProfileRequest
 import com.acon.acon.data.dto.response.profile.PreSignedUrlResponse
 import com.acon.acon.data.dto.response.profile.ProfileResponse
-import com.acon.acon.data.remote.ProfileApi
+import com.acon.acon.data.api.remote.ProfileApi
 import retrofit2.Response
 import javax.inject.Inject
 

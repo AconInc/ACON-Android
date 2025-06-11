@@ -36,6 +36,7 @@ import com.acon.acon.domain.model.spot.v2.Spot
 import com.acon.acon.domain.type.TransportMode
 import com.acon.acon.domain.type.UserType
 import com.acon.acon.feature.spot.mock.spotListUiStateRestaurantMock
+import com.acon.feature.common.compose.LocalRequestSignIn
 import com.acon.feature.common.compose.getScreenHeight
 import com.acon.feature.common.compose.toDp
 import kotlinx.collections.immutable.ImmutableList
@@ -47,7 +48,6 @@ private const val MAX_GUEST_AVAILABLE_COUNT = 5
 internal fun SpotEmptyView(
     userType: UserType,
     otherSpots: ImmutableList<Spot>,
-    onGuestItemClick: () -> Unit,
     onSpotClick: (Spot) -> Unit,
     onTryFindWay: (Spot) -> Unit,
     modifier: Modifier = Modifier,
@@ -60,6 +60,8 @@ internal fun SpotEmptyView(
     val itemHeightPx by remember {
         mutableFloatStateOf(screenHeightPx * .3f)
     }
+
+    val onSignInRequired = LocalRequestSignIn.current
 
     Column(
         modifier = modifier,
@@ -104,7 +106,7 @@ internal fun SpotEmptyView(
                                 color = AconTheme.color.GlassBlackDefault
                             )
                             .clickable {
-                                onGuestItemClick()
+                                onSignInRequired()
                             }
                             .fogBackground(
                                 glowColor = AconTheme.color.White,
@@ -160,7 +162,6 @@ private fun SpotListEmptyView1Preview() {
         userType = UserType.GUEST,
         otherSpots = spotListUiStateRestaurantMock.spotList.toImmutableList(),
         onSpotClick = {},
-        onGuestItemClick = {},
         onTryFindWay = {},
         modifier = Modifier.fillMaxSize()
     )
@@ -172,7 +173,6 @@ private fun SpotListEmptyView2Preview() {
     SpotEmptyView(
         userType = UserType.GUEST,
         otherSpots = listOf<Spot>().toImmutableList(),
-        onGuestItemClick = {},
         onSpotClick = {},
         onTryFindWay = {},
         modifier = Modifier.fillMaxSize()

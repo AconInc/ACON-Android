@@ -3,14 +3,14 @@ package com.acon.acon.domain.error.user
 import com.acon.acon.domain.error.ErrorFactory
 import com.acon.acon.domain.error.RootError
 
-sealed class PostLoginError : RootError() {
-    class InvalidSocialType : PostLoginError() {
+sealed class PostSignInError : RootError() {
+    class InvalidSocialType : PostSignInError() {
         override val code: Int = 40009
     }
-    class InvalidIdTokenSignature : PostLoginError() {
+    class InvalidIdTokenSignature : PostSignInError() {
         override val code: Int = 40010
     }
-    class GooglePublicKeyDownloadFailed : PostLoginError() {
+    class GooglePublicKeyDownloadFailed : PostSignInError() {
         override val code: Int = 50002
     }
 

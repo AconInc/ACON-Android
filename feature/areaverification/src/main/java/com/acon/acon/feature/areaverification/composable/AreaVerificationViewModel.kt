@@ -8,7 +8,6 @@ import android.location.LocationManager
 import androidx.core.app.ActivityCompat
 import com.acon.feature.common.base.BaseContainerHost
 import com.acon.acon.domain.model.area.Area
-import com.acon.acon.domain.repository.AreaVerificationRepository
 import com.acon.acon.domain.repository.UserRepository
 import com.acon.acon.feature.areaverification.amplitude.amplitudeClickNext
 import com.acon.acon.feature.areaverification.amplitude.amplitudeCompleteArea
@@ -21,7 +20,6 @@ import javax.inject.Inject
 class AreaVerificationViewModel @Inject constructor(
     private val application: Application,
     private val userRepository: UserRepository,
-    private val areaVerificationRepository: AreaVerificationRepository
 ) : BaseContainerHost<AreaVerificationUiState, AreaVerificationSideEffect>() {
 
     override val container = container<AreaVerificationUiState, AreaVerificationSideEffect>(
@@ -42,21 +40,9 @@ class AreaVerificationViewModel @Inject constructor(
         }
     }
 
-    fun showPermissionDialog() = intent {
-        reduce {
-            state.copy(showPermissionDialog = true)
-        }
-    }
-
     private fun showLocationDialog() = intent {
         reduce {
             state.copy(showLocationDialog = true)
-        }
-    }
-
-    fun updateLocationPermissionStatus(isGranted: Boolean) = intent {
-        reduce {
-            state.copy(hasLocationPermission = isGranted)
         }
     }
 
@@ -68,15 +54,6 @@ class AreaVerificationViewModel @Inject constructor(
             )
         )
         amplitudeClickNext()
-    }
-
-    fun onPermissionSettingClick(packageName: String) = intent {
-        postSideEffect(
-            AreaVerificationSideEffect.NavigateToAppLocationSettings(packageName)
-        )
-        reduce {
-            state.copy(showPermissionDialog = false)
-        }
     }
 
     fun onDeviceGPSSettingClick(packageName: String) = intent {
@@ -95,8 +72,7 @@ class AreaVerificationViewModel @Inject constructor(
             )
         }
 
-        val verifiedAreaList =
-            areaVerificationRepository.fetchVerifiedAreaList().getOrElse { emptyList() }
+        val verifiedAreaList = userRepository.fetchVerifiedAreaList().getOrElse { emptyList() }
         val verifiedAreaId = verifiedAreaList[0].verifiedAreaId
 
         if(verifiedAreaList[0].name == area) {
@@ -106,10 +82,10 @@ class AreaVerificationViewModel @Inject constructor(
                 )
             }
         } else {
-            areaVerificationRepository.verifyArea(latitude, longitude)
+            userRepository.verifyArea(latitude, longitude)
                 .onSuccess { newVerifiedArea ->
                     if (verifiedAreaId != newVerifiedArea.verifiedAreaId) {
-                        areaVerificationRepository.deleteVerifiedArea(verifiedAreaId)
+                        userRepository.deleteVerifiedArea(verifiedAreaId)
                             .onSuccess {
                                 reduce {
                                     state.copy(
@@ -175,7 +151,7 @@ class AreaVerificationViewModel @Inject constructor(
             )
         }
 
-        areaVerificationRepository.verifyArea(latitude, longitude)
+        userRepository.verifyArea(latitude, longitude)
             .onSuccess { area ->
                 reduce {
                     state.copy(
@@ -184,7 +160,6 @@ class AreaVerificationViewModel @Inject constructor(
                         isVerifySuccess = true
                     )
                 }
-                userRepository.updateLocalVerificationType(true)
                 amplitudeCompleteArea()
             }
             .onFailure { throwable ->
@@ -203,8 +178,6 @@ class AreaVerificationViewModel @Inject constructor(
 }
 
 data class AreaVerificationUiState(
-    val hasLocationPermission: Boolean = false,
-    var showPermissionDialog: Boolean = false,
     val isGPSEnabled: Boolean = false,
     val showDeviceGPSDialog: Boolean = false,
     val showLocationDialog: Boolean = false,

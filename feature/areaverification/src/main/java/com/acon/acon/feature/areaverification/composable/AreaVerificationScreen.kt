@@ -23,7 +23,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.button.v2.AconFilledButton
-import com.acon.acon.core.designsystem.component.dialog.AconPermissionDialog
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.core.utils.feature.action.BackOnPressed
 import com.acon.feature.common.compose.getScreenHeight
@@ -33,18 +32,11 @@ internal fun AreaVerificationScreen(
     state: AreaVerificationUiState,
     route: String,
     onNextButtonClick: () -> Unit,
-    onPermissionSettingClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
     val screenHeightDp = getScreenHeight()
     val offsetY = (screenHeightDp * 0.65f)
-
-    if (state.showPermissionDialog) {
-        AconPermissionDialog(
-            onPermissionGranted = onPermissionSettingClick
-        )
-    }
 
     if (route != stringResource(R.string.area_verification_settings)) {
         BackOnPressed(context)
@@ -110,7 +102,6 @@ private fun AreaVerificationHomeScreenPreview() {
         AreaVerificationScreen(
             state = AreaVerificationUiState(),
             route = "",
-            onPermissionSettingClick = {},
             onNextButtonClick = {}
         )
     }
