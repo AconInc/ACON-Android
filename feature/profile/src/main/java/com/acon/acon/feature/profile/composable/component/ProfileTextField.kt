@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -54,7 +55,6 @@ internal fun ProfileTextField(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .heightIn(min = 44.dp)
             .background(
                 shape = RoundedCornerShape(8.dp),
                 color = AconTheme.color.Gray900
@@ -64,7 +64,7 @@ internal fun ProfileTextField(
                 color = AconTheme.color.GlassWhiteDefault,
                 shape = RoundedCornerShape(8.dp)
             )
-            .padding(10.dp)
+            .padding(vertical = 12.dp, horizontal = 10.dp)
             .noRippleClickable(onClick = onClick),
         contentAlignment = Alignment.CenterStart
     ) {
@@ -109,7 +109,7 @@ internal fun ProfileTextField(
             if (value.text.isNotEmpty() && value.text.length <= 14) {
                 if (isTyping) {
                     CircularProgressIndicator(
-                        modifier = Modifier.size(16.dp),
+                        modifier = Modifier.size(18.dp),
                         strokeWidth = 2.dp,
                         color = AconTheme.color.Gray6
                     )
@@ -117,12 +117,14 @@ internal fun ProfileTextField(
                     Icon(
                         modifier = Modifier
                             .clickable { onValueChange(TextFieldValue()) }
-                            .size(20.dp),
+                            .size(18.dp),
                         imageVector = ImageVector.vectorResource(R.drawable.ic_clear),
                         contentDescription = stringResource(R.string.clear_search_content_description),
                         tint = AconTheme.color.Gray50
                     )
                 }
+            } else {
+                Spacer(Modifier.size(18.dp))
             }
         }
     }

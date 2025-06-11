@@ -11,9 +11,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.feature.spot.toPriceString
 
@@ -50,7 +52,7 @@ internal fun SignatureMenuItem(
     menuName: String,
     menuPrice: String
 ) {
-    val displayMenuName = if (menuName.length > 8) { menuName.take(7) + "…" } else { menuName }
+    val displayMenuName = if (menuName.length > 8) { menuName.take(7) + stringResource(R.string.ellipsis) } else { menuName }
 
     Row(
         verticalAlignment = Alignment.CenterVertically

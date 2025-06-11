@@ -72,11 +72,11 @@ fun ProfileModScreenContainer(
         onRequestExitDialog = viewModel::onRequestExitDialog,
         onDisMissExitDialog = viewModel::onDisMissExitDialog,
         onRequestPhotoPermission = viewModel::onRequestPhotoPermission,
-        onDisMissPhotoPermission = viewModel::onDisMissPhotoPermission,
+        onPhotoPermissionDenied = viewModel::onPhotoPermissionDenied,
         onRequestPermissionDialog = viewModel::onRequestPermissionDialog,
         onDisMissPermissionDialog = viewModel::onDisMissPermissionDialog,
         moveToSettings = viewModel::onPermissionSettingClick,
-        onProfileClicked = viewModel::onRequestProfileEditModal,
+        onRequestProfileEditModal = viewModel::onRequestProfileEditModal,
         onDisMissProfileEditModal = viewModel::onDisMissProfileEditModal,
         onUpdateProfileImage = viewModel::updateProfileImage,
         onClickSaveButton = viewModel::getPreSignedUrl

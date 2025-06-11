@@ -34,7 +34,7 @@ internal fun UploadCompleteScreen(
     }
 
     val displaySpotName = if (spotName.length > 9) {
-        spotName.take(9) + "…"
+        spotName.take(9) + stringResource(R.string.ellipsis)
     } else {
         spotName
     }

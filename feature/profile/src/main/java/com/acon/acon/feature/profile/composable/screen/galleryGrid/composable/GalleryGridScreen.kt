@@ -89,7 +89,6 @@ internal fun GalleryGridScreen(
             .statusBarsPadding()
             .navigationBarsPadding()
     ) {
-
         AconTopBar(
             leadingIcon = {
                 IconButton(
@@ -174,7 +173,7 @@ private fun PhotoItem(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(color = AconTheme.color.Dim_g_30)
+                    .background(color = AconTheme.color.Action.copy(alpha = 0.2f))
             )
         }
     }

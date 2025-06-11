@@ -40,6 +40,7 @@ import com.acon.acon.core.designsystem.theme.AconTheme
 fun AconBottomSheet(
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
+    useGlassMorphism: Boolean = true,
     sheetState: SheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
     ),
@@ -86,10 +87,17 @@ fun AconBottomSheet(
     ) {
         Column(
             modifier = Modifier
-                .defaultHazeEffect(
-                    hazeState = LocalHazeState.current,
-                    tintColor = containerColor,
-                    alpha = .8f,
+                .then(
+                    if (useGlassMorphism) {
+                        Modifier
+                            .defaultHazeEffect(
+                                hazeState = LocalHazeState.current,
+                                tintColor = containerColor,
+                                alpha = .8f,
+                            )
+                    } else {
+                        Modifier.background(containerColor)
+                    }
                 ).navigationBarsPadding()
         ) {
             dragHandle()
