@@ -22,11 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -45,7 +41,6 @@ import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.domain.repository.AconAppRepository
 import com.acon.acon.domain.repository.SocialRepository
 import com.acon.acon.domain.repository.UserRepository
-import com.acon.acon.domain.type.UserType
 import com.acon.acon.feature.areaverification.AreaVerificationRoute
 import com.acon.acon.feature.spot.SpotRoute
 import com.acon.acon.navigation.AconNavigation
@@ -79,13 +74,11 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
@@ -311,7 +304,10 @@ class MainActivity : ComponentActivity() {
                                             }
                                         } else {
                                             navController.navigate(
-                                                AreaVerificationRoute.AreaVerification("onboarding")
+                                                AreaVerificationRoute.AreaVerification(
+                                                    verifiedAreaId = null,
+                                                    route = "onboarding"
+                                                )
                                             ) {
                                                 popUpTo(navController.graph.id) {
                                                     inclusive = true
