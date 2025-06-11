@@ -44,9 +44,7 @@ fun DeleteAccountTextField(
     val threeLineHeight = with(density) { (lineHeight * 3).toDp() }
 
     Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .background(color = AconTheme.color.Gray900),
+        modifier = modifier.fillMaxWidth()
     ) {
         Box(
             modifier = Modifier
@@ -55,9 +53,6 @@ fun DeleteAccountTextField(
                     shape = RoundedCornerShape(8.dp),
                     width = 1.dp,
                     color = AconTheme.color.GlassWhiteDefault
-                )
-                .background(
-                    color = AconTheme.color.Gray900
                 )
         ) {
             Row(

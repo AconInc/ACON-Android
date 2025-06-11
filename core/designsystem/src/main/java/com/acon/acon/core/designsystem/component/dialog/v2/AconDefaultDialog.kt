@@ -17,8 +17,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.SecureFlagPolicy
-import com.acon.acon.core.designsystem.effect.LocalHazeState
-import com.acon.acon.core.designsystem.effect.defaultHazeEffect
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
 
@@ -43,14 +41,12 @@ fun AconDefaultDialog(
     ) {
         Surface(
             shape = RoundedCornerShape(14.dp),
-            color = AconTheme.color.GlassWhiteDefault.copy(alpha = .4f),
+            color = AconTheme.color.Gray4545,
             modifier = Modifier.fillMaxWidth(),
         ) {
             Column(
-                modifier = Modifier.fillMaxWidth().defaultHazeEffect(
-                    hazeState = LocalHazeState.current,
-                    tintColor = AconTheme.color.GlassWhiteDefault,
-                ), horizontalAlignment = Alignment.CenterHorizontally
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
                     text = title,
@@ -77,7 +73,7 @@ fun AconDefaultDialog(
                         .noRippleClickable {
                             onAction()
                         }
-                        .padding(vertical = 10.dp),
+                        .padding(vertical = 14.dp),
                     textAlign = TextAlign.Center
                 )
             }

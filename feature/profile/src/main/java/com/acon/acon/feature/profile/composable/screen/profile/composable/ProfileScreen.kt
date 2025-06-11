@@ -2,20 +2,16 @@ package com.acon.acon.feature.profile.composable.screen.profile.composable
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
@@ -25,6 +21,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -57,67 +54,63 @@ fun ProfileScreen(
     onBookmark: () -> Unit = {},
     onSettings: () -> Unit = {},
     onEditProfile: () -> Unit = {},
+    onBottomSheetShowStateChange: (Boolean) -> Unit = {},
     onNavigateToSpotListScreen: () -> Unit = {},
     onNavigateToUploadScreen: () -> Unit = {},
 ) {
     val screenHeightDp = getScreenHeight()
-    val boxHeight = (screenHeightDp * (60f / 740f))
+    val profileImageHeight = (screenHeightDp * (60f / 740f))
     val admobHeight = (screenHeightDp * (165f / 740f))
     val savedStoreHeight = (screenHeightDp * (200f / 740f))
+    val bottomSheetHeight = (screenHeightDp * (518f / 740f))
 
     val userType = LocalUserType.current
     val onSignInRequired = LocalRequestSignIn.current
 
-    Column(
-        modifier = modifier
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
-                .verticalScroll(rememberScrollState())
-        ) {
-            when (state) {
-                is ProfileUiState.Success -> {
+    Column(modifier) {
+        when (state) {
+            is ProfileUiState.Success -> {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                        .verticalScroll(rememberScrollState())
+                ) {
+                    AconTopBar(
+                        content = {
+                            Text(
+                                text = stringResource(R.string.profile_topbar),
+                                style = AconTheme.typography.Title4,
+                                fontWeight = FontWeight.SemiBold,
+                                color = AconTheme.color.White
+                            )
+                        },
+                        trailingIcon = {
+                            IconButton(
+                                onClick = { onSettings() }
+                            ) {
+                                Icon(
+                                    imageVector = ImageVector.vectorResource(R.drawable.ic_setting),
+                                    contentDescription = stringResource(R.string.content_description_settings),
+                                    tint = AconTheme.color.White
+                                )
+                            }
+                        },
+                        modifier = Modifier.padding(vertical = 14.dp)
+                    )
+
                     Column(
                         modifier = Modifier
-                            .background(AconTheme.color.Gray900)
-                            .statusBarsPadding()
+                            .padding(top = 40.dp)
                             .padding(horizontal = 16.dp)
                     ) {
-                        AconTopBar(
-                            paddingValues = PaddingValues(0.dp),
-                            content = {
-                                Text(
-                                    text = stringResource(R.string.profile_topbar),
-                                    style = AconTheme.typography.Title4,
-                                    fontWeight = FontWeight.SemiBold,
-                                    color = AconTheme.color.White
-                                )
-                            },
-                            trailingIcon = {
-                                IconButton(
-                                    onClick = { onSettings() }
-                                ) {
-                                    Icon(
-                                        imageVector = ImageVector.vectorResource(R.drawable.ic_setting),
-                                        contentDescription = stringResource(R.string.content_description_settings),
-                                        tint = AconTheme.color.White
-                                    )
-                                }
-                            },
-                            modifier = Modifier.padding(vertical = 14.dp)
-                        )
-
-                        Row(
-                            modifier = Modifier.padding(top = 40.dp)
-                        ) {
+                        Row {
                             if (state.profileImage.isEmpty()) {
                                 Image(
                                     imageVector = ImageVector.vectorResource(R.drawable.ic_default_profile),
                                     contentDescription = stringResource(R.string.content_description_default_profile_image),
                                     modifier = Modifier
-                                        .size(boxHeight)
+                                        .size(profileImageHeight)
                                         .clip(CircleShape)
                                 )
                             } else {
@@ -125,7 +118,7 @@ fun ProfileScreen(
                                     model = state.profileImage,
                                     contentDescription = stringResource(R.string.content_description_profile_image),
                                     modifier = Modifier
-                                        .size(boxHeight)
+                                        .size(profileImageHeight)
                                         .clip(CircleShape),
                                     contentScale = ContentScale.Crop
                                 )
@@ -214,72 +207,71 @@ fun ProfileScreen(
                         )
                     }
                 }
+            }
 
-                is ProfileUiState.Loading -> {}
-                is ProfileUiState.LoadFailed -> {}
+            is ProfileUiState.Loading -> {}
+            is ProfileUiState.LoadFailed -> {}
 
-                is ProfileUiState.Guest -> {
+            is ProfileUiState.Guest -> {
+                Column(modifier = Modifier) {
+                    AconTopBar(
+                        content = {
+                            Text(
+                                text = stringResource(R.string.profile_topbar),
+                                style = AconTheme.typography.Title4,
+                                fontWeight = FontWeight.SemiBold,
+                                color = AconTheme.color.White
+                            )
+                        },
+                        trailingIcon = {
+                            IconButton(
+                                onClick = { onSettings() }
+                            ) {
+                                Icon(
+                                    imageVector = ImageVector.vectorResource(R.drawable.ic_setting),
+                                    contentDescription = stringResource(R.string.content_description_settings),
+                                    tint = AconTheme.color.White
+                                )
+                            }
+                        },
+                        modifier = Modifier.padding(vertical = 14.dp)
+                    )
+
                     Column(
                         modifier = Modifier
-                            .background(AconTheme.color.Gray900)
-                            .statusBarsPadding()
+                            .padding(top = 40.dp)
                             .padding(horizontal = 16.dp)
-                    ) {
-                        AconTopBar(
-                            paddingValues = PaddingValues(0.dp),
-                            content = {
-                                Text(
-                                    text = stringResource(R.string.profile_topbar),
-                                    style = AconTheme.typography.Title4,
-                                    fontWeight = FontWeight.SemiBold,
-                                    color = AconTheme.color.White
-                                )
-                            },
-                            trailingIcon = {
-                                IconButton(
-                                    onClick = { onSettings() }
-                                ) {
-                                    Icon(
-                                        imageVector = ImageVector.vectorResource(R.drawable.ic_setting),
-                                        contentDescription = stringResource(R.string.content_description_settings),
-                                        tint = AconTheme.color.White
-                                    )
-                                }
-                            },
-                            modifier = Modifier.padding(vertical = 14.dp)
-                        )
 
+                    ) {
                         Row(
-                            modifier = Modifier
-                                .padding(vertical = 40.dp)
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
                             Image(
                                 imageVector = ImageVector.vectorResource(R.drawable.ic_default_profile),
                                 contentDescription = stringResource(R.string.content_description_default_profile_image),
                                 modifier = Modifier
-                                    .size(boxHeight)
+                                    .size(profileImageHeight)
                                     .clip(CircleShape)
                             )
 
-                            Text(
-                                text = stringResource(R.string.you_need_sign_in),
-                                style = AconTheme.typography.Headline4,
-                                color = AconTheme.color.White,
+                            Row(
                                 modifier = Modifier
                                     .padding(start = 16.dp)
-                                    .padding(vertical = 16.dp)
-                                    .noRippleClickable { onSignInRequired() }
-                            )
+                                    .noRippleClickable { onBottomSheetShowStateChange(true) }
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.you_need_sign_in),
+                                    style = AconTheme.typography.Headline4,
+                                    color = AconTheme.color.White,
+                                )
 
-                            Icon(
-                                imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_right_24),
-                                contentDescription = stringResource(R.string.content_description_go_sign_in),
-                                modifier = Modifier
-                                    .padding(start = 4.dp)
-                                    .padding(vertical = 16.dp)
-                                    .noRippleClickable { onSignInRequired() },
-                                tint = AconTheme.color.White
-                            )
+                                Icon(
+                                    imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_right_24),
+                                    contentDescription = stringResource(R.string.content_description_go_sign_in),
+                                    modifier = Modifier.padding(start = 4.dp),
+                                    tint = AconTheme.color.Gray50
+                                )
+                            }
                         }
 
                         ProfileNativeAd(

@@ -108,7 +108,7 @@ private fun SpotInfo(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = if (spot.name.length > 15) spot.name.take(15) + "…" else spot.name,
+                text = if (spot.name.length > 15) spot.name.take(15) + stringResource(R.string.ellipsis) else spot.name,
                 style = AconTheme.typography.Title4,
                 fontWeight = FontWeight.SemiBold,
                 color = AconTheme.color.White,

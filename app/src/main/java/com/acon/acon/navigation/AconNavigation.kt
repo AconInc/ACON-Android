@@ -45,7 +45,6 @@ fun AconNavigation(
                 hostState = snackbarHostState
             ) { snackbarData: SnackbarData ->
                 AconToastPopup(
-                    minHeight = 56.dp,
                     shape = RoundedCornerShape(8.dp),
                     content = {
                         Text(

@@ -45,7 +45,7 @@ import com.acon.acon.core.designsystem.component.topbar.AconTopBar
 import com.acon.acon.core.designsystem.effect.LocalHazeState
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.core.utils.feature.permission.CheckAndRequestPhotoPermission
+import com.acon.acon.core.utils.feature.permission.storage.CheckAndRequestPhotoPermission
 import com.acon.acon.feature.profile.composable.component.GallerySelectBottomSheet
 import com.acon.acon.feature.profile.composable.component.NicknameValidMessageRow
 import com.acon.acon.feature.profile.composable.component.ProfilePhotoBox
@@ -59,6 +59,7 @@ import com.acon.acon.feature.profile.composable.type.contentDescriptionResId
 import com.acon.acon.feature.profile.composable.type.validMessageResId
 import com.acon.acon.feature.profile.composable.utils.BirthdayTransformation
 import com.acon.feature.common.compose.getScreenHeight
+import com.acon.feature.common.compose.getScreenWidth
 import dev.chrisbanes.haze.hazeSource
 
 @Composable
@@ -73,18 +74,20 @@ internal fun ProfileModScreen(
     onRequestExitDialog: () -> Unit,
     onDisMissExitDialog: () -> Unit,
     onRequestPhotoPermission: () -> Unit,
-    onDisMissPhotoPermission: () -> Unit,
+    onPhotoPermissionDenied: () -> Unit,
     onRequestPermissionDialog: () -> Unit,
     onDisMissPermissionDialog: () -> Unit,
     moveToSettings: (String) -> Unit,
-    onProfileClicked: () -> Unit = {},
+    onRequestProfileEditModal: () -> Unit,
     onDisMissProfileEditModal: () -> Unit,
     onUpdateProfileImage: (String) -> Unit,
     onClickSaveButton: () -> Unit = {},
 ) {
     val context = LocalContext.current
+    val screenWidthDp = getScreenWidth()
     val screenHeightDp = getScreenHeight()
-    val boxHeight = (screenHeightDp * (80f / 740f))
+    val dialogWidth = (screenWidthDp * (260f / 360f))
+    val profileImageHeight = (screenHeightDp * (80f / 740f))
 
     val focusManager = LocalFocusManager.current
 
@@ -109,13 +112,48 @@ internal fun ProfileModScreen(
             if (state.requestPhotoPermission) {
                 CheckAndRequestPhotoPermission(
                     onPermissionGranted = {
-                        onDisMissPhotoPermission()
-                        navigateToCustomGallery()
+                        onPhotoPermissionDenied()
+                        onRequestProfileEditModal()
                     },
                     onPermissionDenied = {
                         onRequestPermissionDialog()
-                        onRequestPhotoPermission()
                     }
+                )
+            }
+
+            if (state.showPermissionDialog) {
+                AconTwoActionDialog(
+                    title = stringResource(R.string.photo_permission_title),
+                    action1 = stringResource(R.string.photo_permission_alert_left_btn),
+                    action2 = stringResource(R.string.photo_permission_alert_right_btn),
+                    onDismissRequest = { onDisMissPermissionDialog() },
+                    onAction1 = {
+                        onPhotoPermissionDenied()
+                        onDisMissPermissionDialog()
+                    },
+                    onAction2 = {
+                        onPhotoPermissionDenied()
+                        moveToSettings(context.packageName)
+                    },
+                    content = {
+                        Text(
+                            text = stringResource(R.string.photo_permission_content),
+                            color = AconTheme.color.Gray200,
+                            style = AconTheme.typography.Body1,
+                            maxLines = 1,
+                            modifier = Modifier.padding(bottom = 20.dp)
+                        )
+                    },
+                    modifier = Modifier.width(dialogWidth)
+                )
+            }
+
+            if (state.showPhotoEditModal) {
+                GallerySelectBottomSheet(
+                    isDefault = state.fetchedPhotoUri.contains("basic_profile_image"),
+                    onDismiss = { onDisMissProfileEditModal() },
+                    onGallerySelect = { navigateToCustomGallery() },
+                    onDefaultImageSelect = { onUpdateProfileImage("basic_profile_image") },
                 )
             }
 
@@ -132,35 +170,8 @@ internal fun ProfileModScreen(
                     },
                     onAction2 = {
                         navigateToBack()
-                    }
-                )
-            }
-
-            if (state.showPermissionDialog) {
-                AconTwoActionDialog(
-                    title = stringResource(R.string.photo_permission_title),
-                    action1 = stringResource(R.string.photo_permission_alert_left_btn),
-                    action2 = stringResource(R.string.photo_permission_alert_right_btn),
-                    onDismissRequest = { onDisMissPermissionDialog() },
-                    onAction1 = { onDisMissPermissionDialog() },
-                    onAction2 = { moveToSettings(context.packageName) },
-                ) {
-                    Text(
-                        text = stringResource(R.string.photo_permission_content),
-                        color = AconTheme.color.Gray200,
-                        style = AconTheme.typography.Body1,
-                        maxLines = 1,
-                        modifier = Modifier.padding(bottom = 20.dp)
-                    )
-                }
-            }
-
-            if (state.showPhotoEditModal) {
-                GallerySelectBottomSheet(
-                    isDefault = state.fetchedPhotoUri.contains("basic_profile_image"),
-                    onDismiss = { onDisMissProfileEditModal() },
-                    onGallerySelect = { onRequestPhotoPermission() },
-                    onDefaultImageSelect = { onUpdateProfileImage("basic_profile_image") },
+                    },
+                    modifier = Modifier.width(dialogWidth)
                 )
             }
 
@@ -213,15 +224,15 @@ internal fun ProfileModScreen(
                             Spacer(modifier = Modifier.weight(1f))
                             Box(
                                 modifier = Modifier
-                                    .size(boxHeight)
-                                    .aspectRatio(1f),
+                                    .size(profileImageHeight)
+                                    .aspectRatio(1f)
+                                    .noRippleClickable { onRequestPhotoPermission() },
                                 contentAlignment = Alignment.Center
                             ) {
                                 ProfilePhotoBox(
                                     modifier = Modifier
                                         .fillMaxSize()
                                         .align(Alignment.Center),
-                                    onProfileClicked = onProfileClicked,
                                     photoUri = state.selectedPhotoUri.ifEmpty { state.fetchedPhotoUri }
                                 )
                                 Image(
@@ -229,7 +240,6 @@ internal fun ProfileModScreen(
                                     contentDescription = stringResource(R.string.content_description_edit_profile),
                                     modifier = Modifier
                                         .align(alignment = Alignment.BottomEnd)
-                                        .noRippleClickable { onProfileClicked() }
                                 )
                             }
                             Spacer(modifier = Modifier.weight(1f))
@@ -435,11 +445,11 @@ private fun ProfileModScreenPreview() {
             onRequestExitDialog = {},
             onDisMissExitDialog = {},
             onRequestPhotoPermission = {},
-            onDisMissPhotoPermission = {},
+            onPhotoPermissionDenied = {},
             onRequestPermissionDialog = {},
             onDisMissPermissionDialog = {},
             moveToSettings = {},
-            onProfileClicked = {},
+            onRequestProfileEditModal = {},
             onDisMissProfileEditModal = {},
             onUpdateProfileImage = {},
             onClickSaveButton = {}

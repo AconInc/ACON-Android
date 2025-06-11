@@ -31,7 +31,8 @@ import com.acon.acon.core.designsystem.theme.AconTheme
 @Composable
 fun SignInBottomSheet(
     onDismissRequest: () -> Unit = {},
-    onGoogleSignIn: () -> Unit = {}
+    onGoogleSignIn: () -> Unit = {},
+    modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
     AconBottomSheet(
@@ -39,11 +40,10 @@ fun SignInBottomSheet(
         onDismissRequest = onDismissRequest
     ) {
         Column(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.7f)
                 .padding(horizontal = 20.dp)
-                .padding(top = 24.dp, bottom = 56.dp),
+                .padding(top = 24.dp, bottom = 64.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
@@ -61,6 +61,7 @@ fun SignInBottomSheet(
                 modifier = Modifier.weight(1f)
             )
 
+            Spacer(Modifier.weight(1f))
             AconGoogleSignInButton(
                 onClick = onGoogleSignIn
             )

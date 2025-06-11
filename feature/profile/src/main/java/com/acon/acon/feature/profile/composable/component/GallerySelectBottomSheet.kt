@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.bottomsheet.AconBottomSheet
@@ -49,6 +50,7 @@ fun GallerySelectBottomSheet(
                     text = stringResource(R.string.upload_photo_from_album),
                     color = AconTheme.color.White,
                     style = AconTheme.typography.Title4,
+                    fontWeight = FontWeight.Normal,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp, vertical = 17.dp)
@@ -69,6 +71,7 @@ fun GallerySelectBottomSheet(
                         text = stringResource(R.string.set_default_profile_image),
                         color = AconTheme.color.White,
                         style = AconTheme.typography.Title4,
+                        fontWeight = FontWeight.Normal,
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp, vertical = 17.dp)

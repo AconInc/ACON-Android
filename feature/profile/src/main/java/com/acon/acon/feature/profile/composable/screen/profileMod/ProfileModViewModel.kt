@@ -209,7 +209,13 @@ class ProfileModViewModel @Inject constructor(
             2 -> if (java.time.Year.isLeap(year.toLong())) 29 else 28
             else -> return false
         }
-        return day in 1..maxDays
+        return try {
+            val inputDate = java.time.LocalDate.of(year, month, day)
+            val today = java.time.LocalDate.now()
+            !inputDate.isAfter(today)
+        } catch (e: Exception) {
+            false
+        }
     }
 
     fun navigateToCustomGallery() = intent {
@@ -244,7 +250,7 @@ class ProfileModViewModel @Inject constructor(
         }
     }
 
-    fun onDisMissPhotoPermission() = intent {
+    fun onPhotoPermissionDenied() = intent {
         runOn<ProfileModState.Success> {
             reduce {
                 state.copy(requestPhotoPermission = false)
@@ -315,6 +321,7 @@ class ProfileModViewModel @Inject constructor(
                         birthday = birthday
                     )
                 }
+
                 state.selectedPhotoUri == "basic_profile_image" -> {
                     updateProfile(
                         fileName = state.uploadFileName,
@@ -322,6 +329,7 @@ class ProfileModViewModel @Inject constructor(
                         birthday = birthday
                     )
                 }
+
                 else -> {
                     profileRepository.getPreSignedUrl()
                         .onSuccess { result ->

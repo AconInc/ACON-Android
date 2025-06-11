@@ -3,8 +3,8 @@ package com.acon.acon.core.designsystem.component.button
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
@@ -40,14 +40,15 @@ fun AconGoogleSignInButton(
             containerColor = AconTheme.color.White,
             contentColor = AconTheme.color.Gray500
         ),
-        modifier = modifier.heightIn(min = 54.dp),
         onClick = {
             val currentTime = System.currentTimeMillis()
             if (currentTime - lastClickTime >= throttleTime) {
                 lastClickTime = currentTime
                 onClick()
             }
-        }
+        },
+        contentPadding = PaddingValues(vertical = 17.dp),
+        modifier = modifier
     ) {
         Box(
             modifier = Modifier.fillMaxWidth()

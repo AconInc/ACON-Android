@@ -141,7 +141,7 @@ internal fun LocationMapScreen(
                     style = AconTheme.typography.Body1,
                     textAlign = TextAlign.Center,
                     modifier = Modifier
-                        .padding(vertical = 10.dp)
+                        .padding(vertical = 13.dp)
                 )
             }
         )

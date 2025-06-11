@@ -1,10 +1,8 @@
 package com.acon.acon.feature.profile.composable.screen.bookmark.composable
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -21,6 +19,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -32,7 +31,6 @@ import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.topbar.AconTopBar
 import com.acon.acon.core.designsystem.effect.LocalHazeState
 import com.acon.acon.core.designsystem.effect.defaultHazeEffect
-import com.acon.acon.core.designsystem.effect.imageGradientLayer
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.feature.profile.composable.screen.bookmark.BookmarkUiState
 import com.acon.acon.feature.profile.composable.screen.mockSpotList
@@ -55,12 +53,15 @@ fun BookmarkScreen(
         BookmarkUiState.Loading -> {
             Box(
                 modifier = modifier
-                    .background(AconTheme.color.Gray900)
-                    .statusBarsPadding()
                     .fillMaxSize()
+                    .defaultHazeEffect(
+                        hazeState = LocalHazeState.current,
+                        tintColor = Color(0xFF1C1C20),
+                        blurRadius = 20.dp,
+                    )
+                    .statusBarsPadding()
             ) {
                 AconTopBar(
-                    paddingValues = PaddingValues(0.dp),
                     leadingIcon = {
                         IconButton(
                             onClick = onNavigateToBack
@@ -82,12 +83,6 @@ fun BookmarkScreen(
                     },
                     modifier = Modifier
                         .padding(vertical = 14.dp)
-                        .imageGradientLayer()
-                        .defaultHazeEffect(
-                            hazeState = LocalHazeState.current,
-                            tintColor = AconTheme.color.Gray900,
-                            blurRadius = 20.dp,
-                        )
                         .zIndex(1f)
                 )
 
@@ -123,15 +118,19 @@ fun BookmarkScreen(
                 }
             }
         }
+
         BookmarkUiState.Success -> {
             Box(
                 modifier = modifier
-                    .background(AconTheme.color.Gray900)
-                    .statusBarsPadding()
                     .fillMaxSize()
+                    .defaultHazeEffect(
+                        hazeState = LocalHazeState.current,
+                        tintColor = Color(0xFF1C1C20),
+                        blurRadius = 20.dp,
+                    )
+                    .statusBarsPadding()
             ) {
                 AconTopBar(
-                    paddingValues = PaddingValues(0.dp),
                     leadingIcon = {
                         IconButton(
                             onClick = onNavigateToBack
@@ -153,12 +152,6 @@ fun BookmarkScreen(
                     },
                     modifier = Modifier
                         .padding(vertical = 14.dp)
-                        .imageGradientLayer()
-                        .defaultHazeEffect(
-                            hazeState = LocalHazeState.current,
-                            tintColor = AconTheme.color.Gray900,
-                            blurRadius = 20.dp,
-                        )
                         .zIndex(1f)
                 )
 
@@ -195,6 +188,7 @@ fun BookmarkScreen(
                 }
             }
         }
+
         BookmarkUiState.LoadFailed -> {}
     }
 }
