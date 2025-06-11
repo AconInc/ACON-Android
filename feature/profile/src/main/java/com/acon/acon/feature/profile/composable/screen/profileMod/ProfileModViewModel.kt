@@ -250,7 +250,7 @@ class ProfileModViewModel @Inject constructor(
         }
     }
 
-    fun onDisMissPhotoPermission() = intent {
+    fun onPhotoPermissionDenied() = intent {
         runOn<ProfileModState.Success> {
             reduce {
                 state.copy(requestPhotoPermission = false)
@@ -321,6 +321,7 @@ class ProfileModViewModel @Inject constructor(
                         birthday = birthday
                     )
                 }
+
                 state.selectedPhotoUri == "basic_profile_image" -> {
                     updateProfile(
                         fileName = state.uploadFileName,
@@ -328,6 +329,7 @@ class ProfileModViewModel @Inject constructor(
                         birthday = birthday
                     )
                 }
+
                 else -> {
                     profileRepository.getPreSignedUrl()
                         .onSuccess { result ->

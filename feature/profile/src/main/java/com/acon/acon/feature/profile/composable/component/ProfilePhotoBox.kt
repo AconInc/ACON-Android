@@ -19,13 +19,11 @@ import androidx.compose.ui.res.vectorResource
 import coil3.compose.AsyncImage
 import coil3.compose.rememberAsyncImagePainter
 import com.acon.acon.core.designsystem.R
-import com.acon.acon.core.designsystem.noRippleClickable
 
 @Composable
 fun ProfilePhotoBox(
     photoUri: String,
-    modifier: Modifier = Modifier,
-    onProfileClicked: () -> Unit = {}
+    modifier: Modifier = Modifier
 ) {
     BoxWithConstraints(
         modifier = modifier.fillMaxSize()
@@ -37,8 +35,7 @@ fun ProfilePhotoBox(
                     .fillMaxSize()
                     .width(imageWidth)
                     .height(imageWidth)
-                    .clip(CircleShape)
-                    .noRippleClickable { onProfileClicked() },
+                    .clip(CircleShape),
                 contentAlignment = Alignment.Center
             ) {
                 when {
