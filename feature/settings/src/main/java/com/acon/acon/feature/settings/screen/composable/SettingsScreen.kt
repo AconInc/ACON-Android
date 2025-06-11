@@ -1,6 +1,5 @@
 package com.acon.acon.feature.settings.screen.composable
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -55,10 +54,6 @@ fun SettingsScreen(
 
     val hazeState = rememberHazeState()
     val scrollState = rememberScrollState()
-
-    BackHandler {
-        navigateBack()
-    }
 
     Column(
         modifier = modifier
