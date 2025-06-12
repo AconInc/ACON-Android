@@ -3,6 +3,7 @@ package com.acon.acon.feature.profile.composable.screen.galleryList.composable
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -22,106 +24,293 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.rememberAsyncImagePainter
 import com.acon.acon.core.designsystem.R
+import com.acon.acon.core.designsystem.component.dialog.v2.AconTwoActionDialog
 import com.acon.acon.core.designsystem.component.topbar.AconTopBar
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
+import com.acon.acon.core.utils.feature.permission.media.CheckAndRequestMediaPermission
+import com.acon.acon.feature.profile.composable.screen.MediaPermissionBottomSheet
 import com.acon.acon.feature.profile.composable.screen.galleryList.Album
-import com.acon.acon.feature.profile.composable.screen.galleryList.GalleryListSideEffect
-import com.acon.acon.feature.profile.composable.screen.galleryList.GalleryListState
-import com.acon.acon.feature.profile.composable.screen.galleryList.GalleryListViewModel
-import org.orbitmvi.orbit.compose.collectAsState
-import org.orbitmvi.orbit.compose.collectSideEffect
-
-@Composable
-fun GalleryListContainer(
-    modifier: Modifier = Modifier,
-    viewModel: GalleryListViewModel = hiltViewModel(),
-    onAlbumSelected: (String, String) -> Unit = { _, _ -> },
-    onBackClicked: () -> Unit = {},
-) {
-    val state by viewModel.collectAsState()
-
-    LaunchedEffect(Unit) {
-        viewModel.loadAlbums()
-    }
-
-    viewModel.collectSideEffect {
-        when (it) {
-            is GalleryListSideEffect.NavigateToAlbumGrid -> {
-                onAlbumSelected(it.albumId, it.albumName)
-            }
-        }
-    }
-
-    GalleryListScreen(
-        state = state,
-        modifier = modifier,
-        onAlbumSelected = viewModel::onClickAlbum,
-        onBackClicked = onBackClicked
-    )
-}
+import com.acon.acon.feature.profile.composable.screen.galleryList.GalleryListUiState
+import com.acon.feature.common.compose.getScreenWidth
 
 @Composable
 internal fun GalleryListScreen(
-    state: GalleryListState,
-    modifier: Modifier = Modifier,
+    state: GalleryListUiState,
+    onBackClicked: () -> Unit,
+    onRefreshAlbum: () -> Unit,
+    onClickPermissionSettings: (String) -> Unit,
+    toggleMediaPermission: () -> Unit,
+    requestMediaPermission: () -> Unit,
+    resetMediaPermission: () -> Unit,
+    requestMediaPermissionModal: () -> Unit,
+    dismissMediaPermissionModal: () -> Unit,
+    requestMediaPermissionDialog: () -> Unit,
+    dismissMediaPermissionDialog: () -> Unit,
     onAlbumSelected: (String, String) -> Unit,
-    onBackClicked: () -> Unit
+    modifier: Modifier = Modifier
 ) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(color = AconTheme.color.Gray900)
-            .statusBarsPadding()
-            .navigationBarsPadding()
-    ) {
-        AconTopBar(
-            leadingIcon = {
-                IconButton(
-                    onClick = { onBackClicked() }
+    val context = LocalContext.current
+    val screenWidthDp = getScreenWidth()
+    val dialogWidth = (screenWidthDp * (260f / 360f))
+
+    when (state) {
+        is GalleryListUiState.Granted -> {
+            Column(
+                modifier = modifier
+                    .fillMaxSize()
+                    .background(color = AconTheme.color.Gray900)
+                    .statusBarsPadding()
+                    .navigationBarsPadding()
+            ) {
+                AconTopBar(
+                    leadingIcon = {
+                        IconButton(
+                            onClick = { onBackClicked() }
+                        ) {
+                            Icon(
+                                imageVector = ImageVector.vectorResource(R.drawable.ic_topbar_arrow_left),
+                                contentDescription = stringResource(R.string.back),
+                                tint = AconTheme.color.Gray50
+                            )
+                        }
+                    },
+                    content = {
+                        Text(
+                            text = stringResource(R.string.my_album),
+                            style = AconTheme.typography.Title4,
+                            fontWeight = FontWeight.SemiBold,
+                            color = AconTheme.color.White
+                        )
+                    },
+                    modifier = Modifier.padding(vertical = 14.dp)
+                )
+
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize()
                 ) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(R.drawable.ic_topbar_arrow_left),
-                        contentDescription = stringResource(R.string.back),
-                        tint = AconTheme.color.Gray50
+                    items(
+                        items = state.albumList,
+                        key = { album -> album.id }
+                    ) { album ->
+                        AlbumItem(
+                            album = album,
+                            onAlbumSelected = onAlbumSelected
+                        )
+                    }
+                }
+            }
+        }
+
+        is GalleryListUiState.Partial -> {
+            if (state.requestMediaPermission) {
+                // 권한 처리
+                CheckAndRequestMediaPermission(
+                    onPermissionGranted = {
+                        resetMediaPermission()
+                        onRefreshAlbum()
+                    },
+                    onPermissionDenied = {
+                        resetMediaPermission()
+                        requestMediaPermissionDialog()
+                    },
+                    ignorePartialPermission = false
+                )
+            }
+
+            // 갤러리 권한 선택 바텀시트
+            if (state.showMediaPermissionModal) {
+                MediaPermissionBottomSheet(
+                    onDismiss = { dismissMediaPermissionModal() },
+                    onClickPermissionCheck = {
+                        // 권한 요청 (더 많은 사진 선택 버튼) -> 추가 권한 다이얼로그 요청
+                        dismissMediaPermissionModal()
+                        requestMediaPermission()
+                    },
+                    onClickPermissionSettings = {
+                        dismissMediaPermissionModal()
+                        onClickPermissionSettings(context.packageName)
+                    }
+                )
+            }
+
+            // 설정으로 이동하는 다이얼로그
+            if (state.showMediaPermissionDialog) {
+                AconTwoActionDialog(
+                    title = stringResource(R.string.photo_permission_title),
+                    action1 = stringResource(R.string.photo_permission_alert_left_btn),
+                    action2 = stringResource(R.string.photo_permission_alert_right_btn),
+                    onDismissRequest = { dismissMediaPermissionDialog() },
+                    onAction1 = {
+                        resetMediaPermission()
+                        dismissMediaPermissionDialog()
+                    },
+                    onAction2 = {
+                        resetMediaPermission()
+                        onClickPermissionSettings(context.packageName)
+                        dismissMediaPermissionDialog()
+                    },
+                    content = {
+                        Text(
+                            text = stringResource(R.string.photo_permission_content),
+                            color = AconTheme.color.Gray200,
+                            style = AconTheme.typography.Body1,
+                            maxLines = 1,
+                            modifier = Modifier.padding(bottom = 20.dp)
+                        )
+                    },
+                    modifier = Modifier.width(dialogWidth)
+                )
+            }
+
+            Column(
+                modifier = modifier
+                    .fillMaxSize()
+                    .background(color = AconTheme.color.Gray900)
+                    .statusBarsPadding()
+                    .navigationBarsPadding()
+            ) {
+                AconTopBar(
+                    leadingIcon = {
+                        IconButton(
+                            onClick = { onBackClicked() }
+                        ) {
+                            Icon(
+                                imageVector = ImageVector.vectorResource(R.drawable.ic_topbar_arrow_left),
+                                contentDescription = stringResource(R.string.back),
+                                tint = AconTheme.color.Gray50
+                            )
+                        }
+                    },
+                    modifier = Modifier.padding(vertical = 14.dp)
+                )
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                ) {
+                    Text(
+                        text = "지금 모든 사진 접근 권한을 허용하면 더 쉽고 편하게 사진을 올릴 수 있어요", //stringResource(R.string.), // TODO - 문구 정해지면 수정
+                        color = AconTheme.color.White,
+                        style = AconTheme.typography.Body1
+                    )
+
+                    Spacer(Modifier.height(8.dp))
+                    Text(
+                        text = "사진 권한 변경", //stringResource(R.string.), // TODO - 문구 정해지면 수정
+                        color = AconTheme.color.Action,
+                        style = AconTheme.typography.Body1,
+                        modifier = Modifier.noRippleClickable { requestMediaPermissionModal() }
                     )
                 }
-            },
-            content = {
-                Text(
-                    text = stringResource(R.string.my_album),
-                    style = AconTheme.typography.Title4,
-                    fontWeight = FontWeight.SemiBold,
-                    color = AconTheme.color.White
-                )
-            },
-            modifier = Modifier.padding(vertical = 14.dp)
-        )
 
-        LazyColumn(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            items(
-                items = state.albumList,
-                key = { album -> album.id }
-            ) { album ->
-                AlbumItem(
-                    album = album,
-                    onAlbumSelected = onAlbumSelected
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "이미지가 없습니다.", //stringResource(R.string.), // TODO - 문구 정해지면 수정
+                        color = AconTheme.color.White,
+                        style = AconTheme.typography.Body1
+                    )
+                }
+            }
+        }
+
+        is GalleryListUiState.Denied -> {
+
+            // 이 화면에 처음들어 왔을 때 권한이 Denied이면 requestMediaPermission 호출
+            LaunchedEffect(Unit) {
+                requestMediaPermission()
+            }
+
+            if (state.requestMediaPermission) {
+                CheckAndRequestMediaPermission(
+                    onPermissionGranted = {
+                        resetMediaPermission()
+                        onRefreshAlbum()
+                    },
+                    onPermissionDenied = {
+                        resetMediaPermission()
+                        requestMediaPermissionDialog()
+                    }
                 )
+            }
+
+            // 설정으로 이동하는 다이얼로그
+            if (state.showMediaPermissionDialog) {
+                AconTwoActionDialog(
+                    title = stringResource(R.string.photo_permission_title),
+                    action1 = stringResource(R.string.photo_permission_alert_left_btn),
+                    action2 = stringResource(R.string.photo_permission_alert_right_btn),
+                    onDismissRequest = { dismissMediaPermissionDialog() },
+                    onAction1 = {
+                        resetMediaPermission()
+                        dismissMediaPermissionDialog()
+                    },
+                    onAction2 = {
+                        resetMediaPermission()
+                        onClickPermissionSettings(context.packageName)
+                        dismissMediaPermissionDialog()
+                    },
+                    content = {
+                        Text(
+                            text = stringResource(R.string.photo_permission_content),
+                            color = AconTheme.color.Gray200,
+                            style = AconTheme.typography.Body1,
+                            maxLines = 1,
+                            modifier = Modifier.padding(bottom = 20.dp)
+                        )
+                    },
+                    modifier = Modifier.width(dialogWidth)
+                )
+            }
+
+            Column(
+                modifier = modifier
+                    .fillMaxSize()
+                    .background(color = AconTheme.color.Gray900)
+                    .statusBarsPadding()
+                    .navigationBarsPadding()
+            ) {
+                AconTopBar(
+                    leadingIcon = {
+                        IconButton(
+                            onClick = { onBackClicked() }
+                        ) {
+                            Icon(
+                                imageVector = ImageVector.vectorResource(R.drawable.ic_topbar_arrow_left),
+                                contentDescription = stringResource(R.string.back),
+                                tint = AconTheme.color.Gray50
+                            )
+                        }
+                    },
+                    modifier = Modifier.padding(vertical = 14.dp)
+                )
+
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "이미지가 없습니다.", //stringResource(R.string.), // TODO - 문구 정해지면 수정
+                        color = AconTheme.color.White,
+                        style = AconTheme.typography.Body1
+                    )
+                }
             }
         }
     }
@@ -176,5 +365,20 @@ private fun AlbumItem(
 @Preview
 @Composable
 private fun PreviewCustomGalleryScreen() {
-    GalleryListContainer()
+    AconTheme {
+        GalleryListScreen(
+            state = GalleryListUiState.Partial(),
+            onBackClicked = {},
+            onRefreshAlbum = {},
+            onClickPermissionSettings = {},
+            toggleMediaPermission = {},
+            requestMediaPermission = {},
+            resetMediaPermission = {},
+            requestMediaPermissionModal = {},
+            dismissMediaPermissionModal = {},
+            requestMediaPermissionDialog = {},
+            dismissMediaPermissionDialog = {},
+            onAlbumSelected = { _, _ -> }
+        )
+    }
 }
