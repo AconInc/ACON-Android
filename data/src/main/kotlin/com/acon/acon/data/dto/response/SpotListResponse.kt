@@ -6,6 +6,7 @@ import com.acon.acon.domain.type.TagType
 import com.acon.acon.domain.type.TransportMode
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import timber.log.Timber
 
 @Serializable
 data class SpotListResponse(
@@ -20,11 +21,13 @@ data class SpotListResponse(
 
 @Serializable
 data class SpotResponse(
-    @SerialName("id") val id: Long?,
+    @SerialName("spotId") val id: Long?,
     @SerialName("image") val image: String?,
     @SerialName("name") val name: String?,
     @SerialName("acornCount") val acornCount: Int?,
+    @SerialName("isOpen") val isOpen: Boolean?,
     @SerialName("closingTime") val closingTime: String?,
+    @SerialName("nextOpening") val nextOpening: String?,
     @SerialName("tagList") val tags: List<String>?,
     @SerialName("eta") val walkingTime: Int?,
     @SerialName("latitude") val latitude: Double?,
@@ -36,7 +39,7 @@ data class SpotResponse(
         image = image.orEmpty(),
         name = name.orEmpty(),
         acorn = acornCount ?: 0,
-        tags = tags?.map { tagString ->
+        tags = tags?.mapNotNull { tagString ->
             when(tagString) {
                 "NEW" -> TagType.NEW
                 "LOCAL" -> TagType.LOCAL
@@ -45,12 +48,17 @@ data class SpotResponse(
                 "TOP 3" -> TagType.TOP_3
                 "TOP 4" -> TagType.TOP_4
                 "TOP 5" -> TagType.TOP_5
-                else -> throw IllegalArgumentException("Unknown tag: $tagString")
+                else -> {
+                    Timber.e("Unknown tag type: $tagString")
+                    null
+                }
             }
         } ?: emptyList(),
         eta = walkingTime ?: 0,
-        closingTime = closingTime ?: "",
         latitude = latitude ?: 0.0,
         longitude = longitude ?: 0.0,
+        closingTime = closingTime.orEmpty(),
+        isOpen = isOpen ?: false,
+        nextOpening = nextOpening.orEmpty(),
     )
 }
