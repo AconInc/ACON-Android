@@ -30,6 +30,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
@@ -41,6 +42,7 @@ import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.domain.model.spot.v2.Spot
 import com.acon.acon.domain.type.TransportMode
 import com.acon.acon.domain.type.UserType
+import com.acon.acon.core.designsystem.R
 import com.acon.acon.feature.spot.screen.spotlist.SpotListUiStateV2
 import com.acon.core.ads_api.LocalSpotListAdProvider
 import com.acon.feature.common.compose.LocalRequestSignIn
@@ -135,7 +137,7 @@ internal fun SpotListSuccessView(
             ) {
                 if (page == 0) {
                     Text(
-                        text = "최고의 선택.",
+                        text = stringResource(R.string.best_choice),
                         style = AconTheme.typography.Title2,
                         fontWeight = FontWeight.SemiBold,
                         color = AconTheme.color.White,

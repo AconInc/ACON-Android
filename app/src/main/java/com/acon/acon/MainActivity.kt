@@ -292,37 +292,37 @@ class MainActivity : ComponentActivity() {
                             .fillMaxSize()
                             .background(AconTheme.color.Gray900),
                     )
-                }
 
-                if (appState.showSignInBottomSheet) {
-                    SignInBottomSheet(
-                        onDismissRequest = { viewModel.updateShowSignInBottomSheet(false) },
-                        onGoogleSignIn = {
-                            scope.launch {
-                                socialRepository.googleSignIn()
-                                    .onSuccess {
-                                        if (it.hasVerifiedArea) {
-                                            navController.navigate(SpotRoute.SpotList) {
-                                                popUpTo(navController.graph.id) {
-                                                    inclusive = true
+                    if (appState.showSignInBottomSheet) {
+                        SignInBottomSheet(
+                            onDismissRequest = { viewModel.updateShowSignInBottomSheet(false) },
+                            onGoogleSignIn = {
+                                scope.launch {
+                                    socialRepository.googleSignIn()
+                                        .onSuccess {
+                                            if (it.hasVerifiedArea) {
+                                                navController.navigate(SpotRoute.SpotList) {
+                                                    popUpTo(navController.graph.id) {
+                                                        inclusive = true
+                                                    }
+                                                }
+                                            } else {
+                                                navController.navigate(
+                                                    AreaVerificationRoute.AreaVerification("onboarding")
+                                                ) {
+                                                    popUpTo(navController.graph.id) {
+                                                        inclusive = true
+                                                    }
                                                 }
                                             }
-                                        } else {
-                                            navController.navigate(
-                                                AreaVerificationRoute.AreaVerification("onboarding")
-                                            ) {
-                                                popUpTo(navController.graph.id) {
-                                                    inclusive = true
-                                                }
-                                            }
+                                        }.onFailure {
+
                                         }
-                                    }.onFailure {
-
-                                    }
-                                viewModel.updateShowSignInBottomSheet(false)
-                            }
-                        },
-                    )
+                                    viewModel.updateShowSignInBottomSheet(false)
+                                }
+                            }, modifier = Modifier
+                        )
+                    }
                 }
 
                 if (appState.showPermissionDialog)
