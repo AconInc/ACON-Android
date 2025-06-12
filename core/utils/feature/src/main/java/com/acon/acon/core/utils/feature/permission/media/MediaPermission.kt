@@ -5,7 +5,6 @@ import android.Manifest.permission.READ_MEDIA_IMAGES
 import android.Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED
 import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.os.Build
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts.RequestMultiplePermissions
 import androidx.compose.runtime.Composable
@@ -96,24 +95,28 @@ fun CheckAndRequestMediaPermission(
                     }
 
                     partial -> {
-                        Log.d("로그", "requestPermissions, partial")
                         if (ignorePartialPermission) onPermissionGranted()
                     }
 
                     else -> {
-                        Log.d("로그", "requestPermissions, denied")
                         onPermissionDenied()
                     }
                 }
             }
 
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> {
-                if (results[READ_MEDIA_IMAGES] == true) onPermissionGranted()
+                val granted = results[READ_MEDIA_IMAGES]
+                    ?: (checkSelfPermission(context, READ_MEDIA_IMAGES) == PERMISSION_GRANTED)
+
+                if (granted) onPermissionGranted()
                 else onPermissionDenied()
             }
 
             else -> {
-                if (results[READ_EXTERNAL_STORAGE] == true) onPermissionGranted()
+                val granted = results[READ_EXTERNAL_STORAGE]
+                    ?: (checkSelfPermission(context, READ_EXTERNAL_STORAGE) == PERMISSION_GRANTED)
+
+                if (granted) onPermissionGranted()
                 else onPermissionDenied()
             }
         }
@@ -143,10 +146,9 @@ fun CheckAndRequestMediaPermission(
                 if (ignorePartialPermission) {
                     onPermissionGranted()
                 } else {
-                    /* 제한적 접근 권한 상태에서 "더 많은 사진과 동영상에 액세스하도록 허용하시겠습니까?"
-                       시스템 권한 다이얼로그를 한번 더 띄우는 코드 */
+                    /* 권한이 제한된 액세스 허용인 경우, "더 많은 사진과 동영상에 액세스하도록 허용하시겠습니까?"
+                       추가 권한 다이얼로그(시스템 UI) 를 한번 더 띄우는 코드 */
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-                        Log.d("로그", "StorageAccess.Partial → 시스템 권한 다이얼로그를 한번 더 요청")
                         requestPermissions.launch(
                             arrayOf(
                                 READ_MEDIA_IMAGES,
