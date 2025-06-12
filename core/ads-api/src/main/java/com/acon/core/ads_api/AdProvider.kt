@@ -7,9 +7,9 @@ import androidx.compose.ui.Modifier
 interface AdProvider {
 
     @Composable
-    fun NativeAd(modifier: Modifier = Modifier)
+    fun NativeAd(modifier: Modifier)
 }
 
-val LocalAdProvider = staticCompositionLocalOf<AdProvider> {
+val LocalSpotListAdProvider = staticCompositionLocalOf<AdProvider> {
     error("AdProvider가 제공되지 않았습니다.")
 }
