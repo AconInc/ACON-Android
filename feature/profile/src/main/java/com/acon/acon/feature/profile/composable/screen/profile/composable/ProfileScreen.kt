@@ -54,7 +54,6 @@ fun ProfileScreen(
     onBookmark: () -> Unit = {},
     onSettings: () -> Unit = {},
     onEditProfile: () -> Unit = {},
-    onBottomSheetShowStateChange: (Boolean) -> Unit = {},
     onNavigateToSpotListScreen: () -> Unit = {},
     onNavigateToUploadScreen: () -> Unit = {},
 ) {
@@ -62,7 +61,6 @@ fun ProfileScreen(
     val profileImageHeight = (screenHeightDp * (60f / 740f))
     val admobHeight = (screenHeightDp * (165f / 740f))
     val savedStoreHeight = (screenHeightDp * (200f / 740f))
-    val bottomSheetHeight = (screenHeightDp * (518f / 740f))
 
     val userType = LocalUserType.current
     val onSignInRequired = LocalRequestSignIn.current
@@ -257,7 +255,7 @@ fun ProfileScreen(
                             Row(
                                 modifier = Modifier
                                     .padding(start = 16.dp)
-                                    .noRippleClickable { onBottomSheetShowStateChange(true) }
+                                    .noRippleClickable { onSignInRequired() }
                             ) {
                                 Text(
                                     text = stringResource(R.string.you_need_sign_in),
@@ -282,6 +280,7 @@ fun ProfileScreen(
                 }
             }
         }
+        Spacer(Modifier.weight(1f))
         AconBottomBar(
             selectedItem = BottomNavType.PROFILE,
             onItemClick = { bottomType ->
