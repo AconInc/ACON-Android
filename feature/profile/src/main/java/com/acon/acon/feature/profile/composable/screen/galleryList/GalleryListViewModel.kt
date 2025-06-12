@@ -22,15 +22,16 @@ class GalleryListViewModel @Inject constructor(
 
     override val container =
         container<GalleryListUiState, GalleryListSideEffect>(GalleryListUiState.Granted()) {
-            when (getStorageAccess(context)) {
-                StorageAccess.GRANTED -> {
-                    loadAlbums()
-                }
-
-                StorageAccess.Partial -> reduce { GalleryListUiState.Partial() }
-                StorageAccess.Denied -> reduce { GalleryListUiState.Denied() }
-            }
+            updateStorageAccess()
         }
+
+    fun updateStorageAccess() = intent {
+        when (getStorageAccess(context)) {
+            StorageAccess.GRANTED -> { loadAlbums() }
+            StorageAccess.Partial -> reduce { GalleryListUiState.Partial() }
+            StorageAccess.Denied -> reduce { GalleryListUiState.Denied() }
+        }
+    }
 
     private fun getAlbumList(contentResolver: ContentResolver): List<Album> {
         val albumMap = mutableMapOf<String, Album>()
@@ -107,22 +108,6 @@ class GalleryListViewModel @Inject constructor(
             reduce {
                 state.copy(showMediaPermissionModal = false)
             }
-        }
-    }
-
-    fun toggleMediaPermission() = intent {
-        when (state) {
-            is GalleryListUiState.Partial -> {
-                val prev = (state as GalleryListUiState.Partial).requestMediaPermission
-                reduce { (state as GalleryListUiState.Partial).copy(requestMediaPermission = !prev) }
-            }
-
-            is GalleryListUiState.Denied -> {
-                val prev = (state as GalleryListUiState.Denied).requestMediaPermission
-                reduce { (state as GalleryListUiState.Denied).copy(requestMediaPermission = !prev) }
-            }
-
-            else -> Unit
         }
     }
 

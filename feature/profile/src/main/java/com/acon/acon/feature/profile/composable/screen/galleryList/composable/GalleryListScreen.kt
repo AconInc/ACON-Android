@@ -52,7 +52,6 @@ internal fun GalleryListScreen(
     onBackClicked: () -> Unit,
     onRefreshAlbum: () -> Unit,
     onClickPermissionSettings: (String) -> Unit,
-    toggleMediaPermission: () -> Unit,
     requestMediaPermission: () -> Unit,
     resetMediaPermission: () -> Unit,
     requestMediaPermissionModal: () -> Unit,
@@ -116,7 +115,6 @@ internal fun GalleryListScreen(
 
         is GalleryListUiState.Partial -> {
             if (state.requestMediaPermission) {
-                // 권한 처리
                 CheckAndRequestMediaPermission(
                     onPermissionGranted = {
                         resetMediaPermission()
@@ -130,14 +128,12 @@ internal fun GalleryListScreen(
                 )
             }
 
-            // 갤러리 권한 선택 바텀시트
             if (state.showMediaPermissionModal) {
                 MediaPermissionBottomSheet(
                     onDismiss = { dismissMediaPermissionModal() },
                     onClickPermissionCheck = {
-                        // 권한 요청 (더 많은 사진 선택 버튼) -> 추가 권한 다이얼로그 요청
                         dismissMediaPermissionModal()
-                        requestMediaPermission()
+                        requestMediaPermission() // 추가 권한 요청 (권한이 제한된 액세스 허용인 경우 -> 추가 권한 (안드로이드 14+))
                     },
                     onClickPermissionSettings = {
                         dismissMediaPermissionModal()
@@ -146,7 +142,6 @@ internal fun GalleryListScreen(
                 )
             }
 
-            // 설정으로 이동하는 다이얼로그
             if (state.showMediaPermissionDialog) {
                 AconTwoActionDialog(
                     title = stringResource(R.string.photo_permission_title),
@@ -159,8 +154,8 @@ internal fun GalleryListScreen(
                     },
                     onAction2 = {
                         resetMediaPermission()
-                        onClickPermissionSettings(context.packageName)
                         dismissMediaPermissionDialog()
+                        onClickPermissionSettings(context.packageName)
                     },
                     content = {
                         Text(
@@ -213,7 +208,10 @@ internal fun GalleryListScreen(
                         text = "사진 권한 변경", //stringResource(R.string.), // TODO - 문구 정해지면 수정
                         color = AconTheme.color.Action,
                         style = AconTheme.typography.Body1,
-                        modifier = Modifier.noRippleClickable { requestMediaPermissionModal() }
+                        modifier = Modifier.noRippleClickable {
+                            resetMediaPermission()
+                            requestMediaPermissionModal()
+                        }
                     )
                 }
 
@@ -250,7 +248,6 @@ internal fun GalleryListScreen(
                 )
             }
 
-            // 설정으로 이동하는 다이얼로그
             if (state.showMediaPermissionDialog) {
                 AconTwoActionDialog(
                     title = stringResource(R.string.photo_permission_title),
@@ -263,8 +260,8 @@ internal fun GalleryListScreen(
                     },
                     onAction2 = {
                         resetMediaPermission()
-                        onClickPermissionSettings(context.packageName)
                         dismissMediaPermissionDialog()
+                        onClickPermissionSettings(context.packageName)
                     },
                     content = {
                         Text(
@@ -371,7 +368,6 @@ private fun PreviewCustomGalleryScreen() {
             onBackClicked = {},
             onRefreshAlbum = {},
             onClickPermissionSettings = {},
-            toggleMediaPermission = {},
             requestMediaPermission = {},
             resetMediaPermission = {},
             requestMediaPermissionModal = {},
