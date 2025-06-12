@@ -3,7 +3,9 @@ package com.acon.acon.core.utils.feature.permission.media
 import android.Manifest.permission.READ_EXTERNAL_STORAGE
 import android.Manifest.permission.READ_MEDIA_IMAGES
 import android.Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED
+import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.os.Build
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts.RequestMultiplePermissions
 import androidx.compose.runtime.Composable
@@ -15,6 +17,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -28,11 +31,16 @@ import kotlinx.coroutines.launch
  *
  * @RequiresPermission(anyOf = [READ_MEDIA_IMAGES, READ_MEDIA_VISUAL_USER_SELECTED, READ_EXTERNAL_STORAGE])
  * This app is not using Video Permission → (READ_MEDIA_VIDEO)
+ *
+ * onPermissionGranted → 미디어 접근권한이 Granted이면 실행되는 동작
+ * onPermissionDenied →  미디어 접근권한이 Denied이면 실행되는 동작
+ * ignorePartialPermission → 미디어 접근 권한이 Granted, Partial 상태에서의 동작이 서로 다르게 동작해야 할 때 사용되는 플래그 (갤러리 내부에서 사용)
  */
 @Composable
 fun CheckAndRequestMediaPermission(
     onPermissionGranted: () -> Unit,
     onPermissionDenied: () -> Unit,
+    ignorePartialPermission: Boolean = true
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -64,12 +72,38 @@ fun CheckAndRequestMediaPermission(
     ) { results: Map<String, Boolean> ->
         when {
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE -> {
-                val granted =
-                    results[READ_MEDIA_IMAGES] == true && results[READ_MEDIA_VISUAL_USER_SELECTED] == true
+                val readMediaImage = results[READ_MEDIA_IMAGES]
+                val readVisualUserSelected = results[READ_MEDIA_VISUAL_USER_SELECTED]
+
+                val granted = if (readMediaImage != null) {
+                    results[READ_MEDIA_IMAGES] == true
+                } else {
+                    checkSelfPermission(context, READ_MEDIA_IMAGES) == PERMISSION_GRANTED
+                }
+
+                val partial = if (readVisualUserSelected != null) {
+                    results[READ_MEDIA_VISUAL_USER_SELECTED] == true
+                } else {
+                    checkSelfPermission(
+                        context,
+                        READ_MEDIA_VISUAL_USER_SELECTED
+                    ) == PERMISSION_GRANTED
+                }
 
                 when {
-                    granted -> onPermissionGranted()
-                    else -> onPermissionDenied()
+                    granted -> {
+                        onPermissionGranted()
+                    }
+
+                    partial -> {
+                        Log.d("로그", "requestPermissions, partial")
+                        if (ignorePartialPermission) onPermissionGranted()
+                    }
+
+                    else -> {
+                        Log.d("로그", "requestPermissions, denied")
+                        onPermissionDenied()
+                    }
                 }
             }
 
@@ -87,7 +121,7 @@ fun CheckAndRequestMediaPermission(
 
     LaunchedEffect(storageAccess) {
         when (storageAccess) {
-            StorageAccess.GRANTED, StorageAccess.Partial -> {
+            StorageAccess.GRANTED -> {
                 onPermissionGranted()
             }
 
@@ -103,6 +137,24 @@ fun CheckAndRequestMediaPermission(
                         arrayOf(READ_EXTERNAL_STORAGE)
                 }
                 requestPermissions.launch(permission)
+            }
+
+            StorageAccess.Partial -> {
+                if (ignorePartialPermission) {
+                    onPermissionGranted()
+                } else {
+                    /* 제한적 접근 권한 상태에서 "더 많은 사진과 동영상에 액세스하도록 허용하시겠습니까?"
+                       시스템 권한 다이얼로그를 한번 더 띄우는 코드 */
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                        Log.d("로그", "StorageAccess.Partial → 시스템 권한 다이얼로그를 한번 더 요청")
+                        requestPermissions.launch(
+                            arrayOf(
+                                READ_MEDIA_IMAGES,
+                                READ_MEDIA_VISUAL_USER_SELECTED
+                            )
+                        )
+                    }
+                }
             }
         }
     }
