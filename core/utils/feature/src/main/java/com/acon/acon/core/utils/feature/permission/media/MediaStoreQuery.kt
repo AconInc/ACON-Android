@@ -1,4 +1,4 @@
-package com.acon.acon.core.utils.feature.permission.storage
+package com.acon.acon.core.utils.feature.permission.media
 
 import android.Manifest.permission.READ_EXTERNAL_STORAGE
 import android.Manifest.permission.READ_MEDIA_IMAGES
@@ -92,7 +92,7 @@ fun MediaStoreQueryContent() {
 @Composable
 private fun loadImages(
     contentResolver: ContentResolver,
-): State<List<FileEntry>> = produceState(initialValue = emptyList()) {
+): State<List<MediaEntry>> = produceState(initialValue = emptyList()) {
     value = getImages(contentResolver)
 }
 
@@ -100,7 +100,7 @@ private fun loadImages(
  * Query [MediaStore] through [ContentResolver] to get all images sorted by added date by targeting
  * the [Images] collection
  */
-private suspend fun getImages(contentResolver: ContentResolver): List<FileEntry> {
+private suspend fun getImages(contentResolver: ContentResolver): List<MediaEntry> {
     return withContext(Dispatchers.IO) {
         // List of columns we want to fetch
         val projection = arrayOf(
@@ -118,7 +118,7 @@ private suspend fun getImages(contentResolver: ContentResolver): List<FileEntry>
             Images.Media.EXTERNAL_CONTENT_URI
         }
 
-        val images = mutableListOf<FileEntry>()
+        val images = mutableListOf<MediaEntry>()
 
         contentResolver.query(
             collectionUri, // Queried collection
@@ -140,7 +140,7 @@ private suspend fun getImages(contentResolver: ContentResolver): List<FileEntry>
                 val mimeType = cursor.getString(mimeTypeColumn)
                 val dateAdded = cursor.getLong(dateAddedColumn)
 
-                images.add(FileEntry(uri, name, size, mimeType, dateAdded))
+                images.add(MediaEntry(uri, name, size, mimeType, dateAdded))
             }
         }
 
