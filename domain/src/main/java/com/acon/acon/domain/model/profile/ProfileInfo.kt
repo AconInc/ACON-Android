@@ -3,18 +3,11 @@ package com.acon.acon.domain.model.profile
 import androidx.compose.runtime.Immutable
 
 @Immutable
-data class Profile (
+data class ProfileInfo(
     val image: String,
     val nickname: String,
-    val leftAcornCount: Int,
     val birthDate: String?,
-    val verifiedAreaList: List<VerifiedArea>,
-)
-
-@Immutable
-data class VerifiedArea(
-    val id: Long,
-    val name: String
+    val savedSpots: List<SavedSpot>,
 )
 
 @Immutable

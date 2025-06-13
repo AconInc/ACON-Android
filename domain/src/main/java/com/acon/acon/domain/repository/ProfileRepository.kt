@@ -1,13 +1,13 @@
 package com.acon.acon.domain.repository
 
 import com.acon.acon.domain.model.profile.PreSignedUrl
-import com.acon.acon.domain.model.profile.Profile
+import com.acon.acon.domain.model.profile.ProfileInfo
 import com.acon.acon.domain.model.profile.SavedSpot
 import com.acon.acon.domain.type.UpdateProfileType
 import kotlinx.coroutines.flow.Flow
 
 interface ProfileRepository {
-    suspend fun fetchProfile(): Result<Profile>
+    suspend fun fetchProfile(): Result<ProfileInfo>
 
     suspend fun getPreSignedUrl(): Result<PreSignedUrl>
 

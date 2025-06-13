@@ -7,7 +7,7 @@ import com.acon.acon.data.error.runCatchingWith
 import com.acon.acon.domain.error.profile.SaveSpotError
 import com.acon.acon.domain.error.profile.ValidateNicknameError
 import com.acon.acon.domain.model.profile.PreSignedUrl
-import com.acon.acon.domain.model.profile.Profile
+import com.acon.acon.domain.model.profile.ProfileInfo
 import com.acon.acon.domain.model.profile.SavedSpot
 import com.acon.acon.domain.repository.ProfileRepository
 import com.acon.acon.domain.type.UpdateProfileType
@@ -24,7 +24,7 @@ class ProfileRepositoryImpl @Inject constructor(
     @IODispatcher private val scope: CoroutineScope,
     private val profileRemoteDataSource: ProfileRemoteDataSource
 ) : ProfileRepository {
-    override suspend fun fetchProfile(): Result<Profile> {
+    override suspend fun fetchProfile(): Result<ProfileInfo> {
         return runCatchingWith() {
             profileRemoteDataSource.fetchProfile().toProfile()
         }

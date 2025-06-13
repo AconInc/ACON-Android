@@ -104,7 +104,7 @@ fun ProfileScreen(
                             .padding(horizontal = 16.dp)
                     ) {
                         Row {
-                            if (state.profileImage.isEmpty()) {
+                            if (state.profileInfo.image.isEmpty()) {
                                 Image(
                                     imageVector = ImageVector.vectorResource(R.drawable.ic_default_profile),
                                     contentDescription = stringResource(R.string.content_description_default_profile_image),
@@ -114,7 +114,7 @@ fun ProfileScreen(
                                 )
                             } else {
                                 AsyncImage(
-                                    model = state.profileImage,
+                                    model = state.profileInfo.image,
                                     contentDescription = stringResource(R.string.content_description_profile_image),
                                     modifier = Modifier
                                         .size(profileImageHeight)
@@ -130,7 +130,7 @@ fun ProfileScreen(
                                     .padding(start = 16.dp)
                             ) {
                                 Text(
-                                    text = state.nickname,
+                                    text = state.profileInfo.nickname,
                                     style = AconTheme.typography.Headline4,
                                     color = AconTheme.color.White
                                 )
@@ -208,9 +208,6 @@ fun ProfileScreen(
                     }
                 }
             }
-
-            is ProfileUiState.Loading -> {}
-            is ProfileUiState.LoadFailed -> {}
 
             is ProfileUiState.Guest -> {
                 Column(modifier = Modifier) {
