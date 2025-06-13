@@ -83,7 +83,7 @@ class LocalVerificationViewModel @Inject constructor(
                         showEditAreaDialog()
                     }
 
-                    is DeleteVerifiedAreaError.VerifiedAreaDeletePeriodRestrictedError -> {
+                    is DeleteVerifiedAreaError.PeriodRestrictedDeleteError -> {
                         Timber.e(TAG, "인증일로부터 1주 이상 3개월 미만인 지역은 삭제할 수 없습니다.")
                         showAreaDeleteFailDialog()
                     }
