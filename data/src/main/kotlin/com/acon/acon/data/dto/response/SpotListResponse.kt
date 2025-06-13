@@ -1,5 +1,6 @@
 package com.acon.acon.data.dto.response
 
+import com.acon.acon.core.common.utils.toLocalTime
 import com.acon.acon.domain.model.spot.v2.SpotList
 import com.acon.acon.domain.model.spot.v2.Spot
 import com.acon.acon.domain.type.TagType
@@ -7,6 +8,7 @@ import com.acon.acon.domain.type.TransportMode
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import timber.log.Timber
+import java.time.LocalTime
 
 @Serializable
 data class SpotListResponse(
@@ -57,8 +59,8 @@ data class SpotResponse(
         eta = walkingTime ?: 0,
         latitude = latitude ?: 0.0,
         longitude = longitude ?: 0.0,
-        closingTime = closingTime.orEmpty(),
+        closingTime = closingTime.toLocalTime() ?: LocalTime.MIN,
         isOpen = isOpen ?: false,
-        nextOpening = nextOpening.orEmpty(),
+        nextOpening = nextOpening.toLocalTime() ?: LocalTime.MIN,
     )
 }

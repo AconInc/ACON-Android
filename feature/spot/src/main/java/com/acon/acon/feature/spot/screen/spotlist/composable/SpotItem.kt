@@ -1,5 +1,7 @@
 package com.acon.acon.feature.spot.screen.spotlist.composable
 
+import android.graphics.Paint
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -22,6 +24,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
+import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -38,6 +44,8 @@ import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import coil3.size.Scale
+import com.acon.acon.core.common.utils.toHHmm
+import com.acon.acon.core.common.utils.toLocalTime
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.button.v2.AconFilledButton
 import com.acon.acon.core.designsystem.component.tag.AconTag
@@ -133,6 +141,7 @@ private fun SpotInfo(
                 )
             }
         }
+
         FlowRow(
             modifier = Modifier.padding(top = 8.dp),
             horizontalArrangement = Arrangement.spacedBy(4.dp)
@@ -148,6 +157,51 @@ private fun SpotInfo(
                 )
             }
         }
+
+        Row(
+            modifier = Modifier.padding(top = 8.dp, start = 6.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            val dotColor = if (spot.isOpen) AconTheme.color.Success else AconTheme.color.Gray500
+
+            Canvas(
+                Modifier
+            ) {
+                drawContext.canvas.nativeCanvas.apply {
+                    drawCircle(
+                        center.x, center.y, 20f, Paint().apply {
+                            color = Color.Transparent.toArgb()
+                            setShadowLayer(
+                                20f,
+                                0f,
+                                0f,
+                                dotColor.copy(alpha = 1f).toArgb()
+                            )
+                        }
+                    )
+                }
+                drawCircle(
+                    color = dotColor,
+                    radius = 4.dp.toPx()
+                )
+            }
+            Text(
+                text = (if (spot.isOpen) spot.closingTime else spot.nextOpening).toHHmm(),
+                style = AconTheme.typography.Body1,
+                color = AconTheme.color.Gray200,
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.padding(start = 10.dp)
+            )
+
+            Text(
+                text = stringResource(if (spot.isOpen) R.string.closing else R.string.opening),
+                style = AconTheme.typography.Body1,
+                color = AconTheme.color.Gray200,
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.padding(start = 4.dp)
+            )
+        }
+
         Spacer(modifier = Modifier.weight(1f))
         AconFilledButton(
             modifier = Modifier.align(Alignment.End),
@@ -281,7 +335,9 @@ private fun SpotItemV2Preview() {
             latitude = 0.0,
             longitude = 0.0,
             tags = emptyList(),
-            closingTime = "23:00"
+            closingTime = "22:00".toLocalTime()!!,
+            isOpen = true,
+            nextOpening = "10:00".toLocalTime()!!
         ),
         transportMode = TransportMode.WALKING,
         onItemClick = {},
@@ -305,7 +361,9 @@ private fun SpotItemV2EmptyImagePreview() {
             latitude = 0.0,
             longitude = 0.0,
             tags = emptyList(),
-            closingTime = "23:00"
+            closingTime = "22:00".toLocalTime()!!,
+            isOpen = true,
+            nextOpening = "10:00".toLocalTime()!!
         ),
         transportMode = TransportMode.WALKING,
         onItemClick = {},

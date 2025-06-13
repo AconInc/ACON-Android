@@ -153,6 +153,8 @@
     <string name="unavailable_location_title">서비스 불가 지역이에요</string>
     <string name="unavailable_location_description">서비스 지원이 불가능한 지역에 있어요\n지역을 옮기신 후 다시 시도해주세요</string>
     <string name="best_choice">최고의 선택.</string>
+    <string name="closing">영업종료</string>
+    <string name="opening">영업시작</string>
 
     <!-- SpotDetail -->
     <string name="no_store_image_verified">등록된 사진은 없지만\n맛집임을 아콘이 보장해요</string>
