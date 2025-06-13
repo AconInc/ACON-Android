@@ -59,6 +59,7 @@ import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.domain.model.spot.v2.Spot
 import com.acon.acon.domain.type.TagType
 import com.acon.acon.domain.type.TransportMode
+import com.acon.acon.feature.spot.screen.component.OperationDot
 
 @Composable
 internal fun SpotItem(
@@ -167,29 +168,7 @@ private fun SpotInfo(
             modifier = Modifier.padding(top = 8.dp, start = 6.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            val dotColor = if (spot.isOpen) AconTheme.color.Success else AconTheme.color.Gray500
-
-            Canvas(
-                Modifier
-            ) {
-                drawContext.canvas.nativeCanvas.apply {
-                    drawCircle(
-                        center.x, center.y, 20f, Paint().apply {
-                            color = Color.Transparent.toArgb()
-                            setShadowLayer(
-                                20f,
-                                0f,
-                                0f,
-                                dotColor.copy(alpha = 1f).toArgb()
-                            )
-                        }
-                    )
-                }
-                drawCircle(
-                    color = dotColor,
-                    radius = 4.dp.toPx()
-                )
-            }
+            OperationDot(spot.isOpen)
             Text(
                 text = (if (spot.isOpen) spot.closingTime else spot.nextOpening).toHHmm(),
                 style = AconTheme.typography.Body1,
