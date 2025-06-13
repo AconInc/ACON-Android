@@ -12,8 +12,12 @@ sealed class ReplaceVerifiedArea : RootError() {
         override val code: Int = 40054
     }
 
-    class VerifiedAreaDeletePeriodRestrictedError : ReplaceVerifiedArea() {
+    class PeriodRestrictedDeleteError : ReplaceVerifiedArea() {
         override val code: Int = 40055
+    }
+
+    class MultiLocationReplaceError : ReplaceVerifiedArea() {
+        override val code: Int = 40056
     }
 
     class VerifiedAreaNotFound : ReplaceVerifiedArea() {
@@ -25,7 +29,8 @@ sealed class ReplaceVerifiedArea : RootError() {
             return arrayOf(
                 OutOfServiceAreaError(),
                 InvalidVerifiedArea(),
-                VerifiedAreaDeletePeriodRestrictedError(),
+                PeriodRestrictedDeleteError(),
+                MultiLocationReplaceError(),
                 VerifiedAreaNotFound()
             )
         }
