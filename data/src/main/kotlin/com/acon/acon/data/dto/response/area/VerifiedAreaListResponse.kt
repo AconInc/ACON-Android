@@ -11,11 +11,11 @@ data class VerifiedAreaListResponse(
 
 @Serializable
 data class VerifiedAreaResponse(
-    @SerialName("id") val id: Long,
+    @SerialName("verifiedAreaId") val verifiedAreaId: Long,
     @SerialName("name") val name: String,
 ) {
     fun toVerifiedArea() = Area(
-        verifiedAreaId = id,
+        verifiedAreaId = verifiedAreaId,
         name = name
     )
 }
