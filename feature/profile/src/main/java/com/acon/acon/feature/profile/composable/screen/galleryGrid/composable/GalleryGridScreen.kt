@@ -13,13 +13,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
@@ -28,60 +25,33 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.rememberAsyncImagePainter
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.topbar.AconTopBar
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.feature.profile.composable.screen.galleryGrid.GalleryGridSideEffect
-import com.acon.acon.feature.profile.composable.screen.galleryGrid.GalleryGridState
-import com.acon.acon.feature.profile.composable.screen.galleryGrid.GalleryGridViewModel
-import org.orbitmvi.orbit.compose.collectAsState
-import org.orbitmvi.orbit.compose.collectSideEffect
-
-@Composable
-fun GalleryGridContainer(
-    albumId: String,
-    albumName: String,
-    modifier: Modifier = Modifier,
-    viewModel: GalleryGridViewModel = hiltViewModel(),
-    onBackClicked: () -> Unit = {},
-    onNavigateToPhotoCrop: (String) -> Unit = {}
-) {
-    val state by viewModel.collectAsState()
-
-    LaunchedEffect(albumId) {
-        viewModel.loadPhotos(albumId)
-    }
-
-    viewModel.collectSideEffect {
-        when (it) {
-            is GalleryGridSideEffect.NavigateToPhotoCropScreen -> {
-                onNavigateToPhotoCrop(it.photoUri)
-            }
-        }
-    }
-
-    GalleryGridScreen(
-        modifier = modifier,
-        state = state,
-        albumName = albumName,
-        onPhotoSelected = viewModel::onPhotoSelected,
-        onConfirmSelected = viewModel::onConfirmSelected,
-        onBackClicked = onBackClicked,
-    )
-}
+import com.acon.acon.feature.profile.composable.screen.galleryGrid.GalleryGridUiState
 
 @Composable
 internal fun GalleryGridScreen(
-    modifier: Modifier = Modifier,
-    state: GalleryGridState,
+    state: GalleryGridUiState,
     albumName: String,
+    modifier: Modifier = Modifier,
+    onBackClicked: () -> Unit,
+    onUpdateAllImages: () -> Unit,
+    onUpdateUserSelectedImages: () -> Unit,
+    onClickPermissionSettings: (String) -> Unit,
+    requestMediaPermission: () -> Unit,
+    resetMediaPermission: () -> Unit,
+    requestMediaPermissionModal: () -> Unit,
+    dismissMediaPermissionModal: () -> Unit,
+    requestMediaPermissionDialog: () -> Unit,
+    dismissMediaPermissionDialog: () -> Unit,
     onPhotoSelected: (Uri) -> Unit,
-    onConfirmSelected: (String) -> Unit,
-    onBackClicked: () -> Unit
+    onConfirmSelected: (String) -> Unit
 ) {
+    // TODO - state 처리, UI 및 로직 구현
+    
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -110,14 +80,14 @@ internal fun GalleryGridScreen(
                 )
             },
             trailingIcon = {
-                if (state.selectedPhotoUri != null) {
+                if (true) {
                     Text(
                         text = stringResource(R.string.select),
                         style = AconTheme.typography.Title4,
                         fontWeight = FontWeight.SemiBold,
                         color = AconTheme.color.Action,
                         modifier = Modifier.noRippleClickable {
-                            onConfirmSelected(state.selectedPhotoUri.toString())
+                            //onConfirmSelected(state.selectedPhotoUri.toString())
                         }
                     )
                 }
@@ -131,16 +101,16 @@ internal fun GalleryGridScreen(
             verticalArrangement = Arrangement.spacedBy(4.dp),
             horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            items(
-                items = state.photoList,
-                key = { photoUri -> photoUri }
-            ) { photoUri ->
-                PhotoItem(
-                    uri = photoUri,
-                    isSelected = photoUri == state.selectedPhotoUri,
-                    onClick = { onPhotoSelected(photoUri) }
-                )
-            }
+//            items(
+//                items = state.photoList,
+//                key = { photoUri -> photoUri }
+//            ) { photoUri ->
+//                PhotoItem(
+//                    uri = photoUri,
+//                    isSelected = photoUri == state.selectedPhotoUri,
+//                    onClick = { onPhotoSelected(photoUri) }
+//                )
+//            }
         }
     }
 }
