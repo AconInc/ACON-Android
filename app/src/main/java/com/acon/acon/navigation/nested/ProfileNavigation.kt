@@ -122,13 +122,9 @@ internal fun NavGraphBuilder.profileNavigation(
             )
         }
 
-        composable<ProfileRoute.GalleryGrid> { backStackEntry ->
-            val route = backStackEntry.toRoute<ProfileRoute.GalleryGrid>()
-
+        composable<ProfileRoute.GalleryGrid> {
             GalleryGridContainer(
                 modifier = Modifier.fillMaxSize(),
-                albumId = route.albumId,
-                albumName = route.albumName,
                 onBackClicked = {
                     navController.popBackStack()
                 },
