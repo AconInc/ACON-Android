@@ -58,7 +58,6 @@ fun getStorageAccess(context: Context): StorageAccess {
     }
 }
 
-
 /**
  * Query [MediaStore] through [ContentResolver] to get all images & videos sorted by most added date
  * by targeting the [Files] collection
