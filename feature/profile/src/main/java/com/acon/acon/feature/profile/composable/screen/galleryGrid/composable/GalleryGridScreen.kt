@@ -1,7 +1,6 @@
 package com.acon.acon.feature.profile.composable.screen.galleryGrid.composable
 
 import android.net.Uri
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -34,7 +33,8 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil3.compose.rememberAsyncImagePainter
+import coil3.compose.AsyncImage
+import coil3.request.ImageRequest
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.dialog.v2.AconTwoActionDialog
 import com.acon.acon.core.designsystem.component.topbar.AconTopBar
@@ -398,8 +398,10 @@ private fun PhotoItem(
             .size(itemSize.dp)
             .noRippleClickable { onClick() }
     ) {
-        Image(
-            painter = rememberAsyncImagePainter(uri),
+        AsyncImage(
+            model = ImageRequest.Builder(LocalContext.current)
+                .data(uri)
+                .build(),
             contentDescription = stringResource(R.string.content_description_photo),
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop
