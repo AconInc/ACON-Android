@@ -117,7 +117,6 @@ internal fun GalleryListScreen(
         }
 
         is GalleryListUiState.Partial -> {
-
             if (state.requestMediaPermission) {
                 CheckAndRequestMediaPermission(
                     onPermissionGranted = {
@@ -251,7 +250,6 @@ internal fun GalleryListScreen(
         }
 
         is GalleryListUiState.Denied -> {
-
             // 이 화면에 처음들어 왔을 때 권한이 Denied이면 requestMediaPermission 호출
             LaunchedEffect(Unit) {
                 requestMediaPermission()

@@ -126,7 +126,13 @@ internal fun NavGraphBuilder.profileNavigation(
             GalleryGridContainer(
                 modifier = Modifier.fillMaxSize(),
                 onBackClicked = {
-                    navController.popBackStack()
+                    navController.navigate(ProfileRoute.GalleryList) {
+                        popUpTo(ProfileRoute.GalleryList) {
+                            inclusive = true
+                        }
+                        launchSingleTop = true
+                        restoreState = false
+                    }
                 },
                 onNavigateToPhotoCrop = { photoId ->
                     navController.navigate(ProfileRoute.PhotoCrop(photoId))
