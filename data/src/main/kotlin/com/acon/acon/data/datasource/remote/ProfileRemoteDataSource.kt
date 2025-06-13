@@ -27,6 +27,8 @@ class ProfileRemoteDataSource @Inject constructor(
             request = UpdateProfileRequest(profileImage = fileName, nickname = nickname, birthDate = formatBirthday(birthday))
         )
     }
+
+    suspend fun fetchSavedSpots() = profileApi.fetchSavedSpots()
 }
 
 private fun formatBirthday(birthday: String?): String? {

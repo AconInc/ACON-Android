@@ -6,6 +6,7 @@ import com.acon.acon.data.error.runCatchingWith
 import com.acon.acon.domain.error.profile.ValidateNicknameError
 import com.acon.acon.domain.model.profile.PreSignedUrl
 import com.acon.acon.domain.model.profile.Profile
+import com.acon.acon.domain.model.profile.SavedSpot
 import com.acon.acon.domain.repository.ProfileRepository
 import com.acon.acon.domain.type.UpdateProfileType
 import kotlinx.coroutines.CoroutineScope
@@ -64,5 +65,13 @@ class ProfileRepositoryImpl @Inject constructor(
 
     override suspend fun resetProfileType() {
         _updateProfileType.emit(UpdateProfileType.IDLE)
+    }
+
+    override suspend fun fetchSavedSpots(): Result<List<SavedSpot>> {
+        return runCatchingWith() {
+            profileRemoteDataSource.fetchSavedSpots().savedSpotResponseList?.map {
+                it.toSavedSpot()
+            }.orEmpty()
+        }
     }
 }

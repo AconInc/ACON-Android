@@ -2,6 +2,7 @@ package com.acon.acon.domain.repository
 
 import com.acon.acon.domain.model.profile.PreSignedUrl
 import com.acon.acon.domain.model.profile.Profile
+import com.acon.acon.domain.model.profile.SavedSpot
 import com.acon.acon.domain.type.UpdateProfileType
 import kotlinx.coroutines.flow.Flow
 
@@ -19,4 +20,6 @@ interface ProfileRepository {
     fun updateProfileType(type: UpdateProfileType)
 
     suspend fun resetProfileType()
+
+    suspend fun fetchSavedSpots(): Result<List<SavedSpot>>
 }
