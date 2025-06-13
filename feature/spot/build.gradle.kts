@@ -17,6 +17,7 @@ dependencies {
     implementation(projects.core.designsystem)
     implementation(projects.core.utils.feature)
     implementation(projects.core.map)
+    implementation(projects.core.adsApi)
     implementation(projects.feature.common)
 
     implementation(libs.pulltorefresh)

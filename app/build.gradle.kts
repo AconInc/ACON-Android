@@ -36,9 +36,13 @@ dependencies {
     implementation(projects.core.designsystem)
     implementation(projects.core.utils.feature)
     implementation(projects.core.map)
+    implementation(projects.core.adsApi)
+
     implementation(projects.domain)
     implementation(projects.data)
+
     implementation(projects.feature.common)
+    implementation(projects.feature.adsImpl)
     implementation(projects.feature.signin)
     implementation(projects.feature.spot)
     implementation(projects.feature.onboarding)

@@ -71,7 +71,7 @@
 
     <!-- SignIn BottomSheet -->
     <string name="sign_in_bottom_sheet_title">Acon에 로그인</string>
-    <string name="sign_in_bottom_sheet_content">지금 당신의 위치에서\n 최고의 맛집을 추천받아보세요</string>
+    <string name="sign_in_bottom_sheet_content">지금 당신의 위치에서\n최고의 맛집을 추천받아보세요</string>
     <string name="sign_in_bottom_sheet_google_sign_in">Google로 계속하기</string>
     <string name="sign_in_bottom_sheet_policy_agreement">가입을 진행할 경우,아래의 정책에 대해 동의한 것으로 간주합니다.</string>
     <string name="sign_in_bottom_sheet_term_of_use">이용약관</string>
@@ -152,6 +152,7 @@
     <string name="refresh_spot">지금 위치 기준으로 다시 추천 받기</string>
     <string name="unavailable_location_title">서비스 불가 지역이에요</string>
     <string name="unavailable_location_description">서비스 지원이 불가능한 지역에 있어요\n지역을 옮기신 후 다시 시도해주세요</string>
+    <string name="best_choice">최고의 선택.</string>
 
     <!-- SpotDetail -->
     <string name="no_store_image_verified">등록된 사진은 없지만\n맛집임을 아콘이 보장해요</string>
