@@ -2,14 +2,11 @@ package com.acon.acon.feature.profile.composable.screen.profile.composable
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -211,25 +208,8 @@ fun ProfileScreen(
                     }
                 }
             }
-
             is ProfileUiState.Loading -> {}
-            is ProfileUiState.LoadFailed -> {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(AconTheme.color.White),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Image(
-                        imageVector = ImageVector.vectorResource(R.drawable.ic_edit),
-                        contentDescription = stringResource(R.string.content_description_edit_profile),
-                        modifier = Modifier
-                            .size(100.dp)
-                            .noRippleClickable { onEditProfile() }
-                    )
-                }
-            }
-
+            is ProfileUiState.LoadFailed -> {}
             is ProfileUiState.Guest -> {
                 Column(modifier = Modifier) {
                     AconTopBar(

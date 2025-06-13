@@ -4,6 +4,7 @@ import androidx.compose.runtime.Immutable
 import androidx.lifecycle.viewModelScope
 import com.acon.acon.domain.model.profile.VerifiedArea
 import com.acon.acon.domain.repository.ProfileRepository
+import com.acon.acon.domain.type.UserType
 import com.acon.feature.common.base.BaseContainerHost
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -18,13 +19,13 @@ class ProfileViewModel @Inject constructor(
     val updateProfileState = profileRepository.getProfileType()
 
     override val container =
-        container<ProfileUiState, ProfileUiSideEffect>(ProfileUiState.LoadFailed) {
-//            userType.collect {
-//                when(it) {
-//                    UserType.GUEST -> reduce { ProfileUiState.Guest }
-//                    else -> fetchUserProfileInfo()
-//                }
-//            }
+        container<ProfileUiState, ProfileUiSideEffect>(ProfileUiState.Loading) {
+            userType.collect {
+                when(it) {
+                    UserType.GUEST -> reduce { ProfileUiState.Guest }
+                    else -> fetchUserProfileInfo()
+                }
+            }
         }
 
     fun resetUpdateProfileType() {

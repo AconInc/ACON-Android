@@ -57,12 +57,11 @@ internal fun NavGraphBuilder.profileNavigation(
                 },
                 onNavigateToSettingsScreen = { navController.navigate(SettingsRoute.Settings) },
                 onNavigateToProfileEditScreen = {
-                    navController.navigate(ProfileRoute.GalleryList)
-//                    navController.navigate(
-//                        ProfileRoute.ProfileMod(
-//                            null
-//                        )
-//                    )
+                    navController.navigate(
+                        ProfileRoute.ProfileMod(
+                            null
+                        )
+                    )
                 },
                 onNavigateToAreaVerificationScreen = {
                     navController.navigate(AreaVerificationRoute.AreaVerification("onboarding")) {
