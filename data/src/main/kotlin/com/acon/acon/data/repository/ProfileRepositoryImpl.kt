@@ -2,7 +2,9 @@ package com.acon.acon.data.repository
 
 import com.acon.acon.core.common.IODispatcher
 import com.acon.acon.data.datasource.remote.ProfileRemoteDataSource
+import com.acon.acon.data.dto.request.SaveSpotRequest
 import com.acon.acon.data.error.runCatchingWith
+import com.acon.acon.domain.error.profile.SaveSpotError
 import com.acon.acon.domain.error.profile.ValidateNicknameError
 import com.acon.acon.domain.model.profile.PreSignedUrl
 import com.acon.acon.domain.model.profile.Profile
@@ -72,6 +74,12 @@ class ProfileRepositoryImpl @Inject constructor(
             profileRemoteDataSource.fetchSavedSpots().savedSpotResponseList?.map {
                 it.toSavedSpot()
             }.orEmpty()
+        }
+    }
+
+    override suspend fun saveSpot(spotId: Long): Result<Unit> {
+        return runCatchingWith(*SaveSpotError.createErrorInstances()) {
+            profileRemoteDataSource.saveSpot(SaveSpotRequest(spotId))
         }
     }
 }

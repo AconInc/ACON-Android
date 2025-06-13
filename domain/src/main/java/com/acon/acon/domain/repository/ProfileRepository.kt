@@ -22,4 +22,6 @@ interface ProfileRepository {
     suspend fun resetProfileType()
 
     suspend fun fetchSavedSpots(): Result<List<SavedSpot>>
+
+    suspend fun saveSpot(spotId: Long): Result<Unit>
 }
