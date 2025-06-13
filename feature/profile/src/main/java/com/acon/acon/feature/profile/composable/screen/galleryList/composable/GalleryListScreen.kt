@@ -50,7 +50,8 @@ import com.acon.feature.common.compose.getScreenWidth
 internal fun GalleryListScreen(
     state: GalleryListUiState,
     onBackClicked: () -> Unit,
-    onRefreshAlbum: () -> Unit,
+    onUpdateAllAlbum: () -> Unit,
+    onUpdateUserSelectedAlbum: () -> Unit,
     onClickPermissionSettings: (String) -> Unit,
     requestMediaPermission: () -> Unit,
     resetMediaPermission: () -> Unit,
@@ -66,6 +67,8 @@ internal fun GalleryListScreen(
     val dialogWidth = (screenWidthDp * (260f / 360f))
 
     when (state) {
+        is GalleryListUiState.Loading -> {}
+
         is GalleryListUiState.Granted -> {
             Column(
                 modifier = modifier
@@ -114,16 +117,18 @@ internal fun GalleryListScreen(
         }
 
         is GalleryListUiState.Partial -> {
+
             if (state.requestMediaPermission) {
                 CheckAndRequestMediaPermission(
                     onPermissionGranted = {
                         resetMediaPermission()
-                        onRefreshAlbum()
+                        onUpdateAllAlbum()
                     },
                     onPermissionDenied = {
                         resetMediaPermission()
                         requestMediaPermissionDialog()
                     },
+                    onPermissionPartial = { onUpdateUserSelectedAlbum() },
                     ignorePartialPermission = false
                 )
             }
@@ -215,15 +220,31 @@ internal fun GalleryListScreen(
                     )
                 }
 
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "이미지가 없습니다.", //stringResource(R.string.), // TODO - 문구 정해지면 수정
-                        color = AconTheme.color.White,
-                        style = AconTheme.typography.Body1
-                    )
+                if (state.albumList.isEmpty()) {
+                    Box(
+                        modifier = Modifier.weight(1f),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "이미지가 없습니다.", //stringResource(R.string.), // TODO - 문구 정해지면 수정
+                            color = AconTheme.color.White,
+                            style = AconTheme.typography.Body1
+                        )
+                    }
+                } else {
+                    LazyColumn(
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        items(
+                            items = state.albumList,
+                            key = { album -> album.id }
+                        ) { album ->
+                            AlbumItem(
+                                album = album,
+                                onAlbumSelected = onAlbumSelected
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -239,12 +260,13 @@ internal fun GalleryListScreen(
                 CheckAndRequestMediaPermission(
                     onPermissionGranted = {
                         resetMediaPermission()
-                        onRefreshAlbum()
+                        onUpdateAllAlbum()
                     },
                     onPermissionDenied = {
                         resetMediaPermission()
                         requestMediaPermissionDialog()
-                    }
+                    },
+                    onPermissionPartial = { onUpdateUserSelectedAlbum() }
                 )
             }
 
@@ -366,7 +388,8 @@ private fun PreviewCustomGalleryScreen() {
         GalleryListScreen(
             state = GalleryListUiState.Partial(),
             onBackClicked = {},
-            onRefreshAlbum = {},
+            onUpdateAllAlbum = {},
+            onUpdateUserSelectedAlbum = {},
             onClickPermissionSettings = {},
             requestMediaPermission = {},
             resetMediaPermission = {},

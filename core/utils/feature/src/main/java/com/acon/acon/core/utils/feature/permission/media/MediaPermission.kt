@@ -32,13 +32,15 @@ import kotlinx.coroutines.launch
  * This app is not using Video Permission → (READ_MEDIA_VIDEO)
  *
  * onPermissionGranted → 미디어 접근권한이 Granted이면 실행되는 동작
- * onPermissionDenied →  미디어 접근권한이 Denied이면 실행되는 동작
+ * onPermissionDenied  → 미디어 접근권한이 Denied이면  실행되는 동작
+ * onPermissionPartial → 미디어 접근권한이 Partial이면 실행되는 동작 (제한적 접근 권한)
  * ignorePartialPermission → 미디어 접근 권한이 Granted, Partial 상태에서의 동작이 서로 다르게 동작해야 할 때 사용되는 플래그 (갤러리 내부에서 사용)
  */
 @Composable
 fun CheckAndRequestMediaPermission(
     onPermissionGranted: () -> Unit,
     onPermissionDenied: () -> Unit,
+    onPermissionPartial: () -> Unit = {},
     ignorePartialPermission: Boolean = true
 ) {
     val context = LocalContext.current
@@ -53,20 +55,22 @@ fun CheckAndRequestMediaPermission(
     ) {
         val eventObserver = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME) {
-                value = getStorageAccess(context)
-
-                if (value == StorageAccess.Partial) {
+                value = getStorageAccess(context) // 권한 상태 최신으로 업데이트
+                if ((value == StorageAccess.Partial) || (value == StorageAccess.Denied))
                     coroutineScope.launch {
-                        files = getVisualMedia(context.contentResolver)
+                        files =
+                            getVisualMedia(context.contentResolver) // 제한적 접근 권한에서, 유저가 직접 허용한 미디어 파일(이미지) 리스트를 쿼리
+                        if (files.isNotEmpty()) {
+                            onPermissionPartial() // 유저가 이미지를 선택했다면, 앨범 새로고침 콜백 호출 (허용한 이미지로만 갱신)
+                        }
                     }
-                }
             }
         }
         lifecycleOwner.lifecycle.addObserver(eventObserver)
         awaitDispose { lifecycleOwner.lifecycle.removeObserver(eventObserver) }
     }
 
-    val requestPermissions = rememberLauncherForActivityResult(
+    val requestPermissionLauncher = rememberLauncherForActivityResult(
         contract = RequestMultiplePermissions()
     ) { results: Map<String, Boolean> ->
         when {
@@ -139,7 +143,7 @@ fun CheckAndRequestMediaPermission(
                     else ->
                         arrayOf(READ_EXTERNAL_STORAGE)
                 }
-                requestPermissions.launch(permission)
+                requestPermissionLauncher.launch(permission)
             }
 
             StorageAccess.Partial -> {
@@ -149,7 +153,7 @@ fun CheckAndRequestMediaPermission(
                     /* 권한이 제한된 액세스 허용인 경우, "더 많은 사진과 동영상에 액세스하도록 허용하시겠습니까?"
                        추가 권한 다이얼로그(시스템 UI) 를 한번 더 띄우는 코드 */
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-                        requestPermissions.launch(
+                        requestPermissionLauncher.launch(
                             arrayOf(
                                 READ_MEDIA_IMAGES,
                                 READ_MEDIA_VISUAL_USER_SELECTED

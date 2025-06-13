@@ -21,15 +21,39 @@ class GalleryListViewModel @Inject constructor(
 ) : BaseContainerHost<GalleryListUiState, GalleryListSideEffect>() {
 
     override val container =
-        container<GalleryListUiState, GalleryListSideEffect>(GalleryListUiState.Granted()) {
+        container<GalleryListUiState, GalleryListSideEffect>(GalleryListUiState.Loading) {
             updateStorageAccess()
         }
 
     fun updateStorageAccess() = intent {
         when (getStorageAccess(context)) {
-            StorageAccess.GRANTED -> { loadAlbums() }
-            StorageAccess.Partial -> reduce { GalleryListUiState.Partial() }
+            StorageAccess.GRANTED -> {
+                updateAllAlbums()
+            }
+
+            StorageAccess.Partial -> {
+                reduce { GalleryListUiState.Partial(albumList = getAlbumList(context.contentResolver)) }
+            }
+
             StorageAccess.Denied -> reduce { GalleryListUiState.Denied() }
+        }
+    }
+
+    fun updateAllAlbums() = intent {
+        val albums = getAlbumList(context.contentResolver)
+        reduce { GalleryListUiState.Granted(albumList = albums) }
+    }
+
+    fun updateUserSelectedAlbums() = intent {
+        val albums = getAlbumList(context.contentResolver)
+        reduce {
+            when (state) {
+                is GalleryListUiState.Partial -> (state as GalleryListUiState.Partial).copy(
+                    albumList = albums
+                )
+
+                else -> GalleryListUiState.Partial(albumList = albums)
+            }
         }
     }
 
@@ -81,18 +105,6 @@ class GalleryListViewModel @Inject constructor(
         return albumMap.values.map { album ->
             album.copy(imageCount = bucketCountMap[album.id] ?: 0)
         }.toMutableList()
-    }
-
-    private fun loadAlbums() = intent {
-        runOn<GalleryListUiState.Granted> {
-            val albums = getAlbumList(context.contentResolver)
-            reduce { state.copy(albumList = albums) }
-        }
-    }
-
-    fun updateAlbums() = intent {
-        val albums = getAlbumList(context.contentResolver)
-        reduce { GalleryListUiState.Granted(albumList = albums) }
     }
 
     fun requestMediaPermissionModal() = intent {
@@ -184,12 +196,16 @@ class GalleryListViewModel @Inject constructor(
 }
 
 sealed class GalleryListUiState {
+    data object Loading : GalleryListUiState()
+
     @Immutable
     data class Granted(
         val albumList: List<Album> = emptyList()
     ) : GalleryListUiState()
 
+    @Immutable
     data class Partial(
+        val albumList: List<Album> = emptyList(),
         val requestMediaPermission: Boolean = false,
         val showMediaPermissionModal: Boolean = false,
         val showMediaPermissionDialog: Boolean = false
