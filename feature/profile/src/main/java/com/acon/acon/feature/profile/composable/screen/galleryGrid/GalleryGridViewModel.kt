@@ -171,11 +171,11 @@ class GalleryGridViewModel @Inject constructor(
         reduce {
             when (state) {
                 is GalleryGridUiState.Granted -> {
-                    GalleryGridUiState.Granted(selectedPhotoUri = photoUri)
+                    (state as GalleryGridUiState.Granted).copy(selectedPhotoUri = photoUri)
                 }
 
                 is GalleryGridUiState.Partial -> {
-                    GalleryGridUiState.Partial(selectedPhotoUri = photoUri)
+                    (state as GalleryGridUiState.Partial).copy(selectedPhotoUri = photoUri)
                 }
 
                 else -> state
