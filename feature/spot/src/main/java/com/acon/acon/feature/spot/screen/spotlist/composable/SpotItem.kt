@@ -116,20 +116,22 @@ private fun SpotInfo(
                 modifier = Modifier.padding()
             )
             Spacer(modifier = Modifier.weight(1f))
-            Icon(
-                imageVector = ImageVector.vectorResource(R.drawable.acon_line),
-                contentDescription = stringResource(R.string.acorn_count_content_description),
-                tint = AconTheme.color.Gray50
-            )
-            Text(
-                text = (if (spot.acorn >= 9999) "+" else "") + spot.acorn.coerceAtMost(9999),
-                style = AconTheme.typography.Body1,
-                fontWeight = FontWeight.W400,
-                color = AconTheme.color.White,
-                maxLines = 1,
-                modifier = Modifier.padding(start = 2.dp),
-                textAlign = TextAlign.End
-            )
+            if (spot.acorn > 0) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(R.drawable.acon_line),
+                    contentDescription = stringResource(R.string.acorn_count_content_description),
+                    tint = AconTheme.color.Gray50
+                )
+                Text(
+                    text = (if (spot.acorn >= 9999) "+" else "") + spot.acorn.coerceAtMost(9999),
+                    style = AconTheme.typography.Body1,
+                    fontWeight = FontWeight.W400,
+                    color = AconTheme.color.White,
+                    maxLines = 1,
+                    modifier = Modifier.padding(start = 2.dp),
+                    textAlign = TextAlign.End
+                )
+            }
         }
         FlowRow(
             modifier = Modifier.padding(top = 8.dp),

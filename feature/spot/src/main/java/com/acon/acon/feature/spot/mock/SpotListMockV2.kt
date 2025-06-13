@@ -120,6 +120,50 @@ internal val spotListUiStateRestaurantMock = SpotListUiStateV2.Success(
             longitude = 126.976986,
             tags = emptyList()
         ),
+        Spot(
+            id = 9L,
+            name = "애슐리퀸즈",
+            image = "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNTAyMTlfNjEg%2FMDAxNzM5OTMxMzA0NDY2.v_0Ddkqr9MSmAs99KC5vnIrRNAPBSrTO_1ue3hILjSIg.RSa92XZdL4SPsCRQcJ6gz9C8-vjBeOyAeT8EJexQPsQg.JPEG%2FKakaoTalk_20250219_085453546_20.jpg",
+            acorn = 9999,
+            eta = 9,
+            closingTime = "23:00",
+            latitude = 37.572793,
+            longitude = 126.976986,
+            tags = emptyList()
+        ),
+        Spot(
+            id = 10L,
+            name = "애슐리퀸즈",
+            image = "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNTAyMTlfNjEg%2FMDAxNzM5OTMxMzA0NDY2.v_0Ddkqr9MSmAs99KC5vnIrRNAPBSrTO_1ue3hILjSIg.RSa92XZdL4SPsCRQcJ6gz9C8-vjBeOyAeT8EJexQPsQg.JPEG%2FKakaoTalk_20250219_085453546_20.jpg",
+            acorn = 9999,
+            eta = 9,
+            closingTime = "23:00",
+            latitude = 37.572793,
+            longitude = 126.976986,
+            tags = emptyList()
+        ),
+        Spot(
+            id = 11L,
+            name = "애슐리퀸즈",
+            image = "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNTAyMTlfNjEg%2FMDAxNzM5OTMxMzA0NDY2.v_0Ddkqr9MSmAs99KC5vnIrRNAPBSrTO_1ue3hILjSIg.RSa92XZdL4SPsCRQcJ6gz9C8-vjBeOyAeT8EJexQPsQg.JPEG%2FKakaoTalk_20250219_085453546_20.jpg",
+            acorn = 9999,
+            eta = 9,
+            closingTime = "23:00",
+            latitude = 37.572793,
+            longitude = 126.976986,
+            tags = emptyList()
+        ),
+        Spot(
+            id = 12L,
+            name = "애슐리퀸즈",
+            image = "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNTAyMTlfNjEg%2FMDAxNzM5OTMxMzA0NDY2.v_0Ddkqr9MSmAs99KC5vnIrRNAPBSrTO_1ue3hILjSIg.RSa92XZdL4SPsCRQcJ6gz9C8-vjBeOyAeT8EJexQPsQg.JPEG%2FKakaoTalk_20250219_085453546_20.jpg",
+            acorn = 9999,
+            eta = 9,
+            closingTime = "23:00",
+            latitude = 37.572793,
+            longitude = 126.976986,
+            tags = emptyList()
+        ),
     ), headTitle = "최고의 선택.",
     selectedSpotType = SpotType.RESTAURANT,
     currentLocation = Location(""),

@@ -30,6 +30,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
@@ -41,7 +42,9 @@ import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.domain.model.spot.v2.Spot
 import com.acon.acon.domain.type.TransportMode
 import com.acon.acon.domain.type.UserType
+import com.acon.acon.core.designsystem.R
 import com.acon.acon.feature.spot.screen.spotlist.SpotListUiStateV2
+import com.acon.core.ads_api.LocalSpotListAdProvider
 import com.acon.feature.common.compose.LocalRequestSignIn
 import com.acon.feature.common.compose.toDp
 import dev.chrisbanes.haze.hazeSource
@@ -60,6 +63,20 @@ internal fun SpotListSuccessView(
     itemHeightPx: Float,
     modifier: Modifier = Modifier,
 ) {
+
+    val adInsertedSpot: MutableList<Spot?> = state.spotList.toMutableList()
+    when {
+        adInsertedSpot.size >= 11 -> {
+            adInsertedSpot.add(5, null)
+            adInsertedSpot.add(10, null)
+        }
+        adInsertedSpot.size >= 6 -> {
+            adInsertedSpot.add(5, null)
+        }
+        else -> {
+            adInsertedSpot.add(null)
+        }
+    }
 
     val context = LocalContext.current
     val onSignInRequired = LocalRequestSignIn.current
@@ -95,7 +112,7 @@ internal fun SpotListSuccessView(
             beyondViewportPageCount = 1,
             pageSize = PageSize.Fixed((itemHeightPx).toDp())
         ) { page ->
-            val spot = state.spotList[page]
+            val spot = adInsertedSpot[page]
             var spotFogColor by remember {
                 mutableStateOf(Color.Transparent)
             }
@@ -120,7 +137,7 @@ internal fun SpotListSuccessView(
             ) {
                 if (page == 0) {
                     Text(
-                        text = "최고의 선택.",
+                        text = stringResource(R.string.best_choice),
                         style = AconTheme.typography.Title2,
                         fontWeight = FontWeight.SemiBold,
                         color = AconTheme.color.White,
@@ -133,8 +150,40 @@ internal fun SpotListSuccessView(
                             .zIndex(2f)
                     )
                 }
-                if (page >= MAX_GUEST_AVAILABLE_COUNT && userType == UserType.GUEST) {
-                    SpotGuestItem(
+                if (spot != null) {
+                    if (page >= MAX_GUEST_AVAILABLE_COUNT && userType == UserType.GUEST) {
+                        SpotGuestItem(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .clip(RoundedCornerShape(20.dp))
+                                .background(
+                                    shape = RoundedCornerShape(20.dp),
+                                    color = AconTheme.color.GlassBlackDefault
+                                )
+                                .clickable {
+                                    onSignInRequired()
+                                }
+                                .fogBackground(
+                                    glowColor = AconTheme.color.White,
+                                )
+                        )
+                    } else {
+                        SpotItem(
+                            transportMode = state.transportMode,
+                            spot = spot,
+                            onItemClick = onSpotClick,
+                            onFindWayButtonClick = onTryFindWay,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .fogBackground(
+                                    glowColor = spotFogColor,
+                                    glowAlpha = 1f,
+                                )
+                                .zIndex(1f)
+                        )
+                    }
+                } else {
+                    LocalSpotListAdProvider.current.NativeAd(
                         modifier = Modifier
                             .fillMaxSize()
                             .clip(RoundedCornerShape(20.dp))
@@ -142,32 +191,14 @@ internal fun SpotListSuccessView(
                                 shape = RoundedCornerShape(20.dp),
                                 color = AconTheme.color.GlassBlackDefault
                             )
-                            .clickable {
-                                onSignInRequired()
-                            }
-                            .fogBackground(
-                                glowColor = AconTheme.color.White,
-                            )
-                    )
-                } else {
-                    SpotItem(
-                        transportMode = state.transportMode,
-                        spot = spot,
-                        onItemClick = onSpotClick,
-                        onFindWayButtonClick = onTryFindWay,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .fogBackground(
-                                glowColor = spotFogColor,
-                                glowAlpha = 1f,
-                            )
-                            .zIndex(1f)
                     )
                 }
             }
 
             LaunchedEffect(Unit) {
-                spotFogColor = if (spot.image.isBlank()) Color(0xFFE17651) else spot.image.getOverlayColor(context)
+                if (spot != null) {
+                    spotFogColor = if (spot.image.isBlank()) Color(0xFFE17651) else spot.image.getOverlayColor(context)
+                }
             }
         }
     }
