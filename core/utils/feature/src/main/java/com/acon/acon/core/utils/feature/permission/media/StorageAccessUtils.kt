@@ -25,21 +25,39 @@ import kotlinx.coroutines.withContext
  *                      -> Full access sets [READ_MEDIA_IMAGES] and/or [READ_MEDIA_VIDEO] to granted
  */
 fun getStorageAccess(context: Context): StorageAccess {
-    return if (
-        checkSelfPermission(context, READ_MEDIA_IMAGES) == PERMISSION_GRANTED
-    ) {
-        StorageAccess.GRANTED
-    } else if (
-        Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
-        checkSelfPermission(context, READ_MEDIA_VISUAL_USER_SELECTED) == PERMISSION_GRANTED
-    ) {
-        StorageAccess.Partial
-    } else if (checkSelfPermission(context, READ_EXTERNAL_STORAGE) == PERMISSION_GRANTED) {
-        StorageAccess.GRANTED
-    } else {
-        StorageAccess.Denied
+    return when {
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE -> {
+            val readImage = checkSelfPermission(context, READ_MEDIA_IMAGES) == PERMISSION_GRANTED
+            val readImageUserSelect =
+                checkSelfPermission(context, READ_MEDIA_VISUAL_USER_SELECTED) == PERMISSION_GRANTED
+
+            when {
+                readImage -> StorageAccess.GRANTED
+                readImageUserSelect -> StorageAccess.Partial
+                else -> StorageAccess.Denied
+            }
+        }
+
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> {
+            if (checkSelfPermission(
+                    context,
+                    READ_MEDIA_IMAGES
+                ) == PERMISSION_GRANTED
+            ) StorageAccess.GRANTED
+            else StorageAccess.Denied
+        }
+
+        else -> {
+            if (checkSelfPermission(
+                    context,
+                    READ_EXTERNAL_STORAGE
+                ) == PERMISSION_GRANTED
+            ) StorageAccess.GRANTED
+            else StorageAccess.Denied
+        }
     }
 }
+
 
 /**
  * Query [MediaStore] through [ContentResolver] to get all images & videos sorted by most added date
@@ -56,7 +74,6 @@ suspend fun getVisualMedia(contentResolver: ContentResolver): List<MediaEntry> {
         )
 
         val collectionUri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            // This allows us to query all the device storage volumes instead of the primary only
             Files.getContentUri(MediaStore.VOLUME_EXTERNAL)
         } else {
             Files.getContentUri("external")
@@ -65,17 +82,12 @@ suspend fun getVisualMedia(contentResolver: ContentResolver): List<MediaEntry> {
         val visualMedia = mutableListOf<MediaEntry>()
 
         contentResolver.query(
-            // Queried collection
             collectionUri,
-            // List of columns we want to fetch
             projection,
-            // Filtering parameters (in this case [MEDIA_TYPE] column)
             "${FileColumns.MEDIA_TYPE} = ? OR ${FileColumns.MEDIA_TYPE} = ?",
-            // Filtering values (in this case image or video files)
             arrayOf(
                 FileColumns.MEDIA_TYPE_IMAGE.toString(),
             ),
-            // Sorting order (recent -> older files)
             "${FileColumns.DATE_ADDED} DESC"
         )?.use { cursor ->
             val idColumn = cursor.getColumnIndexOrThrow(FileColumns._ID)
