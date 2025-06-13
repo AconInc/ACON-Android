@@ -7,10 +7,6 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlin.reflect.typeOf
 
-val simpleSpotNavType by lazy {
-    typeOf<SimpleSpot>() to createNavType<SimpleSpot>()
-}
-
 inline fun <reified T : Any> createNavType(
     isNullableAllowed: Boolean = false,
     json: Json = Json,

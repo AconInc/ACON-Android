@@ -8,6 +8,7 @@ import com.acon.acon.domain.model.spot.SpotDetailInfo
 import com.acon.acon.domain.repository.SpotRepository
 import com.acon.acon.feature.spot.SpotRoute
 import com.acon.feature.common.base.BaseContainerHost
+import com.acon.feature.common.navigation.spotNavigationParameterNavType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import org.orbitmvi.orbit.annotation.OrbitExperimental
@@ -22,7 +23,9 @@ class SpotDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : BaseContainerHost<SpotDetailUiState, SpotDetailSideEffect>() {
 
-    private val spotId = savedStateHandle.toRoute<SpotRoute.SpotDetail>().id
+    private val spotId = savedStateHandle.toRoute<SpotRoute.SpotDetail>(
+        mapOf(spotNavigationParameterNavType)
+    ).spotNavigationParameter.spotId
 
     override val container =
         container<SpotDetailUiState, SpotDetailSideEffect>(SpotDetailUiState.Loading) {
