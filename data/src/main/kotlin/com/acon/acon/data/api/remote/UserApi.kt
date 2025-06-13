@@ -6,7 +6,6 @@ import com.acon.acon.data.dto.request.ReplaceVerifiedAreaRequest
 import com.acon.acon.data.dto.request.SignInRequest
 import com.acon.acon.data.dto.request.SignOutRequest
 import com.acon.acon.data.dto.response.SignInResponse
-import com.acon.acon.data.dto.response.area.AreaVerificationResponse
 import com.acon.acon.data.dto.response.area.VerifiedAreaListResponse
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -34,7 +33,7 @@ interface UserApi {
     @POST("/api/v1/verified-areas")
     suspend fun verifyArea(
         @Body request: AreaVerificationRequest
-    ): AreaVerificationResponse
+    )
 
     @GET("/api/v1/verified-areas")
     suspend fun fetchVerifiedAreaList() : VerifiedAreaListResponse

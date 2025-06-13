@@ -15,7 +15,7 @@ interface UserRepository {
     suspend fun verifyArea(
         latitude: Double,
         longitude: Double
-    ): Result<Area>
+    ): Result<Unit>
 
     suspend fun fetchVerifiedAreaList(): Result<List<Area>>
 

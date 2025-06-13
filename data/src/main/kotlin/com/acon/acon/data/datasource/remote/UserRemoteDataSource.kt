@@ -1,13 +1,12 @@
 package com.acon.acon.data.datasource.remote
 
+import com.acon.acon.data.api.remote.UserApi
+import com.acon.acon.data.dto.request.AreaVerificationRequest
 import com.acon.acon.data.dto.request.DeleteAccountRequest
+import com.acon.acon.data.dto.request.ReplaceVerifiedAreaRequest
 import com.acon.acon.data.dto.request.SignInRequest
 import com.acon.acon.data.dto.request.SignOutRequest
 import com.acon.acon.data.dto.response.SignInResponse
-import com.acon.acon.data.api.remote.UserApi
-import com.acon.acon.data.dto.request.AreaVerificationRequest
-import com.acon.acon.data.dto.request.ReplaceVerifiedAreaRequest
-import com.acon.acon.data.dto.response.area.AreaVerificationResponse
 import com.acon.acon.data.dto.response.area.VerifiedAreaListResponse
 import javax.inject.Inject
 
@@ -29,7 +28,7 @@ class UserRemoteDataSource @Inject constructor(
     suspend fun verifyArea(
         latitude: Double,
         longitude: Double
-    ): AreaVerificationResponse {
+    ) {
         return userApi.verifyArea(
             request = AreaVerificationRequest(
                 latitude = latitude,
