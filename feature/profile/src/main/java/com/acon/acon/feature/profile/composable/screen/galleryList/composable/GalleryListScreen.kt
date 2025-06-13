@@ -203,14 +203,14 @@ internal fun GalleryListScreen(
                         .padding(16.dp)
                 ) {
                     Text(
-                        text = "지금 모든 사진 접근 권한을 허용하면 더 쉽고 편하게 사진을 올릴 수 있어요", //stringResource(R.string.), // TODO - 문구 정해지면 수정
+                        text = stringResource(R.string.change_photo_permission_call_to_action), // TODO - 문구 정해지면 수정
                         color = AconTheme.color.White,
                         style = AconTheme.typography.Body1
                     )
 
                     Spacer(Modifier.height(8.dp))
                     Text(
-                        text = "사진 권한 변경", //stringResource(R.string.), // TODO - 문구 정해지면 수정
+                        text = stringResource(R.string.change_photo_permission), // TODO - 문구 정해지면 수정
                         color = AconTheme.color.Action,
                         style = AconTheme.typography.Body1,
                         modifier = Modifier.noRippleClickable {
@@ -222,13 +222,14 @@ internal fun GalleryListScreen(
 
                 if (state.albumList.isEmpty()) {
                     Box(
-                        modifier = Modifier.weight(1f),
+                        modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "이미지가 없습니다.", //stringResource(R.string.), // TODO - 문구 정해지면 수정
+                            text = stringResource(R.string.no_photo), // TODO - 문구 정해지면 수정
                             color = AconTheme.color.White,
-                            style = AconTheme.typography.Body1
+                            style = AconTheme.typography.Body1,
+                            modifier = Modifier.align(Alignment.Center)
                         )
                     }
                 } else {
@@ -325,7 +326,7 @@ internal fun GalleryListScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "이미지가 없습니다.", //stringResource(R.string.), // TODO - 문구 정해지면 수정
+                        text = stringResource(R.string.no_photo), // TODO - 문구 정해지면 수정
                         color = AconTheme.color.White,
                         style = AconTheme.typography.Body1
                     )
