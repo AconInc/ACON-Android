@@ -38,7 +38,7 @@ interface UserApi {
     @GET("/api/v1/verified-areas")
     suspend fun fetchVerifiedAreaList() : VerifiedAreaListResponse
 
-    @POST("/api/v1/verified-areas/replacements")
+    @POST("/api/v1/verified-areas/replacement")
     suspend fun replaceVerifiedArea(
         @Body request: ReplaceVerifiedAreaRequest
     )
