@@ -30,38 +30,38 @@ import com.acon.acon.core.designsystem.theme.AconTheme
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SignInBottomSheet(
-    onDismissRequest: () -> Unit = {},
-    onGoogleSignIn: () -> Unit = {},
+    onDismissRequest: () -> Unit,
+    onGoogleSignIn: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
     AconBottomSheet(
-        modifier = Modifier,
+        modifier = modifier,
         onDismissRequest = onDismissRequest
     ) {
         Column(
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 20.dp)
-                .padding(top = 24.dp, bottom = 64.dp),
+                .padding(bottom = 54.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
                 text = stringResource(R.string.sign_in_bottom_sheet_title),
                 style = AconTheme.typography.Headline4,
-                color = AconTheme.color.White
+                color = AconTheme.color.White,
+                modifier = Modifier.padding(top = 24.dp)
             )
 
-            Spacer(Modifier.height(8.dp))
             Text(
                 text = stringResource(R.string.sign_in_bottom_sheet_content),
                 style = AconTheme.typography.Body1,
                 color = AconTheme.color.Gray2,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.padding(top = 8.dp)
             )
 
-            Spacer(Modifier.weight(1f))
+            Spacer(Modifier.height(190.dp))
             AconGoogleSignInButton(
                 onClick = onGoogleSignIn
             )

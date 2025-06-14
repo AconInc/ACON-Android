@@ -44,6 +44,9 @@ import com.acon.acon.domain.repository.UserRepository
 import com.acon.acon.feature.areaverification.AreaVerificationRoute
 import com.acon.acon.feature.spot.SpotRoute
 import com.acon.acon.navigation.AconNavigation
+import com.acon.core.ads_api.AdProvider
+import com.acon.core.ads_api.LocalSpotListAdProvider
+import com.acon.feature.ads_impl.SpotListAdProvider
 import com.acon.feature.common.compose.LocalLocation
 import com.acon.feature.common.compose.LocalNavController
 import com.acon.feature.common.compose.LocalRequestLocationPermission
@@ -92,6 +95,7 @@ class MainActivity : ComponentActivity() {
 
     private val viewModel by viewModels<MainViewModel>()
 
+    private val spotListAdProvider: AdProvider = SpotListAdProvider()
     private val gpsResolutionResultLauncher = registerForActivityResult(
         ActivityResultContracts.StartIntentSenderForResult()
     ) { result ->
@@ -280,47 +284,48 @@ class MainActivity : ComponentActivity() {
                     LocalHazeState provides hazeState,
                     LocalUserType provides appState.userType,
                     LocalRequestSignIn provides { viewModel.updateShowSignInBottomSheet(true) },
-                    LocalRequestLocationPermission provides ::requestLocationPermission
+                    LocalRequestLocationPermission provides ::requestLocationPermission,
+                    LocalSpotListAdProvider provides spotListAdProvider
                 ) {
                     AconNavigation(
                         modifier = Modifier
                             .fillMaxSize()
                             .background(AconTheme.color.Gray900),
                     )
-                }
 
-                if (appState.showSignInBottomSheet) {
-                    SignInBottomSheet(
-                        onDismissRequest = { viewModel.updateShowSignInBottomSheet(false) },
-                        onGoogleSignIn = {
-                            scope.launch {
-                                socialRepository.googleSignIn()
-                                    .onSuccess {
-                                        if (it.hasVerifiedArea) {
-                                            navController.navigate(SpotRoute.SpotList) {
-                                                popUpTo(navController.graph.id) {
-                                                    inclusive = true
+                    if (appState.showSignInBottomSheet) {
+                        SignInBottomSheet(
+                            onDismissRequest = { viewModel.updateShowSignInBottomSheet(false) },
+                            onGoogleSignIn = {
+                                scope.launch {
+                                    socialRepository.googleSignIn()
+                                        .onSuccess {
+                                            if (it.hasVerifiedArea) {
+                                                navController.navigate(SpotRoute.SpotList) {
+                                                    popUpTo(navController.graph.id) {
+                                                        inclusive = true
+                                                    }
+                                                }
+                                            } else {
+                                                navController.navigate(
+                                                    AreaVerificationRoute.AreaVerification(
+                                                        verifiedAreaId = null,
+                                                        route = "onboarding"
+                                                    )
+                                                ) {
+                                                    popUpTo(navController.graph.id) {
+                                                        inclusive = true
+                                                    }
                                                 }
                                             }
-                                        } else {
-                                            navController.navigate(
-                                                AreaVerificationRoute.AreaVerification(
-                                                    verifiedAreaId = null,
-                                                    route = "onboarding"
-                                                )
-                                            ) {
-                                                popUpTo(navController.graph.id) {
-                                                    inclusive = true
-                                                }
-                                            }
+                                        }.onFailure {
+
                                         }
-                                    }.onFailure {
-
-                                    }
-                                viewModel.updateShowSignInBottomSheet(false)
-                            }
-                        },
-                    )
+                                    viewModel.updateShowSignInBottomSheet(false)
+                                }
+                            }, modifier = Modifier
+                        )
+                    }
                 }
 
                 if (appState.showPermissionDialog)
