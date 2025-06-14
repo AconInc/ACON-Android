@@ -74,7 +74,6 @@ fun ProfileScreenContainer(
             is ProfileUiSideEffect.OnNavigateToSpotListScreen -> { onNavigateToSpotListScreen() }
             is ProfileUiSideEffect.OnNavigateToSettingsScreen -> { onNavigateToSettingsScreen() }
             is ProfileUiSideEffect.OnNavigateToProfileEditScreen -> { onNavigateToProfileEditScreen() }
-            is ProfileUiSideEffect.OnNavigateToAreaVerificationScreen -> { onNavigateToAreaVerificationScreen() }
             is ProfileUiSideEffect.FailedToLoadProfileInfo -> { context.showToast(R.string.unknown_error) }
         }
     }

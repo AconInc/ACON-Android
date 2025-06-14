@@ -182,7 +182,8 @@ internal fun RestaurantFilterBottomSheet(
                         fontWeight = FontWeight.SemiBold,
                     ),
                     shape = CircleShape,
-                    enabled = completeButtonEnabled && selectedRestaurantTypes.isNotEmpty(),
+                    enabled = completeButtonEnabled &&
+                            (selectedRestaurantTypes.isNotEmpty() || selectedRestaurantOperationTypes.isNotEmpty() || selectedRestaurantPriceTypes.isNotEmpty()),
                     onClick = { onComplete(
                         mapOf(
                             RestaurantFilterType.RestaurantType::class to (selectedRestaurantTypes.toSet() as Set<RestaurantFilterType>),
@@ -291,7 +292,7 @@ internal fun CafeFilterBottomSheet(
                         fontWeight = FontWeight.SemiBold,
                     ),
                     shape = CircleShape,
-                    enabled = completeButtonEnabled && selectedCafeTypes.isNotEmpty(),
+                    enabled = completeButtonEnabled && (selectedCafeTypes.isNotEmpty() || selectedCafeOperationTypes.isNotEmpty()),
                     onClick = {
                         onComplete(
                             mapOf(

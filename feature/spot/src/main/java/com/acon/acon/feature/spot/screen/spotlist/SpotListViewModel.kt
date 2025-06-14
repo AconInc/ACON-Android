@@ -67,7 +67,7 @@ class SpotListViewModel @Inject constructor(
                             transportMode = it.transportMode,
                             spotList = it.spots,
                             headTitle = "최고의 선택.",
-                            selectedSpotType = SpotType.RESTAURANT,
+                            selectedSpotType = state.selectedSpotType,
                             currentLocation = location
                         )
                     }

@@ -228,7 +228,13 @@ fun ProfileScreen(
             }
 
             is ProfileUiState.Guest -> {
-                Column(modifier = Modifier) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                        .verticalScroll(rememberScrollState())
+                        .hazeSource(LocalHazeState.current)
+                ) {
                     AconTopBar(
                         content = {
                             Text(
