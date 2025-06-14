@@ -34,7 +34,7 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-     fun fetchUserProfileInfo() = intent {
+    fun fetchUserProfileInfo() = intent {
         profileRepository.fetchProfile()
             .onSuccess { profile ->
                 reduce {

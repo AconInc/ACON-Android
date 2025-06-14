@@ -206,10 +206,8 @@ fun ProfileScreen(
                     }
                 }
             }
-
             is ProfileUiState.Loading -> {}
             is ProfileUiState.LoadFailed -> {}
-
             is ProfileUiState.Guest -> {
                 Column(modifier = Modifier) {
                     AconTopBar(
