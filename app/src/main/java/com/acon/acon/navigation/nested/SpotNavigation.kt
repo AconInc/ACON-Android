@@ -11,12 +11,14 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.acon.acon.core.designsystem.theme.AconTheme
+import com.acon.acon.domain.model.spot.SpotNavigationParameter
 import com.acon.acon.feature.profile.composable.ProfileRoute
 import com.acon.acon.feature.spot.SpotRoute
 import com.acon.acon.feature.spot.screen.spotdetail.composable.SpotDetailScreenContainer
 import com.acon.acon.feature.spot.screen.spotlist.composable.SpotListScreenContainer
 import com.acon.acon.feature.upload.UploadRoute
 import com.acon.feature.common.intent.openMapNavigation
+import com.acon.feature.common.navigation.spotNavigationParameterNavType
 
 internal fun NavGraphBuilder.spotNavigation(
     navController: NavHostController
@@ -37,8 +39,10 @@ internal fun NavGraphBuilder.spotNavigation(
                 onNavigateToProfileScreen = {
                     navController.navigate(ProfileRoute.Graph)
                 },
-                onNavigateToSpotDetailScreen = {
-                    navController.navigate(SpotRoute.SpotDetail(it.id))
+                onNavigateToSpotDetailScreen = { spot, tm ->
+                    navController.navigate(SpotRoute.SpotDetail(
+                        SpotNavigationParameter(spot.id, spot.tags, tm, spot.eta)
+                    ))
                 },
                 onNavigateToExternalMap = context::openMapNavigation,
                 modifier = Modifier
@@ -47,7 +51,9 @@ internal fun NavGraphBuilder.spotNavigation(
             )
         }
 
-        composable<SpotRoute.SpotDetail> {
+        composable<SpotRoute.SpotDetail>(
+            typeMap = mapOf(spotNavigationParameterNavType)
+        ) {
             SpotDetailScreenContainer(
                 modifier = Modifier.fillMaxSize(),
                 onNavigateToBack = {

@@ -14,8 +14,12 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.mutableStateSetOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -77,6 +81,9 @@ internal fun RestaurantFilterBottomSheet(
     onReset: () -> Unit,
     onDismissRequest: () -> Unit,
 ) {
+    var completeButtonEnabled by remember {
+        mutableStateOf(false)
+    }
     val selectedRestaurantTypes = remember {
         mutableStateSetOf<RestaurantFilterType.RestaurantType>(
             *selectedItems.filterIsInstance<RestaurantFilterType.RestaurantType>().toTypedArray()
@@ -118,6 +125,7 @@ internal fun RestaurantFilterBottomSheet(
                     if (selectedRestaurantTypes.contains(it)) {
                         selectedRestaurantTypes.remove(it)
                     } else {
+                        completeButtonEnabled = true
                         selectedRestaurantTypes.add(it)
                     }
                 },
@@ -172,6 +180,7 @@ internal fun RestaurantFilterBottomSheet(
                         fontWeight = FontWeight.SemiBold,
                     ),
                     shape = CircleShape,
+                    enabled = completeButtonEnabled && selectedRestaurantTypes.isNotEmpty(),
                     onClick = { onComplete(
                         mapOf(
                             RestaurantFilterType.RestaurantType::class to (selectedRestaurantTypes.toSet() as Set<RestaurantFilterType>),
@@ -199,6 +208,9 @@ internal fun CafeFilterBottomSheet(
     onReset: () -> Unit,
     onDismissRequest: () -> Unit,
 ) {
+    var completeButtonEnabled by remember {
+        mutableStateOf(false)
+    }
     val selectedCafeTypes = remember {
         mutableStateSetOf<CafeFilterType.CafeType>(
             *selectedItems.filterIsInstance<CafeFilterType.CafeType>().toTypedArray()
@@ -235,6 +247,7 @@ internal fun CafeFilterBottomSheet(
                     if (selectedCafeTypes.contains(it)) {
                         selectedCafeTypes.remove(it)
                     } else {
+                        completeButtonEnabled = true
                         selectedCafeTypes.add(it)
                     }
                 },
@@ -275,6 +288,7 @@ internal fun CafeFilterBottomSheet(
                         fontWeight = FontWeight.SemiBold,
                     ),
                     shape = CircleShape,
+                    enabled = completeButtonEnabled && selectedCafeTypes.isNotEmpty(),
                     onClick = {
                         onComplete(
                             mapOf(

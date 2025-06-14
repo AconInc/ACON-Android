@@ -115,7 +115,7 @@ class SpotListViewModel @Inject constructor(
 
     fun onSpotClicked(spot: Spot) = intent {
         runOn<SpotListUiStateV2.Success> {
-            postSideEffect(SpotListSideEffectV2.NavigateToSpotDetailScreen(spot))
+            postSideEffect(SpotListSideEffectV2.NavigateToSpotDetailScreen(spot, state.transportMode))
         }
     }
 
@@ -276,7 +276,7 @@ sealed interface SpotListUiStateV2 {
 sealed interface SpotListSideEffectV2 {
     data object ShowToastMessage : SpotListSideEffectV2
     data class NavigateToExternalMap(val start: Location, val destination: Location) : SpotListSideEffectV2
-    data class NavigateToSpotDetailScreen(val spot: Spot) : SpotListSideEffectV2
+    data class NavigateToSpotDetailScreen(val spot: Spot, val transportMode: TransportMode) : SpotListSideEffectV2
 }
 
 internal typealias FilterDetailKey = KClass<out Enum<*>>

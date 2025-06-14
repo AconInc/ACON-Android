@@ -8,6 +8,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.acon.acon.domain.model.spot.v2.Spot
+import com.acon.acon.domain.type.TransportMode
 import com.acon.acon.feature.spot.screen.spotlist.SpotListSideEffectV2
 import com.acon.acon.feature.spot.screen.spotlist.SpotListViewModel
 import com.acon.feature.common.compose.LocalOnRetry
@@ -18,7 +19,7 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 fun SpotListScreenContainer(
     onNavigateToUploadScreen: () -> Unit,
     onNavigateToProfileScreen: () -> Unit,
-    onNavigateToSpotDetailScreen: (Spot) -> Unit,
+    onNavigateToSpotDetailScreen: (Spot, TransportMode) -> Unit,
     onNavigateToExternalMap: (start: Location, destination: Location) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: SpotListViewModel = hiltViewModel()
@@ -51,7 +52,7 @@ fun SpotListScreenContainer(
                 // Handle the side effect here
             }
             is SpotListSideEffectV2.NavigateToSpotDetailScreen -> {
-                onNavigateToSpotDetailScreen(it.spot)
+                onNavigateToSpotDetailScreen(it.spot, it.transportMode)
             }
             is SpotListSideEffectV2.NavigateToExternalMap -> {
                 onNavigateToExternalMap(it.start, it.destination)
