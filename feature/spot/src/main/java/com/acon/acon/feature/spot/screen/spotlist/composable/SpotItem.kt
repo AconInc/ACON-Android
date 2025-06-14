@@ -1,7 +1,5 @@
 package com.acon.acon.feature.spot.screen.spotlist.composable
 
-import android.graphics.Paint
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -24,14 +22,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
-import androidx.compose.ui.graphics.nativeCanvas
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -54,7 +44,7 @@ import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.button.v2.AconFilledButton
 import com.acon.acon.core.designsystem.component.tag.AconTag
 import com.acon.acon.core.designsystem.effect.imageGradientLayer
-import com.acon.acon.core.designsystem.image.LoadImageErrorPainter
+import com.acon.acon.core.designsystem.image.rememberDefaultLoadImageErrorPainter
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.domain.model.spot.v2.Spot
 import com.acon.acon.domain.type.TagType
@@ -271,7 +261,7 @@ private fun SpotImage(
                 .build(),
             contentDescription = spot.name,
             contentScale = ContentScale.Crop,
-            error = LoadImageErrorPainter.Default
+            error = rememberDefaultLoadImageErrorPainter()
         )
     }
 }
