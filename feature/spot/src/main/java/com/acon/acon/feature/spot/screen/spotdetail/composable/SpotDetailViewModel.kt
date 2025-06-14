@@ -4,7 +4,7 @@ import android.location.Location
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
-import com.acon.acon.domain.model.spot.SpotDetailInfo
+import com.acon.acon.domain.model.spot.SpotDetail
 import com.acon.acon.domain.repository.SpotRepository
 import com.acon.acon.feature.spot.SpotRoute
 import com.acon.feature.common.base.BaseContainerHost
@@ -27,18 +27,20 @@ class SpotDetailViewModel @Inject constructor(
     override val container =
         container<SpotDetailUiState, SpotDetailSideEffect>(SpotDetailUiState.Loading) {
             val spotDetailInfoDeferred = viewModelScope.async {
-                spotRepository.getSpotDetailInfo(spotId)
+                spotRepository.fetchSpotDetail(
+                    spotId = spotId,
+                    isMain = null //TODO - 딥링크 구현 후 수정
+                )
             }
 
-            val spotDetailInfoResult = spotDetailInfoDeferred.await()
-            fetchMenuBoardList() //TODO - 장소 상세 api 배포되면 위치 수정
+            val spotDetailResult = spotDetailInfoDeferred.await()
             reduce {
-                if (spotDetailInfoResult.getOrNull() == null) {
+                if (spotDetailResult.getOrNull() == null) {
                     SpotDetailUiState.LoadFailed
                 }
                 else {
                     SpotDetailUiState.Success(
-                        spotDetailInfo = spotDetailInfoResult.getOrNull()!!,
+                        spotDetail = spotDetailResult.getOrNull()!!
                     )
                 }
             }
@@ -46,25 +48,20 @@ class SpotDetailViewModel @Inject constructor(
 
     fun fetchMenuBoardList() = intent {
         runOn<SpotDetailUiState.Success> {
-            // TODO - SpotDetailInfo -> hasMenuboardImage == true/false
-            if(true) {
-                spotRepository.fetchMenuBoards(spotId).onSuccess {
-                    reduce {
-                        state.copy(
-                            menuBoardList = it.menuBoardImageList,
-                            menuBoardListLoad = true
-                        )
-                    }
-                }.onFailure {
-                    // TODO - 메뉴 이미지 로딩 실패 UI
-                    reduce {
-                        state.copy(menuBoardListLoad = false)
-                    }
-                }
-            } else {
+            spotRepository.fetchMenuBoards(spotId).onSuccess {
                 reduce {
                     state.copy(
-                        menuBoardList = emptyList()
+                        menuBoardList = it.menuBoardImageList,
+                        menuBoardListLoad = true,
+                        showMenuBoardDialog = true
+                    )
+                }
+            }.onFailure {
+                // TODO - 메뉴 이미지 로딩 실패 UI
+                reduce {
+                    state.copy(
+                        menuBoardListLoad = false,
+                        showMenuBoardDialog = true
                     )
                 }
             }
@@ -94,20 +91,12 @@ class SpotDetailViewModel @Inject constructor(
         runOn<SpotDetailUiState.Success> {
             postSideEffect(
                 SpotDetailSideEffect.OnFindWayButtonClick(
-                    goalDestinationLat = state.spotDetailInfo.latitude,
-                    goalDestinationLng = state.spotDetailInfo.longitude,
-                    goalDestinationName = state.spotDetailInfo.name,
+                    goalDestinationLat = state.spotDetail.latitude,
+                    goalDestinationLng = state.spotDetail.longitude,
+                    goalDestinationName = state.spotDetail.name,
                     startLocation = location
                 )
             )
-        }
-    }
-
-    fun onRequestMenuBoard() = intent {
-        runOn<SpotDetailUiState.Success> {
-            reduce {
-                state.copy(showMenuBoardDialog = true)
-            }
         }
     }
 
@@ -155,7 +144,7 @@ class SpotDetailViewModel @Inject constructor(
 sealed interface SpotDetailUiState {
     @Immutable
     data class Success(
-        val spotDetailInfo: SpotDetailInfo,
+        val spotDetail: SpotDetail,
         val menuBoardList: List<String> = emptyList(),
         val menuBoardListLoad: Boolean = false,
         val showMenuBoardDialog: Boolean = false,
