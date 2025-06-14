@@ -8,7 +8,11 @@ data class ProfileInfo(
     val nickname: String,
     val birthDate: String?,
     val savedSpots: List<SavedSpot>,
-)
+) {
+    companion object {
+        val Empty = ProfileInfo("", "", null, emptyList())
+    }
+}
 
 @Immutable
 data class PreSignedUrl(

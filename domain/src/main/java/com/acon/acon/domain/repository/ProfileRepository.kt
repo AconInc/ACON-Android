@@ -7,7 +7,7 @@ import com.acon.acon.domain.type.UpdateProfileType
 import kotlinx.coroutines.flow.Flow
 
 interface ProfileRepository {
-    suspend fun fetchProfile(): Result<ProfileInfo>
+    fun fetchProfile(): Flow<Result<ProfileInfo>>
 
     suspend fun getPreSignedUrl(): Result<PreSignedUrl>
 

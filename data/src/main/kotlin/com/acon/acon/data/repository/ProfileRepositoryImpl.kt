@@ -1,6 +1,7 @@
 package com.acon.acon.data.repository
 
 import com.acon.acon.core.common.IODispatcher
+import com.acon.acon.data.cache.ProfileInfoCache
 import com.acon.acon.data.datasource.remote.ProfileRemoteDataSource
 import com.acon.acon.data.dto.request.SaveSpotRequest
 import com.acon.acon.data.error.runCatchingWith
@@ -24,10 +25,11 @@ class ProfileRepositoryImpl @Inject constructor(
     @IODispatcher private val scope: CoroutineScope,
     private val profileRemoteDataSource: ProfileRemoteDataSource
 ) : ProfileRepository {
-    override suspend fun fetchProfile(): Result<ProfileInfo> {
-        return runCatchingWith() {
-            profileRemoteDataSource.fetchProfile().toProfile()
-        }
+
+    private val profileInfoCache = ProfileInfoCache(scope, profileRemoteDataSource)
+
+    override fun fetchProfile(): Flow<Result<ProfileInfo>> {
+        return profileInfoCache.data
     }
 
     override suspend fun getPreSignedUrl(): Result<PreSignedUrl> {
@@ -45,6 +47,12 @@ class ProfileRepositoryImpl @Inject constructor(
     override suspend fun updateProfile(fileName: String, nickname: String, birthday: String?): Result<Unit> {
         return runCatchingWith() {
             profileRemoteDataSource.updateProfile(fileName, nickname, birthday)
+            profileInfoCache.updateData(ProfileInfo(
+                nickname = nickname,
+                birthDate = birthday,
+                image = fileName,
+                savedSpots = profileInfoCache.data.value.getOrNull()?.savedSpots.orEmpty()
+            ))
         }
     }
 

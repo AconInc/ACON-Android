@@ -7,9 +7,11 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.acon.acon.core.designsystem.R
+import com.acon.acon.core.utils.feature.toast.showToast
 import com.acon.acon.domain.type.UpdateProfileType
 import com.acon.acon.feature.profile.composable.screen.profile.ProfileUiSideEffect
 import com.acon.acon.feature.profile.composable.screen.profile.ProfileViewModel
@@ -30,6 +32,7 @@ fun ProfileScreenContainer(
     onNavigateToUploadScreen: () -> Unit = {},
     viewModel: ProfileViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
     val state by viewModel.collectAsState()
 
     val coroutineScope = rememberCoroutineScope()
@@ -46,7 +49,6 @@ fun ProfileScreenContainer(
                             duration = SnackbarDuration.Short,
                         )
                     }
-                    viewModel.fetchUserProfileInfo()
                     viewModel.resetUpdateProfileType()
                 }
                 UpdateProfileType.FAILURE -> {}
@@ -72,6 +74,8 @@ fun ProfileScreenContainer(
             is ProfileUiSideEffect.OnNavigateToSpotListScreen -> { onNavigateToSpotListScreen() }
             is ProfileUiSideEffect.OnNavigateToSettingsScreen -> { onNavigateToSettingsScreen() }
             is ProfileUiSideEffect.OnNavigateToProfileEditScreen -> { onNavigateToProfileEditScreen() }
+            is ProfileUiSideEffect.OnNavigateToAreaVerificationScreen -> { onNavigateToAreaVerificationScreen() }
+            is ProfileUiSideEffect.FailedToLoadProfileInfo -> { context.showToast(R.string.unknown_error) }
         }
     }
 }

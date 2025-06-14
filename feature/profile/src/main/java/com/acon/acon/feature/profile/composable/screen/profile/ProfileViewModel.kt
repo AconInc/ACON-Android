@@ -19,11 +19,19 @@ class ProfileViewModel @Inject constructor(
     val updateProfileState = profileRepository.getProfileType()
 
     override val container =
-        container<ProfileUiState, ProfileUiSideEffect>(ProfileUiState.Loading) {
+        container<ProfileUiState, ProfileUiSideEffect>(ProfileUiState.Success(ProfileInfo.Empty)) {
             userType.collect {
                 when(it) {
                     UserType.GUEST -> reduce { ProfileUiState.Guest }
-                    else -> fetchUserProfileInfo()
+                    else -> {
+                        profileRepository.fetchProfile().collect { profileInfoResult ->
+                            profileInfoResult.onSuccess {
+                                reduce { ProfileUiState.Success(profileInfo = it) }
+                            }.onFailure {
+                                postSideEffect(ProfileUiSideEffect.FailedToLoadProfileInfo)
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -32,14 +40,6 @@ class ProfileViewModel @Inject constructor(
         viewModelScope.launch {
             profileRepository.resetProfileType()
         }
-    }
-
-     fun fetchUserProfileInfo() = intent {
-         profileRepository.fetchProfile()
-             .reduceResult(
-                 onSuccess = { ProfileUiState.Success(profileInfo = it) },
-                 onFailure = { ProfileUiState.LoadFailed }
-             )
     }
 
     fun onSpotDetail(spotId: Long) = intent {
@@ -74,4 +74,7 @@ sealed interface ProfileUiSideEffect {
     data object OnNavigateToSpotListScreen : ProfileUiSideEffect
     data object OnNavigateToSettingsScreen : ProfileUiSideEffect
     data object OnNavigateToProfileEditScreen : ProfileUiSideEffect
+    data object OnNavigateToAreaVerificationScreen : ProfileUiSideEffect
+
+    data object FailedToLoadProfileInfo : ProfileUiSideEffect
 }
