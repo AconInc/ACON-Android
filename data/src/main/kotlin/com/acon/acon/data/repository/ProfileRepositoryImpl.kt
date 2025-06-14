@@ -1,5 +1,6 @@
 package com.acon.acon.data.repository
 
+import android.net.Uri
 import com.acon.acon.core.common.IODispatcher
 import com.acon.acon.data.cache.ProfileInfoCache
 import com.acon.acon.data.datasource.remote.ProfileRemoteDataSource
@@ -44,13 +45,13 @@ class ProfileRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun updateProfile(fileName: String, nickname: String, birthday: String?): Result<Unit> {
+    override suspend fun updateProfile(fileName: String, nickname: String, birthday: String?, uri: String): Result<Unit> {
         return runCatchingWith() {
             profileRemoteDataSource.updateProfile(fileName, nickname, birthday)
             profileInfoCache.updateData(ProfileInfo(
                 nickname = nickname,
                 birthDate = birthday,
-                image = fileName,
+                image = uri,
                 savedSpots = profileInfoCache.data.value.getOrNull()?.savedSpots.orEmpty()
             ))
         }
