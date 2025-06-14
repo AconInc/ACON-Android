@@ -37,6 +37,8 @@ import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.bottombar.AconBottomBar
 import com.acon.acon.core.designsystem.component.bottombar.BottomNavType
 import com.acon.acon.core.designsystem.component.topbar.AconTopBar
+import com.acon.acon.core.designsystem.effect.LocalHazeState
+import com.acon.acon.core.designsystem.effect.defaultHazeEffect
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.domain.type.UserType
@@ -45,6 +47,7 @@ import com.acon.acon.feature.profile.composable.screen.profile.ProfileUiState
 import com.acon.feature.common.compose.LocalRequestSignIn
 import com.acon.feature.common.compose.LocalUserType
 import com.acon.feature.common.compose.getScreenHeight
+import dev.chrisbanes.haze.hazeSource
 
 @SuppressLint("ConfigurationScreenWidthHeight")
 @Composable
@@ -74,6 +77,7 @@ fun ProfileScreen(
                         .fillMaxWidth()
                         .weight(1f)
                         .verticalScroll(rememberScrollState())
+                        .hazeSource(LocalHazeState.current)
                 ) {
                     AconTopBar(
                         content = {
@@ -236,6 +240,7 @@ fun ProfileScreen(
 
                     Column(
                         modifier = Modifier
+                            .weight(1f)
                             .padding(top = 40.dp)
                             .padding(horizontal = 16.dp)
 
@@ -279,7 +284,6 @@ fun ProfileScreen(
                 }
             }
         }
-        Spacer(Modifier.weight(1f))
         AconBottomBar(
             selectedItem = BottomNavType.PROFILE,
             onItemClick = { bottomType ->
@@ -301,6 +305,10 @@ fun ProfileScreen(
             },
             modifier = Modifier
                 .fillMaxWidth()
+                .defaultHazeEffect(
+                    hazeState = LocalHazeState.current,
+                    tintColor = AconTheme.color.GlassGray900
+                )
                 .navigationBarsPadding()
         )
     }
