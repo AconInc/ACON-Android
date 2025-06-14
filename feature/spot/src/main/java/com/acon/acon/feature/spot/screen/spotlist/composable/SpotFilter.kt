@@ -140,6 +140,7 @@ internal fun RestaurantFilterBottomSheet(
                     if (selectedRestaurantOperationTypes.contains(it)) {
                         selectedRestaurantOperationTypes.remove(it)
                     } else {
+                        completeButtonEnabled = true
                         selectedRestaurantOperationTypes.add(it)
                     }
                 },
@@ -154,6 +155,7 @@ internal fun RestaurantFilterBottomSheet(
                     if (selectedRestaurantPriceTypes.contains(it)) {
                         selectedRestaurantPriceTypes.remove(it)
                     } else {
+                        completeButtonEnabled = true
                         selectedRestaurantPriceTypes.add(it)
                     }
                 },
@@ -262,6 +264,7 @@ internal fun CafeFilterBottomSheet(
                     if (selectedCafeOperationTypes.contains(it)) {
                         selectedCafeOperationTypes.remove(it)
                     } else {
+                        completeButtonEnabled = true
                         selectedCafeOperationTypes.add(it)
                     }
                 },
