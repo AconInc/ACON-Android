@@ -14,7 +14,7 @@ import com.acon.acon.domain.error.spot.GetSpotDetailInfoError
 import com.acon.acon.domain.model.area.LegalArea
 import com.acon.acon.domain.model.spot.Condition
 import com.acon.acon.domain.model.spot.MenuBoardList
-import com.acon.acon.domain.model.spot.SpotDetailInfo
+import com.acon.acon.domain.model.spot.SpotDetail
 import com.acon.acon.domain.model.spot.v2.SpotList
 import com.acon.acon.domain.repository.SpotRepository
 import javax.inject.Inject
@@ -57,11 +57,12 @@ class SpotRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getSpotDetailInfo(
+    override suspend fun fetchSpotDetail(
         spotId: Long,
-    ): Result<SpotDetailInfo> {
+        isMain: Boolean?
+    ): Result<SpotDetail> {
         return runCatchingWith(*GetSpotDetailInfoError.createErrorInstances()) {
-            spotRemoteDataSource.getSpotDetailInfo(spotId).toSpotDetailInfo()
+            spotRemoteDataSource.fetchSpotDetail(spotId, isMain).toSpotDetail()
         }
     }
 
