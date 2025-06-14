@@ -15,6 +15,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.toRoute
 import com.acon.acon.core.designsystem.theme.AconTheme
+import com.acon.acon.domain.model.spot.NavFromBookmark
 import com.acon.acon.domain.model.spot.SpotNavigationParameter
 import com.acon.acon.feature.SettingsRoute
 import com.acon.acon.feature.profile.composable.ProfileRoute
@@ -100,7 +101,8 @@ internal fun NavGraphBuilder.profileNavigation(
                 },
                 onNavigateToSpotDetailScreen = {
                     navController.navigate(SpotRoute.SpotDetail(
-                        SpotNavigationParameter(it, emptyList(), null, null)
+                        SpotNavigationParameter(it, emptyList(), null, null),
+                        NavFromBookmark(true)
                     ))
                 },
             )

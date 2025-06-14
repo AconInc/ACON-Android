@@ -18,6 +18,7 @@ import com.acon.acon.feature.spot.screen.spotdetail.composable.SpotDetailScreenC
 import com.acon.acon.feature.spot.screen.spotlist.composable.SpotListScreenContainer
 import com.acon.acon.feature.upload.UploadRoute
 import com.acon.feature.common.intent.openMapNavigation
+import com.acon.feature.common.navigation.fromBookmarkNavType
 import com.acon.feature.common.navigation.spotNavigationParameterNavType
 
 internal fun NavGraphBuilder.spotNavigation(
@@ -52,7 +53,10 @@ internal fun NavGraphBuilder.spotNavigation(
         }
 
         composable<SpotRoute.SpotDetail>(
-            typeMap = mapOf(spotNavigationParameterNavType)
+            typeMap = mapOf(
+                spotNavigationParameterNavType,
+                fromBookmarkNavType
+            )
         ) {
             SpotDetailScreenContainer(
                 modifier = Modifier.fillMaxSize(),
