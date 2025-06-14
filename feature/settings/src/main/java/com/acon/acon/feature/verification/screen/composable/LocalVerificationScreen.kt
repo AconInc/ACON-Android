@@ -35,8 +35,7 @@ import com.acon.acon.feature.verification.screen.LocalVerificationUiState
 fun LocalVerificationScreen(
     state: LocalVerificationUiState,
     onNavigateBack: () -> Unit,
-    onclickAddArea: () -> Unit,
-    onclickEditArea: (String) -> Unit,
+    onclickAreaVerification: (Long) -> Unit,
     onDeleteVerifiedAreaChip: (Long) -> Unit,
     onShowEditAreaDialog: () -> Unit,
     onDismissEditAreaDialog: () -> Unit,
@@ -71,7 +70,7 @@ fun LocalVerificationScreen(
                     onAction2 = {
                         onDismissEditAreaDialog()
                         if (state.verificationAreaList.size == 1) {
-                            onclickEditArea(state.verificationAreaList[0].name)
+                            onclickAreaVerification(state.verificationAreaList[0].verifiedAreaId)
                         }
                     },
                     onDismissRequest = {},
@@ -155,7 +154,9 @@ fun LocalVerificationScreen(
                                 onDeleteVerifiedAreaChip(verifiedAreaId)
                             }
                         },
-                        onClickAddArea = onclickAddArea,
+                        onClickAddArea = {
+                            onclickAreaVerification(-1)
+                        },
                         modifier = Modifier.fillMaxWidth()
                     )
                 }
@@ -176,8 +177,7 @@ fun LocalVerificationScreenPreview() {
                 verificationAreaList = emptyList()
             ),
             onNavigateBack = {},
-            onclickAddArea = {},
-            onclickEditArea = {},
+            onclickAreaVerification = {},
             onDeleteVerifiedAreaChip = {},
             onShowEditAreaDialog = {},
             onDismissEditAreaDialog = {},

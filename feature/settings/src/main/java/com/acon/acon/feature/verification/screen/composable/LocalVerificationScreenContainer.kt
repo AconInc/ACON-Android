@@ -16,8 +16,7 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 fun LocalVerificationScreenContainer(
     modifier: Modifier = Modifier,
     navigateToSettingsScreen: () -> Unit = {},
-    navigateToAreaVerificationToAdd: () -> Unit = {},
-    navigateToAreaVerificationToEdit: (String) -> Unit = {},
+    navigateToAreaVerification: (Long) -> Unit = {},
     viewModel: LocalVerificationViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
@@ -27,8 +26,7 @@ fun LocalVerificationScreenContainer(
         state = state,
         modifier = modifier,
         onNavigateBack = viewModel::onNavigateToSettingsScreen,
-        onclickAddArea = viewModel::onNavigateToAreaVerificationAdd,
-        onclickEditArea = viewModel::onNavigateToAreaVerificationEdit,
+        onclickAreaVerification = viewModel::onNavigateToAreaVerification,
         onDeleteVerifiedAreaChip = viewModel::deleteVerifiedArea,
         onShowEditAreaDialog = viewModel::showEditAreaDialog,
         onDismissEditAreaDialog = viewModel::dismissEditAreaDialog,
@@ -42,9 +40,8 @@ fun LocalVerificationScreenContainer(
             }
 
             is LocalVerificationSideEffect.NavigateToSettingsScreen -> navigateToSettingsScreen()
-            is LocalVerificationSideEffect.NavigateToAreaVerificationToAdd -> navigateToAreaVerificationToAdd()
-            is LocalVerificationSideEffect.NavigateToAreaVerificationToEdit -> navigateToAreaVerificationToEdit(
-                it.area
+            is LocalVerificationSideEffect.NavigateToAreaVerification-> navigateToAreaVerification(
+                it.verifiedAreaId
             )
         }
     }

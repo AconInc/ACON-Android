@@ -11,7 +11,7 @@ data class VerifiedAreaListResponse(
 
 @Serializable
 data class VerifiedAreaResponse(
-    @SerialName("id") val id: Long,
+    @SerialName("verifiedAreaId") val id: Long,
     @SerialName("name") val name: String,
 ) {
     fun toVerifiedArea() = Area(

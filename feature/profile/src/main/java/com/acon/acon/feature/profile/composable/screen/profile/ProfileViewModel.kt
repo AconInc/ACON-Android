@@ -89,5 +89,4 @@ sealed interface ProfileUiSideEffect {
     data object OnNavigateToSpotListScreen : ProfileUiSideEffect
     data object OnNavigateToSettingsScreen : ProfileUiSideEffect
     data object OnNavigateToProfileEditScreen : ProfileUiSideEffect
-    data object OnNavigateToAreaVerificationScreen : ProfileUiSideEffect
 }

@@ -308,7 +308,10 @@ class MainActivity : ComponentActivity() {
                                                 }
                                             } else {
                                                 navController.navigate(
-                                                    AreaVerificationRoute.AreaVerification("onboarding")
+                                                    AreaVerificationRoute.AreaVerification(
+                                                        verifiedAreaId = null,
+                                                        route = "onboarding"
+                                                    )
                                                 ) {
                                                     popUpTo(navController.graph.id) {
                                                         inclusive = true
