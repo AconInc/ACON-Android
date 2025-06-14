@@ -26,6 +26,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.util.fastForEach
 import androidx.compose.ui.zIndex
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.topbar.AconTopBar
@@ -50,7 +51,7 @@ fun BookmarkScreen(
     val skeletonHeight = (screenHeightDp * 0.07f)
 
     when (state) {
-        BookmarkUiState.Loading -> {
+        is BookmarkUiState.Loading -> {
             Box(
                 modifier = modifier
                     .fillMaxSize()
@@ -119,7 +120,7 @@ fun BookmarkScreen(
             }
         }
 
-        BookmarkUiState.Success -> {
+        is BookmarkUiState.Success -> {
             Box(
                 modifier = modifier
                     .fillMaxSize()
@@ -163,7 +164,7 @@ fun BookmarkScreen(
                         .verticalScroll(rememberScrollState())
                         .hazeSource(LocalHazeState.current)
                 ) {
-                    mockSpotList.chunked(2).forEach { rowItems ->
+                    state.savedSpots?.chunked(2)?.fastForEach { rowItems ->
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -173,7 +174,7 @@ fun BookmarkScreen(
                             rowItems.forEach { spot ->
                                 BookmarkItem(
                                     spot = spot,
-                                    onClickSpotItem = { onSpotClick(1) },
+                                    onClickSpotItem = { onSpotClick(spot.id) },
                                     modifier = Modifier
                                         .weight(1f)
                                         .aspectRatio(160f / 231f)
@@ -189,7 +190,7 @@ fun BookmarkScreen(
             }
         }
 
-        BookmarkUiState.LoadFailed -> {}
+        is BookmarkUiState.LoadFailed -> {}
     }
 }
 

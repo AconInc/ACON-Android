@@ -1,6 +1,7 @@
 package com.acon.acon.feature.profile.composable.screen.bookmark
 
-import com.acon.acon.domain.repository.ProfileRepository
+import com.acon.acon.domain.model.spot.v2.SavedSpot
+import com.acon.acon.domain.repository.SpotRepository
 import com.acon.feature.common.base.BaseContainerHost
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.orbitmvi.orbit.annotation.OrbitExperimental
@@ -10,25 +11,36 @@ import javax.inject.Inject
 @OptIn(OrbitExperimental::class)
 @HiltViewModel
 class BookmarkViewModel @Inject constructor(
-    private val profileRepository: ProfileRepository,
+    private val spotRepository: SpotRepository
 ) : BaseContainerHost<BookmarkUiState, BookmarkUiSideEffect>() {
 
-    override val container =  container<BookmarkUiState, BookmarkUiSideEffect>(BookmarkUiState.Success) {
-        // TODO
+    override val container =  container<BookmarkUiState, BookmarkUiSideEffect>(BookmarkUiState.Loading) {
+        fetchSavedSpotList()
+    }
+
+    private fun fetchSavedSpotList() = intent {
+        spotRepository.fetchSavedSpotList().onSuccess {
+            reduce {
+                BookmarkUiState.Success(savedSpots = it.saveSpotList)
+            }
+        }.onFailure {
+            // TODO - 네트워크 실패 뷰
+        }
     }
 
     fun navigateToBack() = intent {
         postSideEffect(BookmarkUiSideEffect.OnNavigateToBack)
     }
 
-    // TODO - 정보 담아서 보내야 함
     fun onSpotClicked(spotId: Long) = intent {
-        postSideEffect(BookmarkUiSideEffect.OnNavigateToSpotDetailScreen(spotId))
+        runOn<BookmarkUiState.Success> {
+            postSideEffect(BookmarkUiSideEffect.OnNavigateToSpotDetailScreen(spotId))
+        }
     }
 }
 
 sealed interface BookmarkUiState {
-    data object Success : BookmarkUiState
+    data class Success(val savedSpots: List<SavedSpot>? = emptyList()) : BookmarkUiState
     data object Loading : BookmarkUiState
     data object LoadFailed : BookmarkUiState
 }
