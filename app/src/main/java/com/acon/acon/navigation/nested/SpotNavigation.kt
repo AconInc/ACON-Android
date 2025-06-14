@@ -55,10 +55,10 @@ internal fun NavGraphBuilder.spotNavigation(
             typeMap = mapOf(spotNavigationParameterNavType)
         ) {
             SpotDetailScreenContainer(
-                modifier = Modifier.fillMaxSize(),
                 onNavigateToBack = {
                     navController.popBackStack()
                 },
+                modifier = Modifier.fillMaxSize()
             )
         }
     }
