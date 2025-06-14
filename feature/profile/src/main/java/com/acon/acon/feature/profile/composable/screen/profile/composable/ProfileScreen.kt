@@ -140,7 +140,9 @@ fun ProfileScreen(
                                 )
 
                                 Spacer(Modifier.height(4.dp))
-                                Row {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
                                     Text(
                                         text = stringResource(R.string.edit_profile),
                                         style = AconTheme.typography.Body1,
