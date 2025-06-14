@@ -5,6 +5,6 @@ import kotlinx.serialization.Serializable
 
 @Immutable
 @Serializable
-data class NavFromBookmark(
-    val fromBookmark: Boolean? = null
+data class NavFromProfile(
+    val fromProfile: Boolean? = null
 )
