@@ -11,6 +11,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.acon.acon.core.designsystem.theme.AconTheme
+import com.acon.acon.domain.model.spot.NavFromBookmark
 import com.acon.acon.domain.model.spot.SpotNavigationParameter
 import com.acon.acon.feature.profile.composable.ProfileRoute
 import com.acon.acon.feature.spot.SpotRoute
@@ -18,6 +19,7 @@ import com.acon.acon.feature.spot.screen.spotdetail.composable.SpotDetailScreenC
 import com.acon.acon.feature.spot.screen.spotlist.composable.SpotListScreenContainer
 import com.acon.acon.feature.upload.UploadRoute
 import com.acon.feature.common.intent.openMapNavigation
+import com.acon.feature.common.navigation.fromBookmarkNavType
 import com.acon.feature.common.navigation.spotNavigationParameterNavType
 
 internal fun NavGraphBuilder.spotNavigation(
@@ -41,7 +43,8 @@ internal fun NavGraphBuilder.spotNavigation(
                 },
                 onNavigateToSpotDetailScreen = { spot, tm ->
                     navController.navigate(SpotRoute.SpotDetail(
-                        SpotNavigationParameter(spot.id, spot.tags, tm, spot.eta)
+                        SpotNavigationParameter(spot.id, spot.tags, tm, spot.eta),
+                        NavFromBookmark(false)
                     ))
                 },
                 onNavigateToExternalMap = context::openMapNavigation,
@@ -52,7 +55,10 @@ internal fun NavGraphBuilder.spotNavigation(
         }
 
         composable<SpotRoute.SpotDetail>(
-            typeMap = mapOf(spotNavigationParameterNavType)
+            typeMap = mapOf(
+                spotNavigationParameterNavType,
+                fromBookmarkNavType
+            )
         ) {
             SpotDetailScreenContainer(
                 modifier = Modifier.fillMaxSize(),
