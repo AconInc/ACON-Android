@@ -24,7 +24,9 @@ class BookmarkViewModel @Inject constructor(
                 BookmarkUiState.Success(savedSpots = it.saveSpotList)
             }
         }.onFailure {
-            // TODO - 네트워크 실패 뷰
+            reduce {
+                BookmarkUiState.LoadFailed
+            }
         }
     }
 

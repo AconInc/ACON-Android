@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
 import androidx.compose.ui.zIndex
 import com.acon.acon.core.designsystem.R
+import com.acon.acon.core.designsystem.component.error.NetworkErrorView
 import com.acon.acon.core.designsystem.component.topbar.AconTopBar
 import com.acon.acon.core.designsystem.effect.LocalHazeState
 import com.acon.acon.core.designsystem.effect.defaultHazeEffect
@@ -37,6 +38,7 @@ import com.acon.acon.feature.profile.composable.screen.bookmark.BookmarkUiState
 import com.acon.acon.feature.profile.composable.screen.mockSpotList
 import com.acon.acon.feature.profile.composable.screen.profile.composable.BookmarkItem
 import com.acon.acon.feature.profile.composable.screen.profile.composable.BookmarkSkeletonItem
+import com.acon.feature.common.compose.LocalOnRetry
 import com.acon.feature.common.compose.getScreenHeight
 import dev.chrisbanes.haze.hazeSource
 
@@ -190,7 +192,12 @@ fun BookmarkScreen(
             }
         }
 
-        is BookmarkUiState.LoadFailed -> {}
+        is BookmarkUiState.LoadFailed -> {
+            NetworkErrorView(
+                onRetry = LocalOnRetry.current,
+                modifier = Modifier.fillMaxSize()
+            )
+        }
     }
 }
 
