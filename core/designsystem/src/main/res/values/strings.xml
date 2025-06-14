@@ -237,9 +237,10 @@
     <string name="upload_photo_from_album">앨범에서 사진 업로드</string>
     <string name="set_default_profile_image">기본 이미지로 변경</string>
     <string name="selected_image">선택 이미지</string>
-    <string name="no_store_image">이미지 준비중</string>
+    <string name="no_store_image">이미지 준비 중</string>
     <string name="saved_store">저장한 장소</string>
     <string name="show_saved_all_store">전체보기</string>
+    <string name="no_saved_spot">저장한 장소가 없어요</string>
 
     <!-- setting -->
     <string name="settings_screen_topbar">설정</string>

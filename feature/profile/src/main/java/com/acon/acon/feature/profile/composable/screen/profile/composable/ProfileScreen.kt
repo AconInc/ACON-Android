@@ -174,40 +174,52 @@ fun ProfileScreen(
                             )
 
                             Spacer(Modifier.weight(1f))
-                            Text(
-                                text = stringResource(R.string.show_saved_all_store),
-                                color = AconTheme.color.Action,
-                                style = AconTheme.typography.Body1,
-                                fontWeight = FontWeight.SemiBold,
-                                modifier = Modifier
-                                    .padding(vertical = 2.dp)
-                                    .padding(end = 8.dp)
-                                    .noRippleClickable { onBookmark() }
-                            )
-                        }
-
-                        Spacer(Modifier.height(8.dp))
-                        LazyRow(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(savedStoreHeight),
-                            horizontalArrangement = Arrangement.spacedBy(10.dp)
-                        ) {
-                            items(
-                                items = mockSpotList,
-                                key = { it.id }
-                            ) { spot ->
-                                BookmarkItem(
-                                    spot = spot,
-                                    onClickSpotItem = { onSpotDetail(1) }, // TODO - 장소 상세로 이동
-                                    modifier = Modifier.aspectRatio(150f / 217f)
+                            if (state.profileInfo.savedSpots.isNotEmpty()) {
+                                Text(
+                                    text = stringResource(R.string.show_saved_all_store),
+                                    color = AconTheme.color.Action,
+                                    style = AconTheme.typography.Body1,
+                                    fontWeight = FontWeight.SemiBold,
+                                    modifier = Modifier
+                                        .padding(vertical = 2.dp)
+                                        .padding(end = 8.dp)
+                                        .noRippleClickable { onBookmark() }
                                 )
                             }
                         }
 
+                        Spacer(Modifier.height(8.dp))
+                        if (state.profileInfo.savedSpots.isNotEmpty()) {
+                            LazyRow(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(savedStoreHeight),
+                                horizontalArrangement = Arrangement.spacedBy(10.dp)
+                            ) {
+                                items(
+                                    items = state.profileInfo.savedSpots,
+                                    key = { it.spotId }
+                                ) { spot ->
+                                    BookmarkItem(
+                                        spot = spot,
+                                        onClickSpotItem = { onSpotDetail(spot.spotId) },
+                                        modifier = Modifier.aspectRatio(150f / 217f)
+                                    )
+                                }
+                            }
+                        } else {
+                            Text(
+                                text = stringResource(R.string.no_saved_spot),
+                                style = AconTheme.typography.Body1,
+                                fontWeight = FontWeight.W400,
+                                color = AconTheme.color.Gray500,
+                            )
+                        }
+
+                        Spacer(Modifier.height(if (state.profileInfo.savedSpots.isEmpty()) 40.dp else 20.dp))
                         ProfileNativeAd(
                             screenHeight = admobHeight,
-                            modifier = Modifier.padding(top = 20.dp, bottom = 23.dp)
+                            modifier = Modifier.padding(bottom = 23.dp)
                         )
                     }
                 }
