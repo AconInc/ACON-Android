@@ -1,6 +1,7 @@
 package com.acon.acon.feature.profile.composable.screen.profile.composable
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,7 +19,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil3.compose.AsyncImage
+import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import coil3.size.Scale
@@ -41,14 +42,41 @@ internal fun BookmarkItem(
             .noRippleClickable { onClickSpotItem() }
     ) {
         if(spot.image?.isEmpty() == true) {
-            AsyncImage(
+            SubcomposeAsyncImage(
                 model = ImageRequest
                     .Builder(LocalContext.current)
                     .crossfade(true)
                     .data(spot.image)
                     .scale(Scale.FIT)
                     .build(),
-                error = painterResource(R.drawable.ic_bg_no_store_profile),
+                error = {
+                    Box(
+                        modifier = modifier
+                            .fillMaxSize()
+                            .background(AconTheme.color.GlassWhiteDisabled)
+                            .imageGradientLayer()
+                    ) {
+                        Text(
+                            text = if (spot.name.length > 9) spot.name.take(8) + stringResource(R.string.ellipsis) else spot.name,
+                            color = AconTheme.color.White,
+                            style = AconTheme.typography.Title5,
+                            fontWeight = FontWeight.SemiBold,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .align(Alignment.TopCenter)
+                                .padding(top = 20.dp)
+                                .padding(horizontal = 20.dp)
+                        )
+
+                        Text(
+                            text = stringResource(R.string.image_load_failed),
+                            color = AconTheme.color.Gray50,
+                            style = AconTheme.typography.Caption1,
+                            modifier = Modifier
+                                .align(Alignment.Center)
+                        )
+                    }
+                },
                 contentDescription = stringResource(R.string.store_background_image_content_description),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
@@ -70,11 +98,11 @@ internal fun BookmarkItem(
         } else {
             Image(
                 painter = painterResource(R.drawable.ic_bg_no_store_profile),
-                contentDescription = stringResource(R.string.no_store_background_image_content_description),
+                contentDescription = stringResource(R.string.no_store_image),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxSize()
-                    .imageGradientLayer()
+                    .imageGradientTopLayer()
             )
 
             Text(
@@ -103,6 +131,17 @@ internal fun BookmarkItem(
 @Preview
 @Composable
 private fun BookmarkItemPreview() {
+    AconTheme {
+        BookmarkItem(
+            spot = SavedSpot(1, "", ""),
+            onClickSpotItem = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun LoadFailedBookmarkItemPreview() {
     AconTheme {
         BookmarkItem(
             spot = SavedSpot(1, "", ""),
