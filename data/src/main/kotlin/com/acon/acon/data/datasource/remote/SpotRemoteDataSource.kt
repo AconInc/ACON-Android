@@ -8,6 +8,7 @@ import com.acon.acon.data.dto.response.SpotListResponse
 import com.acon.acon.data.dto.response.area.LegalAreaResponse
 import com.acon.acon.data.api.remote.SpotNoAuthApi
 import com.acon.acon.data.api.remote.SpotAuthApi
+import com.acon.acon.data.dto.response.SavedSpotListResponse
 import javax.inject.Inject
 
 class SpotRemoteDataSource @Inject constructor(
@@ -33,5 +34,9 @@ class SpotRemoteDataSource @Inject constructor(
 
     suspend fun fetchMenuBoards(spotId: Long): MenuBoardListResponse {
         return spotNoAuthApi.fetchMenuBoards(spotId)
+    }
+
+    suspend fun fetchSavedSpotList(): SavedSpotListResponse {
+        return spotAuthApi.fetchSavedSpotList()
     }
 }

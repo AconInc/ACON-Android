@@ -4,6 +4,7 @@ import com.acon.acon.domain.model.area.LegalArea
 import com.acon.acon.domain.model.spot.Condition
 import com.acon.acon.domain.model.spot.MenuBoardList
 import com.acon.acon.domain.model.spot.SpotDetailInfo
+import com.acon.acon.domain.model.spot.v2.SavedSpotList
 import com.acon.acon.domain.model.spot.v2.SpotList
 
 interface SpotRepository {
@@ -30,4 +31,6 @@ interface SpotRepository {
     suspend fun fetchMenuBoards(
         spotId: Long
     ): Result<MenuBoardList>
+
+    suspend fun fetchSavedSpotList(): Result<SavedSpotList>
 }

@@ -15,6 +15,7 @@ import com.acon.acon.domain.model.area.LegalArea
 import com.acon.acon.domain.model.spot.Condition
 import com.acon.acon.domain.model.spot.MenuBoardList
 import com.acon.acon.domain.model.spot.SpotDetailInfo
+import com.acon.acon.domain.model.spot.v2.SavedSpotList
 import com.acon.acon.domain.model.spot.v2.SpotList
 import com.acon.acon.domain.repository.SpotRepository
 import javax.inject.Inject
@@ -77,5 +78,9 @@ class SpotRepositoryImpl @Inject constructor(
         return runCatchingWith(*FetchMenuBoardsError.createErrorInstances()) {
             spotRemoteDataSource.fetchMenuBoards(spotId).toMenuBoardList()
         }
+    }
+
+    override suspend fun fetchSavedSpotList(): Result<SavedSpotList> {
+        return runCatchingWith() { spotRemoteDataSource.fetchSavedSpotList().toSavedSpotList() }
     }
 }
