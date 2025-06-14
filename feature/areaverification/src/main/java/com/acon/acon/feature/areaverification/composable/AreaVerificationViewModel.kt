@@ -79,10 +79,16 @@ class AreaVerificationViewModel @Inject constructor(
         }.onFailure { error ->
             // TODO - 네트워크에러
             when(error) {
-                is ReplaceVerifiedArea.OutOfServiceAreaError -> {}
-                is ReplaceVerifiedArea.InvalidVerifiedArea -> {}
-                is ReplaceVerifiedArea.VerifiedAreaDeletePeriodRestrictedError -> {}
-                is ReplaceVerifiedArea.VerifiedAreaNotFound -> {}
+                is ReplaceVerifiedArea.OutOfServiceAreaError -> {
+                }
+                is ReplaceVerifiedArea.InvalidVerifiedArea -> {
+                }
+                is ReplaceVerifiedArea.PeriodRestrictedDeleteError -> {
+                }
+                is ReplaceVerifiedArea.MultiLocationReplaceError -> {
+                }
+                is ReplaceVerifiedArea.VerifiedAreaNotFound -> {
+                }
             }
         }
     }
@@ -114,7 +120,6 @@ class AreaVerificationViewModel @Inject constructor(
             .onSuccess { area ->
                 reduce {
                     state.copy(
-                        areaName = area.name,
                         isVerifySuccess = true
                     )
                 }
@@ -138,7 +143,6 @@ data class AreaVerificationUiState(
     val longitude: Double = 0.0,
     val isVerifySuccess: Boolean = false,
     val verifiedAreaList: List<Area> = emptyList(),
-    val areaName: String = ""
 )
 
 sealed interface AreaVerificationSideEffect {
