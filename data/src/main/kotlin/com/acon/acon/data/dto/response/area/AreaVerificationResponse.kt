@@ -6,11 +6,11 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class AreaVerificationResponse(
-    @SerialName("id") val id: Long,
+    @SerialName("verifiedAreaId") val verifiedAreaId: Long,
     @SerialName("name") val name: String
 ) {
     fun toArea() = Area(
-        verifiedAreaId = id,
+        verifiedAreaId = verifiedAreaId,
         name = name
     )
 }

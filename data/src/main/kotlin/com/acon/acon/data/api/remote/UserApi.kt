@@ -2,10 +2,10 @@ package com.acon.acon.data.api.remote
 
 import com.acon.acon.data.dto.request.AreaVerificationRequest
 import com.acon.acon.data.dto.request.DeleteAccountRequest
+import com.acon.acon.data.dto.request.ReplaceVerifiedAreaRequest
 import com.acon.acon.data.dto.request.SignInRequest
 import com.acon.acon.data.dto.request.SignOutRequest
 import com.acon.acon.data.dto.response.SignInResponse
-import com.acon.acon.data.dto.response.area.AreaVerificationResponse
 import com.acon.acon.data.dto.response.area.VerifiedAreaListResponse
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -33,10 +33,15 @@ interface UserApi {
     @POST("/api/v1/verified-areas")
     suspend fun verifyArea(
         @Body request: AreaVerificationRequest
-    ): AreaVerificationResponse
+    )
 
     @GET("/api/v1/verified-areas")
     suspend fun fetchVerifiedAreaList() : VerifiedAreaListResponse
+
+    @POST("/api/v1/verified-areas/replacement")
+    suspend fun replaceVerifiedArea(
+        @Body request: ReplaceVerifiedAreaRequest
+    )
 
     @DELETE("/api/v1/verified-areas/{verifiedAreaId}")
     suspend fun deleteVerifiedArea(

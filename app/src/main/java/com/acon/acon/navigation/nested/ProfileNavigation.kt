@@ -5,8 +5,6 @@ import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -19,7 +17,6 @@ import androidx.navigation.toRoute
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.domain.model.spot.SpotNavigationParameter
 import com.acon.acon.feature.SettingsRoute
-import com.acon.acon.feature.areaverification.AreaVerificationRoute
 import com.acon.acon.feature.profile.composable.ProfileRoute
 import com.acon.acon.feature.profile.composable.screen.bookmark.composable.BookmarkScreenContainer
 import com.acon.acon.feature.profile.composable.screen.galleryGrid.composable.GalleryGridContainer
@@ -67,13 +64,6 @@ internal fun NavGraphBuilder.profileNavigation(
                             null
                         )
                     )
-                },
-                onNavigateToAreaVerificationScreen = {
-                    navController.navigate(AreaVerificationRoute.AreaVerification("onboarding")) {
-                        popUpTo(ProfileRoute.Graph) {
-                            inclusive = true
-                        }
-                    }
                 },
                 onNavigateToUploadScreen = {
                     navController.navigate(UploadRoute.Graph)

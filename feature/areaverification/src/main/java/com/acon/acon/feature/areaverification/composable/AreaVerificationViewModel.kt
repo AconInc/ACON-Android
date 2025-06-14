@@ -6,11 +6,12 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.location.LocationManager
 import androidx.core.app.ActivityCompat
-import com.acon.feature.common.base.BaseContainerHost
+import com.acon.acon.domain.error.area.ReplaceVerifiedArea
 import com.acon.acon.domain.model.area.Area
 import com.acon.acon.domain.repository.UserRepository
 import com.acon.acon.feature.areaverification.amplitude.amplitudeClickNext
 import com.acon.acon.feature.areaverification.amplitude.amplitudeCompleteArea
+import com.acon.feature.common.base.BaseContainerHost
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.orbitmvi.orbit.viewmodel.container
 import timber.log.Timber
@@ -29,8 +30,7 @@ class AreaVerificationViewModel @Inject constructor(
     }
 
     fun checkDeviceGPSStatus() = intent {
-        val locationManager =
-            application.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        val locationManager = application.getSystemService(Context.LOCATION_SERVICE) as LocationManager
         val isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
 
         if (isGPSEnabled) {
@@ -65,62 +65,35 @@ class AreaVerificationViewModel @Inject constructor(
         }
     }
 
-    fun editVerifiedArea(area: String, latitude: Double, longitude: Double) = intent {
-        reduce {
-            state.copy(
-                error = null
-            )
-        }
-
-        val verifiedAreaList = userRepository.fetchVerifiedAreaList().getOrElse { emptyList() }
-        val verifiedAreaId = verifiedAreaList[0].verifiedAreaId
-
-        if(verifiedAreaList[0].name == area) {
+    fun editVerifiedArea(previousVerifiedAreaId: Long, latitude: Double, longitude: Double) = intent {
+        userRepository.replaceVerifiedArea(
+            previousVerifiedAreaId = previousVerifiedAreaId,
+            latitude = latitude,
+            longitude = longitude
+        ).onSuccess {
             reduce {
                 state.copy(
                     isVerifySuccess = true
                 )
             }
-        } else {
-            userRepository.verifyArea(latitude, longitude)
-                .onSuccess { newVerifiedArea ->
-                    if (verifiedAreaId != newVerifiedArea.verifiedAreaId) {
-                        userRepository.deleteVerifiedArea(verifiedAreaId)
-                            .onSuccess {
-                                reduce {
-                                    state.copy(
-                                        verifiedArea = newVerifiedArea,
-                                        isVerifySuccess = true
-                                    )
-                                }
-                            }
-                            .onFailure { deleteError ->
-                                reduce { state.copy(error = deleteError.message) }
-                                // TODO - 네트워크에러
-                            }
-                    } else {
-                        reduce {
-                            state.copy(
-                                verifiedArea = newVerifiedArea,
-                                isVerifySuccess = true
-                            )
-                        }
-                    }
-                    amplitudeCompleteArea()
+        }.onFailure { error ->
+            // TODO - 네트워크에러
+            when(error) {
+                is ReplaceVerifiedArea.OutOfServiceAreaError -> {
                 }
-                .onFailure { throwable ->
-                    reduce {
-                        state.copy(
-                            error = throwable.message
-                        )
-                    }
-                    // TODO - 네트워크에러
+                is ReplaceVerifiedArea.InvalidVerifiedArea -> {
                 }
+                is ReplaceVerifiedArea.PeriodRestrictedDeleteError -> {
+                }
+                is ReplaceVerifiedArea.MultiLocationReplaceError -> {
+                }
+                is ReplaceVerifiedArea.VerifiedAreaNotFound -> {
+                }
+            }
         }
     }
 
     fun checkSupportLocation(context: Context) = intent {
-
         if (ActivityCompat.checkSelfPermission(
                 context, Manifest.permission.ACCESS_FINE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
@@ -139,35 +112,20 @@ class AreaVerificationViewModel @Inject constructor(
                     Timber.tag(TAG).d("GPS 불가 지역(해외)")
                     showLocationDialog()
                 }
-            } ?: run {
-            Timber.tag(TAG).d("GPS 좌표 가져오기 실패")
-        }
+            }
     }
 
     fun verifyArea(latitude: Double, longitude: Double) = intent {
-        reduce {
-            state.copy(
-                error = null
-            )
-        }
-
         userRepository.verifyArea(latitude, longitude)
             .onSuccess { area ->
                 reduce {
                     state.copy(
-                        verifiedArea = area,
-                        areaName = area.name,
                         isVerifySuccess = true
                     )
                 }
                 amplitudeCompleteArea()
             }
-            .onFailure { throwable ->
-                reduce {
-                    state.copy(
-                        error = throwable.message,
-                    )
-                }
+            .onFailure {
                 // TODO - 네트워크에러
             }
     }
@@ -184,10 +142,7 @@ data class AreaVerificationUiState(
     val latitude: Double = 0.0,
     val longitude: Double = 0.0,
     val isVerifySuccess: Boolean = false,
-    val verifiedArea: Area? = null,
     val verifiedAreaList: List<Area> = emptyList(),
-    val areaName: String = "",
-    val error: String? = null
 )
 
 sealed interface AreaVerificationSideEffect {

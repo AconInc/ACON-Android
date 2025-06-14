@@ -10,8 +10,9 @@ import com.acon.acon.data.dto.request.SignInRequest
 import com.acon.acon.data.dto.request.SignOutRequest
 import com.acon.acon.data.error.runCatchingWith
 import com.acon.acon.domain.error.area.DeleteVerifiedAreaError
-import com.acon.acon.domain.error.user.PostSignInError
+import com.acon.acon.domain.error.area.ReplaceVerifiedArea
 import com.acon.acon.domain.error.user.PostLogoutError
+import com.acon.acon.domain.error.user.PostSignInError
 import com.acon.acon.domain.model.area.Area
 import com.acon.acon.domain.model.user.VerificationStatus
 import com.acon.acon.domain.repository.UserRepository
@@ -83,17 +84,33 @@ class UserRepositoryImpl @Inject constructor(
     override suspend fun verifyArea(
         latitude: Double,
         longitude: Double
-    ): Result<Area> = runCatchingWith() {
+    ): Result<Unit> = runCatchingWith() {
+        // TODO - 동네인증 API Error 처리 안됨
         userRemoteDataSource.verifyArea(
             latitude = latitude,
             longitude = longitude
-        ).toArea()
+        )
     }
 
     override suspend fun fetchVerifiedAreaList(): Result<List<Area>> {
+        // TODO - 인증 지역 조회 API Error 처리 안됨
         return runCatchingWith() {
             userRemoteDataSource.fetchVerifiedAreaList().verifiedAreaList
                 .map { it.toVerifiedArea() }
+        }
+    }
+
+    override suspend fun replaceVerifiedArea(
+        previousVerifiedAreaId: Long,
+        latitude: Double,
+        longitude: Double
+    ): Result<Unit> {
+        return runCatchingWith(*ReplaceVerifiedArea.createErrorInstances()) {
+            userRemoteDataSource.replaceVerifiedArea(
+                previousVerifiedAreaId = previousVerifiedAreaId,
+                latitude = latitude,
+                longitude = longitude
+            )
         }
     }
 

@@ -83,7 +83,7 @@ class LocalVerificationViewModel @Inject constructor(
                         showEditAreaDialog()
                     }
 
-                    is DeleteVerifiedAreaError.VerifiedAreaDeletePeriodRestrictedError -> {
+                    is DeleteVerifiedAreaError.PeriodRestrictedDeleteError -> {
                         Timber.e(TAG, "인증일로부터 1주 이상 3개월 미만인 지역은 삭제할 수 없습니다.")
                         showAreaDeleteFailDialog()
                     }
@@ -105,12 +105,8 @@ class LocalVerificationViewModel @Inject constructor(
         postSideEffect(LocalVerificationSideEffect.NavigateToSettingsScreen)
     }
 
-    fun onNavigateToAreaVerificationAdd() = intent {
-        postSideEffect(LocalVerificationSideEffect.NavigateToAreaVerificationToAdd)
-    }
-
-    fun onNavigateToAreaVerificationEdit(area: String) = intent {
-        postSideEffect(LocalVerificationSideEffect.NavigateToAreaVerificationToEdit(area))
+    fun onNavigateToAreaVerification(verifiedAreaId: Long) = intent {
+        postSideEffect(LocalVerificationSideEffect.NavigateToAreaVerification(verifiedAreaId))
     }
 
     companion object {
@@ -133,6 +129,5 @@ sealed interface LocalVerificationUiState {
 sealed interface LocalVerificationSideEffect {
     data object ShowUnKnownErrorToast : LocalVerificationSideEffect
     data object NavigateToSettingsScreen : LocalVerificationSideEffect
-    data object NavigateToAreaVerificationToAdd : LocalVerificationSideEffect
-    data class NavigateToAreaVerificationToEdit(val area: String) : LocalVerificationSideEffect
+    data class NavigateToAreaVerification(val verifiedAreaId: Long) : LocalVerificationSideEffect
 }

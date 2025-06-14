@@ -27,7 +27,6 @@ fun ProfileScreenContainer(
     onNavigateToSpotListScreen: () -> Unit = {},
     onNavigateToSettingsScreen: () -> Unit = {},
     onNavigateToProfileEditScreen: () -> Unit = {},
-    onNavigateToAreaVerificationScreen: () -> Unit = {},
     onNavigateToUploadScreen: () -> Unit = {},
     viewModel: ProfileViewModel = hiltViewModel()
 ) {
@@ -73,7 +72,6 @@ fun ProfileScreenContainer(
             is ProfileUiSideEffect.OnNavigateToSpotListScreen -> { onNavigateToSpotListScreen() }
             is ProfileUiSideEffect.OnNavigateToSettingsScreen -> { onNavigateToSettingsScreen() }
             is ProfileUiSideEffect.OnNavigateToProfileEditScreen -> { onNavigateToProfileEditScreen() }
-            is ProfileUiSideEffect.OnNavigateToAreaVerificationScreen -> { onNavigateToAreaVerificationScreen() }
         }
     }
 }

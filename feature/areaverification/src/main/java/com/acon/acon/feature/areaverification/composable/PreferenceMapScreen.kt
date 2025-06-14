@@ -37,8 +37,7 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 fun PreferenceMapScreen(
     latitude: Double,
     longitude: Double,
-    area: String,
-    isEdit: Boolean,
+    previousVerifiedAreaId: Long,
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit = {},
     onNavigateToNext: () -> Unit = {},
@@ -166,9 +165,9 @@ fun PreferenceMapScreen(
                 initialLongitude = longitude,
                 modifier = Modifier.fillMaxSize(),
                 onClickConfirm = {
-                    if (isEdit) {
+                    if (previousVerifiedAreaId != (-1).toLong()) {
                         viewModel.editVerifiedArea(
-                            area = area,
+                            previousVerifiedAreaId = previousVerifiedAreaId,
                             latitude = currentLatitude,
                             longitude = currentLongitude
                         )
