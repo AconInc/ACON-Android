@@ -17,7 +17,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -25,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -33,20 +33,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import coil3.compose.AsyncImage
+import coil3.request.ImageRequest
+import coil3.request.crossfade
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
 
 @Composable
 internal fun MenuBoardOverlay(
-    imageList: List<Int>,
+    imageList: List<String>,
     isMenuBoardLoaded: Boolean,
     onDismiss: () -> Unit
 ) {
     var currentIndex by rememberSaveable { mutableIntStateOf(0) }
     val zoomState = remember { PinchZoomState() }
-
-    var menuBoardQA by remember { mutableStateOf(false) }
 
     Dialog(
         onDismissRequest = onDismiss,
@@ -66,16 +66,13 @@ internal fun MenuBoardOverlay(
                 modifier = Modifier
                     .align(Alignment.TopStart)
                     .padding(top = 32.dp, start = 14.dp)
-                    .noRippleClickable {
-                        menuBoardQA = !menuBoardQA // QA용 코드
-                        //onDismiss()
-                    }
+                    .noRippleClickable { onDismiss() }
             )
 
             PinchToZoomImage(
                 zoomState = zoomState,
                 menuBoardImage = imageList[currentIndex],
-                isMenuBoardLoaded = menuBoardQA, //isMenuBoardLoaded
+                isMenuBoardLoaded = isMenuBoardLoaded
             )
 
             Row(
@@ -101,7 +98,6 @@ internal fun MenuBoardOverlay(
                 }
 
                 Spacer(modifier = Modifier.weight(1f))
-
                 if (imageList.size > 1 && currentIndex < imageList.lastIndex) {
                     Icon(
                         imageVector = ImageVector.vectorResource(R.drawable.ic_menu_arrow_forward),
@@ -124,7 +120,7 @@ internal fun MenuBoardOverlay(
 @Composable
 internal fun PinchToZoomImage(
     zoomState: PinchZoomState,
-    menuBoardImage: Int,
+    menuBoardImage: String,
     isMenuBoardLoaded: Boolean
 ) {
     if (isMenuBoardLoaded) {
@@ -136,7 +132,11 @@ internal fun PinchToZoomImage(
             contentAlignment = Alignment.Center
         ) {
             AsyncImage(
-                model = menuBoardImage,
+                model = ImageRequest
+                    .Builder(LocalContext.current)
+                    .crossfade(true)
+                    .data(menuBoardImage)
+                    .build(),
                 contentDescription = stringResource(R.string.menu_board_content_description),
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop
@@ -158,7 +158,7 @@ internal fun PinchToZoomImage(
                     .fillMaxSize()
                     .align(Alignment.Center),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
+                verticalArrangement = Arrangement.Center
             ) {
                 Text(
                     text = stringResource(R.string.menu_board_load_failed),

@@ -12,33 +12,24 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.util.fastForEach
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.theme.AconTheme
+import com.acon.acon.domain.model.spot.SignatureMenu
 import com.acon.acon.feature.spot.toPriceString
-
-// TODO - api 배포되면 제거
-private data class SignatureMenuData(
-    val name: String,
-    val price: Int
-)
-
-private val mockSignatureMenuList = listOf(
-    SignatureMenuData("만두", 5000),
-    SignatureMenuData("양꼬치", 35000),
-    SignatureMenuData("닭도리탕", 60000)
-)
 
 @Composable
 internal fun SignatureMenu(
-    signatureMenuList: List<String>
+    signatureMenuList: List<SignatureMenu>
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
-        mockSignatureMenuList.take(3).forEach { menu -> // TODO - api 배포되면 수정
+        signatureMenuList.fastForEach { menu ->
             SignatureMenuItem(
                 menuName = menu.name,
                 menuPrice = menu.price.toPriceString()
@@ -76,6 +67,7 @@ internal fun SignatureMenuItem(
             text = menuPrice,
             color = AconTheme.color.White,
             style = AconTheme.typography.Body1,
+            fontWeight = FontWeight.SemiBold
         )
     }
 }

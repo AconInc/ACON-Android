@@ -26,6 +26,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.acon.acon.core.designsystem.R
@@ -174,7 +175,8 @@ internal fun StoreDetailButton(
                     offset = Offset(x = 0f, y = blurPx),
                     blurRadius = blurPx
                 )
-            )
+            ),
+            fontWeight = FontWeight.SemiBold
         )
     }
 }
