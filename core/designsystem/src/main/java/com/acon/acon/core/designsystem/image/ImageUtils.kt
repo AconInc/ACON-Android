@@ -3,7 +3,6 @@ package com.acon.acon.core.designsystem.image
 import android.content.Context
 import android.graphics.Bitmap
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -12,14 +11,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextMeasurer
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
@@ -31,8 +27,6 @@ import coil3.request.allowHardware
 import coil3.toBitmap
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.theme.AconColors
-import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.core.designsystem.theme.AconTypography
 import com.acon.acon.core.designsystem.theme.Typography
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -117,25 +111,33 @@ class LoadImageErrorPainter(
 
         drawText(textLayoutResult, topLeft = topLeft)
     }
+}
 
-    companion object {
-        val Default: LoadImageErrorPainter
-            @Composable
-            get() = LoadImageErrorPainter(
-                colors = listOf(
-                    AconColors.Gray900.copy(.6f),
-                    AconColors.Gray300.copy(.5f),
-                    AconColors.Gray900.copy(.6f)
-                ),
-                icon = painterResource(R.drawable.ic_acon_fill_white),
-                iconSize = with(LocalDensity.current) {
-                    Size(36.dp.toPx(), 36.dp.toPx())
-                },
-                description = stringResource(R.string.fail_to_load_image),
-                textMeasurer = rememberTextMeasurer(),
-                spacing = with(LocalDensity.current) {
-                    12.dp.toPx()
-                }
-            )
+@Composable
+fun rememberDefaultLoadImageErrorPainter(): LoadImageErrorPainter {
+    val colors = listOf(
+        AconColors.Gray900.copy(.6f),
+        AconColors.Gray300.copy(.5f),
+        AconColors.Gray900.copy(.6f)
+    )
+    val icon = painterResource(R.drawable.ic_acon_fill_white)
+    val description = stringResource(R.string.fail_to_load_image)
+    val textMeasurer = rememberTextMeasurer()
+    val iconSize = with(LocalDensity.current) {
+        remember { Size(36.dp.toPx(), 36.dp.toPx()) }
+    }
+    val spacing = with(LocalDensity.current) {
+        remember { 12.dp.toPx() }
+    }
+
+    return remember(colors, icon, description, textMeasurer, iconSize, spacing) {
+        LoadImageErrorPainter(
+            colors = colors,
+            icon = icon,
+            iconSize = iconSize,
+            description = description,
+            textMeasurer = textMeasurer,
+            spacing = spacing
+        )
     }
 }

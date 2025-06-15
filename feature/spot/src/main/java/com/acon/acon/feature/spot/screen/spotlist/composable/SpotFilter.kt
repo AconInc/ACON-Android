@@ -140,6 +140,7 @@ internal fun RestaurantFilterBottomSheet(
                     if (selectedRestaurantOperationTypes.contains(it)) {
                         selectedRestaurantOperationTypes.remove(it)
                     } else {
+                        completeButtonEnabled = true
                         selectedRestaurantOperationTypes.add(it)
                     }
                 },
@@ -154,6 +155,7 @@ internal fun RestaurantFilterBottomSheet(
                     if (selectedRestaurantPriceTypes.contains(it)) {
                         selectedRestaurantPriceTypes.remove(it)
                     } else {
+                        completeButtonEnabled = true
                         selectedRestaurantPriceTypes.add(it)
                     }
                 },
@@ -180,7 +182,8 @@ internal fun RestaurantFilterBottomSheet(
                         fontWeight = FontWeight.SemiBold,
                     ),
                     shape = CircleShape,
-                    enabled = completeButtonEnabled && selectedRestaurantTypes.isNotEmpty(),
+                    enabled = completeButtonEnabled &&
+                            (selectedRestaurantTypes.isNotEmpty() || selectedRestaurantOperationTypes.isNotEmpty() || selectedRestaurantPriceTypes.isNotEmpty()),
                     onClick = { onComplete(
                         mapOf(
                             RestaurantFilterType.RestaurantType::class to (selectedRestaurantTypes.toSet() as Set<RestaurantFilterType>),
@@ -262,6 +265,7 @@ internal fun CafeFilterBottomSheet(
                     if (selectedCafeOperationTypes.contains(it)) {
                         selectedCafeOperationTypes.remove(it)
                     } else {
+                        completeButtonEnabled = true
                         selectedCafeOperationTypes.add(it)
                     }
                 },
@@ -288,7 +292,7 @@ internal fun CafeFilterBottomSheet(
                         fontWeight = FontWeight.SemiBold,
                     ),
                     shape = CircleShape,
-                    enabled = completeButtonEnabled && selectedCafeTypes.isNotEmpty(),
+                    enabled = completeButtonEnabled && (selectedCafeTypes.isNotEmpty() || selectedCafeOperationTypes.isNotEmpty()),
                     onClick = {
                         onComplete(
                             mapOf(

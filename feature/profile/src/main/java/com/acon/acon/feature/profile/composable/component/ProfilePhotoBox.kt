@@ -19,6 +19,8 @@ import androidx.compose.ui.res.vectorResource
 import coil3.compose.AsyncImage
 import coil3.compose.rememberAsyncImagePainter
 import com.acon.acon.core.designsystem.R
+import com.acon.acon.core.designsystem.image.LoadImageErrorPainter
+import com.acon.acon.core.designsystem.image.rememberDefaultLoadImageErrorPainter
 
 @Composable
 fun ProfilePhotoBox(
@@ -55,7 +57,8 @@ fun ProfilePhotoBox(
                             contentDescription = stringResource(R.string.content_description_settings),
                             modifier = Modifier.fillMaxSize(),
                             contentScale = ContentScale.Crop,
-                            alignment = Alignment.Center
+                            alignment = Alignment.Center,
+                            error = rememberDefaultLoadImageErrorPainter()
                         )
                     }
 

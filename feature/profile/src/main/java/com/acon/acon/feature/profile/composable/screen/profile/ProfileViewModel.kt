@@ -2,7 +2,7 @@ package com.acon.acon.feature.profile.composable.screen.profile
 
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.viewModelScope
-import com.acon.acon.domain.model.profile.VerifiedArea
+import com.acon.acon.domain.model.profile.ProfileInfo
 import com.acon.acon.domain.repository.ProfileRepository
 import com.acon.acon.domain.type.UserType
 import com.acon.feature.common.base.BaseContainerHost
@@ -19,11 +19,19 @@ class ProfileViewModel @Inject constructor(
     val updateProfileState = profileRepository.getProfileType()
 
     override val container =
-        container<ProfileUiState, ProfileUiSideEffect>(ProfileUiState.Loading) {
+        container<ProfileUiState, ProfileUiSideEffect>(ProfileUiState.Success(ProfileInfo.Empty)) {
             userType.collect {
                 when(it) {
                     UserType.GUEST -> reduce { ProfileUiState.Guest }
-                    else -> fetchUserProfileInfo()
+                    else -> {
+                        profileRepository.fetchProfile().collect { profileInfoResult ->
+                            profileInfoResult.onSuccess {
+                                reduce { ProfileUiState.Success(profileInfo = it) }
+                            }.onFailure {
+                                postSideEffect(ProfileUiSideEffect.FailedToLoadProfileInfo)
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -32,23 +40,6 @@ class ProfileViewModel @Inject constructor(
         viewModelScope.launch {
             profileRepository.resetProfileType()
         }
-    }
-
-    fun fetchUserProfileInfo() = intent {
-        profileRepository.fetchProfile()
-            .onSuccess { profile ->
-                reduce {
-                    ProfileUiState.Success(
-                        profileImage = profile.image,
-                        nickname = profile.nickname.lowercase(),
-                        aconCount = profile.leftAcornCount,
-                        verifiedArea = profile.verifiedAreaList
-                    )
-                }
-            }
-            .onFailure {
-                reduce { ProfileUiState.LoadFailed }
-            }
     }
 
     fun onSpotDetail(spotId: Long) = intent {
@@ -71,14 +62,8 @@ class ProfileViewModel @Inject constructor(
 sealed interface ProfileUiState {
     @Immutable
     data class Success(
-        val profileImage: String,
-        val nickname: String,
-        val aconCount: Int,
-        val verifiedArea: List<VerifiedArea>
+        val profileInfo: ProfileInfo
     ) : ProfileUiState
-
-    data object Loading : ProfileUiState
-    data object LoadFailed : ProfileUiState
 
     data object Guest : ProfileUiState
 }
@@ -89,4 +74,6 @@ sealed interface ProfileUiSideEffect {
     data object OnNavigateToSpotListScreen : ProfileUiSideEffect
     data object OnNavigateToSettingsScreen : ProfileUiSideEffect
     data object OnNavigateToProfileEditScreen : ProfileUiSideEffect
+
+    data object FailedToLoadProfileInfo : ProfileUiSideEffect
 }
