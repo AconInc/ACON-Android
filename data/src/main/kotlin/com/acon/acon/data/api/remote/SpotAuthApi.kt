@@ -4,6 +4,7 @@ import com.acon.acon.data.dto.request.AddBookmarkRequest
 import com.acon.acon.data.dto.request.SpotListRequest
 import com.acon.acon.data.dto.response.SpotDetailResponse
 import com.acon.acon.data.dto.response.SpotListResponse
+import com.acon.acon.data.dto.response.profile.SavedSpotsResponse
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -21,6 +22,9 @@ interface SpotAuthApi {
     suspend fun fetchSpotDetail(
         @Path("spotId") spotId: Long
     ): SpotDetailResponse
+
+    @GET("/api/v1/saved-spots")
+    suspend fun fetchSavedSpotList(): SavedSpotsResponse
 
     @POST("/api/v1/saved-spots")
     suspend fun addBookmark(

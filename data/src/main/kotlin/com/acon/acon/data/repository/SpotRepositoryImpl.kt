@@ -15,6 +15,7 @@ import com.acon.acon.domain.error.spot.FetchRecentNavigationLocationError
 import com.acon.acon.domain.error.spot.FetchSpotListError
 import com.acon.acon.domain.error.spot.GetSpotDetailInfoError
 import com.acon.acon.domain.model.area.LegalArea
+import com.acon.acon.domain.model.profile.SavedSpot
 import com.acon.acon.domain.model.spot.Condition
 import com.acon.acon.domain.model.spot.MenuBoardList
 import com.acon.acon.domain.model.spot.SpotDetail
@@ -79,6 +80,14 @@ class SpotRepositoryImpl @Inject constructor(
     ): Result<MenuBoardList> {
         return runCatchingWith(*FetchMenuBoardsError.createErrorInstances()) {
             spotRemoteDataSource.fetchMenuBoards(spotId).toMenuBoardList()
+        }
+    }
+
+    override suspend fun fetchSavedSpotList(): Result<List<SavedSpot>> {
+        return runCatchingWith() {
+            spotRemoteDataSource.fetchSavedSpotList().savedSpotResponseList?.map {
+                it.toSavedSpot()
+            }.orEmpty()
         }
     }
 
