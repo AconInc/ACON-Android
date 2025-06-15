@@ -28,7 +28,7 @@ import com.acon.acon.domain.model.profile.SavedSpot
 
 @Composable
 internal fun BookmarkItem(
-    spot: SavedSpot, // TODO - 서버에서 보내준 값으로 변경 (state)
+    spot: SavedSpot,
     onClickSpotItem:() -> Unit,
     modifier: Modifier = Modifier
 ) {
