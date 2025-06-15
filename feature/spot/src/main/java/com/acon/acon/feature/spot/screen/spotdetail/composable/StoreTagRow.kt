@@ -11,13 +11,11 @@ import androidx.compose.ui.unit.dp
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.tag.AconTag
 import com.acon.acon.core.designsystem.theme.AconTheme
+import com.acon.acon.domain.type.TagType
 
 @Composable
 internal fun StoreTagRow(
-    isNew: Boolean,
-    isLocal: Boolean,
-    isRanking: Boolean,
-    rankingNumber: Int,
+    tags: List<TagType>,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -25,21 +23,25 @@ internal fun StoreTagRow(
         horizontalArrangement = Arrangement.spacedBy(4.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        if (isNew) {
+        if (TagType.NEW in tags) {
             AconTag(
                 text = stringResource(R.string.store_tag_new),
                 backgroundColor = AconTheme.color.TagNew
             )
         }
-        if (isLocal) {
+
+        if (TagType.LOCAL in tags) {
             AconTag(
                 text = stringResource(R.string.store_tag_local),
                 backgroundColor = AconTheme.color.TagLocal
             )
         }
-        if (isRanking) {
+
+        val rankingTag = tags.firstOrNull { it.name.startsWith("TOP_") }
+        rankingTag?.let {
+            val rank = it.name.removePrefix("TOP_").toIntOrNull() ?: return@let
             AconTag(
-                text = stringResource(R.string.store_tag_ranking, rankingNumber),
+                text = stringResource(R.string.store_tag_ranking, rank),
                 backgroundColor = AconTheme.color.Gray900
             )
         }
@@ -51,10 +53,7 @@ internal fun StoreTagRow(
 private fun StoreChipPreview() {
     AconTheme {
         StoreTagRow(
-            isNew = true,
-            isLocal = true,
-            isRanking = true,
-            rankingNumber = 1
+            tags = emptyList()
         )
     }
 }
