@@ -23,8 +23,8 @@ class SpotRemoteDataSource @Inject constructor(
         return spotNoAuthApi.fetchRecentNavigationLocation(request)
     }
 
-    suspend fun fetchSpotDetail(spotId: Long, isMain: Boolean?): SpotDetailResponse {
-        return spotNoAuthApi.fetchSpotDetail(spotId, isMain)
+    suspend fun fetchSpotDetail(spotId: Long): SpotDetailResponse {
+        return spotAuthApi.fetchSpotDetail(spotId)
     }
 
     suspend fun getLegalDong(latitude: Double, longitude: Double): LegalAreaResponse {

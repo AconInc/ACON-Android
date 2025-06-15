@@ -59,10 +59,9 @@ class SpotRepositoryImpl @Inject constructor(
 
     override suspend fun fetchSpotDetail(
         spotId: Long,
-        isMain: Boolean?
     ): Result<SpotDetail> {
         return runCatchingWith(*GetSpotDetailInfoError.createErrorInstances()) {
-            spotRemoteDataSource.fetchSpotDetail(spotId, isMain).toSpotDetail()
+            spotRemoteDataSource.fetchSpotDetail(spotId).toSpotDetail()
         }
     }
 

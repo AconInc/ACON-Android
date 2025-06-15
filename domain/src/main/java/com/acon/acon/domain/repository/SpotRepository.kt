@@ -20,7 +20,6 @@ interface SpotRepository {
 
     suspend fun fetchSpotDetail(
          spotId: Long,
-         isMain: Boolean?
     ): Result<SpotDetail>
 
     suspend fun getLegalDong(
