@@ -26,7 +26,6 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.acon.acon.core.designsystem.R
@@ -38,12 +37,12 @@ internal fun StoreFloatingButtonSet(
     onClickShare: () -> Unit,
     onClickBookmark: () -> Unit,
     modifier: Modifier = Modifier,
-    isMenuBoarEnabled: Boolean = false,
+    isBookmarkSelected: Boolean = false,
+    isMenuBoarEnabled: Boolean = false
 ) {
     var isMenuBoardLongPressed by remember { mutableStateOf(false) }
     var isShareLongPressed by remember { mutableStateOf(false) }
     var isBookmarkLongPressed by remember { mutableStateOf(false) }
-    var isBookmarkSelected by remember { mutableStateOf(false) }
 
     val menuBoardImage = when {
         isMenuBoardLongPressed -> R.drawable.ic_menu_board_pressed
@@ -76,7 +75,6 @@ internal fun StoreFloatingButtonSet(
             name = stringResource(R.string.save),
             imageRes = bookmarkImageRes,
             onClickButton = {
-                isBookmarkSelected = !isBookmarkSelected
                 isBookmarkLongPressed = false
                 onClickBookmark()
             },
@@ -84,7 +82,6 @@ internal fun StoreFloatingButtonSet(
                 isBookmarkLongPressed = true
             },
             onReleaseAfterLongPress = {
-                isBookmarkSelected = !isBookmarkSelected
                 isBookmarkLongPressed = false
                 onClickBookmark()
             }
@@ -106,7 +103,7 @@ internal fun StoreFloatingButtonSet(
 }
 
 @Composable
-internal fun StoreDetailButton(
+private fun StoreDetailButton(
     name: String,
     @DrawableRes imageRes: Int,
     onClickButton: () -> Unit,
@@ -175,8 +172,7 @@ internal fun StoreDetailButton(
                     offset = Offset(x = 0f, y = blurPx),
                     blurRadius = blurPx
                 )
-            ),
-            fontWeight = FontWeight.SemiBold
+            )
         )
     }
 }

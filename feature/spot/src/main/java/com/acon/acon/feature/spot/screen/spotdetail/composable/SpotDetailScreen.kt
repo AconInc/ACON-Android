@@ -56,7 +56,7 @@ internal fun SpotDetailScreen(
     state: SpotDetailUiState,
     modifier: Modifier = Modifier,
     onNavigateToBack: () -> Unit = {},
-    onClickAddBookmark: () -> Unit = {},
+    onClickBookmark: () -> Unit = {},
     onClickDeleteBookmark: () -> Unit = {},
     onClickRequestMenuBoard: () -> Unit = {},
     onDismissMenuBoard: () -> Unit = {},
@@ -333,10 +333,10 @@ internal fun SpotDetailScreen(
                                 context.startActivity(shareIntent)
                             },
                             onClickBookmark = {
-                                //onClickAddBookmark()
-                                //onClickDeleteBookmark()
                                 // TODO - 북마크 ON 상태이면 북마크 삭제 / 북마크 OFF 상태이면 북마크 추가
+                                onClickBookmark()
                             },
+                            isBookmarkSelected = state.isBookmarkSaved,
                             isMenuBoarEnabled = state.spotDetail.hasMenuboardImage
                         )
                     }

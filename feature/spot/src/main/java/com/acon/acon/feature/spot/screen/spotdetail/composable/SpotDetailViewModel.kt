@@ -47,7 +47,7 @@ class SpotDetailViewModel @Inject constructor(
                         tags = spotNavData.tags,
                         transportMode = spotNavData.transportMode,
                         eta = spotNavData.eta,
-                        spotDetail = spotDetailResult.getOrNull()!!
+                        spotDetail = spotDetailResult.getOrNull()!!,
                     )
                 }
             }
@@ -72,6 +72,40 @@ class SpotDetailViewModel @Inject constructor(
                     )
                 }
             }
+        }
+    }
+
+    fun toggleBookmark() = intent {
+        runOn<SpotDetailUiState.Success> {
+            if (state.isBookmarkSaved) {
+                deleteBookmark()
+            } else {
+                addBookmark()
+            }
+        }
+    }
+
+    private fun addBookmark() = intent {
+        spotRepository.addBookmark(spotNavData.spotId).onSuccess {
+            runOn<SpotDetailUiState.Success> {
+                reduce {
+                    state.copy(isBookmarkSaved = true)
+                }
+            }
+        }.onFailure {
+
+        }
+    }
+
+    private fun deleteBookmark() = intent {
+        spotRepository.deleteBookmark(spotNavData.spotId).onSuccess {
+            runOn<SpotDetailUiState.Success> {
+                reduce {
+                    state.copy(isBookmarkSaved = false)
+                }
+            }
+        }.onFailure {
+
         }
     }
 
@@ -159,6 +193,7 @@ sealed interface SpotDetailUiState {
         val transportMode: TransportMode? = TransportMode.WALKING,
         val eta: Int? = 0,
         val spotDetail: SpotDetail,
+        val isBookmarkSaved: Boolean = false,
         val menuBoardList: List<String> = emptyList(),
         val menuBoardListLoad: Boolean = false,
         val showMenuBoardDialog: Boolean = false,
