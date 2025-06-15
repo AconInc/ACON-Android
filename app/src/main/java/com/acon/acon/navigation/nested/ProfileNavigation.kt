@@ -45,7 +45,7 @@ internal fun NavGraphBuilder.profileNavigation(
                     .statusBarsPadding(),
                 onNavigateToSpotDetailScreen = {
                     navController.navigate(SpotRoute.SpotDetail(
-                        SpotNavigationParameter(it, emptyList(), null, null)
+                        SpotNavigationParameter(it, emptyList(), null, null, true)
                     ))
                 },
                 onNavigateToBookMarkScreen = {
@@ -100,7 +100,7 @@ internal fun NavGraphBuilder.profileNavigation(
                 },
                 onNavigateToSpotDetailScreen = {
                     navController.navigate(SpotRoute.SpotDetail(
-                        SpotNavigationParameter(it, emptyList(), null, null)
+                        SpotNavigationParameter(it, emptyList(), null, null, true),
                     ))
                 },
             )
