@@ -5,8 +5,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.map.onLocationReady
-import com.acon.acon.feature.openNaverMap
+import com.acon.acon.core.utils.feature.toast.showToast
+import com.acon.feature.common.intent.openNaverMapNavigationWithMode
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
@@ -22,19 +24,15 @@ fun SpotDetailScreenContainer(
     SpotDetailScreen(
         state = state,
         modifier = modifier,
-        onClickAddBookmark = {}, //TODO - 북마크 추가 api
-        onClickDeleteBookmark = {}, //TODO - 북마크 삭제 api
         onNavigateToBack = viewModel::navigateToBack,
-        onClickMenuBoard = viewModel::onRequestMenuBoard,
-        onClickRefreshMenuBoard = viewModel::fetchMenuBoardList,
+        onClickBookmark = viewModel::toggleBookmark,
+        onClickRequestMenuBoard = viewModel::fetchMenuBoardList,
         onDismissMenuBoard = viewModel::onDismissMenuBoard,
         onRequestErrorReportModal = viewModel::onRequestReportErrorModal,
         onDismissErrorReportModal = viewModel::onDismissReportErrorModal,
         onRequestFindWayModal = viewModel::onRequestFindWayModal,
         onDismissFindWayModal = viewModel::onDismissFindWayModal,
-        onFindWayButtonClick = {
-            viewModel.fetchRecentNavigationLocation()
-        },
+        onClickFindWay = viewModel::fetchRecentNavigationLocation
     )
 
     viewModel.collectSideEffect { sideEffect ->
@@ -47,18 +45,15 @@ fun SpotDetailScreenContainer(
                     viewModel.onFindWay(location)
                 }
             }
-            is SpotDetailSideEffect.RecentLocationFetchFailed -> {
-                // TODO -> 최근 길 안내 장소 저장 (실패)
-            }
             is SpotDetailSideEffect.OnFindWayButtonClick -> {
-                openNaverMap(
-                    context = context,
-                    location = sideEffect.startLocation,
-                    destinationLat = sideEffect.goalDestinationLat,
-                    destinationLng = sideEffect.goalDestinationLng,
-                    destinationName = sideEffect.goalDestinationName
+                context.openNaverMapNavigationWithMode(
+                    start = sideEffect.start,
+                    destination = sideEffect.destination,
+                    destinationName = sideEffect.destinationName,
+                    transportMode = sideEffect.transportMode
                 )
             }
+            is SpotDetailSideEffect.ShowErrorToast -> context.showToast(R.string.unknown_error_message)
         }
     }
 }

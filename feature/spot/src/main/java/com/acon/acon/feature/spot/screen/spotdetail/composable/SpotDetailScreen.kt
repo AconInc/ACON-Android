@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
@@ -33,54 +34,40 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.acon.acon.core.common.UrlConstants
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.button.v2.AconFilledButton
+import com.acon.acon.core.designsystem.component.error.NetworkErrorView
 import com.acon.acon.core.designsystem.component.topbar.AconTopBar
 import com.acon.acon.core.designsystem.effect.LocalHazeState
 import com.acon.acon.core.designsystem.effect.imageGradientLayer
+import com.acon.acon.core.designsystem.image.rememberDefaultLoadImageErrorPainter
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
+import com.acon.acon.feature.spot.screen.component.OperationDot
+import com.acon.feature.common.compose.LocalOnRetry
 import com.acon.feature.common.compose.getTextSizeDp
 import dev.chrisbanes.haze.hazeSource
 import okhttp3.internal.immutableListOf
 
-private val testMenuBoardList = listOf(
-    R.drawable.ic_launcher_background,
-    R.drawable.ic_error_1_120,
-    R.drawable.ic_launcher_background
-)
-
-private val testStoreImageList = listOf(
-    R.drawable.ic_launcher_background,
-    R.drawable.ic_error_1_120,
-    R.drawable.ic_launcher_background,
-    R.drawable.ic_error_1_120,
-    R.drawable.ic_launcher_background,
-    R.drawable.ic_error_1_120,
-    R.drawable.ic_launcher_background,
-    R.drawable.ic_error_1_120,
-    R.drawable.ic_launcher_background,
-)
-
 @Composable
 internal fun SpotDetailScreen(
     state: SpotDetailUiState,
-    onFindWayButtonClick: () -> Unit,
     modifier: Modifier = Modifier,
-    onClickAddBookmark: () -> Unit = {},
+    onNavigateToBack: () -> Unit = {},
+    onClickBookmark: () -> Unit = {},
     onClickDeleteBookmark: () -> Unit = {},
-    onClickMenuBoard: () -> Unit = {},
-    onClickRefreshMenuBoard: () -> Unit = {},
+    onClickRequestMenuBoard: () -> Unit = {},
     onDismissMenuBoard: () -> Unit = {},
     onRequestErrorReportModal: () -> Unit = {},
     onDismissErrorReportModal: () -> Unit = {},
     onRequestFindWayModal: () -> Unit = {},
     onDismissFindWayModal: () -> Unit = {},
-    onNavigateToBack: () -> Unit = {},
+    onClickFindWay: () -> Unit = {}
 ) {
     val context = LocalContext.current
     val indicatorScrollState = rememberLazyListState()
@@ -92,19 +79,26 @@ internal fun SpotDetailScreen(
     )
 
     when (state) {
-        SpotDetailUiState.LoadFailed -> {}
-        SpotDetailUiState.Loading -> {}
+        is SpotDetailUiState.LoadFailed -> {
+            NetworkErrorView(
+                onRetry = LocalOnRetry.current,
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+        is SpotDetailUiState.Loading -> {}
         is SpotDetailUiState.Success -> {
-            val storeName = state.spotDetailInfo.name
-            val storeImageList = testStoreImageList // state.spotDetailInfo.imageList
-            val acornCount = 99 //TODO - state.spotDetailInfo.acornCount
+            val storeName = state.spotDetail.name
+            val storeImageList = state.spotDetail.imageList
+            val acornCount = state.spotDetail.acornCount
+            val isStoreOpen = state.spotDetail.isOpen
+
             val bottomPadding = if (storeImageList.size <= 1) {
                 34.dp
             } else {
                 0.dp
             }
 
-            val pageCount = testStoreImageList.size //state.spotDetailInfo.imageList.size
+            val pageCount = state.spotDetail.imageList.size
             val pagerState = rememberPagerState(initialPage = 0, pageCount = { pageCount })
 
             Box(
@@ -124,15 +118,19 @@ internal fun SpotDetailScreen(
                 }
 
                 if (state.showFindWayModal) {
+                    // TODO - 프로필, 북마크,딥링크 진입 유저 - 길찾기 방식 -> route/public
                     FindWayBottomSheet(
-                        onFindWay = { onFindWayButtonClick() },
+                        onFindWay = {
+                            onClickFindWay()
+                            onDismissFindWayModal()
+                        },
                         onDismissRequest = { onDismissFindWayModal() }
                     )
                 }
 
                 if (state.showMenuBoardDialog) {
                     MenuBoardOverlay(
-                        imageList = testMenuBoardList, //state.menuBoardList,
+                        imageList = state.menuBoardList,
                         isMenuBoardLoaded = state.menuBoardListLoad,
                         onDismiss = { onDismissMenuBoard() }
                     )
@@ -142,7 +140,7 @@ internal fun SpotDetailScreen(
                     HorizontalPager(
                         state = pagerState
                     ) { page ->
-                        AsyncImage(
+                       AsyncImage(
                             model = storeImageList[page],
                             contentDescription = stringResource(R.string.store_background_image_content_description),
                             contentScale = ContentScale.Crop,
@@ -150,7 +148,8 @@ internal fun SpotDetailScreen(
                                 .fillMaxSize()
                                 .imageGradientLayer(
                                     startColor = AconTheme.color.Gray900.copy(alpha = 0.8f)
-                                )
+                                ),
+                            error = rememberDefaultLoadImageErrorPainter()
                         )
                     }
                 } else {
@@ -168,6 +167,7 @@ internal fun SpotDetailScreen(
                                 ),
                             contentScale = ContentScale.Crop
                         )
+
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
@@ -182,6 +182,7 @@ internal fun SpotDetailScreen(
                                 text = noStoreText.random(),
                                 color = AconTheme.color.Gray200,
                                 style = AconTheme.typography.Body1,
+                                fontWeight = FontWeight.SemiBold,
                                 textAlign = TextAlign.Center
                             )
                         }
@@ -191,7 +192,7 @@ internal fun SpotDetailScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .hazeSource(LocalHazeState.current),
+                        .hazeSource(LocalHazeState.current)
                 ) {
                     AconTopBar(
                         leadingIcon = {
@@ -225,24 +226,31 @@ internal fun SpotDetailScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = if (storeName.length > 9) storeName.take(9) + stringResource(R.string.ellipsis) else storeName,
-                            style = AconTheme.typography.Title4,
+                            text = storeName,
+                            style = AconTheme.typography.Title3,
                             color = AconTheme.color.White,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            fontWeight = FontWeight.SemiBold,
+                            modifier = Modifier.weight(1f)
                         )
 
-                        Spacer(Modifier.weight(1f))
+                        Spacer(Modifier.width(40.dp))
                         Icon(
                             imageVector = ImageVector.vectorResource(R.drawable.acon_line),
                             contentDescription = stringResource(R.string.acorn_count_content_description),
                             tint = AconTheme.color.Gray50
                         )
-
                         Text(
-                            text = if (acornCount > 9999) stringResource(R.string.over_max_acon_count) else acornCount.toString(),
+                            text = when {
+                                acornCount > 9999 -> stringResource(R.string.over_max_acon_count)
+                                acornCount == 0 -> ""
+                                else -> acornCount.toString()
+                            },
                             style = AconTheme.typography.Body1,
-                            fontWeight = FontWeight.Normal,
                             color = AconTheme.color.White,
                             modifier = Modifier
+                                .padding(vertical = 2.dp)
                                 .padding(start = 2.dp)
                                 .widthIn(
                                     max = getTextSizeDp(
@@ -254,14 +262,38 @@ internal fun SpotDetailScreen(
                         )
                     }
 
+                    /*  TODO - 장소 상세 Tag 처리 로직
+                         * 일반 유저: 이전 페이지 "NEW", "LOCAL", "TOP" 태그 그대로 가져오기
+                         * 프로필, 북마크, 딥링크로 진입한 유저: API 응답으로 제공
+                     */
                     Spacer(Modifier.height(8.dp))
                     StoreTagRow(
-                        isNew = true, // TODO - state.spotDetailInfo.tagList.contains(stringResource(R.string.store_tag_new)),
-                        isLocal = true, // TODO - state.spotDetailInfo.tagList.contains(stringResource(R.string.store_tag_local)),
-                        isRanking = true,
-                        rankingNumber = 1, // TODO - api 나오면 수정 (임시 값들)
+                        tags = state.tags ?: emptyList(),
                         modifier = Modifier.padding(start = 20.dp)
                     )
+
+                    Row(
+                        modifier = Modifier.padding(start = 20.dp, top = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        OperationDot(state.spotDetail.isOpen)
+
+                        Text(
+                            text = if (isStoreOpen) state.spotDetail.closingTime else state.spotDetail.nextOpening,
+                            color = AconTheme.color.Gray200,
+                            style = AconTheme.typography.Body1,
+                            fontWeight = FontWeight.SemiBold,
+                            modifier = Modifier.padding(start = 12.dp)
+                        )
+
+                        Text(
+                            text = stringResource(R.string.store_closed),
+                            color = AconTheme.color.Gray200,
+                            style = AconTheme.typography.Body1,
+                            fontWeight = FontWeight.Normal,
+                            modifier = Modifier.padding(start = 4.dp)
+                        )
+                    }
 
                     Spacer(Modifier.weight(1f))
                     Row(
@@ -275,19 +307,21 @@ internal fun SpotDetailScreen(
                                 text = stringResource(R.string.signature_menu),
                                 color = AconTheme.color.White,
                                 style = AconTheme.typography.Title4,
+                                fontWeight = FontWeight.SemiBold,
                                 modifier = Modifier.align(Alignment.Start)
                             )
 
                             Spacer(Modifier.height(12.dp))
                             SignatureMenu(
-                                signatureMenuList = emptyList() // TODO - state.spotDetailInfo.signatureMenuList
+                                signatureMenuList = state.spotDetail.signatureMenuList
                             )
                         }
 
                         Spacer(modifier = Modifier.weight(1f))
                         StoreFloatingButtonSet(
-                            onClickMenuBoard = { onClickMenuBoard() },
+                            onClickMenuBoard = { onClickRequestMenuBoard() },
                             onClickShare = {
+                                // TODO - 딥링크 구현 후, 수정
                                 val image = storeImageList.getOrElse(0) { "" }
                                 val shareIntent = Intent.createChooser(
                                     Intent().apply {
@@ -295,7 +329,7 @@ internal fun SpotDetailScreen(
                                         type = "image/*"
                                         putExtra(
                                             Intent.EXTRA_TEXT,
-                                            "아콘에서 내 근처 ${state.spotDetailInfo.name} 확인해보세요!"
+                                            "아콘에서 내 근처 ${state.spotDetail.name} 확인해보세요!"
                                         )
                                         putExtra(Intent.EXTRA_STREAM, image)
                                         addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
@@ -305,11 +339,10 @@ internal fun SpotDetailScreen(
                                 context.startActivity(shareIntent)
                             },
                             onClickBookmark = {
-                                //onClickAddBookmark()
-                                //onClickDeleteBookmark()
-                                // TODO - 북마크 ON 상태이면 북마크 삭제 / 북마크 OFF 상태이면 북마크 추가
+                                onClickBookmark()
                             },
-                            isMenuBoarEnabled = true //state.menuBoardList.isEmpty() //TODO - state.spotDetailInfo.hasMenuboardImage
+                            isBookmarkSelected = state.isBookmarkSaved,
+                            isMenuBoarEnabled = state.spotDetail.hasMenuboardImage
                         )
                     }
 
@@ -329,18 +362,27 @@ internal fun SpotDetailScreen(
                     }
 
                     AconFilledButton(
-                        onClick = { onRequestFindWayModal() },
+                        onClick = {
+                            onRequestFindWayModal()
+                        },
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(start = 16.dp, end = 16.dp, bottom = 20.dp)
                     ) {
+                        // TODO - 프로필, 북마크,딥링크로 들어온 유저 버튼명 -> 그냥 길찾기
                         Text(
-                            text = stringResource(
-                                R.string.btn_find_way_walking_time,
-                                11
-                            ), // TODO - 예상 도착 시간 (도보)
+                            text = if (state.eta == null) {
+                                ""
+                            } else {
+                                stringResource(
+                                    R.string.btn_find_way_walking_time,
+                                    state.getTransportLabel(),
+                                    state.eta
+                                )
+                            },
                             color = AconTheme.color.White,
-                            style = AconTheme.typography.Title4
+                            style = AconTheme.typography.Title4,
+                            fontWeight = FontWeight.SemiBold
                         )
                     }
                 }
@@ -359,7 +401,7 @@ private fun SpotDetailScreenV2Preview() {
             SpotDetailScreen(
                 state = SpotDetailUiState.Loading,
                 onNavigateToBack = {},
-                onFindWayButtonClick = {}
+                onClickFindWay = {}
             )
         }
     }

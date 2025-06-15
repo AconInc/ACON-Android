@@ -15,13 +15,10 @@ import com.acon.acon.domain.type.RestaurantFilterType
 import com.acon.acon.domain.type.SpotType
 import com.acon.acon.domain.type.TransportMode
 import com.acon.acon.domain.usecase.IsDistanceExceededUseCase
-import com.acon.acon.feature.spot.mock.spotListUiStateCafeMock
-import com.acon.acon.feature.spot.mock.spotListUiStateRestaurantMock
 import com.acon.feature.common.base.BaseContainerHost
 import com.acon.feature.common.location.isInKorea
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.delay
 import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.viewmodel.container
 import javax.inject.Inject

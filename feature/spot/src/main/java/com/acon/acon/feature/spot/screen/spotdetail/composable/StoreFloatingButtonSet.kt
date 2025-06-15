@@ -37,12 +37,12 @@ internal fun StoreFloatingButtonSet(
     onClickShare: () -> Unit,
     onClickBookmark: () -> Unit,
     modifier: Modifier = Modifier,
-    isMenuBoarEnabled: Boolean = false,
+    isBookmarkSelected: Boolean = false,
+    isMenuBoarEnabled: Boolean = false
 ) {
     var isMenuBoardLongPressed by remember { mutableStateOf(false) }
     var isShareLongPressed by remember { mutableStateOf(false) }
     var isBookmarkLongPressed by remember { mutableStateOf(false) }
-    var isBookmarkSelected by remember { mutableStateOf(false) }
 
     val menuBoardImage = when {
         isMenuBoardLongPressed -> R.drawable.ic_menu_board_pressed
@@ -75,7 +75,6 @@ internal fun StoreFloatingButtonSet(
             name = stringResource(R.string.save),
             imageRes = bookmarkImageRes,
             onClickButton = {
-                isBookmarkSelected = !isBookmarkSelected
                 isBookmarkLongPressed = false
                 onClickBookmark()
             },
@@ -83,7 +82,6 @@ internal fun StoreFloatingButtonSet(
                 isBookmarkLongPressed = true
             },
             onReleaseAfterLongPress = {
-                isBookmarkSelected = !isBookmarkSelected
                 isBookmarkLongPressed = false
                 onClickBookmark()
             }
@@ -105,7 +103,7 @@ internal fun StoreFloatingButtonSet(
 }
 
 @Composable
-internal fun StoreDetailButton(
+private fun StoreDetailButton(
     name: String,
     @DrawableRes imageRes: Int,
     onClickButton: () -> Unit,

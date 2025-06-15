@@ -3,7 +3,7 @@ package com.acon.acon.domain.repository
 import com.acon.acon.domain.model.area.LegalArea
 import com.acon.acon.domain.model.spot.Condition
 import com.acon.acon.domain.model.spot.MenuBoardList
-import com.acon.acon.domain.model.spot.SpotDetailInfo
+import com.acon.acon.domain.model.spot.SpotDetail
 import com.acon.acon.domain.model.spot.v2.SpotList
 
 interface SpotRepository {
@@ -18,9 +18,9 @@ interface SpotRepository {
         spotId: Long,
     ): Result<Unit>
 
-    suspend fun getSpotDetailInfo(
+    suspend fun fetchSpotDetail(
          spotId: Long,
-    ): Result<SpotDetailInfo>
+    ): Result<SpotDetail>
 
     suspend fun getLegalDong(
         latitude: Double,
@@ -30,4 +30,12 @@ interface SpotRepository {
     suspend fun fetchMenuBoards(
         spotId: Long
     ): Result<MenuBoardList>
+
+    suspend fun addBookmark(
+        spotId: Long
+    ): Result<Unit>
+
+    suspend fun deleteBookmark(
+        spotId: Long
+    ): Result<Unit>
 }
