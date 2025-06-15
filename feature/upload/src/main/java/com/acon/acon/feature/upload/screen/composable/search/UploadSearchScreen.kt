@@ -1,6 +1,7 @@
 package com.acon.acon.feature.upload.screen.composable.search
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,7 +26,10 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
@@ -66,6 +70,9 @@ internal fun UploadSearchScreen(
     modifier: Modifier = Modifier,
 ) {
 
+    val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
+
     val hazeState = rememberHazeState()
 
     var query by rememberSaveable(stateSaver = TextFieldValue.Saver) { mutableStateOf(TextFieldValue("")) }
@@ -87,7 +94,12 @@ internal fun UploadSearchScreen(
     }
 
     Column(
-        modifier = modifier,
+        modifier = modifier.pointerInput(Unit) {
+            detectTapGestures(onTap = {
+                keyboardController?.hide()
+                focusManager.clearFocus()
+            })
+        },
     ) {
         UploadTopAppBar(
             isRightActionEnabled = isNextActionEnabled,
