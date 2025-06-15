@@ -18,6 +18,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
@@ -152,6 +153,11 @@ internal fun SpotListScreen(
         ) {
             when (state) {
                 is SpotListUiStateV2.Success -> {
+                    LaunchedEffect(state.spotList) {
+                        if (state.spotList.isNotEmpty()) {
+                            pagerState.scrollToPage(0)
+                        }
+                    }
                     Box(Modifier.fillMaxSize()) {
                         when (state.selectedSpotType) {
                             SpotType.RESTAURANT -> {

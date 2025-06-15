@@ -124,15 +124,17 @@ internal fun SpotListSuccessView(
                     .padding(vertical = 6.dp)
                     .fillMaxWidth(.91f)
                     .graphicsLayer {
-                        val pageOffset =
-                            pagerState.getOffsetDistanceInPages(page).absoluteValue
-                        val ratio = lerp(
-                            start = 1.1f,
-                            stop = 0.9f,
-                            fraction = pageOffset.coerceIn(0f, 1f)
-                        )
-                        scaleX = ratio
-                        scaleY = ratio
+                        try {
+                            val pageOffset =
+                                pagerState.getOffsetDistanceInPages(page).absoluteValue
+                            val ratio = lerp(
+                                start = 1.1f,
+                                stop = 0.9f,
+                                fraction = pageOffset.coerceIn(0f, 1f)
+                            )
+                            scaleX = ratio
+                            scaleY = ratio
+                        } catch (_: Exception) {}
                     }
             ) {
                 if (page == 0) {
