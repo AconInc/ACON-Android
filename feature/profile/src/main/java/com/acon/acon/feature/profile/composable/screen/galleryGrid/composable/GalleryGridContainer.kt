@@ -54,6 +54,7 @@ fun GalleryGridContainer(
         albumName = viewModel.albumName,
         modifier = modifier,
         onBackClicked = onBackClicked,
+        onLoadMoreImage = viewModel::loadNextPage,
         onUpdateAllImages = viewModel::updateAllImages,
         onUpdateUserSelectedImages = viewModel::updateUserSelectedImages,
         onClickPermissionSettings = viewModel::onPermissionSettingClick,
