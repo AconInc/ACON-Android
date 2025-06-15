@@ -153,11 +153,11 @@ internal fun SpotListScreen(
         ) {
             when (state) {
                 is SpotListUiStateV2.Success -> {
-                    LaunchedEffect(state.spotList) {
-                        if (state.spotList.isNotEmpty()) {
-                            pagerState.scrollToPage(0)
-                        }
-                    }
+//                    LaunchedEffect(state.spotList) {
+//                        if (state.spotList.isNotEmpty()) {
+//                            pagerState.scrollToPage(0)
+//                        }
+//                    }
                     Box(Modifier.fillMaxSize()) {
                         when (state.selectedSpotType) {
                             SpotType.RESTAURANT -> {

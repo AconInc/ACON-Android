@@ -19,6 +19,7 @@ import com.acon.feature.common.base.BaseContainerHost
 import com.acon.feature.common.location.isInKorea
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.delay
 import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.viewmodel.container
 import javax.inject.Inject
@@ -78,15 +79,18 @@ class SpotListViewModel @Inject constructor(
     }
 
     fun onSpotTypeClicked(spotType: SpotType) = intent {
+        val captureState = state as? SpotListUiStateV2.Success
         runOn<SpotListUiStateV2.Success> {
             if (spotType == state.selectedSpotType) return@runOn
             reduce {
-                state.copy(selectedSpotType = spotType)
+                SpotListUiStateV2.Loading(selectedSpotType = spotType)
             }
         }
-        runOn<SpotListUiStateV2.Success> {
+
+        delay(500L)
+        if (captureState != null) {
             fetchSpotList(
-                location = state.currentLocation,
+                location = captureState.currentLocation,
                 condition = Condition(spotType, emptyList())
             ) {
                 SpotListUiStateV2.Success(
@@ -94,7 +98,7 @@ class SpotListViewModel @Inject constructor(
                     spotList = it.spots,
                     headTitle = "최고의 선택.",
                     selectedSpotType = spotType,
-                    currentLocation = state.currentLocation,
+                    currentLocation = captureState.currentLocation,
                     selectedRestaurantFilters = emptyMap(),
                     selectedCafeFilters = emptyMap()
                 )
@@ -139,22 +143,28 @@ class SpotListViewModel @Inject constructor(
     fun onRestaurantFilterSaved(
         selectedRestaurantFilters: Map<FilterDetailKey, Set<RestaurantFilterType>>,
     ) = intent {
-        runOn<SpotListUiStateV2.Success> {
-            reduce {
-                state.copy(
-                    selectedRestaurantFilters = selectedRestaurantFilters,
-                    showFilterModal = false
-                )
-            }
+        val captureState = state as? SpotListUiStateV2.Success
+        reduce {
+            SpotListUiStateV2.Loading(
+                selectedSpotType = state.selectedSpotType,
+                selectedRestaurantFilters = selectedRestaurantFilters,
+            )
         }
-        runOn<SpotListUiStateV2.Success> {
+
+        delay(500L)
+        if (captureState != null) {
             fetchSpotList(
-                location = state.currentLocation,
+                location = captureState.currentLocation,
                 condition = mapCondition(state)
             ) {
-                state.copy(
+                SpotListUiStateV2.Success(
                     transportMode = it.transportMode,
                     spotList = it.spots,
+                    headTitle = "최고의 선택.",
+                    selectedSpotType = captureState.selectedSpotType,
+                    currentLocation = captureState.currentLocation,
+                    selectedRestaurantFilters = state.selectedRestaurantFilters,
+                    selectedCafeFilters = emptyMap()
                 )
             }
         }
@@ -163,22 +173,28 @@ class SpotListViewModel @Inject constructor(
     fun onCafeFilterSaved(
         selectedCafeFilters: Map<FilterDetailKey, Set<CafeFilterType>>,
     ) = intent {
-        runOn<SpotListUiStateV2.Success> {
-            reduce {
-                state.copy(
-                    selectedCafeFilters = selectedCafeFilters,
-                    showFilterModal = false
-                )
-            }
+        val captureState = state as? SpotListUiStateV2.Success
+        reduce {
+            SpotListUiStateV2.Loading(
+                selectedSpotType = state.selectedSpotType,
+                selectedCafeFilters = selectedCafeFilters,
+            )
         }
-        runOn<SpotListUiStateV2.Success> {
+
+        delay(500L)
+        if (captureState != null) {
             fetchSpotList(
-                location = state.currentLocation,
+                location = captureState.currentLocation,
                 condition = mapCondition(state)
             ) {
-                state.copy(
+                SpotListUiStateV2.Success(
                     transportMode = it.transportMode,
                     spotList = it.spots,
+                    headTitle = "최고의 선택.",
+                    selectedSpotType = captureState.selectedSpotType,
+                    currentLocation = captureState.currentLocation,
+                    selectedRestaurantFilters = emptyMap(),
+                    selectedCafeFilters = state.selectedCafeFilters
                 )
             }
         }
@@ -206,7 +222,7 @@ class SpotListViewModel @Inject constructor(
         }
     }
 
-    private fun mapCondition(state: SpotListUiStateV2.Success): Condition {
+    private fun mapCondition(state: SpotListUiStateV2): Condition {
         return Condition(
             spotType = state.selectedSpotType,
             filterList = if (state.selectedSpotType == SpotType.RESTAURANT) {
@@ -239,6 +255,8 @@ class SpotListViewModel @Inject constructor(
 
 sealed interface SpotListUiStateV2 {
     val selectedSpotType: SpotType
+    val selectedRestaurantFilters: Map<FilterDetailKey, Set<RestaurantFilterType>>
+    val selectedCafeFilters: Map<FilterDetailKey, Set<CafeFilterType>>
 
     @Immutable
     data class Success(
@@ -247,22 +265,28 @@ sealed interface SpotListUiStateV2 {
         val spotList: List<Spot>,
         val headTitle: String,
         val currentLocation: Location,
-        val selectedRestaurantFilters: Map<FilterDetailKey, Set<RestaurantFilterType>> = emptyMap(),
-        val selectedCafeFilters: Map<FilterDetailKey, Set<CafeFilterType>> = emptyMap(),
+        override val selectedRestaurantFilters: Map<FilterDetailKey, Set<RestaurantFilterType>> = emptyMap(),
+        override val selectedCafeFilters: Map<FilterDetailKey, Set<CafeFilterType>> = emptyMap(),
         val showFilterModal: Boolean = false,
         val showRefreshPopup: Boolean = false
     ) : SpotListUiStateV2
 
     data class Loading(
         override val selectedSpotType: SpotType,
+        override val selectedRestaurantFilters: Map<FilterDetailKey, Set<RestaurantFilterType>> = emptyMap(),
+        override val selectedCafeFilters: Map<FilterDetailKey, Set<CafeFilterType>> = emptyMap(),
     ) : SpotListUiStateV2
 
     data class LoadFailed(
         override val selectedSpotType: SpotType,
+        override val selectedRestaurantFilters: Map<FilterDetailKey, Set<RestaurantFilterType>> = emptyMap(),
+        override val selectedCafeFilters: Map<FilterDetailKey, Set<CafeFilterType>> = emptyMap(),
     ) : SpotListUiStateV2
 
     data class OutOfServiceArea(
         override val selectedSpotType: SpotType,
+        override val selectedRestaurantFilters: Map<FilterDetailKey, Set<RestaurantFilterType>> = emptyMap(),
+        override val selectedCafeFilters: Map<FilterDetailKey, Set<CafeFilterType>> = emptyMap(),
     ) : SpotListUiStateV2
 }
 
