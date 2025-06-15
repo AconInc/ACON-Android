@@ -41,12 +41,14 @@ import coil3.compose.SubcomposeAsyncImage
 import com.acon.acon.core.common.UrlConstants
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.button.v2.AconFilledButton
+import com.acon.acon.core.designsystem.component.error.NetworkErrorView
 import com.acon.acon.core.designsystem.component.topbar.AconTopBar
 import com.acon.acon.core.designsystem.effect.LocalHazeState
 import com.acon.acon.core.designsystem.effect.imageGradientLayer
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.feature.spot.screen.component.OperationDot
+import com.acon.feature.common.compose.LocalOnRetry
 import com.acon.feature.common.compose.getTextSizeDp
 import dev.chrisbanes.haze.hazeSource
 import okhttp3.internal.immutableListOf
@@ -76,8 +78,13 @@ internal fun SpotDetailScreen(
     )
 
     when (state) {
-        SpotDetailUiState.LoadFailed -> {}
-        SpotDetailUiState.Loading -> {}
+        is SpotDetailUiState.LoadFailed -> {
+            NetworkErrorView(
+                onRetry = LocalOnRetry.current,
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+        is SpotDetailUiState.Loading -> {}
         is SpotDetailUiState.Success -> {
             val storeName = state.spotDetail.name
             val storeImageList = state.spotDetail.imageList
@@ -110,7 +117,7 @@ internal fun SpotDetailScreen(
                 }
 
                 if (state.showFindWayModal) {
-                    //TODO - 도보/자전거 분리해야 함
+                    // TODO - 프로필, 북마크,딥링크 진입 유저 - 길찾기 방식 -> route/public
                     FindWayBottomSheet(
                         onFindWay = {
                             onClickFindWay()
@@ -257,9 +264,8 @@ internal fun SpotDetailScreen(
                     }
 
                     /*  TODO - 장소 상세 Tag 처리 로직
-                        * 일반 유저: 이전 페이지 "NEW", "LOCAL", "TOP" 태그 그대로 가져오기
-                        * 딥링크 접속 유저: API 응답으로 제공
-                        * 프로필에서  진입: API 응답으로 제공
+                         * 일반 유저: 이전 페이지 "NEW", "LOCAL", "TOP" 태그 그대로 가져오기
+                         * 프로필, 북마크, 딥링크로 진입한 유저: API 응답으로 제공
                      */
                     Spacer(Modifier.height(8.dp))
                     StoreTagRow(
@@ -316,6 +322,7 @@ internal fun SpotDetailScreen(
                         StoreFloatingButtonSet(
                             onClickMenuBoard = { onClickRequestMenuBoard() },
                             onClickShare = {
+                                // TODO - 딥링크 구현 후, 수정
                                 val image = storeImageList.getOrElse(0) { "" }
                                 val shareIntent = Intent.createChooser(
                                     Intent().apply {
@@ -333,7 +340,6 @@ internal fun SpotDetailScreen(
                                 context.startActivity(shareIntent)
                             },
                             onClickBookmark = {
-                                // TODO - 북마크 ON 상태이면 북마크 삭제 / 북마크 OFF 상태이면 북마크 추가
                                 onClickBookmark()
                             },
                             isBookmarkSelected = state.isBookmarkSaved,
@@ -364,7 +370,7 @@ internal fun SpotDetailScreen(
                             .fillMaxWidth()
                             .padding(start = 16.dp, end = 16.dp, bottom = 20.dp)
                     ) {
-                        // TODO - 딥링크이면 그냥 길찾기로 표시
+                        // TODO - 프로필, 북마크,딥링크로 들어온 유저 버튼명 -> 그냥 길찾기
                         Text(
                             text = if (state.eta == null) {
                                 ""

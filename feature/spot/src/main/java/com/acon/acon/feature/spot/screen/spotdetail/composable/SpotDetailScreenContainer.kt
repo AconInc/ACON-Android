@@ -5,7 +5,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.map.onLocationReady
+import com.acon.acon.core.utils.feature.toast.showToast
 import com.acon.feature.common.intent.openNaverMapNavigationWithMode
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
@@ -51,6 +53,7 @@ fun SpotDetailScreenContainer(
                     transportMode = sideEffect.transportMode
                 )
             }
+            is SpotDetailSideEffect.ShowErrorToast -> context.showToast(R.string.unknown_error_message)
         }
     }
 }

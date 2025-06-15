@@ -30,7 +30,7 @@ class SpotDetailViewModel @Inject constructor(
     ).spotNavigationParameter
 
     override val container =
-        container<SpotDetailUiState, SpotDetailSideEffect>(SpotDetailUiState.Loading) {
+        container<SpotDetailUiState, SpotDetailSideEffect>(SpotDetailUiState.LoadFailed) {
             val spotDetailInfoDeferred = viewModelScope.async {
                 spotRepository.fetchSpotDetail(
                     spotId = spotNavData.spotId
@@ -47,7 +47,7 @@ class SpotDetailViewModel @Inject constructor(
                         tags = spotNavData.tags,
                         transportMode = spotNavData.transportMode,
                         eta = spotNavData.eta,
-                        spotDetail = spotDetailResult.getOrNull()!!,
+                        spotDetail = spotDetailResult.getOrNull()!!
                     )
                 }
             }
@@ -64,7 +64,6 @@ class SpotDetailViewModel @Inject constructor(
                     )
                 }
             }.onFailure {
-                // TODO - 메뉴 이미지 로딩 실패 UI
                 reduce {
                     state.copy(
                         menuBoardListLoad = false,
@@ -93,7 +92,7 @@ class SpotDetailViewModel @Inject constructor(
                 }
             }
         }.onFailure {
-
+            postSideEffect(SpotDetailSideEffect.ShowErrorToast)
         }
     }
 
@@ -105,7 +104,7 @@ class SpotDetailViewModel @Inject constructor(
                 }
             }
         }.onFailure {
-
+            postSideEffect(SpotDetailSideEffect.ShowErrorToast)
         }
     }
 
@@ -130,7 +129,7 @@ class SpotDetailViewModel @Inject constructor(
     @OptIn(OrbitExperimental::class)
     fun onFindWay(location: Location) = intent {
         runOn<SpotDetailUiState.Success> {
-            // TODO - 딥링크, 프로필로 진입한 유저 -> Walk
+            // TODO - 딥링크, 프로필로 진입한 유저 -> route/public
             postSideEffect(
                 SpotDetailSideEffect.OnFindWayButtonClick(
                     start = location,
@@ -219,4 +218,5 @@ sealed interface SpotDetailSideEffect {
         val destinationName: String,
         val transportMode: TransportMode
     ) : SpotDetailSideEffect
+    data object ShowErrorToast : SpotDetailSideEffect
 }
