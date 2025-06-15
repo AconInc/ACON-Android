@@ -18,6 +18,7 @@ import com.acon.acon.feature.spot.screen.spotdetail.composable.SpotDetailScreenC
 import com.acon.acon.feature.spot.screen.spotlist.composable.SpotListScreenContainer
 import com.acon.acon.feature.upload.UploadRoute
 import com.acon.feature.common.intent.openMapNavigation
+import com.acon.feature.common.intent.openNaverMapNavigationWithMode
 import com.acon.feature.common.navigation.spotNavigationParameterNavType
 
 internal fun NavGraphBuilder.spotNavigation(
@@ -44,7 +45,7 @@ internal fun NavGraphBuilder.spotNavigation(
                         SpotNavigationParameter(spot.id, spot.tags, tm, spot.eta)
                     ))
                 },
-                onNavigateToExternalMap = context::openMapNavigation,
+                onNavigateToExternalMap = context::openNaverMapNavigationWithMode,
                 modifier = Modifier
                     .fillMaxSize()
                     .background(AconTheme.color.Gray900)

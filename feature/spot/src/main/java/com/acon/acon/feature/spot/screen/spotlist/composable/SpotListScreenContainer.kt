@@ -20,7 +20,7 @@ fun SpotListScreenContainer(
     onNavigateToUploadScreen: () -> Unit,
     onNavigateToProfileScreen: () -> Unit,
     onNavigateToSpotDetailScreen: (Spot, TransportMode) -> Unit,
-    onNavigateToExternalMap: (start: Location, destination: Location) -> Unit,
+    onNavigateToExternalMap: (start: Location, destination: Location, destinationName: String, transportMode: TransportMode) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: SpotListViewModel = hiltViewModel()
 ) {
@@ -55,7 +55,7 @@ fun SpotListScreenContainer(
                 onNavigateToSpotDetailScreen(it.spot, it.transportMode)
             }
             is SpotListSideEffectV2.NavigateToExternalMap -> {
-                onNavigateToExternalMap(it.start, it.destination)
+                onNavigateToExternalMap(it.start, it.destination, it.destinationName, it.transportMode)
             }
         }
     }

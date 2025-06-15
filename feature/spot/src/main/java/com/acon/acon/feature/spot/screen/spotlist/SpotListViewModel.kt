@@ -119,7 +119,9 @@ class SpotListViewModel @Inject constructor(
                 destination = Location("").apply {
                     latitude = spot.latitude
                     longitude = spot.longitude
-                }
+                },
+                destinationName = spot.name,
+                transportMode = state.transportMode
             ))
         }
     }
@@ -292,7 +294,7 @@ sealed interface SpotListUiStateV2 {
 
 sealed interface SpotListSideEffectV2 {
     data object ShowToastMessage : SpotListSideEffectV2
-    data class NavigateToExternalMap(val start: Location, val destination: Location) : SpotListSideEffectV2
+    data class NavigateToExternalMap(val start: Location, val destination: Location, val destinationName: String, val transportMode: TransportMode) : SpotListSideEffectV2
     data class NavigateToSpotDetailScreen(val spot: Spot, val transportMode: TransportMode) : SpotListSideEffectV2
 }
 
