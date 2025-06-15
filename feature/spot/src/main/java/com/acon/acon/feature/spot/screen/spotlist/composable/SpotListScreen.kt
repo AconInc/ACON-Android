@@ -18,6 +18,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
@@ -95,7 +96,7 @@ internal fun SpotListScreen(
                 .height(IntrinsicSize.Min)
                 .defaultHazeEffect(
                     hazeState = LocalHazeState.current,
-                    tintColor = Color(0xFF060505),
+                    tintColor = AconTheme.color.GlassGray900,
                     blurRadius = 20.dp,
                 )
                 .padding(bottom = 14.dp, top = 6.dp)
@@ -152,6 +153,11 @@ internal fun SpotListScreen(
         ) {
             when (state) {
                 is SpotListUiStateV2.Success -> {
+                    LaunchedEffect(state.spotList) {
+                        if (state.spotList.isNotEmpty()) {
+                            pagerState.scrollToPage(0)
+                        }
+                    }
                     Box(Modifier.fillMaxSize()) {
                         when (state.selectedSpotType) {
                             SpotType.RESTAURANT -> {
@@ -268,7 +274,7 @@ internal fun SpotListScreen(
                 .fillMaxWidth()
                 .defaultHazeEffect(
                     hazeState = LocalHazeState.current,
-                    tintColor = AconTheme.color.Dim_b_30
+                    tintColor = AconTheme.color.GlassGray900
                 )
                 .navigationBarsPadding()
         )

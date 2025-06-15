@@ -1,8 +1,8 @@
-package com.acon.acon.core.utils.feature.permission.storage
+package com.acon.acon.core.utils.feature.permission.media
 
 import android.net.Uri
 
-data class FileEntry(
+data class MediaEntry(
     val uri: Uri,
     val name: String,
     val size: Long,

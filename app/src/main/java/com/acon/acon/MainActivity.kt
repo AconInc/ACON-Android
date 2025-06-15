@@ -106,66 +106,66 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private val appUpdateManager by lazy {
-        AppUpdateManagerFactory.create(application)
-    }
-    private val appUpdateInfo = flow {
-        emit(appUpdateManager.appUpdateInfo.await())
-    }.stateIn(
-        scope = lifecycleScope,
-        started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = null
-    )
-
-    private val updateStateFlow = flow {
-        val shouldUpdateAppDeferred = lifecycleScope.async {
-            val currentAppVersion = try {
-                val packageInfo = application.packageManager.getPackageInfo(application.packageName, 0)
-                packageInfo.versionName
-            } catch (e: Exception) {
-                null
-            }
-            currentAppVersion?.let { v ->
-                aconAppRepository.shouldUpdateApp(v).getOrElse { false }
-            }
-        }
-
-        appUpdateInfo.firstNotNull().let { updateInfo ->
-            if (updateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE) {
-                if (updateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)) {  // 1. 강제 업데이트 (인앱)
-                    // Not used
-                } else if (shouldUpdateAppDeferred.await() == true) { // 2. 강제 업데이트 (스토어 이동)
-                    emit(UpdateState.FORCE)
-                } else if (updateInfo.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE)) { // 3. 선택적 업데이트 (인앱)
-                    emit(UpdateState.OPTIONAL)
-                }
-            }
-        }
-    }.stateIn(
-        scope = lifecycleScope,
-        started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = UpdateState.NONE
-    )
-
-    private val appInstallStateListener by lazy {
-        InstallStateUpdatedListener { state ->
-            if (state.installStatus() == InstallStatus.DOWNLOADED) {
-                lifecycleScope.launch {
-                    val result = snackbarHostState.showSnackbar(
-                        message = getString(R.string.update_complete),
-                        actionLabel = getString(R.string.restart)
-                    )
-                    when (result) {
-                        SnackbarResult.ActionPerformed -> {
-                            appUpdateManager.completeUpdate()
-                        }
-
-                        SnackbarResult.Dismissed -> Unit
-                    }
-                }
-            }
-        }
-    }
+//    private val appUpdateManager by lazy {
+//        AppUpdateManagerFactory.create(application)
+//    }
+//    private val appUpdateInfo = flow {
+//        emit(appUpdateManager.appUpdateInfo.await())
+//    }.stateIn(
+//        scope = lifecycleScope,
+//        started = SharingStarted.WhileSubscribed(5_000),
+//        initialValue = null
+//    )
+//
+//    private val updateStateFlow = flow {
+//        val shouldUpdateAppDeferred = lifecycleScope.async {
+//            val currentAppVersion = try {
+//                val packageInfo = application.packageManager.getPackageInfo(application.packageName, 0)
+//                packageInfo.versionName
+//            } catch (e: Exception) {
+//                null
+//            }
+//            currentAppVersion?.let { v ->
+//                aconAppRepository.shouldUpdateApp(v).getOrElse { false }
+//            }
+//        }
+//
+//        appUpdateInfo.firstNotNull().let { updateInfo ->
+//            if (updateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE) {
+//                if (updateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)) {  // 1. 강제 업데이트 (인앱)
+//                    // Not used
+//                } else if (shouldUpdateAppDeferred.await() == true) { // 2. 강제 업데이트 (스토어 이동)
+//                    emit(UpdateState.FORCE)
+//                } else if (updateInfo.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE)) { // 3. 선택적 업데이트 (인앱)
+//                    emit(UpdateState.OPTIONAL)
+//                }
+//            }
+//        }
+//    }.stateIn(
+//        scope = lifecycleScope,
+//        started = SharingStarted.WhileSubscribed(5_000),
+//        initialValue = UpdateState.NONE
+//    )
+//
+//    private val appInstallStateListener by lazy {
+//        InstallStateUpdatedListener { state ->
+//            if (state.installStatus() == InstallStatus.DOWNLOADED) {
+//                lifecycleScope.launch {
+//                    val result = snackbarHostState.showSnackbar(
+//                        message = getString(R.string.update_complete),
+//                        actionLabel = getString(R.string.restart)
+//                    )
+//                    when (result) {
+//                        SnackbarResult.ActionPerformed -> {
+//                            appUpdateManager.completeUpdate()
+//                        }
+//
+//                        SnackbarResult.Dismissed -> Unit
+//                    }
+//                }
+//            }
+//        }
+//    }
     private val snackbarHostState = SnackbarHostState()
     private val appUpdateActivityResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
@@ -394,42 +394,42 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     private fun CheckAndRequireUpdate() {
-        val updateState by updateStateFlow.collectAsStateWithLifecycle()
-
-        when (updateState) {
-            UpdateState.FORCE -> {
-                AconDefaultDialog(
-                    title = stringResource(R.string.update_required_title),
-                    action = stringResource(R.string.update),
-                    onAction = { launchPlayStore() },
-                    onDismissRequest = {}
-                )
-            }
-
-            UpdateState.OPTIONAL -> {
-                AconTwoActionDialog(
-                    title = stringResource(R.string.update_available_title),
-                    action1 = stringResource(R.string.cancel),
-                    action2 = stringResource(R.string.update),
-                    onAction1 = {}, onAction2 = {
-                        appUpdateManager.startUpdateFlowForResult(
-                            appUpdateInfo.value ?: return@AconTwoActionDialog,
-                            appUpdateActivityResultLauncher,
-                            AppUpdateOptions.defaultOptions(AppUpdateType.FLEXIBLE)
-                        )
-                    }, onDismissRequest = {}
-                )
-            }
-
-            UpdateState.NONE -> Unit
-        }
-
-        DisposableEffect(appUpdateManager) {
-            appUpdateManager.registerListener(appInstallStateListener)
-            onDispose {
-                appUpdateManager.unregisterListener(appInstallStateListener)
-            }
-        }
+//        val updateState by updateStateFlow.collectAsStateWithLifecycle()
+//
+//        when (updateState) {
+//            UpdateState.FORCE -> {
+//                AconDefaultDialog(
+//                    title = stringResource(R.string.update_required_title),
+//                    action = stringResource(R.string.update),
+//                    onAction = { launchPlayStore() },
+//                    onDismissRequest = {}
+//                )
+//            }
+//
+//            UpdateState.OPTIONAL -> {
+//                AconTwoActionDialog(
+//                    title = stringResource(R.string.update_available_title),
+//                    action1 = stringResource(R.string.cancel),
+//                    action2 = stringResource(R.string.update),
+//                    onAction1 = {}, onAction2 = {
+//                        appUpdateManager.startUpdateFlowForResult(
+//                            appUpdateInfo.value ?: return@AconTwoActionDialog,
+//                            appUpdateActivityResultLauncher,
+//                            AppUpdateOptions.defaultOptions(AppUpdateType.FLEXIBLE)
+//                        )
+//                    }, onDismissRequest = {}
+//                )
+//            }
+//
+//            UpdateState.NONE -> Unit
+//        }
+//
+//        DisposableEffect(appUpdateManager) {
+//            appUpdateManager.registerListener(appInstallStateListener)
+//            onDispose {
+//                appUpdateManager.unregisterListener(appInstallStateListener)
+//            }
+//        }
     }
 }
 

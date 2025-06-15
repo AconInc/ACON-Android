@@ -4,6 +4,7 @@ import com.acon.acon.data.dto.request.UpdateProfileRequest
 import com.acon.acon.data.dto.response.profile.PreSignedUrlResponse
 import com.acon.acon.data.dto.response.profile.ProfileResponse
 import com.acon.acon.data.api.remote.ProfileApi
+import com.acon.acon.data.dto.request.SaveSpotRequest
 import retrofit2.Response
 import javax.inject.Inject
 
@@ -27,6 +28,9 @@ class ProfileRemoteDataSource @Inject constructor(
             request = UpdateProfileRequest(profileImage = fileName, nickname = nickname, birthDate = formatBirthday(birthday))
         )
     }
+
+    suspend fun fetchSavedSpots() = profileApi.fetchSavedSpots()
+    suspend fun saveSpot(saveSpotRequest: SaveSpotRequest) = profileApi.saveSpot(saveSpotRequest)
 }
 
 private fun formatBirthday(birthday: String?): String? {

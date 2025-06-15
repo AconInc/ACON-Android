@@ -12,7 +12,7 @@ data class UploadSpotSuggestionsResponse(
 @Serializable
 data class UploadSpotSuggestionResponse(
     @SerialName("spotId") val spotId: Long,
-    @SerialName("spotName") val spotName: String
+    @SerialName("name") val spotName: String
 ) {
     fun toSuggestion() = UploadSpotSuggestion(
         spotId = spotId,

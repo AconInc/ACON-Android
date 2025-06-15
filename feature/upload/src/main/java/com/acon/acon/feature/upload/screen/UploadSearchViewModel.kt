@@ -51,7 +51,7 @@ class UploadSearchViewModel @Inject constructor(
         }
         viewModelScope.launch {
             queryFlow
-                .debounce(200)
+                .debounce(100)
                 .distinctUntilChanged()
                 .collect { query ->
                     runOn<UploadSearchUiState.Success> {

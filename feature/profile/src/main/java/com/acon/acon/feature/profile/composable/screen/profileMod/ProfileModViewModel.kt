@@ -62,20 +62,22 @@ class ProfileModViewModel @Inject constructor(
     }
 
     private fun fetchUserProfileInfo() = intent {
-        profileRepository.fetchProfile().onSuccess { profile ->
-            val cleanedBirthday = profile.birthDate?.filter { it.isDigit() } ?: ""
-            val limitedNickname = profile.nickname.lowercase().take(14)
+        profileRepository.fetchProfile().collect {
+            it.onSuccess { profile ->
+                val cleanedBirthday = profile.birthDate?.filter { it.isDigit() } ?: ""
+                val limitedNickname = profile.nickname.lowercase().take(14)
 
-            reduce {
-                ProfileModState.Success(
-                    fetchedNickname = limitedNickname,
-                    fetchedBirthday = cleanedBirthday,
-                    birthdayTextFieldValue = TextFieldValue(cleanedBirthday),
-                    fetchedPhotoUri = profile.image,
-                )
+                reduce {
+                    ProfileModState.Success(
+                        fetchedNickname = limitedNickname,
+                        fetchedBirthday = cleanedBirthday,
+                        birthdayTextFieldValue = TextFieldValue(cleanedBirthday),
+                        fetchedPhotoUri = profile.image,
+                    )
+                }
+                onNicknameChanged(limitedNickname, delayValidation = true)
+                onBirthdayChanged(TextFieldValue(cleanedBirthday))
             }
-            onNicknameChanged(limitedNickname, delayValidation = true)
-            onBirthdayChanged(TextFieldValue(cleanedBirthday))
         }
     }
 
@@ -318,7 +320,8 @@ class ProfileModViewModel @Inject constructor(
                     updateProfile(
                         fileName = state.fetchedPhotoUri,
                         nickname = nickname,
-                        birthday = birthday
+                        birthday = birthday,
+                        uri = state.fetchedPhotoUri
                     )
                 }
 
@@ -326,7 +329,8 @@ class ProfileModViewModel @Inject constructor(
                     updateProfile(
                         fileName = state.uploadFileName,
                         nickname = nickname,
-                        birthday = birthday
+                        birthday = birthday,
+                        uri = state.selectedPhotoUri
                     )
                 }
 
@@ -399,13 +403,15 @@ class ProfileModViewModel @Inject constructor(
                             updateProfile(
                                 fileName = state.uploadFileName,
                                 nickname = nickname,
-                                birthday = state.birthdayTextFieldValue.text
+                                birthday = state.birthdayTextFieldValue.text,
+                                uri = imageUri.toString()
                             )
                         } else {
                             updateProfile(
                                 fileName = state.uploadFileName,
                                 nickname = nickname,
-                                birthday = null
+                                birthday = null,
+                                uri = imageUri.toString()
                             )
                         }
                     } else {
@@ -417,8 +423,8 @@ class ProfileModViewModel @Inject constructor(
             }
         }
 
-    private fun updateProfile(fileName: String, nickname: String, birthday: String?) = intent {
-        profileRepository.updateProfile(fileName, nickname, birthday)
+    private fun updateProfile(fileName: String, nickname: String, birthday: String?, uri: String) = intent {
+        profileRepository.updateProfile(fileName, nickname, birthday, uri)
             .onSuccess {
                 profileRepository.updateProfileType(UpdateProfileType.SUCCESS)
                 postSideEffect(ProfileModSideEffect.NavigateToProfile)

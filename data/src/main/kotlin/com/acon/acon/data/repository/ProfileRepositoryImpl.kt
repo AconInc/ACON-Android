@@ -1,11 +1,16 @@
 package com.acon.acon.data.repository
 
+import android.net.Uri
 import com.acon.acon.core.common.IODispatcher
+import com.acon.acon.data.cache.ProfileInfoCache
 import com.acon.acon.data.datasource.remote.ProfileRemoteDataSource
+import com.acon.acon.data.dto.request.SaveSpotRequest
 import com.acon.acon.data.error.runCatchingWith
+import com.acon.acon.domain.error.profile.SaveSpotError
 import com.acon.acon.domain.error.profile.ValidateNicknameError
 import com.acon.acon.domain.model.profile.PreSignedUrl
-import com.acon.acon.domain.model.profile.Profile
+import com.acon.acon.domain.model.profile.ProfileInfo
+import com.acon.acon.domain.model.profile.SavedSpot
 import com.acon.acon.domain.repository.ProfileRepository
 import com.acon.acon.domain.type.UpdateProfileType
 import kotlinx.coroutines.CoroutineScope
@@ -21,10 +26,11 @@ class ProfileRepositoryImpl @Inject constructor(
     @IODispatcher private val scope: CoroutineScope,
     private val profileRemoteDataSource: ProfileRemoteDataSource
 ) : ProfileRepository {
-    override suspend fun fetchProfile(): Result<Profile> {
-        return runCatchingWith() {
-            profileRemoteDataSource.fetchProfile().toProfile()
-        }
+
+    private val profileInfoCache = ProfileInfoCache(scope, profileRemoteDataSource)
+
+    override fun fetchProfile(): Flow<Result<ProfileInfo>> {
+        return profileInfoCache.data
     }
 
     override suspend fun getPreSignedUrl(): Result<PreSignedUrl> {
@@ -39,9 +45,15 @@ class ProfileRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun updateProfile(fileName: String, nickname: String, birthday: String?): Result<Unit> {
+    override suspend fun updateProfile(fileName: String, nickname: String, birthday: String?, uri: String): Result<Unit> {
         return runCatchingWith() {
             profileRemoteDataSource.updateProfile(fileName, nickname, birthday)
+            profileInfoCache.updateData(ProfileInfo(
+                nickname = nickname,
+                birthDate = birthday,
+                image = uri,
+                savedSpots = profileInfoCache.data.value.getOrNull()?.savedSpots.orEmpty()
+            ))
         }
     }
 
@@ -64,5 +76,19 @@ class ProfileRepositoryImpl @Inject constructor(
 
     override suspend fun resetProfileType() {
         _updateProfileType.emit(UpdateProfileType.IDLE)
+    }
+
+    override suspend fun fetchSavedSpots(): Result<List<SavedSpot>> {
+        return runCatchingWith() {
+            profileRemoteDataSource.fetchSavedSpots().savedSpotResponseList?.map {
+                it.toSavedSpot()
+            }.orEmpty()
+        }
+    }
+
+    override suspend fun saveSpot(spotId: Long): Result<Unit> {
+        return runCatchingWith(*SaveSpotError.createErrorInstances()) {
+            profileRemoteDataSource.saveSpot(SaveSpotRequest(spotId))
+        }
     }
 }
