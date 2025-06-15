@@ -245,7 +245,7 @@
     <string name="change_photo_permission">사진 권한 변경</string>
     <string name="change_photo_permission_call_to_action">"지금 모든 사진 접근 권한을 허용하면 더 쉽고 편하게 사진을 올릴 수 있어요"</string>
     <string name="no_photo">이미지가 없습니다.</string>
-    <string name="select_more_photo">더 많은 사진선택</string>
+    <string name="select_more_photo">더 많은 사진 선택</string>
     <string name="grant_access_all_photo">모든 사진에 대한 접근 허용</string>
 
     <!-- setting -->
