@@ -60,24 +60,22 @@ class SpotListViewModel @Inject constructor(
 
             runOn<SpotListUiStateV2.Loading> {
                 initialLocation = location
-                reduce {
-                    spotListUiStateRestaurantMock
+
+                if (location.isInKorea(context)) {
+                    fetchSpotList(location, Condition(SpotType.RESTAURANT, emptyList())) {
+                        SpotListUiStateV2.Success(
+                            transportMode = it.transportMode,
+                            spotList = it.spots,
+                            headTitle = "최고의 선택.",
+                            selectedSpotType = SpotType.RESTAURANT,
+                            currentLocation = location
+                        )
+                    }
+                } else {
+                    reduce {
+                        SpotListUiStateV2.OutOfServiceArea(state.selectedSpotType)
+                    }
                 }
-//                if (location.isInKorea(context)) {
-//                    fetchSpotList(location, Condition(SpotType.RESTAURANT, emptyList())) {
-//                        SpotListUiStateV2.Success(
-//                            transportMode = it.transportMode,
-//                            spotList = it.spots,
-//                            headTitle = "최고의 선택.",
-//                            selectedSpotType = SpotType.RESTAURANT,
-//                            currentLocation = location
-//                        )
-//                    }
-//                } else {
-//                    reduce {
-//                        SpotListUiStateV2.OutOfServiceArea(state.selectedSpotType)
-//                    }
-//                }
             }
         }
     }
@@ -89,27 +87,20 @@ class SpotListViewModel @Inject constructor(
                 state.copy(selectedSpotType = spotType)
             }
 
-            reduce {
-                if (spotType == SpotType.RESTAURANT) {
-                    spotListUiStateRestaurantMock
-                } else {
-                    spotListUiStateCafeMock
-                }
+            fetchSpotList(
+                location = state.currentLocation,
+                condition = Condition(spotType, emptyList())
+            ) {
+                SpotListUiStateV2.Success(
+                    transportMode = it.transportMode,
+                    spotList = it.spots,
+                    headTitle = "최고의 선택.",
+                    selectedSpotType = spotType,
+                    currentLocation = state.currentLocation,
+                    selectedRestaurantFilters = emptyMap(),
+                    selectedCafeFilters = emptyMap()
+                )
             }
-//            fetchSpotList(
-//                location = state.currentLocation,
-//                condition = Condition(spotType, emptyList())
-//            ) {
-//                SpotListUiStateV2.Success(
-//                    transportMode = it.transportMode,
-//                    spotList = it.spots,
-//                    headTitle = "최고의 선택.",
-//                    selectedSpotType = spotType,
-//                    currentLocation = state.currentLocation,
-//                    selectedRestaurantFilters = emptyMap(),
-//                    selectedCafeFilters = emptyMap()
-//                )
-//            }
         }
     }
 
