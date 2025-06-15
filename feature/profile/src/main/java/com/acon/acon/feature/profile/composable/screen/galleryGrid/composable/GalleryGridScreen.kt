@@ -5,10 +5,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -242,24 +240,33 @@ internal fun GalleryGridScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp)
+                        .padding(vertical = 20.dp)
                 ) {
                     Text(
-                        text = stringResource(R.string.change_photo_permission_call_to_action), // TODO - 문구 정해지면 수정
-                        color = AconTheme.color.White,
-                        style = AconTheme.typography.Body1
+                        text = stringResource(R.string.change_photo_permission_call_to_action),
+                        color = AconTheme.color.Gray50,
+                        style = AconTheme.typography.Body1,
+                        modifier = Modifier
+                            .padding(horizontal = 20.dp)
                     )
 
-                    Spacer(Modifier.height(8.dp))
-                    Text(
-                        text = stringResource(R.string.change_photo_permission), // TODO - 문구 정해지면 수정
-                        color = AconTheme.color.Action,
-                        style = AconTheme.typography.Body1,
-                        modifier = Modifier.noRippleClickable {
-                            resetMediaPermission()
-                            requestMediaPermissionModal()
-                        }
-                    )
+                    Box(
+                        modifier = Modifier
+                            .padding(top = 8.dp, start = 20.dp)
+                    ) {
+                        Text(
+                            text = stringResource(R.string.change_photo_permission),
+                            color = AconTheme.color.Action,
+                            style = AconTheme.typography.Body1,
+                            fontWeight = FontWeight.SemiBold,
+                            modifier = Modifier
+                                .padding(8.dp)
+                                .noRippleClickable {
+                                    resetMediaPermission()
+                                    requestMediaPermissionModal()
+                                }
+                        )
+                    }
                 }
 
                 if (state.photoList.isEmpty()) {
@@ -268,8 +275,8 @@ internal fun GalleryGridScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = stringResource(R.string.no_photo), // TODO - 문구 정해지면 수정
-                            color = AconTheme.color.White,
+                            text = stringResource(R.string.no_photo),
+                            color = AconTheme.color.Gray500,
                             style = AconTheme.typography.Body1,
                             modifier = Modifier.align(Alignment.Center)
                         )
@@ -277,7 +284,8 @@ internal fun GalleryGridScreen(
                 } else {
                     LazyVerticalGrid(
                         columns = GridCells.Fixed(4),
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier
+                            .fillMaxSize(),
                         verticalArrangement = Arrangement.spacedBy(4.dp),
                         horizontalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
@@ -363,6 +371,14 @@ internal fun GalleryGridScreen(
                             )
                         }
                     },
+                    content = {
+                        Text(
+                            text = stringResource(R.string.my_album),
+                            style = AconTheme.typography.Title4,
+                            fontWeight = FontWeight.SemiBold,
+                            color = AconTheme.color.White
+                        )
+                    },
                     modifier = Modifier.padding(vertical = 14.dp)
                 )
 
@@ -371,8 +387,8 @@ internal fun GalleryGridScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = stringResource(R.string.no_photo), // TODO - 문구 정해지면 수정
-                        color = AconTheme.color.White,
+                        text = stringResource(R.string.no_photo),
+                        color = AconTheme.color.Gray500,
                         style = AconTheme.typography.Body1
                     )
                 }

@@ -193,30 +193,47 @@ internal fun GalleryListScreen(
                             )
                         }
                     },
+                    content = {
+                        Text(
+                            text = stringResource(R.string.my_album),
+                            style = AconTheme.typography.Title4,
+                            fontWeight = FontWeight.SemiBold,
+                            color = AconTheme.color.White
+                        )
+                    },
                     modifier = Modifier.padding(vertical = 14.dp)
                 )
 
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp)
+                        .padding(vertical = 20.dp)
                 ) {
                     Text(
-                        text = stringResource(R.string.change_photo_permission_call_to_action), // TODO - 문구 정해지면 수정
-                        color = AconTheme.color.White,
-                        style = AconTheme.typography.Body1
+                        text = stringResource(R.string.change_photo_permission_call_to_action),
+                        color = AconTheme.color.Gray50,
+                        style = AconTheme.typography.Body1,
+                        modifier = Modifier
+                            .padding(horizontal = 20.dp)
                     )
 
-                    Spacer(Modifier.height(8.dp))
-                    Text(
-                        text = stringResource(R.string.change_photo_permission), // TODO - 문구 정해지면 수정
-                        color = AconTheme.color.Action,
-                        style = AconTheme.typography.Body1,
-                        modifier = Modifier.noRippleClickable {
-                            resetMediaPermission()
-                            requestMediaPermissionModal()
-                        }
-                    )
+                    Box(
+                        modifier = Modifier
+                            .padding(top = 8.dp, start = 20.dp)
+                    ) {
+                        Text(
+                            text = stringResource(R.string.change_photo_permission),
+                            color = AconTheme.color.Action,
+                            style = AconTheme.typography.Body1,
+                            fontWeight = FontWeight.SemiBold,
+                            modifier = Modifier
+                                .padding(8.dp)
+                                .noRippleClickable {
+                                    resetMediaPermission()
+                                    requestMediaPermissionModal()
+                                }
+                        )
+                    }
                 }
 
                 if (state.albumList.isEmpty()) {
@@ -225,15 +242,16 @@ internal fun GalleryListScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = stringResource(R.string.no_photo), // TODO - 문구 정해지면 수정
-                            color = AconTheme.color.White,
+                            text = stringResource(R.string.no_photo),
+                            color = AconTheme.color.Gray500,
                             style = AconTheme.typography.Body1,
                             modifier = Modifier.align(Alignment.Center)
                         )
                     }
                 } else {
                     LazyColumn(
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier
+                            .weight(1f)
                     ) {
                         items(
                             items = state.albumList,
@@ -316,6 +334,14 @@ internal fun GalleryListScreen(
                             )
                         }
                     },
+                    content = {
+                        Text(
+                            text = stringResource(R.string.my_album),
+                            style = AconTheme.typography.Title4,
+                            fontWeight = FontWeight.SemiBold,
+                            color = AconTheme.color.White
+                        )
+                    },
                     modifier = Modifier.padding(vertical = 14.dp)
                 )
 
@@ -324,8 +350,8 @@ internal fun GalleryListScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = stringResource(R.string.no_photo), // TODO - 문구 정해지면 수정
-                        color = AconTheme.color.White,
+                        text = stringResource(R.string.no_photo),
+                        color = AconTheme.color.Gray500,
                         style = AconTheme.typography.Body1
                     )
                 }

@@ -44,7 +44,7 @@ internal fun MediaPermissionBottomSheet(
                 horizontalArrangement = Arrangement.Start
             ) {
                 Text(
-                    text = stringResource(R.string.select_more_photo), // TODO - 문구 정해지면 수정
+                    text = stringResource(R.string.select_more_photo),
                     color = AconTheme.color.White,
                     style = AconTheme.typography.Title4,
                     fontWeight = FontWeight.Normal,
@@ -64,7 +64,7 @@ internal fun MediaPermissionBottomSheet(
                 horizontalArrangement = Arrangement.Start
             ) {
                 Text(
-                    text = stringResource(R.string.grant_access_all_photo), // TODO - 문구 정해지면 수정
+                    text = stringResource(R.string.grant_access_all_photo),
                     color = AconTheme.color.White,
                     style = AconTheme.typography.Title4,
                     fontWeight = FontWeight.Normal,
