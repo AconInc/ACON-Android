@@ -37,6 +37,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil3.compose.AsyncImage
 import coil3.compose.SubcomposeAsyncImage
 import com.acon.acon.core.common.UrlConstants
 import com.acon.acon.core.designsystem.R
@@ -45,6 +46,7 @@ import com.acon.acon.core.designsystem.component.error.NetworkErrorView
 import com.acon.acon.core.designsystem.component.topbar.AconTopBar
 import com.acon.acon.core.designsystem.effect.LocalHazeState
 import com.acon.acon.core.designsystem.effect.imageGradientLayer
+import com.acon.acon.core.designsystem.image.LoadImageErrorPainter
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.feature.spot.screen.component.OperationDot
@@ -139,7 +141,7 @@ internal fun SpotDetailScreen(
                     HorizontalPager(
                         state = pagerState
                     ) { page ->
-                        SubcomposeAsyncImage(
+                       AsyncImage(
                             model = storeImageList[page],
                             contentDescription = stringResource(R.string.store_background_image_content_description),
                             contentScale = ContentScale.Crop,
@@ -148,9 +150,7 @@ internal fun SpotDetailScreen(
                                 .imageGradientLayer(
                                     startColor = AconTheme.color.Gray900.copy(alpha = 0.8f)
                                 ),
-                            error = {
-                                // TODO - 가게이미지 로드 실패, SpotList에서 사용한 컴포넌트 활용
-                            }
+                            error = LoadImageErrorPainter.Default
                         )
                     }
                 } else {
