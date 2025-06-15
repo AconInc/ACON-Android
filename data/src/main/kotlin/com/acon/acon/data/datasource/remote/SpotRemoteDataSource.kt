@@ -2,6 +2,7 @@ package com.acon.acon.data.datasource.remote
 
 import com.acon.acon.data.api.remote.SpotAuthApi
 import com.acon.acon.data.api.remote.SpotNoAuthApi
+import com.acon.acon.data.dto.request.AddBookmarkRequest
 import com.acon.acon.data.dto.request.RecentNavigationLocationRequest
 import com.acon.acon.data.dto.request.SpotListRequest
 import com.acon.acon.data.dto.response.MenuBoardListResponse
@@ -33,5 +34,13 @@ class SpotRemoteDataSource @Inject constructor(
 
     suspend fun fetchMenuBoards(spotId: Long): MenuBoardListResponse {
         return spotNoAuthApi.fetchMenuBoards(spotId)
+    }
+
+    suspend fun addBookmark(request: AddBookmarkRequest) {
+        return spotAuthApi.addBookmark(request)
+    }
+
+    suspend fun deleteBookmark(spotId: Long) {
+        return spotAuthApi.deleteBookmark(spotId)
     }
 }

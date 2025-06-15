@@ -30,4 +30,12 @@ interface SpotRepository {
     suspend fun fetchMenuBoards(
         spotId: Long
     ): Result<MenuBoardList>
+
+    suspend fun addBookmark(
+        spotId: Long
+    ): Result<Unit>
+
+    suspend fun deleteBookmark(
+        spotId: Long
+    ): Result<Unit>
 }

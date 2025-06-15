@@ -1,12 +1,15 @@
 package com.acon.acon.data.repository
 
 import com.acon.acon.data.datasource.remote.SpotRemoteDataSource
+import com.acon.acon.data.dto.request.AddBookmarkRequest
 import com.acon.acon.data.dto.request.ConditionRequest
 import com.acon.acon.data.dto.request.FilterListRequest
 import com.acon.acon.data.dto.request.RecentNavigationLocationRequest
 import com.acon.acon.data.dto.request.SpotListRequest
 import com.acon.acon.data.error.runCatchingWith
 import com.acon.acon.domain.error.area.GetLegalDongError
+import com.acon.acon.domain.error.spot.AddBookmarkError
+import com.acon.acon.domain.error.spot.DeleteBookmarkError
 import com.acon.acon.domain.error.spot.FetchMenuBoardsError
 import com.acon.acon.domain.error.spot.FetchRecentNavigationLocationError
 import com.acon.acon.domain.error.spot.FetchSpotListError
@@ -76,6 +79,18 @@ class SpotRepositoryImpl @Inject constructor(
     ): Result<MenuBoardList> {
         return runCatchingWith(*FetchMenuBoardsError.createErrorInstances()) {
             spotRemoteDataSource.fetchMenuBoards(spotId).toMenuBoardList()
+        }
+    }
+
+    override suspend fun addBookmark(spotId: Long): Result<Unit> {
+        return runCatchingWith(*AddBookmarkError.createErrorInstances()) {
+            spotRemoteDataSource.addBookmark(AddBookmarkRequest(spotId))
+        }
+    }
+
+    override suspend fun deleteBookmark(spotId: Long): Result<Unit> {
+        return runCatchingWith(*DeleteBookmarkError.createErrorInstances()) {
+            spotRemoteDataSource.deleteBookmark(spotId)
         }
     }
 }
