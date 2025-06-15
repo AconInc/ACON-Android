@@ -19,7 +19,6 @@ import androidx.compose.ui.res.vectorResource
 import coil3.compose.AsyncImage
 import coil3.compose.rememberAsyncImagePainter
 import com.acon.acon.core.designsystem.R
-import com.acon.acon.core.designsystem.image.LoadImageErrorPainter
 import com.acon.acon.core.designsystem.image.rememberDefaultLoadImageErrorPainter
 
 @Composable
