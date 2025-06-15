@@ -30,7 +30,7 @@ class SpotDetailViewModel @Inject constructor(
     ).spotNavigationParameter
 
     override val container =
-        container<SpotDetailUiState, SpotDetailSideEffect>(SpotDetailUiState.LoadFailed) {
+        container<SpotDetailUiState, SpotDetailSideEffect>(SpotDetailUiState.Loading) {
             val spotDetailInfoDeferred = viewModelScope.async {
                 spotRepository.fetchSpotDetail(
                     spotId = spotNavData.spotId
