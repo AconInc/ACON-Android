@@ -6,6 +6,8 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.acon.acon.domain.model.spot.SpotDetail
 import com.acon.acon.domain.repository.SpotRepository
+import com.acon.acon.domain.type.TagType
+import com.acon.acon.domain.type.TransportMode
 import com.acon.acon.feature.spot.SpotRoute
 import com.acon.feature.common.base.BaseContainerHost
 import com.acon.feature.common.navigation.spotNavigationParameterNavType
@@ -23,16 +25,15 @@ class SpotDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : BaseContainerHost<SpotDetailUiState, SpotDetailSideEffect>() {
 
-    private val spotId = savedStateHandle.toRoute<SpotRoute.SpotDetail>(
+    private val spotNavData = savedStateHandle.toRoute<SpotRoute.SpotDetail>(
         mapOf(spotNavigationParameterNavType)
-    ).spotNavigationParameter.spotId
+    ).spotNavigationParameter
 
     override val container =
         container<SpotDetailUiState, SpotDetailSideEffect>(SpotDetailUiState.Loading) {
             val spotDetailInfoDeferred = viewModelScope.async {
                 spotRepository.fetchSpotDetail(
-                    spotId = spotId,
-                    isMain = null //TODO - 딥링크 구현 후 수정
+                    spotId = spotNavData.spotId
                 )
             }
 
@@ -43,6 +44,9 @@ class SpotDetailViewModel @Inject constructor(
                 }
                 else {
                     SpotDetailUiState.Success(
+                        tags = spotNavData.tags,
+                        transportMode = spotNavData.transportMode,
+                        eta = spotNavData.eta,
                         spotDetail = spotDetailResult.getOrNull()!!
                     )
                 }
@@ -51,7 +55,7 @@ class SpotDetailViewModel @Inject constructor(
 
     fun fetchMenuBoardList() = intent {
         runOn<SpotDetailUiState.Success> {
-            spotRepository.fetchMenuBoards(spotId).onSuccess {
+            spotRepository.fetchMenuBoards(spotNavData.spotId).onSuccess {
                 reduce {
                     state.copy(
                         menuBoardList = it.menuBoardImageList,
@@ -71,33 +75,37 @@ class SpotDetailViewModel @Inject constructor(
         }
     }
 
-    fun fetchRecentNavigationLocation() = intent {
-        spotRepository.fetchRecentNavigationLocation(1).onSuccess {
-            postSideEffect(
-                SpotDetailSideEffect.RecentLocationFetched
-            )
-        }.onFailure {
-            postSideEffect(
-                SpotDetailSideEffect.RecentLocationFetchFailed(it)
-            )
-        }
-    }
-
     fun navigateToBack() = intent {
         postSideEffect(
             SpotDetailSideEffect.NavigateToBack
         )
     }
 
+    fun fetchRecentNavigationLocation() = intent {
+        spotRepository.fetchRecentNavigationLocation(spotNavData.spotId).onSuccess {
+            postSideEffect(
+                SpotDetailSideEffect.RecentLocationFetched
+            )
+        }.onFailure {
+            postSideEffect(
+                SpotDetailSideEffect.RecentLocationFetched
+            )
+        }
+    }
+
     @OptIn(OrbitExperimental::class)
     fun onFindWay(location: Location) = intent {
         runOn<SpotDetailUiState.Success> {
+            // TODO - 딥링크, 프로필로 진입한 유저 -> Walk
             postSideEffect(
                 SpotDetailSideEffect.OnFindWayButtonClick(
-                    goalDestinationLat = state.spotDetail.latitude,
-                    goalDestinationLng = state.spotDetail.longitude,
-                    goalDestinationName = state.spotDetail.name,
-                    startLocation = location
+                    start = location,
+                    destination = Location("").apply {
+                        latitude = state.spotDetail.latitude
+                        longitude = state.spotDetail.longitude
+                    },
+                    destinationName = state.spotDetail.name,
+                    transportMode = state.transportMode ?: TransportMode.WALKING
                 )
             )
         }
@@ -147,14 +155,22 @@ class SpotDetailViewModel @Inject constructor(
 sealed interface SpotDetailUiState {
     @Immutable
     data class Success(
+        val tags: List<TagType>? = emptyList(),
+        val transportMode: TransportMode? = TransportMode.WALKING,
+        val eta: Int? = 0,
         val spotDetail: SpotDetail,
         val menuBoardList: List<String> = emptyList(),
         val menuBoardListLoad: Boolean = false,
         val showMenuBoardDialog: Boolean = false,
         val showReportErrorModal: Boolean = false,
         val showFindWayModal: Boolean = false
-    ) : SpotDetailUiState
-
+    ) : SpotDetailUiState {
+        fun getTransportLabel(): String = when (transportMode) {
+            TransportMode.WALKING -> "도보"
+            TransportMode.BIKING -> "자전거"
+            else -> "도보"
+        }
+    }
     data object Loading : SpotDetailUiState
     data object LoadFailed : SpotDetailUiState
 }
@@ -162,11 +178,10 @@ sealed interface SpotDetailUiState {
 sealed interface SpotDetailSideEffect {
     data object NavigateToBack : SpotDetailSideEffect
     data object RecentLocationFetched : SpotDetailSideEffect
-    data class RecentLocationFetchFailed(val error: Throwable) : SpotDetailSideEffect
     data class OnFindWayButtonClick(
-        val goalDestinationLat: Double,
-        val goalDestinationLng: Double,
-        val goalDestinationName: String,
-        val startLocation: Location
+        val start: Location,
+        val destination: Location,
+        val destinationName: String,
+        val transportMode: TransportMode
     ) : SpotDetailSideEffect
 }

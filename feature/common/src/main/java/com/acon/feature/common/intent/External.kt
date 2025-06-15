@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.net.Uri
+import com.acon.acon.domain.type.TransportMode
 
 /**
  * Acon 플레이스토어로 이동
@@ -73,6 +74,39 @@ private fun Context.openGoogleMapNavigation(
     val intent = Intent(Intent.ACTION_VIEW, uri)
     intent.setPackage(GOOGLE_MAP_PACKAGE_NAME)
     startActivity(intent)
+}
+
+fun Context.openNaverMapNavigationWithMode(
+    start: Location,
+    destination: Location,
+    destinationName: String,
+    transportMode: TransportMode
+) {
+    val mode = when (transportMode) {
+        TransportMode.WALKING -> "walk"
+        TransportMode.BIKING -> "bicycle"
+    }
+
+    val uri = Uri.parse(
+        "nmap://route/$mode?" +
+                "dlat=${destination.latitude}&dlng=${destination.longitude}&" +
+                "dname=$destinationName&" +
+                "appname=$packageName"
+    )
+
+    if (isPackageInstalled(this, NAVER_MAP_PACKAGE_NAME)) {
+        val intent = Intent(Intent.ACTION_VIEW, uri).apply {
+            setPackage(NAVER_MAP_PACKAGE_NAME)
+        }
+        startActivity(intent)
+    } else {
+        startActivity(
+            Intent(
+                Intent.ACTION_VIEW,
+                Uri.parse("market://details?id=${NAVER_MAP_PACKAGE_NAME}")
+            )
+        )
+    }
 }
 
 private const val NAVER_MAP_PACKAGE_NAME = "com.nhn.android.nmap"
