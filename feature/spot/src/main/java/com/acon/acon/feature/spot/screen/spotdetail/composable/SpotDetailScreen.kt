@@ -60,7 +60,6 @@ internal fun SpotDetailScreen(
     modifier: Modifier = Modifier,
     onNavigateToBack: () -> Unit = {},
     onClickBookmark: () -> Unit = {},
-    onClickDeleteBookmark: () -> Unit = {},
     onClickRequestMenuBoard: () -> Unit = {},
     onDismissMenuBoard: () -> Unit = {},
     onRequestErrorReportModal: () -> Unit = {},

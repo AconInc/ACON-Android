@@ -31,27 +31,35 @@ class SpotDetailViewModel @Inject constructor(
 
     override val container =
         container<SpotDetailUiState, SpotDetailSideEffect>(SpotDetailUiState.Loading) {
-            val spotDetailInfoDeferred = viewModelScope.async {
-                spotRepository.fetchSpotDetail(
-                    spotId = spotNavData.spotId
+            fetchedSpotDetail()
+        }
+
+    private fun fetchedSpotDetail() = intent {
+        val spotDetailInfoDeferred = viewModelScope.async {
+            spotRepository.fetchSpotDetail(
+                spotId = spotNavData.spotId
+            )
+        }
+
+        val spotDetailResult = spotDetailInfoDeferred.await()
+        reduce {
+            if (spotDetailResult.getOrNull() == null) {
+                SpotDetailUiState.LoadFailed
+            }
+            else {
+                SpotDetailUiState.Success(
+                    tags = spotNavData.tags,
+                    transportMode = spotNavData.transportMode,
+                    eta = spotNavData.eta,
+                    spotDetail = spotDetailResult.getOrNull()!!
                 )
             }
-
-            val spotDetailResult = spotDetailInfoDeferred.await()
-            reduce {
-                if (spotDetailResult.getOrNull() == null) {
-                    SpotDetailUiState.LoadFailed
-                }
-                else {
-                    SpotDetailUiState.Success(
-                        tags = spotNavData.tags,
-                        transportMode = spotNavData.transportMode,
-                        eta = spotNavData.eta,
-                        spotDetail = spotDetailResult.getOrNull()!!
-                    )
-                }
-            }
         }
+    }
+
+    fun retry() = intent {
+        fetchedSpotDetail()
+    }
 
     fun fetchMenuBoardList() = intent {
         runOn<SpotDetailUiState.Success> {

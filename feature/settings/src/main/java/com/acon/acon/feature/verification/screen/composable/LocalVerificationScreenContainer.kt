@@ -1,6 +1,7 @@
 package com.acon.acon.feature.verification.screen.composable
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -9,6 +10,7 @@ import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.utils.feature.toast.showToast
 import com.acon.acon.feature.verification.screen.LocalVerificationSideEffect
 import com.acon.acon.feature.verification.screen.LocalVerificationViewModel
+import com.acon.feature.common.compose.LocalOnRetry
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
@@ -22,16 +24,18 @@ fun LocalVerificationScreenContainer(
     val context = LocalContext.current
     val state by viewModel.collectAsState()
 
-    LocalVerificationScreen(
-        state = state,
-        modifier = modifier,
-        onNavigateBack = viewModel::onNavigateToSettingsScreen,
-        onclickAreaVerification = viewModel::onNavigateToAreaVerification,
-        onDeleteVerifiedAreaChip = viewModel::deleteVerifiedArea,
-        onShowEditAreaDialog = viewModel::showEditAreaDialog,
-        onDismissEditAreaDialog = viewModel::dismissEditAreaDialog,
-        onDismissDeleteFailDialog = viewModel::dismissAreaDeleteFailDialog
-    )
+    CompositionLocalProvider(LocalOnRetry provides viewModel::retry) {
+        LocalVerificationScreen(
+            state = state,
+            modifier = modifier,
+            onNavigateBack = viewModel::onNavigateToSettingsScreen,
+            onclickAreaVerification = viewModel::onNavigateToAreaVerification,
+            onDeleteVerifiedAreaChip = viewModel::deleteVerifiedArea,
+            onShowEditAreaDialog = viewModel::showEditAreaDialog,
+            onDismissEditAreaDialog = viewModel::dismissEditAreaDialog,
+            onDismissDeleteFailDialog = viewModel::dismissAreaDeleteFailDialog
+        )
+    }
 
     viewModel.collectSideEffect {
         when (it) {
