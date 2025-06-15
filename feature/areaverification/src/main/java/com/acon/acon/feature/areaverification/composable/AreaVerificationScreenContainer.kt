@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.acon.acon.core.utils.feature.permission.checkLocationPermission
+import com.acon.acon.core.utils.feature.toast.showToast
 import com.acon.feature.common.compose.LocalRequestLocationPermission
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
@@ -58,6 +59,10 @@ fun AreaVerificationScreenContainer(
 
             is AreaVerificationSideEffect.NavigateToNextScreen -> {
                 onNextScreen(it.latitude, it.longitude)
+            }
+
+            is AreaVerificationSideEffect.ShowErrorToast -> {
+                context.showToast(it.errorMessage)
             }
         }
     }

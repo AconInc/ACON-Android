@@ -77,17 +77,15 @@ class AreaVerificationViewModel @Inject constructor(
                 )
             }
         }.onFailure { error ->
-            // TODO - 네트워크에러
             when(error) {
                 is ReplaceVerifiedArea.OutOfServiceAreaError -> {
+                    postSideEffect(AreaVerificationSideEffect.ShowErrorToast("서비스를 제공하지 않는 지역입니다."))
                 }
                 is ReplaceVerifiedArea.InvalidVerifiedArea -> {
-                }
-                is ReplaceVerifiedArea.PeriodRestrictedDeleteError -> {
-                }
-                is ReplaceVerifiedArea.MultiLocationReplaceError -> {
+                    postSideEffect(AreaVerificationSideEffect.ShowErrorToast("유효하지 않은 인증 지역입니다."))
                 }
                 is ReplaceVerifiedArea.VerifiedAreaNotFound -> {
+                    postSideEffect(AreaVerificationSideEffect.ShowErrorToast("존재하지 않는 인증 지역입니다."))
                 }
             }
         }
@@ -117,7 +115,7 @@ class AreaVerificationViewModel @Inject constructor(
 
     fun verifyArea(latitude: Double, longitude: Double) = intent {
         userRepository.verifyArea(latitude, longitude)
-            .onSuccess { area ->
+            .onSuccess {
                 reduce {
                     state.copy(
                         isVerifySuccess = true
@@ -126,7 +124,7 @@ class AreaVerificationViewModel @Inject constructor(
                 amplitudeCompleteArea()
             }
             .onFailure {
-                // TODO - 네트워크에러
+                postSideEffect(AreaVerificationSideEffect.ShowErrorToast("지역인증에 실패했습니다. 다시 시도해주세요."))
             }
     }
 
@@ -159,4 +157,6 @@ sealed interface AreaVerificationSideEffect {
         val latitude: Double,
         val longitude: Double
     ) : AreaVerificationSideEffect
+
+    data class ShowErrorToast(val errorMessage: String) : AreaVerificationSideEffect
 }
