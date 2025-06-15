@@ -46,7 +46,7 @@ internal fun AreaVerificationScreen(
         modifier = modifier
             .paint(
                 painterResource(R.drawable.area_verification_home_bg),
-                contentScale = ContentScale.FillBounds
+                contentScale = ContentScale.FillWidth
             )
     ) {
         Column(
