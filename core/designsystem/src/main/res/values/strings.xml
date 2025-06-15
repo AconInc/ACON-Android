@@ -162,7 +162,7 @@
     <string name="no_store_image_secret">쉿! 비밀스러운 곳인가 봐요\n아직 등록된 사진이 없어요</string>
     <string name="no_store_image_mystery">직접 가봐야 알 수 있는 장소네요\n설레임을 안고 떠나볼까요?</string>
     <string name="signature_menu">대표메뉴</string>
-    <string name="btn_find_way_walking_time">도보 %d분 길찾기</string>
+    <string name="btn_find_way_walking_time">%1$s %2$d분 길찾기</string>
     <string name="floating_btn_menu_board">메뉴판</string>
     <string name="floating_btn_share">공유</string>
     <string name="floating_btn_more_option">더보기</string>
