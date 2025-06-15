@@ -16,6 +16,7 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.annotation.OrbitDsl
 
+@SuppressLint("ComposableNaming")
 abstract class BaseContainerHost<STATE : Any, SIDE_EFFECT : Any>() :
     ContainerHost<STATE, SIDE_EFFECT>, ViewModel() {
 
@@ -24,7 +25,6 @@ abstract class BaseContainerHost<STATE : Any, SIDE_EFFECT : Any>() :
     private val _userType = MutableStateFlow(UserType.GUEST)
     protected val userType = _userType.asStateFlow()
 
-    @SuppressLint("ComposableNaming")
     @Composable
     fun requestLocationPermission() {
         val onRequestLocationPermission = LocalRequestLocationPermission.current
@@ -34,7 +34,6 @@ abstract class BaseContainerHost<STATE : Any, SIDE_EFFECT : Any>() :
         }
     }
 
-    @SuppressLint("ComposableNaming")
     @Composable
     fun emitUserType() {
         val userType = LocalUserType.current
@@ -44,7 +43,6 @@ abstract class BaseContainerHost<STATE : Any, SIDE_EFFECT : Any>() :
         }
     }
 
-    @SuppressLint("ComposableNaming")
     @Composable
     fun emitLiveLocation() {
         val newLocation = LocalLocation.current

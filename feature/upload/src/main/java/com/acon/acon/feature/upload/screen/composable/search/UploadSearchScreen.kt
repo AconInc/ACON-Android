@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -58,7 +57,7 @@ import kotlinx.collections.immutable.toImmutableList
 @Composable
 internal fun UploadSearchScreen(
     state: UploadSearchUiState,
-    onSearchQueryChanged: (String) -> Unit,
+    onSearchQueryChanged: (String, isSelection: Boolean) -> Unit,
     onSearchedSpotClick: (SearchedSpot, onSuccess: () -> Unit) -> Unit,
     onSuggestionSpotClick: (UploadSpotSuggestion, onSuccess: () -> Unit) -> Unit,
     onVerifyLocationDialogAction: () -> Unit,
@@ -70,6 +69,8 @@ internal fun UploadSearchScreen(
     val hazeState = rememberHazeState()
 
     var query by rememberSaveable(stateSaver = TextFieldValue.Saver) { mutableStateOf(TextFieldValue("")) }
+    var isSelection by remember { mutableStateOf(false) }
+
     val isNextActionEnabled by remember(state) {
         derivedStateOf {
             when (state) {
@@ -81,7 +82,7 @@ internal fun UploadSearchScreen(
 
     LaunchedEffect(Unit) {
         snapshotFlow { query }.collect {
-            onSearchQueryChanged(it.text)
+            onSearchQueryChanged(it.text, isSelection)
         }
     }
 
@@ -127,7 +128,10 @@ internal fun UploadSearchScreen(
                 ) {
                     AconSearchTextField(
                         value = query,
-                        onValueChange = { query = it },
+                        onValueChange = {
+                            query = it
+                            isSelection = false
+                        },
                         placeholder = stringResource(R.string.search_spot_placeholder),
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -144,6 +148,7 @@ internal fun UploadSearchScreen(
                                     title = it.name,
                                     onClick = {
                                         onSuggestionSpotClick(it) {
+                                            isSelection = true
                                             query = TextFieldValue(text = it.name, selection = TextRange(it.name.length))
                                         }
                                     },
@@ -158,6 +163,7 @@ internal fun UploadSearchScreen(
                                 searchedSpots = state.searchedSpots.toImmutableList(),
                                 onItemClick = {
                                     onSearchedSpotClick(it) {
+                                        isSelection = true
                                         query = TextFieldValue(text = it.name, selection = TextRange(it.name.length))
                                     }
                                 },
@@ -294,7 +300,7 @@ private fun SearchedSpotItem(
 private fun UploadSearchScreenPreview() {
     UploadSearchScreen(
         state = uploadSearchUiStateMock,
-        onSearchQueryChanged = {},
+        onSearchQueryChanged = { _, _ -> },
         onBackAction = {},
         onNextAction = {},
         onSearchedSpotClick = {_, _ ->},

@@ -66,8 +66,7 @@ class UploadSearchViewModel @Inject constructor(
                             uploadRepository.getSearchedSpots(query).onSuccess {
                                 reduce {
                                     state.copy(
-                                        searchedSpots = it,
-                                        showSearchedSpots = true
+                                        searchedSpots = it
                                     )
                                 }
 
@@ -80,12 +79,18 @@ class UploadSearchViewModel @Inject constructor(
 
     private val queryFlow = MutableStateFlow("")
 
-    fun onSearchQueryChanged(query: String) = intent {
+    fun onSearchQueryChanged(query: String, isSelection: Boolean) = intent {
         runOn<UploadSearchUiState.Success> {
             reduce {
-                state.copy(
-                    selectedSpot = null
-                )
+                if (isSelection)
+                    state.copy(
+                        showSearchedSpots = false
+                    )
+                else
+                    state.copy(
+                        selectedSpot = null,
+                        showSearchedSpots = query.isNotBlank()
+                    )
             }
             queryFlow.value = query
         }
