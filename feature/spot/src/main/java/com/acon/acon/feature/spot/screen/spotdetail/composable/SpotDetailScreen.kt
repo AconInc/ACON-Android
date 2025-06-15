@@ -4,7 +4,6 @@ import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -38,7 +37,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil3.compose.AsyncImage
+import coil3.compose.SubcomposeAsyncImage
 import com.acon.acon.core.common.UrlConstants
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.button.v2.AconFilledButton
@@ -47,6 +46,7 @@ import com.acon.acon.core.designsystem.effect.LocalHazeState
 import com.acon.acon.core.designsystem.effect.imageGradientLayer
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
+import com.acon.acon.feature.spot.screen.component.OperationDot
 import com.acon.feature.common.compose.getTextSizeDp
 import dev.chrisbanes.haze.hazeSource
 import okhttp3.internal.immutableListOf
@@ -54,8 +54,8 @@ import okhttp3.internal.immutableListOf
 @Composable
 internal fun SpotDetailScreen(
     state: SpotDetailUiState,
-    onFindWayButtonClick: () -> Unit,
     modifier: Modifier = Modifier,
+    onNavigateToBack: () -> Unit = {},
     onClickAddBookmark: () -> Unit = {},
     onClickDeleteBookmark: () -> Unit = {},
     onClickRequestMenuBoard: () -> Unit = {},
@@ -64,7 +64,7 @@ internal fun SpotDetailScreen(
     onDismissErrorReportModal: () -> Unit = {},
     onRequestFindWayModal: () -> Unit = {},
     onDismissFindWayModal: () -> Unit = {},
-    onNavigateToBack: () -> Unit = {},
+    onClickFindWay: () -> Unit = {}
 ) {
     val context = LocalContext.current
     val indicatorScrollState = rememberLazyListState()
@@ -112,7 +112,10 @@ internal fun SpotDetailScreen(
                 if (state.showFindWayModal) {
                     //TODO - 도보/자전거 분리해야 함
                     FindWayBottomSheet(
-                        onFindWay = { onFindWayButtonClick() },
+                        onFindWay = {
+                            onClickFindWay()
+                            onDismissFindWayModal()
+                        },
                         onDismissRequest = { onDismissFindWayModal() }
                     )
                 }
@@ -129,7 +132,7 @@ internal fun SpotDetailScreen(
                     HorizontalPager(
                         state = pagerState
                     ) { page ->
-                        AsyncImage(
+                        SubcomposeAsyncImage(
                             model = storeImageList[page],
                             contentDescription = stringResource(R.string.store_background_image_content_description),
                             contentScale = ContentScale.Crop,
@@ -137,12 +140,13 @@ internal fun SpotDetailScreen(
                                 .fillMaxSize()
                                 .imageGradientLayer(
                                     startColor = AconTheme.color.Gray900.copy(alpha = 0.8f)
-                                )
+                                ),
+                            error = {
+                                // TODO - 가게이미지 로드 실패, SpotList에서 사용한 컴포넌트 활용
+                            }
                         )
                     }
                 } else {
-                    // 가게 이미지가 있을 때 (배경 이미지)
-                    // TODO - 가게 이미지 로드 실패시 뷰 구현 필요
                     Box(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
@@ -255,38 +259,34 @@ internal fun SpotDetailScreen(
                     /*  TODO - 장소 상세 Tag 처리 로직
                         * 일반 유저: 이전 페이지 "NEW", "LOCAL", "TOP" 태그 그대로 가져오기
                         * 딥링크 접속 유저: API 응답으로 제공
-                        * 프로필에서  진입: 응답으로 제공
+                        * 프로필에서  진입: API 응답으로 제공
                      */
                     Spacer(Modifier.height(8.dp))
                     StoreTagRow(
-                        isNew = true, // TODO - state.spotDetailInfo.tagList.contains(stringResource(R.string.store_tag_new)),
-                        isLocal = true, // TODO - state.spotDetailInfo.tagList.contains(stringResource(R.string.store_tag_local)),
-                        isRanking = true,
-                        rankingNumber = 1, // TODO - api 나오면 수정 (임시 값들)
+                        tags = state.tags ?: emptyList(),
                         modifier = Modifier.padding(start = 20.dp)
                     )
 
                     Row(
-                        modifier = Modifier.padding(top = 10.dp),
-                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                        modifier = Modifier.padding(start = 20.dp, top = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        /* if(state.spotDetail.isOpen) {
-                            TODO - Dot 컴포넌트 추가 해야 함 (아직 merge 안된 PR에 있음) (if, else 모두)
-                        } */
+                        OperationDot(state.spotDetail.isOpen)
 
                         Text(
-                            text = if(isStoreOpen) state.spotDetail.closingTime else state.spotDetail.nextOpening,
+                            text = if (isStoreOpen) state.spotDetail.closingTime else state.spotDetail.nextOpening,
                             color = AconTheme.color.Gray200,
                             style = AconTheme.typography.Body1,
                             fontWeight = FontWeight.SemiBold,
-                            modifier = Modifier.padding(top = 10.dp)
+                            modifier = Modifier.padding(start = 12.dp)
                         )
 
                         Text(
                             text = stringResource(R.string.store_closed),
                             color = AconTheme.color.Gray200,
                             style = AconTheme.typography.Body1,
-                            fontWeight = FontWeight.Normal
+                            fontWeight = FontWeight.Normal,
+                            modifier = Modifier.padding(start = 4.dp)
                         )
                     }
 
@@ -357,18 +357,27 @@ internal fun SpotDetailScreen(
                     }
 
                     AconFilledButton(
-                        onClick = { onRequestFindWayModal() },
+                        onClick = {
+                            onRequestFindWayModal()
+                        },
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(start = 16.dp, end = 16.dp, bottom = 20.dp)
                     ) {
+                        // TODO - 딥링크이면 그냥 길찾기로 표시
                         Text(
-                            text = stringResource(
-                                R.string.btn_find_way_walking_time,
-                                11
-                            ), // TODO - 예상 도착 시간 (도보)
+                            text = if (state.eta == null) {
+                                ""
+                            } else {
+                                stringResource(
+                                    R.string.btn_find_way_walking_time,
+                                    state.getTransportLabel(),
+                                    state.eta
+                                )
+                            },
                             color = AconTheme.color.White,
-                            style = AconTheme.typography.Title4
+                            style = AconTheme.typography.Title4,
+                            fontWeight = FontWeight.SemiBold
                         )
                     }
                 }
@@ -387,7 +396,7 @@ private fun SpotDetailScreenV2Preview() {
             SpotDetailScreen(
                 state = SpotDetailUiState.Loading,
                 onNavigateToBack = {},
-                onFindWayButtonClick = {}
+                onClickFindWay = {}
             )
         }
     }
