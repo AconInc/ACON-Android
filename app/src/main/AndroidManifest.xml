@@ -21,6 +21,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="${app_name}"
         android:name="com.acon.acon.AconApplication"
+        android:launchMode="singleTask"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Acon"

@@ -4,14 +4,18 @@ import android.location.Location
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.acon.acon.domain.model.spot.SpotNavigationParameter
 import com.acon.acon.domain.model.spot.v2.Spot
 import com.acon.acon.domain.type.TransportMode
 import com.acon.acon.feature.spot.screen.spotlist.SpotListSideEffectV2
 import com.acon.acon.feature.spot.screen.spotlist.SpotListViewModel
+import com.acon.feature.common.compose.LocalDeepLinkHandler
 import com.acon.feature.common.compose.LocalOnRetry
+import kotlinx.coroutines.flow.filter
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
@@ -22,10 +26,28 @@ fun SpotListScreenContainer(
     onNavigateToSpotDetailScreen: (Spot, TransportMode) -> Unit,
     onNavigateToExternalMap: (start: Location, destination: Location) -> Unit,
     modifier: Modifier = Modifier,
+    onNavigateToDeeplinkSpotDetailScreen:(spotNav: SpotNavigationParameter) -> Unit = {},
     viewModel: SpotListViewModel = hiltViewModel()
 ) {
-
     val state by viewModel.collectAsState()
+    val deepLinkHandler = LocalDeepLinkHandler.current
+
+    LaunchedEffect(Unit) {
+        deepLinkHandler.spotIdFlow
+            .filter { it != -1L }
+            .collect { spotId ->
+                onNavigateToDeeplinkSpotDetailScreen(
+                    SpotNavigationParameter(
+                        spotId = spotId,
+                        tags = emptyList(),
+                        transportMode = null,
+                        eta = null,
+                        isFromDeepLink = true
+                    )
+                )
+                deepLinkHandler.clear()
+            }
+    }
 
     CompositionLocalProvider(LocalOnRetry provides viewModel::retry) {
         SpotListScreen(

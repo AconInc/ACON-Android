@@ -46,6 +46,9 @@ internal fun NavGraphBuilder.spotNavigation(
                         )
                     )
                 },
+                onNavigateToDeeplinkSpotDetailScreen = { spotNav ->
+                    navController.navigate(SpotRoute.SpotDetail(spotNav))
+                },
                 onNavigateToExternalMap = context::openMapNavigation,
                 modifier = Modifier
                     .fillMaxSize()
