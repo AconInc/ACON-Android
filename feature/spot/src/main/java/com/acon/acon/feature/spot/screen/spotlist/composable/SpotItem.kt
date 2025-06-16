@@ -1,5 +1,6 @@
 package com.acon.acon.feature.spot.screen.spotlist.composable
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -22,6 +24,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -178,14 +182,30 @@ private fun SpotInfo(
 
         Spacer(modifier = Modifier.weight(1f))
         AconFilledButton(
-            modifier = Modifier.align(Alignment.End),
+            modifier = Modifier.align(Alignment.CenterHorizontally),
             onClick = {
                 onFindWayButtonClick(spot)
             },
             contentPadding = PaddingValues(
-                horizontal = 23.dp,
-                vertical = 8.dp
+                horizontal = 58.dp,
+                vertical = 12.dp
             ),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = AconTheme.color.Gray900.copy(alpha = .8f),
+                contentColor = AconTheme.color.White,
+            ),
+            border = BorderStroke(
+                width = 1.dp,
+                brush = Brush.horizontalGradient(
+                    colors = listOf(
+                        AconTheme.color.PrimaryDefault,
+                        Color(0xFF4CBD01),
+                        AconTheme.color.White
+                    ),
+                    startX = 0f,
+                    endX = Float.POSITIVE_INFINITY
+                )
+            )
         ) {
             Text(
                 text = stringResource(
