@@ -1,9 +1,9 @@
 package com.acon.acon.feature.verification.screen
 
 import com.acon.acon.domain.error.area.DeleteVerifiedAreaError
-import com.acon.feature.common.base.BaseContainerHost
 import com.acon.acon.domain.model.area.Area
 import com.acon.acon.domain.repository.UserRepository
+import com.acon.feature.common.base.BaseContainerHost
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.annotation.OrbitExperimental
@@ -18,8 +18,8 @@ class LocalVerificationViewModel @Inject constructor(
 ) : BaseContainerHost<LocalVerificationUiState, LocalVerificationSideEffect>() {
 
     override val container: Container<LocalVerificationUiState, LocalVerificationSideEffect> =
-        container(LocalVerificationUiState.Loading) {
-            fetchVerifiedAreaList()
+        container(LocalVerificationUiState.LoadFailed) {
+            //fetchVerifiedAreaList()
         }
 
     private fun fetchVerifiedAreaList() = intent {
@@ -32,6 +32,11 @@ class LocalVerificationViewModel @Inject constructor(
             .onFailure {
                 LocalVerificationUiState.LoadFailed
             }
+    }
+
+    fun retry() = intent {
+        reduce { LocalVerificationUiState.Loading }
+        fetchVerifiedAreaList()
     }
 
     private fun showAreaDeleteFailDialog() = intent {

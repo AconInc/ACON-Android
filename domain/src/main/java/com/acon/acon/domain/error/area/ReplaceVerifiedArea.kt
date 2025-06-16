@@ -2,6 +2,7 @@ package com.acon.acon.domain.error.area
 
 import com.acon.acon.domain.error.ErrorFactory
 import com.acon.acon.domain.error.RootError
+
 sealed class ReplaceVerifiedArea : RootError() {
 
     class OutOfServiceAreaError : ReplaceVerifiedArea() {
