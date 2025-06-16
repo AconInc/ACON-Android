@@ -2,6 +2,7 @@ package com.acon.acon.feature.spot.screen.spotdetail.composable
 
 import android.content.Intent
 import android.net.Uri
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -20,12 +21,15 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -343,7 +347,7 @@ internal fun SpotDetailScreen(
                             onClickBookmark = {
                                 onClickBookmark()
                             },
-                            isBookmarkSelected = state.isBookmarkSaved,
+                            isBookmarkSelected = state.spotDetail.isSaved,
                             isMenuBoarEnabled = state.spotDetail.hasMenuboardImage
                         )
                     }
@@ -369,7 +373,23 @@ internal fun SpotDetailScreen(
                         },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(start = 16.dp, end = 16.dp, bottom = 20.dp)
+                            .padding(start = 16.dp, end = 16.dp, bottom = 20.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = AconTheme.color.Gray900.copy(alpha = .8f),
+                            contentColor = AconTheme.color.White,
+                        ),
+                        border = BorderStroke(
+                            width = 1.dp,
+                            brush = Brush.horizontalGradient(
+                                colors = listOf(
+                                    AconTheme.color.PrimaryDefault,
+                                    Color(0xFF4CBD01),
+                                    AconTheme.color.White
+                                ),
+                                startX = 0f,
+                                endX = Float.POSITIVE_INFINITY
+                            )
+                        )
                     ) {
                         if(state.navFromProfile == true || state.isFromDeepLink == true) {
                             Text(

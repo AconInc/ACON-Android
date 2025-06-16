@@ -139,14 +139,14 @@ internal fun PinchToZoomImage(
                     .build(),
                 contentDescription = stringResource(R.string.menu_board_content_description),
                 modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop
+                contentScale = ContentScale.Fit
             )
         }
     } else {
         Box(
             modifier = Modifier
                 .background(
-                    color = AconTheme.color.Gray4545,
+                    color = AconTheme.color.Gray900,
                     shape = RoundedCornerShape(4.dp)
                 )
                 .widthIn(max = 230.dp)

@@ -88,7 +88,7 @@ class SpotDetailViewModel @Inject constructor(
 
     fun toggleBookmark() = intent {
         runOn<SpotDetailUiState.Success> {
-            if (state.isBookmarkSaved) {
+            if (state.spotDetail.isSaved) {
                 deleteBookmark()
             } else {
                 addBookmark()
@@ -100,7 +100,8 @@ class SpotDetailViewModel @Inject constructor(
         spotRepository.addBookmark(spotNavData.spotId).onSuccess {
             runOn<SpotDetailUiState.Success> {
                 reduce {
-                    state.copy(isBookmarkSaved = true)
+                    val updatedDetail = state.spotDetail.copy(isSaved = true)
+                    state.copy(spotDetail = updatedDetail)
                 }
             }
         }.onFailure {
@@ -112,7 +113,8 @@ class SpotDetailViewModel @Inject constructor(
         spotRepository.deleteBookmark(spotNavData.spotId).onSuccess {
             runOn<SpotDetailUiState.Success> {
                 reduce {
-                    state.copy(isBookmarkSaved = false)
+                    val updatedDetail = state.spotDetail.copy(isSaved = false)
+                    state.copy(spotDetail = updatedDetail)
                 }
             }
         }.onFailure {
@@ -221,7 +223,6 @@ sealed interface SpotDetailUiState {
         val isFromDeepLink: Boolean? = false,
         val navFromProfile: Boolean? = null,
         val spotDetail: SpotDetail,
-        val isBookmarkSaved: Boolean = false,
         val menuBoardList: List<String> = emptyList(),
         val menuBoardListLoad: Boolean = false,
         val showMenuBoardDialog: Boolean = false,
