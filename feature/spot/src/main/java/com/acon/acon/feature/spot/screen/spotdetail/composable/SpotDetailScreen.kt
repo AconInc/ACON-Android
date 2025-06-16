@@ -2,7 +2,6 @@ package com.acon.acon.feature.spot.screen.spotdetail.composable
 
 import android.content.Intent
 import android.net.Uri
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -89,7 +88,6 @@ internal fun SpotDetailScreen(
 
         is SpotDetailUiState.Loading -> {}
         is SpotDetailUiState.Success -> {
-            Log.d("로그", "딥링크 진입 : ${state.isFromDeepLink}")
             val storeName = state.spotDetail.name
             val storeImageList = state.spotDetail.imageList
             val acornCount = state.spotDetail.acornCount
@@ -121,7 +119,7 @@ internal fun SpotDetailScreen(
                 }
 
                 if (state.showFindWayModal) {
-                    // TODO - 프로필, 북마크,딥링크 진입 유저 - 길찾기 방식 -> route/public
+                    // 프로필, 북마크,딥링크 진입 유저 - 길찾기 방식 -> route/public
                     FindWayBottomSheet(
                         onFindWay = {
                             onClickFindWay()
@@ -265,10 +263,9 @@ internal fun SpotDetailScreen(
                         )
                     }
 
-                    /*  TODO - 장소 상세 Tag 처리 로직
-                         * 일반 유저: 이전 페이지 "NEW", "LOCAL", "TOP" 태그 그대로 가져오기
-                         * 프로필, 북마크, 딥링크로 진입한 유저: API 응답으로 제공
-                     */
+                    // 장소 상세 Tag 처리 로직
+                    // 일반 유저: 이전 페이지 "NEW", "LOCAL", "TOP" 태그 그대로 가져오기
+                    // 프로필, 북마크, 딥링크로 진입한 유저: API 응답으로 제공
                     Spacer(Modifier.height(8.dp))
                     StoreTagRow(
                         tags = state.storeTags,
@@ -374,8 +371,7 @@ internal fun SpotDetailScreen(
                             .fillMaxWidth()
                             .padding(start = 16.dp, end = 16.dp, bottom = 20.dp)
                     ) {
-                        // TODO - 프로필, 북마크, 딥링크로 들어온 유저 버튼명 -> 그냥 길찾기
-                        if(state.navFromProfile == true) {
+                        if(state.navFromProfile == true || state.isFromDeepLink == true) {
                             Text(
                                 text = stringResource(R.string.btn_find_way),
                                 color = AconTheme.color.White,

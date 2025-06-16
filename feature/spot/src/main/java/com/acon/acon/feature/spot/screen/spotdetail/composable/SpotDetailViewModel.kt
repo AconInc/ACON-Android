@@ -140,8 +140,8 @@ class SpotDetailViewModel @Inject constructor(
 
     fun onFindWay(location: Location) = intent {
         runOn<SpotDetailUiState.Success> {
-            // TODO - 딥링크, 프로필로 진입한 유저 -> route/public
-            if (state.navFromProfile == true) {
+            // 딥링크, 프로필로 진입한 유저 -> route/public
+            if (state.navFromProfile == true || state.isFromDeepLink == true) {
                 postSideEffect(
                     SpotDetailSideEffect.OnFindWayButtonClick(
                         start = location,
@@ -229,7 +229,7 @@ sealed interface SpotDetailUiState {
         val showFindWayModal: Boolean = false
     ) : SpotDetailUiState {
         val storeTags: List<TagType>
-            get() = if (navFromProfile == true) {
+            get() = if (navFromProfile == true || isFromDeepLink == true) {
                 runCatching {
                     spotDetail.tagList.map { TagType.valueOf(it) }
                 }.getOrElse { emptyList() }
