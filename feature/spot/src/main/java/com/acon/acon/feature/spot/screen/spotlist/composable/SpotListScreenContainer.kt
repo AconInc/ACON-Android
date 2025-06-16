@@ -42,7 +42,8 @@ fun SpotListScreenContainer(
                         tags = emptyList(),
                         transportMode = null,
                         eta = null,
-                        isFromDeepLink = true
+                        isFromDeepLink = true,
+                        navFromProfile = null
                     )
                 )
                 deepLinkHandler.clear()
