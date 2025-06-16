@@ -12,6 +12,8 @@ import com.acon.acon.feature.profile.composable.ProfileRoute
 import com.acon.feature.common.base.BaseContainerHost
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.collections.immutable.PersistentList
+import kotlinx.collections.immutable.persistentListOf
 import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.viewmodel.container
 import javax.inject.Inject
@@ -27,6 +29,11 @@ class GalleryGridViewModel @Inject constructor(
     private val albumId = galleryGridRoute.albumId
     internal val albumName = galleryGridRoute.albumName
 
+    private var page = 0
+    private val pageSize = 20
+    private var allPhotos: List<Uri> = emptyList()
+    private var loadedPhotos: PersistentList<Uri> = persistentListOf()
+
     override val container =
         container<GalleryGridUiState, GalleryGridSideEffect>(GalleryGridUiState.Loading) {
             updateStorageAccess()
@@ -35,24 +42,58 @@ class GalleryGridViewModel @Inject constructor(
     fun updateStorageAccess() = intent {
         when (getStorageAccess(context)) {
             StorageAccess.GRANTED -> {
-                updateAllImages()
+                allPhotos = getAllPhotos(albumId)
+                page = 0
+
+                val initialPhotos = allPhotos.take(pageSize)
+                loadedPhotos = persistentListOf<Uri>().addAll(initialPhotos)
+
+                reduce {
+                    GalleryGridUiState.Granted(photoList = initialPhotos)
+                }
+
+                page = 1
             }
 
             StorageAccess.Partial -> {
-                reduce { GalleryGridUiState.Partial(photoList = getPhotoList(albumId, context)) }
+                reduce { GalleryGridUiState.Partial(photoList = getAllPhotos(albumId)) }
             }
 
             StorageAccess.Denied -> reduce { GalleryGridUiState.Denied() }
         }
     }
 
-    fun updateAllImages() = intent {
-        val photoList = getPhotoList(albumId, context)
+    fun loadNextPage() = intent {
+        if (allPhotos.isEmpty()) return@intent
+
+        val startIndex = page * pageSize
+        val endIndex = (page + 1) * pageSize
+        if (startIndex >= allPhotos.size) return@intent
+
+        val newPhotos = allPhotos.subList(startIndex, endIndex.coerceAtMost(allPhotos.size))
+        val updated = loadedPhotos.addAll(newPhotos)
+
+        reduce {
+            when (val current = state) {
+                is GalleryGridUiState.Granted -> {
+                    loadedPhotos = updated // 꼭 갱신!
+                    current.copy(photoList = loadedPhotos)
+                }
+
+                else -> current
+            }
+        }
+
+        page += 1
+    }
+
+    fun updateAllPhotos() = intent {
+        val photoList = getAllPhotos(albumId)
         reduce { GalleryGridUiState.Granted(photoList = photoList) }
     }
 
-    fun updateUserSelectedImages() = intent {
-        val photoList = getPhotoList(albumId, context)
+    fun updateUserSelectedPhotos() = intent {
+        val photoList = getAllPhotos(albumId)
         reduce {
             when (state) {
                 is GalleryGridUiState.Partial -> (state as GalleryGridUiState.Partial).copy(
@@ -64,7 +105,7 @@ class GalleryGridViewModel @Inject constructor(
         }
     }
 
-    private fun getPhotoList(albumId: String, context: Context): List<Uri> {
+    private fun getAllPhotos(albumId: String): List<Uri> {
         val photoList = mutableListOf<Uri>()
 
         val projection = arrayOf(MediaStore.Images.Media._ID)
@@ -87,7 +128,6 @@ class GalleryGridViewModel @Inject constructor(
                     MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                     imageId.toString()
                 )
-
                 photoList.add(photoUri)
             }
         }

@@ -13,6 +13,7 @@ android {
 
 dependencies {
     implementation(libs.google.services.ads) // TODO - admob Plugin 분리?
+    implementation(libs.androidx.paignig.compose)
 
     implementation(projects.domain)
     implementation(projects.feature.common)

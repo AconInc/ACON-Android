@@ -61,8 +61,17 @@ fun getStorageAccess(context: Context): StorageAccess {
 /**
  * Query [MediaStore] through [ContentResolver] to get all images & videos sorted by most added date
  * by targeting the [Files] collection
+ * 기기의 외부 저장소에서 이미지 파일들을 쿼리해서 MediaEntry 리스트로 반환하는 함수
+ * - 전체 권한: 기기의 모든 이미지가 반환
+ * - 제한적 권한: 사용자가 선택한 이미지들만 반환
+ * - 권한 없음: 빈 리스트 반환
+ * @param contentResolver MediaStore 접근을 위한 ContentResolver
+ * @param onPermissionPartial 제한적 권한 상태에서 이미지가 발견되었을 때 호출될 콜백
  */
-suspend fun getVisualMedia(contentResolver: ContentResolver): List<MediaEntry> {
+suspend fun getVisualMedia(
+    contentResolver: ContentResolver,
+    onPermissionPartial: (() -> Unit)? = null
+): List<MediaEntry> {
     return withContext(Dispatchers.IO) {
         val projection = arrayOf(
             FileColumns._ID,
@@ -80,6 +89,7 @@ suspend fun getVisualMedia(contentResolver: ContentResolver): List<MediaEntry> {
 
         val visualMedia = mutableListOf<MediaEntry>()
 
+        // MediaStore를 통해 모든 이미지 파일을 쿼리 (제한적 권한일 경우 시스템이 허용된 파일만 반환)
         contentResolver.query(
             collectionUri,
             projection,
@@ -95,6 +105,7 @@ suspend fun getVisualMedia(contentResolver: ContentResolver): List<MediaEntry> {
             val mimeTypeColumn = cursor.getColumnIndexOrThrow(FileColumns.MIME_TYPE)
             val dateAddedColumn = cursor.getColumnIndexOrThrow(FileColumns.DATE_ADDED)
 
+            // 쿼리 결과를 순회하면서 MediaEntry 객체로 변환
             while (cursor.moveToNext()) {
                 val uri = ContentUris.withAppendedId(collectionUri, cursor.getLong(idColumn))
                 val name = cursor.getString(displayNameColumn)
@@ -105,6 +116,12 @@ suspend fun getVisualMedia(contentResolver: ContentResolver): List<MediaEntry> {
                 visualMedia.add(MediaEntry(uri, name, size, mimeType, dateAdded))
             }
         }
+
+        // 제한적 권한 상태에서 사용자가 선택한 이미지가 있다면 UI 갱신을 위한 콜백 호출
+        if (visualMedia.isNotEmpty()) {
+            onPermissionPartial?.invoke()
+        }
+
         return@withContext visualMedia
     }
 }
