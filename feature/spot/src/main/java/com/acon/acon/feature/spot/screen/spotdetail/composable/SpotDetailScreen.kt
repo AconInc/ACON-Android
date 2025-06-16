@@ -277,7 +277,7 @@ internal fun SpotDetailScreen(
                     )
 
                     Row(
-                        modifier = Modifier.padding(start = 20.dp, top = 8.dp),
+                        modifier = Modifier.padding(start = 26.dp, top = 8.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         OperationDot(state.spotDetail.isOpen)
