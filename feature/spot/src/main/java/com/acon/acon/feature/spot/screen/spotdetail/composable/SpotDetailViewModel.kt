@@ -31,27 +31,36 @@ class SpotDetailViewModel @Inject constructor(
 
     override val container =
         container<SpotDetailUiState, SpotDetailSideEffect>(SpotDetailUiState.Loading) {
-            val spotDetailInfoDeferred = viewModelScope.async {
-                spotRepository.fetchSpotDetail(
-                    spotId = spotNavData.spotId
+            fetchedSpotDetail()
+        }
+
+    private fun fetchedSpotDetail() = intent {
+        val spotDetailInfoDeferred = viewModelScope.async {
+            spotRepository.fetchSpotDetail(
+                spotId = spotNavData.spotId
+            )
+        }
+
+        val spotDetailResult = spotDetailInfoDeferred.await()
+        reduce {
+            if (spotDetailResult.getOrNull() == null) {
+                SpotDetailUiState.LoadFailed
+            }
+            else {
+                SpotDetailUiState.Success(
+                    tags = spotNavData.tags,
+                    transportMode = spotNavData.transportMode,
+                    eta = spotNavData.eta,
+                    navFromProfile = spotNavData.navFromProfile,
+                    spotDetail = spotDetailResult.getOrNull()!!
                 )
             }
-
-            val spotDetailResult = spotDetailInfoDeferred.await()
-            reduce {
-                if (spotDetailResult.getOrNull() == null) {
-                    SpotDetailUiState.LoadFailed
-                }
-                else {
-                    SpotDetailUiState.Success(
-                        tags = spotNavData.tags,
-                        transportMode = spotNavData.transportMode,
-                        eta = spotNavData.eta,
-                        spotDetail = spotDetailResult.getOrNull()!!
-                    )
-                }
-            }
         }
+    }
+
+    fun retry() = intent {
+        fetchedSpotDetail()
+    }
 
     fun fetchMenuBoardList() = intent {
         runOn<SpotDetailUiState.Success> {
@@ -126,21 +135,36 @@ class SpotDetailViewModel @Inject constructor(
         }
     }
 
-    @OptIn(OrbitExperimental::class)
     fun onFindWay(location: Location) = intent {
         runOn<SpotDetailUiState.Success> {
             // TODO - 딥링크, 프로필로 진입한 유저 -> route/public
-            postSideEffect(
-                SpotDetailSideEffect.OnFindWayButtonClick(
-                    start = location,
-                    destination = Location("").apply {
-                        latitude = state.spotDetail.latitude
-                        longitude = state.spotDetail.longitude
-                    },
-                    destinationName = state.spotDetail.name,
-                    transportMode = state.transportMode ?: TransportMode.WALKING
+            if (state.navFromProfile == true) {
+                postSideEffect(
+                    SpotDetailSideEffect.OnFindWayButtonClick(
+                        start = location,
+                        destination = Location("").apply {
+                            latitude = state.spotDetail.latitude
+                            longitude = state.spotDetail.longitude
+                        },
+                        destinationName = state.spotDetail.name,
+                        transportMode = null,
+                        isPublic = true
+                    )
                 )
-            )
+            } else {
+                postSideEffect(
+                    SpotDetailSideEffect.OnFindWayButtonClick(
+                        start = location,
+                        destination = Location("").apply {
+                            latitude = state.spotDetail.latitude
+                            longitude = state.spotDetail.longitude
+                        },
+                        destinationName = state.spotDetail.name,
+                        transportMode = state.transportMode ?: TransportMode.WALKING,
+                        isPublic = false
+                    )
+                )
+            }
         }
     }
 
@@ -191,6 +215,7 @@ sealed interface SpotDetailUiState {
         val tags: List<TagType>? = emptyList(),
         val transportMode: TransportMode? = TransportMode.WALKING,
         val eta: Int? = 0,
+        val navFromProfile: Boolean? = null,
         val spotDetail: SpotDetail,
         val isBookmarkSaved: Boolean = false,
         val menuBoardList: List<String> = emptyList(),
@@ -199,10 +224,19 @@ sealed interface SpotDetailUiState {
         val showReportErrorModal: Boolean = false,
         val showFindWayModal: Boolean = false
     ) : SpotDetailUiState {
+        val storeTags: List<TagType>
+            get() = if (navFromProfile == true) {
+                runCatching {
+                    spotDetail.tagList.map { TagType.valueOf(it) }
+                }.getOrElse { emptyList() }
+            } else {
+                tags ?: emptyList()
+            }
+
         fun getTransportLabel(): String = when (transportMode) {
             TransportMode.WALKING -> "도보"
             TransportMode.BIKING -> "자전거"
-            else -> "도보"
+            else -> ""
         }
     }
     data object Loading : SpotDetailUiState
@@ -216,7 +250,8 @@ sealed interface SpotDetailSideEffect {
         val start: Location,
         val destination: Location,
         val destinationName: String,
-        val transportMode: TransportMode
+        val isPublic: Boolean,
+        val transportMode: TransportMode? = null
     ) : SpotDetailSideEffect
     data object ShowErrorToast : SpotDetailSideEffect
 }
