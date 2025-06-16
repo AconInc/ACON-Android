@@ -7,7 +7,7 @@ import com.amplitude.android.Amplitude
 import com.amplitude.android.Configuration
 import com.amplitude.android.events.Identify
 
-internal class AconAmplitude: EventTracker() {
+object AconAmplitude: EventTracker() {
     private lateinit var amplitude: Amplitude
 
     override val TEST_API_KEY = BuildConfig.AMPLITUDE_API_TEST_KEY
