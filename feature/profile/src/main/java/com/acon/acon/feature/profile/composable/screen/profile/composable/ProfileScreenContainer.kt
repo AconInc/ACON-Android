@@ -61,6 +61,7 @@ fun ProfileScreenContainer(
         modifier = modifier,
         onBookmark = viewModel::onBookmark,
         onSettings = viewModel::onSettings,
+        onSpotDetail = viewModel::onSpotDetail,
         onEditProfile = viewModel::onEditProfile,
         onNavigateToSpotListScreen = onNavigateToSpotListScreen,
         onNavigateToUploadScreen = onNavigateToUploadScreen
