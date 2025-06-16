@@ -9,9 +9,12 @@ import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.acon.acon.domain.model.spot.v2.Spot
 import com.acon.acon.domain.type.TransportMode
+import com.acon.acon.domain.type.UserType
 import com.acon.acon.feature.spot.screen.spotlist.SpotListSideEffectV2
 import com.acon.acon.feature.spot.screen.spotlist.SpotListViewModel
 import com.acon.feature.common.compose.LocalOnRetry
+import com.acon.feature.common.compose.LocalRequestSignIn
+import com.acon.feature.common.compose.LocalUserType
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
@@ -27,11 +30,19 @@ fun SpotListScreenContainer(
 
     val state by viewModel.collectAsState()
 
+    val userType = LocalUserType.current
+    val onSignInRequired = LocalRequestSignIn.current
+
     CompositionLocalProvider(LocalOnRetry provides viewModel::retry) {
         SpotListScreen(
             state = state,
             onSpotTypeChanged = viewModel::onSpotTypeClicked,
-            onSpotClick = viewModel::onSpotClicked,
+            onSpotClick = {
+                if (userType == UserType.GUEST)
+                    onSignInRequired()
+                else
+                    viewModel.onSpotClicked(it)
+            },
             onTryFindWay = viewModel::onTryFindWay,
             onFilterButtonClick = viewModel::onFilterButtonClicked,
             onFilterModalDismissRequest = viewModel::onFilterModalDismissed,
