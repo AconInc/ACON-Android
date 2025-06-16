@@ -8,9 +8,11 @@ import androidx.compose.material3.SnackbarData
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import com.acon.acon.core.designsystem.animation.defaultEnterTransition
 import com.acon.acon.core.designsystem.animation.defaultExitTransition
@@ -18,7 +20,9 @@ import com.acon.acon.core.designsystem.animation.defaultPopEnterTransition
 import com.acon.acon.core.designsystem.animation.defaultPopExitTransition
 import com.acon.acon.core.designsystem.component.popup.AconToastPopup
 import com.acon.acon.core.designsystem.theme.AconTheme
+import com.acon.acon.domain.model.spot.SpotNavigationParameter
 import com.acon.acon.feature.signin.screen.SignInRoute
+import com.acon.acon.feature.spot.SpotRoute
 import com.acon.acon.navigation.nested.areaVerificationNavigation
 import com.acon.acon.navigation.nested.onboardingNavigationNavigation
 import com.acon.acon.navigation.nested.profileNavigation
@@ -26,6 +30,7 @@ import com.acon.acon.navigation.nested.settingsNavigation
 import com.acon.acon.navigation.nested.signInNavigationNavigation
 import com.acon.acon.navigation.nested.spotNavigation
 import com.acon.acon.navigation.nested.uploadNavigation
+import com.acon.feature.common.compose.LocalDeepLinkHandler
 import com.acon.feature.common.compose.LocalNavController
 import com.acon.feature.common.compose.LocalSnackbarHostState
 
@@ -35,6 +40,29 @@ fun AconNavigation(
 ) {
     val navController = LocalNavController.current
     val snackbarHostState = LocalSnackbarHostState.current
+    val deepLinkHandler = LocalDeepLinkHandler.current
+
+    // 딥링크로 접속했을 때 화면 이동
+    LaunchedEffect(Unit) {
+        deepLinkHandler.spotIdFlow.collect { spotId ->
+            val currentRoute = navController.currentDestination?.route
+            if (currentRoute != SpotRoute.SpotDetail::class.qualifiedName) {
+                navController.navigate(
+                    SpotRoute.SpotDetail(
+                        SpotNavigationParameter(
+                            spotId = spotId,
+                            tags = emptyList(),
+                            transportMode = null,
+                            eta = null,
+                            isFromDeepLink = true
+                        )
+                    )
+                ) {
+                    popUpTo(navController.graph.findStartDestination().id)
+                }
+            }
+        }
+    }
 
     Scaffold(
         containerColor = AconTheme.color.Gray9,

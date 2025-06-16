@@ -5,6 +5,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.navigation.NavHostController
+import com.acon.acon.core.common.DeepLinkHandler
 import com.acon.acon.domain.type.UserType
 
 val LocalOnRetry = staticCompositionLocalOf {
@@ -33,4 +34,8 @@ val LocalRequestSignIn = staticCompositionLocalOf {
 
 val LocalRequestLocationPermission = staticCompositionLocalOf {
     {}
+}
+
+val LocalDeepLinkHandler = staticCompositionLocalOf<DeepLinkHandler> {
+    error("DeepLinkHandler not provided")
 }
