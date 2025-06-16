@@ -40,9 +40,11 @@ internal fun NavGraphBuilder.spotNavigation(
                     navController.navigate(ProfileRoute.Graph)
                 },
                 onNavigateToSpotDetailScreen = { spot, tm ->
-                    navController.navigate(SpotRoute.SpotDetail(
-                        SpotNavigationParameter(spot.id, spot.tags, tm, spot.eta)
-                    ))
+                    navController.navigate(
+                        SpotRoute.SpotDetail(
+                            SpotNavigationParameter(spot.id, spot.tags, tm, spot.eta, null)
+                        )
+                    )
                 },
                 onNavigateToExternalMap = context::openMapNavigation,
                 modifier = Modifier
