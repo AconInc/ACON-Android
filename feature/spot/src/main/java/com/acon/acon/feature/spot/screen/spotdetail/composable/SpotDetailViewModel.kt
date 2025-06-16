@@ -41,20 +41,19 @@ class SpotDetailViewModel @Inject constructor(
             )
         }
 
-            val spotDetailResult = spotDetailInfoDeferred.await()
-            reduce {
-                if (spotDetailResult.getOrNull() == null) {
-                    SpotDetailUiState.LoadFailed
-                }
-                else {
-                    SpotDetailUiState.Success(
-                        tags = spotNavData.tags,
-                        transportMode = spotNavData.transportMode,
-                        eta = spotNavData.eta,
-                        navFromProfile = spotNavData.navFromProfile,
-                        spotDetail = spotDetailResult.getOrNull()!!
-                    )
-                }
+        val spotDetailResult = spotDetailInfoDeferred.await()
+        reduce {
+            if (spotDetailResult.getOrNull() == null) {
+                SpotDetailUiState.LoadFailed
+            }
+            else {
+                SpotDetailUiState.Success(
+                    tags = spotNavData.tags,
+                    transportMode = spotNavData.transportMode,
+                    eta = spotNavData.eta,
+                    navFromProfile = spotNavData.navFromProfile,
+                    spotDetail = spotDetailResult.getOrNull()!!
+                )
             }
         }
     }
