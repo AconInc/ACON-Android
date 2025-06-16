@@ -50,6 +50,9 @@
 }
 -dontwarn android.**
 
+# Google Mobile Services
+-keep class com.google.android.gms.** { *; }
+
 # Kotlin Serialization에서 사용하는 클래스 유지
 -keep class kotlinx.serialization.** { *; }
 -keep @kotlinx.serialization.Serializable class * {*;}

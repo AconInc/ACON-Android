@@ -59,6 +59,9 @@ naverMapLocation = "21.0.2"
 playServicesLocation = "21.3.0"
 playAppUpdate = "2.1.0"
 
+## barnchi.io
+branchIo = "5.8.0"
+
 ##lottie
 lottie = "6.6.2"
 
@@ -177,6 +180,9 @@ preferences-datastore = { module = "androidx.datastore:datastore-preferences", v
 
 # Palette
 palette = { module = "androidx.palette:palette", version.ref = "paletteVersion" }
+
+# branch-io
+branch-io = { module = "io.branch.sdk.android:library", version.ref = "branchIo" }
 
 # Gradle
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
