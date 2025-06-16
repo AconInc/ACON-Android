@@ -267,7 +267,7 @@ internal fun SpotDetailScreen(
                      */
                     Spacer(Modifier.height(8.dp))
                     StoreTagRow(
-                        tags = state.tags ?: emptyList(),
+                        tags = state.storeTags,
                         modifier = Modifier.padding(start = 20.dp)
                     )
 
@@ -368,21 +368,30 @@ internal fun SpotDetailScreen(
                             .fillMaxWidth()
                             .padding(start = 16.dp, end = 16.dp, bottom = 20.dp)
                     ) {
-                        // TODO - 프로필, 북마크,딥링크로 들어온 유저 버튼명 -> 그냥 길찾기
-                        Text(
-                            text = if (state.eta == null) {
-                                ""
-                            } else {
-                                stringResource(
-                                    R.string.btn_find_way_walking_time,
-                                    state.getTransportLabel(),
-                                    state.eta
-                                )
-                            },
-                            color = AconTheme.color.White,
-                            style = AconTheme.typography.Title4,
-                            fontWeight = FontWeight.SemiBold
-                        )
+                        // TODO - 프로필, 북마크, 딥링크로 들어온 유저 버튼명 -> 그냥 길찾기
+                        if(state.navFromProfile == true) {
+                            Text(
+                                text = stringResource(R.string.btn_find_way),
+                                color = AconTheme.color.White,
+                                style = AconTheme.typography.Title4,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        } else {
+                            Text(
+                                text = if (state.eta == null) {
+                                    ""
+                                } else {
+                                    stringResource(
+                                        R.string.btn_find_way_walking_time,
+                                        state.getTransportLabel(),
+                                        state.eta
+                                    )
+                                },
+                                color = AconTheme.color.White,
+                                style = AconTheme.typography.Title4,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }
                     }
                 }
             }

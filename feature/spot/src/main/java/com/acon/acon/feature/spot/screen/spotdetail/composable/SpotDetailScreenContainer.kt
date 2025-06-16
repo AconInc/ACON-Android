@@ -54,7 +54,8 @@ fun SpotDetailScreenContainer(
                     start = sideEffect.start,
                     destination = sideEffect.destination,
                     destinationName = sideEffect.destinationName,
-                    transportMode = sideEffect.transportMode
+                    transportMode = sideEffect.transportMode,
+                    isPublic = sideEffect.isPublic
                 )
             }
             is SpotDetailSideEffect.ShowErrorToast -> context.showToast(R.string.unknown_error_message)
