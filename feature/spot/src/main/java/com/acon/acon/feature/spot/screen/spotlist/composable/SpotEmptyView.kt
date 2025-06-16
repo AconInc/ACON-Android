@@ -48,7 +48,7 @@ private const val MAX_GUEST_AVAILABLE_COUNT = 5
 internal fun SpotEmptyView(
     userType: UserType,
     otherSpots: ImmutableList<Spot>,
-    onSpotClick: (Spot) -> Unit,
+    onSpotClick: (Spot, rank: Int) -> Unit,
     onTryFindWay: (Spot) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -116,12 +116,12 @@ internal fun SpotEmptyView(
                     SpotItem(
                         spot = spot,
                         transportMode = TransportMode.BIKING,
-                        onItemClick = onSpotClick,
+                        onItemClick = { onSpotClick(spot, index + 1) },
                         onFindWayButtonClick = onTryFindWay,
                         modifier = Modifier
                             .height(itemHeightPx.toDp())
                             .padding(bottom = 12.dp)
-                            .fillMaxWidth()
+                            .fillMaxWidth(),
                     )
                 }
             }
@@ -161,7 +161,7 @@ private fun SpotListEmptyView1Preview() {
     SpotEmptyView(
         userType = UserType.GUEST,
         otherSpots = spotListUiStateRestaurantMock.spotList.toImmutableList(),
-        onSpotClick = {},
+        onSpotClick = { _, _ -> },
         onTryFindWay = {},
         modifier = Modifier.fillMaxSize()
     )
@@ -173,7 +173,7 @@ private fun SpotListEmptyView2Preview() {
     SpotEmptyView(
         userType = UserType.GUEST,
         otherSpots = listOf<Spot>().toImmutableList(),
-        onSpotClick = {},
+        onSpotClick = { _, _ -> },
         onTryFindWay = {},
         modifier = Modifier.fillMaxSize()
     )

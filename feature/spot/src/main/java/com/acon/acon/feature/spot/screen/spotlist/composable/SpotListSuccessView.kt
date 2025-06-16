@@ -58,7 +58,7 @@ internal fun SpotListSuccessView(
     pagerState: PagerState,
     state: SpotListUiStateV2.Success,
     userType: UserType,
-    onSpotClick: (Spot) -> Unit,
+    onSpotClick: (Spot, rank: Int) -> Unit,
     onTryFindWay: (Spot) -> Unit,
     itemHeightPx: Float,
     modifier: Modifier = Modifier,
@@ -134,7 +134,8 @@ internal fun SpotListSuccessView(
                             )
                             scaleX = ratio
                             scaleY = ratio
-                        } catch (_: Exception) {}
+                        } catch (_: Exception) {
+                        }
                     }
             ) {
                 if (page == 0) {
@@ -173,7 +174,7 @@ internal fun SpotListSuccessView(
                         SpotItem(
                             transportMode = state.transportMode,
                             spot = spot,
-                            onItemClick = onSpotClick,
+                            onItemClick = { onSpotClick(spot, page + 1) },
                             onFindWayButtonClick = onTryFindWay,
                             modifier = Modifier
                                 .fillMaxSize()
@@ -181,7 +182,8 @@ internal fun SpotListSuccessView(
                                     glowColor = spotFogColor,
                                     glowAlpha = 1f,
                                 )
-                                .zIndex(1f)
+                                .zIndex(1f),
+                            rank = (page + 1).takeIf { it <= 5 } ?: 0
                         )
                     }
                 } else {

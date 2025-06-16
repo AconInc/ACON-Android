@@ -63,7 +63,7 @@ internal fun SpotListScreen(
     state: SpotListUiStateV2,
     modifier: Modifier = Modifier,
     onSpotTypeChanged: (SpotType) -> Unit = {},
-    onSpotClick: (Spot) -> Unit = {},
+    onSpotClick: (Spot, rank: Int) -> Unit = { _, _ -> },
     onTryFindWay: (Spot) -> Unit = {},
     onFilterButtonClick: () -> Unit = {},
     onFilterModalDismissRequest: () -> Unit = {},

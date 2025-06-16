@@ -13,6 +13,7 @@ import com.acon.acon.domain.type.CafeFilterType
 import com.acon.acon.domain.type.CategoryType
 import com.acon.acon.domain.type.RestaurantFilterType
 import com.acon.acon.domain.type.SpotType
+import com.acon.acon.domain.type.TagType
 import com.acon.acon.domain.type.TransportMode
 import com.acon.acon.domain.usecase.IsDistanceExceededUseCase
 import com.acon.feature.common.base.BaseContainerHost
@@ -106,9 +107,25 @@ class SpotListViewModel @Inject constructor(
         }
     }
 
-    fun onSpotClicked(spot: Spot) = intent {
+    fun onSpotClicked(spot: Spot, rank: Int) = intent {
         runOn<SpotListUiStateV2.Success> {
-            postSideEffect(SpotListSideEffectV2.NavigateToSpotDetailScreen(spot, state.transportMode))
+            val tags = spot.tags.toMutableList()
+            when (rank) {
+                1 -> tags.add(TagType.TOP_1)
+                2 -> tags.add(TagType.TOP_2)
+                3 -> tags.add(TagType.TOP_3)
+                4 -> tags.add(TagType.TOP_4)
+                5 -> tags.add(TagType.TOP_5)
+                else -> {}
+            }
+
+            postSideEffect(
+                SpotListSideEffectV2.NavigateToSpotDetailScreen(
+                    spot.copy(
+                        tags = tags
+                    ), state.transportMode
+                )
+            )
         }
     }
 

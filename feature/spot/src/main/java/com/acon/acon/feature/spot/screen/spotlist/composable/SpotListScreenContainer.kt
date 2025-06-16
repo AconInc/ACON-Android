@@ -37,11 +37,11 @@ fun SpotListScreenContainer(
         SpotListScreen(
             state = state,
             onSpotTypeChanged = viewModel::onSpotTypeClicked,
-            onSpotClick = {
+            onSpotClick = { spot, rank ->
                 if (userType == UserType.GUEST)
                     onSignInRequired()
                 else
-                    viewModel.onSpotClicked(it)
+                    viewModel.onSpotClicked(spot, rank)
             },
             onTryFindWay = viewModel::onTryFindWay,
             onFilterButtonClick = viewModel::onFilterButtonClicked,

@@ -62,6 +62,7 @@ internal fun SpotItem(
     onItemClick: (Spot) -> Unit,
     onFindWayButtonClick: (Spot) -> Unit,
     modifier: Modifier = Modifier,
+    rank: Int = 0,
 ) {
     Card(
         modifier = modifier,
@@ -90,6 +91,7 @@ internal fun SpotItem(
             )
             SpotInfo(
                 spot = spot,
+                rank = rank,
                 transportMode = transportMode,
                 onFindWayButtonClick = onFindWayButtonClick,
                 modifier = Modifier
@@ -103,6 +105,7 @@ internal fun SpotItem(
 @Composable
 private fun SpotInfo(
     spot: Spot,
+    rank: Int,
     transportMode: TransportMode,
     onFindWayButtonClick: (Spot) -> Unit,
     modifier: Modifier = Modifier,
@@ -146,14 +149,22 @@ private fun SpotInfo(
             modifier = Modifier.padding(top = 8.dp),
             horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            spot.tags.fastForEach { tagType ->
+            spot.tags.sortedBy {
+                it.ordinal
+            }.fastForEach { tagType ->
                 AconTag(
-                    text = tagType.name.replace("_", " "),
+                    text = tagType.name,
                     backgroundColor = when (tagType) {
                         TagType.NEW -> AconTheme.color.TagNew
                         TagType.LOCAL -> AconTheme.color.TagLocal
                         else -> AconTheme.color.Gray900
                     }
+                )
+            }
+            if (rank >= 1) {
+                AconTag(
+                    text = stringResource(R.string.top, rank),
+                    backgroundColor = AconTheme.color.Gray900
                 )
             }
         }
@@ -339,7 +350,8 @@ private fun SpotItemV2Preview() {
         onFindWayButtonClick = {},
         modifier = Modifier
             .height(600.dp)
-            .clipToBounds()
+            .clipToBounds(),
+        rank = 1
     )
 }
 
@@ -365,7 +377,8 @@ private fun SpotItemV2EmptyImagePreview() {
         onFindWayButtonClick = {},
         modifier = Modifier
             .height(600.dp)
-            .clipToBounds()
+            .clipToBounds(),
+        rank = 3
     )
 }
 
