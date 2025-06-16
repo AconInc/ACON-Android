@@ -56,7 +56,7 @@ internal class AconAmplitude: EventTracker() {
         if (!::amplitude.isInitialized) {
             amplitude = Amplitude(
                 Configuration(
-                    getApiKey(),
+                    apiKey = apiKey,
                     context = context,
                     useBatch = true,
                 )

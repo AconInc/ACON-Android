@@ -7,8 +7,8 @@ abstract class EventTracker {
     protected abstract val TEST_API_KEY: String
     protected abstract val PRODUCTION_API_KEY: String
 
-    protected fun getApiKey(): String {
-        return if (BuildConfig.DEBUG) {
+    protected val apiKey by lazy {
+        if (BuildConfig.DEBUG) {
             TEST_API_KEY
         } else {
             PRODUCTION_API_KEY
