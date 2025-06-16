@@ -283,7 +283,9 @@ internal fun GalleryListScreen(
                         resetMediaPermission()
                         requestMediaPermissionDialog()
                     },
-                    onPermissionPartial = { onUpdateUserSelectedAlbum() }
+                    onPermissionPartial = {
+                        onUpdateUserSelectedAlbum()
+                    }
                 )
             }
 

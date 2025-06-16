@@ -46,7 +46,7 @@ internal fun NavGraphBuilder.profileNavigation(
                 onNavigateToSpotDetailScreen = {
                     navController.navigate(
                         SpotRoute.SpotDetail(
-                            SpotNavigationParameter(it, emptyList(), null, null, null)
+                            SpotNavigationParameter(it, emptyList(), null, null, null, true)
                         )
                     )
                 },
@@ -103,7 +103,7 @@ internal fun NavGraphBuilder.profileNavigation(
                 onNavigateToSpotDetailScreen = {
                     navController.navigate(
                         SpotRoute.SpotDetail(
-                            SpotNavigationParameter(it, emptyList(), null, null, null)
+                            SpotNavigationParameter(it, emptyList(), null, null, null, true)
                         )
                     )
                 },

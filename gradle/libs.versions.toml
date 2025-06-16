@@ -43,6 +43,7 @@ javaxInject = "1"
 orbit = "9.0.0"
 coroutine = "1.7.3"
 dataStoreVersion = "1.1.0"
+paging-compose = "3.3.6"
 
 amplitudeVersion = "1.20.1"
 
@@ -114,6 +115,9 @@ junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4", version.ref = "junitComposeVersion" }
+
+# Paging
+androidx-paignig-compose = { group = "androidx.paging", name = "paging-compose", version.ref = "paging-compose" }
 
 # Coil
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coilCompose" }

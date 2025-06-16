@@ -80,13 +80,15 @@ fun Context.openNaverMapNavigationWithMode(
     start: Location,
     destination: Location,
     destinationName: String,
-    transportMode: TransportMode
+    isPublic: Boolean,
+    transportMode: TransportMode? = null,
 ) {
-    val mode = when (transportMode) {
-        TransportMode.WALKING -> "walk"
-        TransportMode.BIKING -> "bicycle"
+    val mode = when {
+        isPublic -> "public"
+        transportMode == TransportMode.WALKING -> "walk"
+        transportMode == TransportMode.BIKING -> "bicycle"
+        else -> "public"
     }
-
     val uri = Uri.parse(
         "nmap://route/$mode?" +
                 "dlat=${destination.latitude}&dlng=${destination.longitude}&" +

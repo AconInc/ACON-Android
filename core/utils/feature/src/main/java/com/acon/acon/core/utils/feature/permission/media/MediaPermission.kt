@@ -28,13 +28,16 @@ import kotlinx.coroutines.launch
  * documentation = "https://developer.android.com/about/versions/14/changes/partial-photo-video-access",
  * reference = https://github.com/android/platform-samples/tree/main/samples/storage/src/main/java/com/example/platform/storage
  *
+ *
  * @RequiresPermission(anyOf = [READ_MEDIA_IMAGES, READ_MEDIA_VISUAL_USER_SELECTED, READ_EXTERNAL_STORAGE])
  * This app is not using Video Permission → (READ_MEDIA_VIDEO)
  *
- * onPermissionGranted → 미디어 접근권한이 Granted이면 실행되는 동작
- * onPermissionDenied  → 미디어 접근권한이 Denied이면  실행되는 동작
- * onPermissionPartial → 미디어 접근권한이 Partial이면 실행되는 동작 (제한적 접근 권한)
- * ignorePartialPermission → 미디어 접근 권한이 Granted, Partial 상태에서의 동작이 서로 다르게 동작해야 할 때 사용되는 플래그 (갤러리 내부에서 사용)
+ * @param onPermissionGranted → 미디어 접근권한이 Granted이면 실행되는 동작
+ * @param onPermissionDenied  → 미디어 접근권한이 Denied이면  실행되는 동작
+ * @param onPermissionPartial → 미디어 접근권한이 Partial이면 실행되는 동작 (제한적 접근 권한)
+ * @param ignorePartialPermission → (제한적) 권한을 (항상 모두 허용)권한과 동일하게 처리할지 여부
+ *                                      true: PARTIAL과 GRANTED를 동일하게 처리 (일반적인 경우)
+ *                                      false: PARTIAL 별도 처리
  */
 @Composable
 fun CheckAndRequestMediaPermission(
@@ -46,6 +49,7 @@ fun CheckAndRequestMediaPermission(
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val coroutineScope = rememberCoroutineScope()
+
     var files by remember { mutableStateOf(emptyList<MediaEntry>()) }
 
     val storageAccess by produceState(
@@ -55,14 +59,15 @@ fun CheckAndRequestMediaPermission(
     ) {
         val eventObserver = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME) {
-                value = getStorageAccess(context) // 권한 상태 최신으로 업데이트
+                // 앱이 포그라운드로 돌아올 때마다 권한 상태를 최신으로 업데이트
+                // 사용자가 설정 앱에서 권한을 변경했거나, 시스템 권한 다이얼로그에서 파일을 선택
+                value = getStorageAccess(context)
+
                 if ((value == StorageAccess.Partial) || (value == StorageAccess.Denied))
                     coroutineScope.launch {
-                        files =
-                            getVisualMedia(context.contentResolver) // 제한적 접근 권한에서, 유저가 직접 허용한 미디어 파일(이미지) 리스트를 쿼리
-                        if (files.isNotEmpty()) {
-                            onPermissionPartial() // 유저가 이미지를 선택했다면, 앨범 새로고침 콜백 호출 (허용한 이미지로만 갱신)
-                        }
+                        // 제한적 접근 권한인 경우, 시스템은 유저가 직접 허용(선택)한 미디어 파일들만 쿼리하여 결과로 반환
+                        // 이때, 유저가 이미지를 선택했다면, 앨범 UI를 갱신하는 콜백 호출
+                        files = getVisualMedia(context.contentResolver, onPermissionPartial)
                     }
             }
         }

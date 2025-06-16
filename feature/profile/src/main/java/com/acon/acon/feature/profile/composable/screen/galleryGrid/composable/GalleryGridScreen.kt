@@ -15,6 +15,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -49,8 +51,9 @@ internal fun GalleryGridScreen(
     albumName: String,
     modifier: Modifier = Modifier,
     onBackClicked: () -> Unit,
-    onUpdateAllImages: () -> Unit,
-    onUpdateUserSelectedImages: () -> Unit,
+    onLoadMoreImage: () -> Unit,
+    onUpdateAllPhotos: () -> Unit,
+    onUpdateUserSelectedPhotos: () -> Unit,
     onClickPermissionSettings: (String) -> Unit,
     requestMediaPermission: () -> Unit,
     resetMediaPermission: () -> Unit,
@@ -64,6 +67,8 @@ internal fun GalleryGridScreen(
     val context = LocalContext.current
     val screenWidthDp = getScreenWidth()
     val dialogWidth = (screenWidthDp * (260f / 360f))
+
+    val listState = rememberLazyGridState()
 
     when(state) {
         is GalleryGridUiState.Loading -> {}
@@ -107,23 +112,25 @@ internal fun GalleryGridScreen(
                                     .padding(end = 16.dp)
                                     .noRippleClickable {
                                         onConfirmSelected(state.selectedPhotoUri.toString())
-                                }
+                                    }
                             )
                         }
                     },
                     modifier = Modifier.padding(vertical = 14.dp)
                 )
 
-                LazyVerticalGrid(
+                EndlessLazyVerticalGrid(
                     columns = GridCells.Fixed(4),
                     modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.spacedBy(4.dp),
-                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    listState = listState,
+                    loading = false,
+                    loadMore = { onLoadMoreImage() },
+                    loadingItem = {}
                 ) {
-                    items(
+                    itemsIndexed(
                         items = state.photoList,
-                        key = { photoUri -> photoUri }
-                    ) { photoUri ->
+                        key = { index, uri -> "$index-$uri" }
+                    ) { ndex, photoUri ->
                         PhotoItem(
                             uri = photoUri,
                             isSelected = photoUri == state.selectedPhotoUri,
@@ -139,13 +146,13 @@ internal fun GalleryGridScreen(
                 CheckAndRequestMediaPermission(
                     onPermissionGranted = {
                         resetMediaPermission()
-                        onUpdateAllImages()
+                        onUpdateAllPhotos()
                     },
                     onPermissionDenied = {
                         resetMediaPermission()
                         requestMediaPermissionDialog()
                     },
-                    onPermissionPartial = { onUpdateUserSelectedImages() },
+                    onPermissionPartial = { onUpdateUserSelectedPhotos() },
                     ignorePartialPermission = false
                 )
             }
@@ -229,8 +236,8 @@ internal fun GalleryGridScreen(
                                 modifier = Modifier
                                     .padding(end = 16.dp)
                                     .noRippleClickable {
-                                    onConfirmSelected(state.selectedPhotoUri.toString())
-                                }
+                                        onConfirmSelected(state.selectedPhotoUri.toString())
+                                    }
                             )
                         }
                     },
@@ -314,13 +321,13 @@ internal fun GalleryGridScreen(
                 CheckAndRequestMediaPermission(
                     onPermissionGranted = {
                         resetMediaPermission()
-                        onUpdateAllImages()
+                        onUpdateAllPhotos()
                     },
                     onPermissionDenied = {
                         resetMediaPermission()
                         requestMediaPermissionDialog()
                     },
-                    onPermissionPartial = { onUpdateUserSelectedImages() }
+                    onPermissionPartial = { onUpdateUserSelectedPhotos() }
                 )
             }
 
@@ -441,8 +448,9 @@ private fun PreviewGalleryGridScreen() {
             state = GalleryGridUiState.Partial(),
             albumName = "",
             onBackClicked = {},
-            onUpdateAllImages = {},
-            onUpdateUserSelectedImages = {},
+            onLoadMoreImage = {},
+            onUpdateAllPhotos = {},
+            onUpdateUserSelectedPhotos = {},
             onClickPermissionSettings = {},
             requestMediaPermission = {},
             resetMediaPermission = {},
