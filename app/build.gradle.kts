@@ -17,7 +17,7 @@ android {
             applicationIdSuffix = ".debug"
             versionNameSuffix = "-debug"
             manifestPlaceholders["app_name"] = "Acon Debug"
-            manifestPlaceholders["app_domain"] = "iagbj"
+            manifestPlaceholders["app_domain"] = "aconpage"
         }
         release {
             isMinifyEnabled = true
@@ -28,7 +28,7 @@ android {
             )
             signingConfig = signingConfigs.getByName("release")
             manifestPlaceholders["app_name"] = "Acon"
-            manifestPlaceholders["app_domain"] = "iagbj"
+            manifestPlaceholders["app_domain"] = "aconpage"
         }
     }
 }

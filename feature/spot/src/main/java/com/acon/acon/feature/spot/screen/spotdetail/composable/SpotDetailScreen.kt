@@ -323,32 +323,20 @@ internal fun SpotDetailScreen(
                         Spacer(modifier = Modifier.weight(1f))
                         StoreFloatingButtonSet(
                             onClickMenuBoard = { onClickRequestMenuBoard() },
-
-                            // TODO - 딥링크 동작 확인용 임시 코드, 수정 필요
                             onClickShare = {
-                                val image = storeImageList.getOrElse(0) { "" }
-                                val spotId = state.spotDetail.spotId
-                                val spotName = state.spotDetail.name
-
                                 createBranchDeepLink(
                                     context = context,
-                                    spotId = spotId,
-                                    spotName = spotName,
-                                    imageUrl = image.takeIf { it.isNotBlank() }
+                                    spotId = state.spotDetail.spotId,
+                                    spotName = state.spotDetail.name
                                 ) { branchLink ->
                                     val shareIntent = Intent.createChooser(
                                         Intent().apply {
                                             action = Intent.ACTION_SEND
-                                            type =
-                                                if (image.isNotBlank()) "image/*" else "text/plain"
+                                            type = "text/plain"
                                             putExtra(
                                                 Intent.EXTRA_TEXT,
-                                                "아콘에서 내 근처 ${spotName} 확인해보세요!\n$branchLink"
+                                                "Acon에서 내 근처 ${state.spotDetail.name} 확인해보세요!$branchLink"
                                             )
-                                            if (image.isNotBlank()) {
-                                                putExtra(Intent.EXTRA_STREAM, image)
-                                                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                                            }
                                         },
                                         null
                                     )
