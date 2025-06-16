@@ -26,22 +26,24 @@ import com.acon.acon.core.designsystem.theme.AconTheme
 @Composable
 fun AconToastPopup(
     modifier: Modifier = Modifier,
-    color: Color = AconTheme.color.Gray4545,
+    color: Color = AconTheme.color.Gray900,
+    borderColor: Color = AconTheme.color.White.copy(0.6f),
     shape: Shape = RoundedCornerShape(50),
     content: @Composable() (RowScope.() -> Unit)
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
+            .border(
+                width = 1.dp,
+                color = borderColor,
+                shape = shape
+            )
             .background(
                 color = color,
                 shape = shape
             )
-            .border(
-                width = 1.dp,
-                color = AconTheme.color.GlassWhiteDefault,
-                shape = shape
-            ),
+            ,
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {

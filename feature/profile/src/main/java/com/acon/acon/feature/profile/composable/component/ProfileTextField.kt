@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -55,14 +54,14 @@ internal fun ProfileTextField(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .background(
-                shape = RoundedCornerShape(8.dp),
-                color = AconTheme.color.Gray900
-            )
             .border(
                 width = 1.dp,
                 color = AconTheme.color.GlassWhiteDefault,
                 shape = RoundedCornerShape(8.dp)
+            )
+            .background(
+                shape = RoundedCornerShape(8.dp),
+                color = AconTheme.color.Gray900
             )
             .padding(vertical = 12.dp, horizontal = 10.dp)
             .noRippleClickable(onClick = onClick),

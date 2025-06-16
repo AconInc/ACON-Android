@@ -41,7 +41,7 @@ fun AconNavigation(
         modifier = modifier,
         snackbarHost = {
             SnackbarHost(
-                modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 36.dp),
+                modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 120.dp),
                 hostState = snackbarHostState
             ) { snackbarData: SnackbarData ->
                 AconToastPopup(
