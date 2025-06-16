@@ -2,6 +2,7 @@ package com.acon.acon.feature.spot.screen.spotdetail.composable
 
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -49,6 +50,7 @@ import com.acon.acon.core.designsystem.image.rememberDefaultLoadImageErrorPainte
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.feature.spot.screen.component.OperationDot
+import com.acon.acon.feature.spot.screen.spotdetail.createBranchDeepLink
 import com.acon.feature.common.compose.LocalOnRetry
 import com.acon.feature.common.compose.getTextSizeDp
 import dev.chrisbanes.haze.hazeSource
@@ -84,8 +86,10 @@ internal fun SpotDetailScreen(
                 modifier = Modifier.fillMaxSize()
             )
         }
+
         is SpotDetailUiState.Loading -> {}
         is SpotDetailUiState.Success -> {
+            Log.d("로그", "딥링크 진입 : ${state.isFromDeepLink}")
             val storeName = state.spotDetail.name
             val storeImageList = state.spotDetail.imageList
             val acornCount = state.spotDetail.acornCount
@@ -139,7 +143,7 @@ internal fun SpotDetailScreen(
                     HorizontalPager(
                         state = pagerState
                     ) { page ->
-                       AsyncImage(
+                        AsyncImage(
                             model = storeImageList[page],
                             contentDescription = stringResource(R.string.store_background_image_content_description),
                             contentScale = ContentScale.Crop,
@@ -319,23 +323,37 @@ internal fun SpotDetailScreen(
                         Spacer(modifier = Modifier.weight(1f))
                         StoreFloatingButtonSet(
                             onClickMenuBoard = { onClickRequestMenuBoard() },
+
+                            // TODO - 딥링크 동작 확인용 임시 코드, 수정 필요
                             onClickShare = {
-                                // TODO - 딥링크 구현 후, 수정
                                 val image = storeImageList.getOrElse(0) { "" }
-                                val shareIntent = Intent.createChooser(
-                                    Intent().apply {
-                                        action = Intent.ACTION_SEND
-                                        type = "image/*"
-                                        putExtra(
-                                            Intent.EXTRA_TEXT,
-                                            "아콘에서 내 근처 ${state.spotDetail.name} 확인해보세요!"
-                                        )
-                                        putExtra(Intent.EXTRA_STREAM, image)
-                                        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                                    },
-                                    null
-                                )
-                                context.startActivity(shareIntent)
+                                val spotId = state.spotDetail.spotId
+                                val spotName = state.spotDetail.name
+
+                                createBranchDeepLink(
+                                    context = context,
+                                    spotId = spotId,
+                                    spotName = spotName,
+                                    imageUrl = image.takeIf { it.isNotBlank() }
+                                ) { branchLink ->
+                                    val shareIntent = Intent.createChooser(
+                                        Intent().apply {
+                                            action = Intent.ACTION_SEND
+                                            type =
+                                                if (image.isNotBlank()) "image/*" else "text/plain"
+                                            putExtra(
+                                                Intent.EXTRA_TEXT,
+                                                "아콘에서 내 근처 ${spotName} 확인해보세요!\n$branchLink"
+                                            )
+                                            if (image.isNotBlank()) {
+                                                putExtra(Intent.EXTRA_STREAM, image)
+                                                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                                            }
+                                        },
+                                        null
+                                    )
+                                    context.startActivity(shareIntent)
+                                }
                             },
                             onClickBookmark = {
                                 onClickBookmark()

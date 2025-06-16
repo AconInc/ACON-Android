@@ -40,19 +40,22 @@ class SpotDetailViewModel @Inject constructor(
                 spotId = spotNavData.spotId
             )
         }
-
         val spotDetailResult = spotDetailInfoDeferred.await()
+
         reduce {
-            if (spotDetailResult.getOrNull() == null) {
-                SpotDetailUiState.LoadFailed
-            }
-            else {
-                SpotDetailUiState.Success(
-                    tags = spotNavData.tags,
-                    transportMode = spotNavData.transportMode,
-                    eta = spotNavData.eta,
-                    spotDetail = spotDetailResult.getOrNull()!!
-                )
+            when (val spotDetail = spotDetailResult.getOrNull()) {
+                null -> SpotDetailUiState.LoadFailed
+                else -> {
+                    val isDeepLink = spotNavData.isFromDeepLink == true
+
+                    SpotDetailUiState.Success(
+                        isFromDeepLink = isDeepLink,
+                        tags = spotNavData.tags.takeUnless { isDeepLink },
+                        transportMode = spotNavData.transportMode,
+                        eta = spotNavData.eta,
+                        spotDetail = spotDetail
+                    )
+                }
             }
         }
     }
@@ -196,6 +199,7 @@ class SpotDetailViewModel @Inject constructor(
 sealed interface SpotDetailUiState {
     @Immutable
     data class Success(
+        val isFromDeepLink: Boolean? = false,
         val tags: List<TagType>? = emptyList(),
         val transportMode: TransportMode? = TransportMode.WALKING,
         val eta: Int? = 0,
@@ -213,6 +217,7 @@ sealed interface SpotDetailUiState {
             else -> "도보"
         }
     }
+
     data object Loading : SpotDetailUiState
     data object LoadFailed : SpotDetailUiState
 }
@@ -226,5 +231,6 @@ sealed interface SpotDetailSideEffect {
         val destinationName: String,
         val transportMode: TransportMode
     ) : SpotDetailSideEffect
+
     data object ShowErrorToast : SpotDetailSideEffect
 }
