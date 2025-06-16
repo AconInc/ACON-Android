@@ -26,10 +26,12 @@ import androidx.compose.ui.unit.dp
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.dialog.v2.AconDefaultDialog
 import com.acon.acon.core.designsystem.component.dialog.v2.AconTwoActionDialog
+import com.acon.acon.core.designsystem.component.error.NetworkErrorView
 import com.acon.acon.core.designsystem.component.topbar.AconTopBar
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.feature.verification.component.VerifiedAreaChipRow
 import com.acon.acon.feature.verification.screen.LocalVerificationUiState
+import com.acon.feature.common.compose.LocalOnRetry
 
 @Composable
 fun LocalVerificationScreen(
@@ -164,7 +166,12 @@ fun LocalVerificationScreen(
         }
 
         is LocalVerificationUiState.Loading -> {}
-        is LocalVerificationUiState.LoadFailed -> {}
+        is LocalVerificationUiState.LoadFailed -> {
+            NetworkErrorView(
+                onRetry = LocalOnRetry.current,
+                modifier = Modifier.fillMaxSize()
+            )
+        }
     }
 }
 
