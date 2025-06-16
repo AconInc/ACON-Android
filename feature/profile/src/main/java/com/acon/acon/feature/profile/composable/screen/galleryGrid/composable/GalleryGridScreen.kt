@@ -52,8 +52,8 @@ internal fun GalleryGridScreen(
     modifier: Modifier = Modifier,
     onBackClicked: () -> Unit,
     onLoadMoreImage: () -> Unit,
-    onUpdateAllImages: () -> Unit,
-    onUpdateUserSelectedImages: () -> Unit,
+    onUpdateAllPhotos: () -> Unit,
+    onUpdateUserSelectedPhotos: () -> Unit,
     onClickPermissionSettings: (String) -> Unit,
     requestMediaPermission: () -> Unit,
     resetMediaPermission: () -> Unit,
@@ -112,7 +112,7 @@ internal fun GalleryGridScreen(
                                     .padding(end = 16.dp)
                                     .noRippleClickable {
                                         onConfirmSelected(state.selectedPhotoUri.toString())
-                                }
+                                    }
                             )
                         }
                     },
@@ -146,13 +146,13 @@ internal fun GalleryGridScreen(
                 CheckAndRequestMediaPermission(
                     onPermissionGranted = {
                         resetMediaPermission()
-                        onUpdateAllImages()
+                        onUpdateAllPhotos()
                     },
                     onPermissionDenied = {
                         resetMediaPermission()
                         requestMediaPermissionDialog()
                     },
-                    onPermissionPartial = { onUpdateUserSelectedImages() },
+                    onPermissionPartial = { onUpdateUserSelectedPhotos() },
                     ignorePartialPermission = false
                 )
             }
@@ -236,8 +236,8 @@ internal fun GalleryGridScreen(
                                 modifier = Modifier
                                     .padding(end = 16.dp)
                                     .noRippleClickable {
-                                    onConfirmSelected(state.selectedPhotoUri.toString())
-                                }
+                                        onConfirmSelected(state.selectedPhotoUri.toString())
+                                    }
                             )
                         }
                     },
@@ -321,13 +321,13 @@ internal fun GalleryGridScreen(
                 CheckAndRequestMediaPermission(
                     onPermissionGranted = {
                         resetMediaPermission()
-                        onUpdateAllImages()
+                        onUpdateAllPhotos()
                     },
                     onPermissionDenied = {
                         resetMediaPermission()
                         requestMediaPermissionDialog()
                     },
-                    onPermissionPartial = { onUpdateUserSelectedImages() }
+                    onPermissionPartial = { onUpdateUserSelectedPhotos() }
                 )
             }
 
@@ -449,8 +449,8 @@ private fun PreviewGalleryGridScreen() {
             albumName = "",
             onBackClicked = {},
             onLoadMoreImage = {},
-            onUpdateAllImages = {},
-            onUpdateUserSelectedImages = {},
+            onUpdateAllPhotos = {},
+            onUpdateUserSelectedPhotos = {},
             onClickPermissionSettings = {},
             requestMediaPermission = {},
             resetMediaPermission = {},

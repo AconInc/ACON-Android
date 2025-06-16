@@ -79,6 +79,7 @@ class GalleryGridViewModel @Inject constructor(
                     loadedPhotos = updated // 꼭 갱신!
                     current.copy(photoList = loadedPhotos)
                 }
+
                 else -> current
             }
         }
@@ -86,12 +87,12 @@ class GalleryGridViewModel @Inject constructor(
         page += 1
     }
 
-    fun updateAllImages() = intent {
+    fun updateAllPhotos() = intent {
         val photoList = getAllPhotos(albumId)
         reduce { GalleryGridUiState.Granted(photoList = photoList) }
     }
 
-    fun updateUserSelectedImages() = intent {
+    fun updateUserSelectedPhotos() = intent {
         val photoList = getAllPhotos(albumId)
         reduce {
             when (state) {
