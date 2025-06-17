@@ -18,8 +18,8 @@ class LocalVerificationViewModel @Inject constructor(
 ) : BaseContainerHost<LocalVerificationUiState, LocalVerificationSideEffect>() {
 
     override val container: Container<LocalVerificationUiState, LocalVerificationSideEffect> =
-        container(LocalVerificationUiState.LoadFailed) {
-            //fetchVerifiedAreaList()
+        container(LocalVerificationUiState.Loading) {
+            fetchVerifiedAreaList()
         }
 
     private fun fetchVerifiedAreaList() = intent {
