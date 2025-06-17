@@ -13,6 +13,7 @@ import com.acon.feature.common.base.BaseContainerHost
 import com.acon.feature.common.navigation.spotNavigationParameterNavType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.viewmodel.container
 import javax.annotation.concurrent.Immutable
@@ -35,6 +36,7 @@ class SpotDetailViewModel @Inject constructor(
         }
 
     private fun fetchedSpotDetail() = intent {
+        delay(800)
         val spotDetailInfoDeferred = viewModelScope.async {
             spotRepository.fetchSpotDetail(
                 spotId = spotNavData.spotId

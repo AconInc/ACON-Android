@@ -53,6 +53,7 @@ import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.feature.spot.screen.component.OperationDot
 import com.acon.acon.feature.spot.screen.spotdetail.createBranchDeepLink
+import com.acon.acon.feature.spot.screen.spotlist.composable.SpotDetailLoadingView
 import com.acon.feature.common.compose.LocalOnRetry
 import com.acon.feature.common.compose.getTextSizeDp
 import dev.chrisbanes.haze.hazeSource
@@ -89,7 +90,13 @@ internal fun SpotDetailScreen(
             )
         }
 
-        is SpotDetailUiState.Loading -> {}
+        is SpotDetailUiState.Loading -> {
+            SpotDetailLoadingView(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(AconTheme.color.Gray900)
+            )
+        }
         is SpotDetailUiState.Success -> {
             val storeName = state.spotDetail.name
             val storeImageList = state.spotDetail.imageList
@@ -219,7 +226,8 @@ internal fun SpotDetailScreen(
                                     .noRippleClickable { onRequestErrorReportModal() }
                             )
                         },
-                        modifier = Modifier.padding(vertical = 14.dp)
+                        modifier = Modifier
+                            .padding(top = 44.dp, bottom = 14.dp)
                     )
 
                     Row(
