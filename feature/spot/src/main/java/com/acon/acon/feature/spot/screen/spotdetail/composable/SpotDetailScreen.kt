@@ -156,7 +156,8 @@ internal fun SpotDetailScreen(
                             modifier = Modifier
                                 .fillMaxSize()
                                 .imageGradientLayer(
-                                    startColor = AconTheme.color.Gray900.copy(alpha = 0.8f)
+                                    startColor = AconTheme.color.Gray900.copy(alpha = 0.8f),
+                                    ratio = 0.5f
                                 ),
                             error = rememberDefaultLoadImageErrorPainter()
                         )
@@ -170,10 +171,7 @@ internal fun SpotDetailScreen(
                             painter = painterResource(id = R.drawable.ic_background_no_store),
                             contentDescription = stringResource(R.string.no_store_background_image_content_description),
                             modifier = Modifier
-                                .fillMaxSize()
-                                .imageGradientLayer(
-                                    startColor = AconTheme.color.Gray900.copy(alpha = 0.8f),
-                                ),
+                                .fillMaxSize(),
                             contentScale = ContentScale.Crop
                         )
 
