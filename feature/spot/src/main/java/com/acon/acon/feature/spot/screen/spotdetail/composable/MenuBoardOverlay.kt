@@ -56,7 +56,9 @@ internal fun MenuBoardOverlay(
         )
     ) {
         Box(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .background(AconTheme.color.DimDefault.copy(alpha = 0.7f)),
             contentAlignment = Alignment.Center
         ) {
             Icon(
