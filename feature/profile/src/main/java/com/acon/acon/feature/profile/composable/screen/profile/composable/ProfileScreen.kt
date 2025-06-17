@@ -219,10 +219,10 @@ fun ProfileScreen(
                         }
 
                         Spacer(Modifier.height(if (state.profileInfo.savedSpots.isEmpty()) 40.dp else 20.dp))
-                        ProfileNativeAd(
-                            screenHeight = admobHeight,
-                            modifier = Modifier.padding(bottom = 23.dp)
-                        )
+//                        ProfileNativeAd(
+//                            screenHeight = admobHeight,
+//                            modifier = Modifier.padding(bottom = 23.dp)
+//                        )
                     }
                 }
             }
@@ -296,10 +296,10 @@ fun ProfileScreen(
                             }
                         }
 
-                        ProfileNativeAd(
-                            screenHeight = admobHeight,
-                            modifier = Modifier.padding(top = 20.dp)
-                        )
+//                        ProfileNativeAd(
+//                            screenHeight = admobHeight,
+//                            modifier = Modifier.padding(top = 20.dp)
+//                        )
                     }
                 }
             }
