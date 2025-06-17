@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -108,8 +107,6 @@ internal fun SpotDetailScreen(
 
             Box(
                 modifier = modifier
-                    .navigationBarsPadding()
-                    .statusBarsPadding()
             ) {
                 if (state.showReportErrorModal) {
                     ReportErrorBottomSheet(
@@ -198,6 +195,7 @@ internal fun SpotDetailScreen(
                     modifier = Modifier
                         .fillMaxSize()
                         .hazeSource(LocalHazeState.current)
+                        .navigationBarsPadding()
                 ) {
                     AconTopBar(
                         leadingIcon = {
