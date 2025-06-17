@@ -20,22 +20,18 @@ fun NavGraphBuilder.areaVerificationNavigation(
         startDestination = AreaVerificationRoute.AreaVerification()
     ) {
         composable<AreaVerificationRoute.AreaVerification> { backStackEntry ->
-            val routeData = backStackEntry.arguments?.let {
-                AreaVerificationRoute.AreaVerification(
-                    verifiedAreaId = it.getLong("verifiedAreaId")
-                )
-            }
+            val routeData = backStackEntry.toRoute<AreaVerificationRoute.AreaVerification>()
 
             AreaVerificationScreenContainer(
                 modifier = Modifier.fillMaxSize(),
-                route = routeData?.route ?: "onboarding",
+                route = routeData.route ?: "onboarding",
                 onNextScreen = { latitude, longitude ->
                     navController.navigate(
                         AreaVerificationRoute.CheckInMap(
                             latitude = latitude,
                             longitude = longitude,
-                            verifiedAreaId = routeData?.verifiedAreaId ?: -1,
-                            route = routeData?.route
+                            verifiedAreaId = routeData.verifiedAreaId ?: -1,
+                            route = routeData.route
                         )
                     )
                 }
@@ -51,11 +47,7 @@ fun NavGraphBuilder.areaVerificationNavigation(
                 previousVerifiedAreaId = route.verifiedAreaId,
                 onNavigateToNext = {
                     if (route.route == "settings") {
-                        navController.navigate(SettingsRoute.LocalVerification) {
-                            popUpTo(SettingsRoute.LocalVerification) {
-                                inclusive = true
-                            }
-                        }
+                        navController.popBackStack(route = SettingsRoute.LocalVerification, inclusive = true)
                     } else {
                         navController.navigate(OnboardingRoute.Graph) {
                             popUpTo(0) { inclusive = true }

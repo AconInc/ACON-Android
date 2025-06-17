@@ -2,11 +2,13 @@ package com.acon.acon.navigation.nested
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import com.acon.acon.BuildConfig
+import com.acon.acon.core.utils.feature.toast.showToast
 import com.acon.acon.feature.SettingsRoute
 import com.acon.acon.feature.areaverification.AreaVerificationRoute
 import com.acon.acon.feature.onboarding.OnboardingRoute
@@ -55,13 +57,17 @@ internal fun NavGraphBuilder.settingsNavigation(
         }
 
         composable<SettingsRoute.LocalVerification> {
+            val context = LocalContext.current
+
             LocalVerificationScreenContainer(
                 modifier = Modifier.fillMaxSize(),
                 navigateToSettingsScreen = { navController.popBackStack() },
                 navigateToAreaVerification = {
+                    context.showToast("인증 완료 되었습니다")
                     navController.navigate(
                         AreaVerificationRoute.AreaVerification(
-                            verifiedAreaId = it
+                            verifiedAreaId = it,
+                            route = "settings"
                         )
                     )
                 }
