@@ -17,6 +17,7 @@ import com.acon.acon.domain.type.TagType
 import com.acon.acon.domain.type.TransportMode
 import com.acon.acon.domain.usecase.IsDistanceExceededUseCase
 import com.acon.feature.common.base.BaseContainerHost
+import com.acon.feature.common.intent.NavigationAppHandler
 import com.acon.feature.common.location.isInKorea
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -131,15 +132,30 @@ class SpotListViewModel @Inject constructor(
 
     fun onTryFindWay(spot: Spot) = intent {
         runOn<SpotListUiStateV2.Success> {
-            postSideEffect(SpotListSideEffectV2.NavigateToExternalMap(
-                start = state.currentLocation,
-                destination = Location("").apply {
-                    latitude = spot.latitude
-                    longitude = spot.longitude
-                },
-                destinationName = spot.name,
-                transportMode = state.transportMode
-            ))
+            reduce {
+                state.copy(
+                    showChooseNavigationAppModal = true
+                )
+            }
+        }
+    }
+
+    fun onNavigationAppChosen(handler: NavigationAppHandler) = intent {
+        runOn<SpotListUiStateV2.Success> {
+            postSideEffect(SpotListSideEffectV2.NavigateToExternalMap(handler))
+            reduce {
+                state.copy(
+                    showChooseNavigationAppModal = false
+                )
+            }
+        }
+    }
+
+    fun onChooseNavigationAppModalDismissed() = intent {
+        runOn<SpotListUiStateV2.Success> {
+            reduce {
+                state.copy(showChooseNavigationAppModal = false)
+            }
         }
     }
 
@@ -287,7 +303,8 @@ sealed interface SpotListUiStateV2 {
         override val selectedRestaurantFilters: Map<FilterDetailKey, Set<RestaurantFilterType>> = emptyMap(),
         override val selectedCafeFilters: Map<FilterDetailKey, Set<CafeFilterType>> = emptyMap(),
         val showFilterModal: Boolean = false,
-        val showRefreshPopup: Boolean = false
+        val showRefreshPopup: Boolean = false,
+        val showChooseNavigationAppModal: Boolean = false
     ) : SpotListUiStateV2
 
     data class Loading(
@@ -311,7 +328,7 @@ sealed interface SpotListUiStateV2 {
 
 sealed interface SpotListSideEffectV2 {
     data object ShowToastMessage : SpotListSideEffectV2
-    data class NavigateToExternalMap(val start: Location, val destination: Location, val destinationName: String, val transportMode: TransportMode) : SpotListSideEffectV2
+    data class NavigateToExternalMap(val handler: NavigationAppHandler) : SpotListSideEffectV2
     data class NavigateToSpotDetailScreen(val spot: Spot, val transportMode: TransportMode) : SpotListSideEffectV2
 }
 

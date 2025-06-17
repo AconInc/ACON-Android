@@ -5,7 +5,6 @@ import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
@@ -17,8 +16,6 @@ import com.acon.acon.feature.spot.SpotRoute
 import com.acon.acon.feature.spot.screen.spotdetail.composable.SpotDetailScreenContainer
 import com.acon.acon.feature.spot.screen.spotlist.composable.SpotListScreenContainer
 import com.acon.acon.feature.upload.UploadRoute
-import com.acon.feature.common.intent.openMapNavigation
-import com.acon.feature.common.intent.openNaverMapNavigationWithMode
 import com.acon.feature.common.navigation.spotNavigationParameterNavType
 
 internal fun NavGraphBuilder.spotNavigation(
@@ -32,7 +29,6 @@ internal fun NavGraphBuilder.spotNavigation(
             enterTransition = { EnterTransition.None },
             exitTransition = { ExitTransition.None }
         ) {
-            val context = LocalContext.current
             SpotListScreenContainer(
                 onNavigateToUploadScreen = {
                     navController.navigate(UploadRoute.Graph)
@@ -50,7 +46,6 @@ internal fun NavGraphBuilder.spotNavigation(
                 onNavigateToDeeplinkSpotDetailScreen = { spotNav ->
                     navController.navigate(SpotRoute.SpotDetail(spotNav))
                 },
-                onNavigateToExternalMap = context::openNaverMapNavigationWithMode,
                 modifier = Modifier
                     .fillMaxSize()
                     .background(AconTheme.color.Gray900)

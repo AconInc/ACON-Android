@@ -1,12 +1,12 @@
 package com.acon.acon.feature.spot.screen.spotlist.composable
 
-import android.location.Location
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.acon.acon.domain.model.spot.SpotNavigationParameter
 import com.acon.acon.domain.model.spot.v2.Spot
@@ -16,9 +16,9 @@ import com.acon.acon.feature.spot.screen.spotlist.SpotListSideEffectV2
 import com.acon.acon.feature.spot.screen.spotlist.SpotListViewModel
 import com.acon.feature.common.compose.LocalDeepLinkHandler
 import com.acon.feature.common.compose.LocalOnRetry
-import kotlinx.coroutines.flow.filter
 import com.acon.feature.common.compose.LocalRequestSignIn
 import com.acon.feature.common.compose.LocalUserType
+import kotlinx.coroutines.flow.filter
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
@@ -27,13 +27,13 @@ fun SpotListScreenContainer(
     onNavigateToUploadScreen: () -> Unit,
     onNavigateToProfileScreen: () -> Unit,
     onNavigateToSpotDetailScreen: (Spot, TransportMode) -> Unit,
-    onNavigateToExternalMap: (start: Location, destination: Location, destinationName: String, isPublic: Boolean, transportMode: TransportMode) -> Unit,
     modifier: Modifier = Modifier,
     onNavigateToDeeplinkSpotDetailScreen:(spotNav: SpotNavigationParameter) -> Unit = {},
     viewModel: SpotListViewModel = hiltViewModel()
 ) {
     val state by viewModel.collectAsState()
     val deepLinkHandler = LocalDeepLinkHandler.current
+    val context = LocalContext.current
 
     val userType = LocalUserType.current
     val onSignInRequired = LocalRequestSignIn.current
@@ -67,6 +67,8 @@ fun SpotListScreenContainer(
                     viewModel.onSpotClicked(spot, rank)
             },
             onTryFindWay = viewModel::onTryFindWay,
+            onNavigationAppChoose = viewModel::onNavigationAppChosen,
+            onChooseNavigationAppModalDismiss = viewModel::onChooseNavigationAppModalDismissed,
             onFilterButtonClick = viewModel::onFilterButtonClicked,
             onFilterModalDismissRequest = viewModel::onFilterModalDismissed,
             onRestaurantFilterSaved = viewModel::onRestaurantFilterSaved,
@@ -89,7 +91,7 @@ fun SpotListScreenContainer(
                 onNavigateToSpotDetailScreen(it.spot, it.transportMode)
             }
             is SpotListSideEffectV2.NavigateToExternalMap -> {
-                onNavigateToExternalMap(it.start, it.destination, it.destinationName, false, it.transportMode)
+                it.handler.startNavigationApp(context)
             }
         }
     }
