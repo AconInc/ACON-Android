@@ -38,7 +38,7 @@ internal fun StoreFloatingButtonSet(
     onClickBookmark: () -> Unit,
     modifier: Modifier = Modifier,
     isBookmarkSelected: Boolean = false,
-    isMenuBoarEnabled: Boolean = false
+    isMenuBoardEnabled: Boolean = false
 ) {
     var isMenuBoardLongPressed by remember { mutableStateOf(false) }
     var isShareLongPressed by remember { mutableStateOf(false) }
@@ -46,7 +46,7 @@ internal fun StoreFloatingButtonSet(
 
     val menuBoardImage = when {
         isMenuBoardLongPressed -> R.drawable.ic_menu_board_pressed
-        isMenuBoarEnabled -> R.drawable.ic_menu_board_enable
+        isMenuBoardEnabled -> R.drawable.ic_menu_board_enable
         else -> R.drawable.ic_menu_board_disable
     }
     val shareImage = if (isShareLongPressed) R.drawable.ic_share_pressed else R.drawable.ic_share_enable
@@ -61,6 +61,7 @@ internal fun StoreFloatingButtonSet(
     ) {
         StoreDetailButton(
             name = stringResource(R.string.floating_btn_menu_board),
+            isEnabled = isMenuBoardEnabled,
             imageRes = menuBoardImage,
             onClickButton = onClickMenuBoard,
             onLongClickButton = { isMenuBoardLongPressed = true },
@@ -109,6 +110,7 @@ private fun StoreDetailButton(
     onClickButton: () -> Unit,
     onLongClickButton: (() -> Unit),
     onReleaseAfterLongPress: (() -> Unit),
+    isEnabled: Boolean = true,
     isShare: Boolean = false
 ) {
     var isLongPressed by remember { mutableStateOf(false) }
@@ -135,30 +137,34 @@ private fun StoreDetailButton(
                 contentDescription = name,
                 modifier = Modifier
                     .pointerInput(Unit) {
-                        detectTapGestures(
-                            onPress = {
-                                isLongPressed = false
-                                val pressSucceeded = tryAwaitRelease()
-                                if (pressSucceeded && isLongPressed) {
-                                    onReleaseAfterLongPress()
-                                }
-                            },
-                            onTap = {
-                                val currentTime = System.currentTimeMillis()
-                                if (isShare) {
-                                    if (currentTime - lastClickTime >= throttleTime) {
-                                        lastClickTime = currentTime
+                        if (isEnabled) {
+                            detectTapGestures(
+                                onPress = {
+                                    isLongPressed = false
+                                    val pressSucceeded = tryAwaitRelease()
+                                    if (pressSucceeded && isLongPressed) {
+                                        onReleaseAfterLongPress()
+                                    }
+                                },
+                                onTap = {
+                                    val currentTime = System.currentTimeMillis()
+                                    if (isShare) {
+                                        if (currentTime - lastClickTime >= throttleTime) {
+                                            lastClickTime = currentTime
+                                            onClickButton()
+                                        }
+                                    } else {
                                         onClickButton()
                                     }
-                                } else {
-                                    onClickButton()
+                                },
+                                onLongPress = {
+                                    isLongPressed = true
+                                    onLongClickButton()
                                 }
-                            },
-                            onLongPress = {
-                                isLongPressed = true
-                                onLongClickButton()
-                            }
-                        )
+                            )
+                        } else {
+                            Unit
+                        }
                     }
             )
         }

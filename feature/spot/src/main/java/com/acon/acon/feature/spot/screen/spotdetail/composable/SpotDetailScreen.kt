@@ -348,7 +348,7 @@ internal fun SpotDetailScreen(
                                 onClickBookmark()
                             },
                             isBookmarkSelected = state.spotDetail.isSaved,
-                            isMenuBoarEnabled = state.spotDetail.hasMenuboardImage
+                            isMenuBoardEnabled = state.spotDetail.hasMenuboardImage
                         )
                     }
 
