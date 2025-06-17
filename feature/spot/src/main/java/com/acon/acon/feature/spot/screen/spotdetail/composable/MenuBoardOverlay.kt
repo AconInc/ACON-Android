@@ -47,6 +47,7 @@ internal fun MenuBoardOverlay(
 ) {
     var currentIndex by rememberSaveable { mutableIntStateOf(0) }
     val zoomState = remember { PinchZoomState() }
+    val isZooming = zoomState.isZooming
 
     Dialog(
         onDismissRequest = onDismiss,
@@ -61,21 +62,29 @@ internal fun MenuBoardOverlay(
                 .background(AconTheme.color.DimDefault.copy(alpha = 0.7f)),
             contentAlignment = Alignment.Center
         ) {
-            Icon(
-                imageVector = ImageVector.vectorResource(R.drawable.ic_x_mark),
-                contentDescription = stringResource(R.string.exit),
-                tint = AconTheme.color.Gray50,
-                modifier = Modifier
-                    .align(Alignment.TopStart)
-                    .padding(top = 32.dp, start = 14.dp)
-                    .noRippleClickable { onDismiss() }
-            )
+            if(!isZooming) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_x_mark),
+                    contentDescription = stringResource(R.string.exit),
+                    tint = AconTheme.color.Gray50,
+                    modifier = Modifier
+                        .align(Alignment.TopStart)
+                        .padding(top = 32.dp, start = 14.dp)
+                        .noRippleClickable { onDismiss() }
+                )
+            }
 
-            PinchToZoomImage(
-                zoomState = zoomState,
-                menuBoardImage = imageList[currentIndex],
-                isMenuBoardLoaded = isMenuBoardLoaded
-            )
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .pinchZoomAndTransform(zoomState),
+                contentAlignment = Alignment.Center
+            ) {
+                PinchToZoomImage(
+                    menuBoardImage = imageList[currentIndex],
+                    isMenuBoardLoaded = isMenuBoardLoaded
+                )
+            }
 
             Row(
                 modifier = Modifier
@@ -84,33 +93,35 @@ internal fun MenuBoardOverlay(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                if (imageList.size > 1 && currentIndex > 0) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(R.drawable.ic_menu_arrow_back),
-                        contentDescription = stringResource(R.string.btn_previous_background_image_content_description),
-                        modifier = Modifier
-                            .size(36.dp)
-                            .noRippleClickable(enabled = !zoomState.isZooming) {
-                                currentIndex--
-                            },
-                        tint = AconTheme.color.Gray50
-                    )
-                } else {
-                    Spacer(modifier = Modifier.size(36.dp))
-                }
+                if(!isZooming) {
+                    if (imageList.size > 1 && currentIndex > 0) {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(R.drawable.ic_menu_arrow_back),
+                            contentDescription = stringResource(R.string.btn_previous_background_image_content_description),
+                            modifier = Modifier
+                                .size(36.dp)
+                                .noRippleClickable(enabled = !zoomState.isZooming) {
+                                    currentIndex--
+                                },
+                            tint = AconTheme.color.Gray50
+                        )
+                    } else {
+                        Spacer(modifier = Modifier.size(36.dp))
+                    }
 
-                Spacer(modifier = Modifier.weight(1f))
-                if (imageList.size > 1 && currentIndex < imageList.lastIndex) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(R.drawable.ic_menu_arrow_forward),
-                        contentDescription = stringResource(R.string.btn_next_image_content_description),
-                        modifier = Modifier
-                            .size(36.dp)
-                            .noRippleClickable(enabled = !zoomState.isZooming) {
-                                currentIndex++
-                            },
-                        tint = AconTheme.color.Gray50
-                    )
+                    Spacer(modifier = Modifier.weight(1f))
+                    if (imageList.size > 1 && currentIndex < imageList.lastIndex) {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(R.drawable.ic_menu_arrow_forward),
+                            contentDescription = stringResource(R.string.btn_next_image_content_description),
+                            modifier = Modifier
+                                .size(36.dp)
+                                .noRippleClickable(enabled = !zoomState.isZooming) {
+                                    currentIndex++
+                                },
+                            tint = AconTheme.color.Gray50
+                        )
+                    }
                 } else {
                     Spacer(modifier = Modifier.size(36.dp))
                 }
@@ -121,7 +132,6 @@ internal fun MenuBoardOverlay(
 
 @Composable
 internal fun PinchToZoomImage(
-    zoomState: PinchZoomState,
     menuBoardImage: String,
     isMenuBoardLoaded: Boolean
 ) {
@@ -129,8 +139,7 @@ internal fun PinchToZoomImage(
         Box(
             modifier = Modifier
                 .widthIn(max = 230.dp)
-                .aspectRatio(230f / 325f)
-                .pinchZoomAndTransform(zoomState),
+                .aspectRatio(230f / 325f),
             contentAlignment = Alignment.Center
         ) {
             AsyncImage(
