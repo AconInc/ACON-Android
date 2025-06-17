@@ -41,9 +41,14 @@ internal fun NavGraphBuilder.spotNavigation(
                     navController.navigate(ProfileRoute.Graph)
                 },
                 onNavigateToSpotDetailScreen = { spot, tm ->
-                    navController.navigate(SpotRoute.SpotDetail(
-                        SpotNavigationParameter(spot.id, spot.tags, tm, spot.eta, null)
-                    ))
+                    navController.navigate(
+                        SpotRoute.SpotDetail(
+                            SpotNavigationParameter(spot.id, spot.tags, tm, spot.eta, null, null)
+                        )
+                    )
+                },
+                onNavigateToDeeplinkSpotDetailScreen = { spotNav ->
+                    navController.navigate(SpotRoute.SpotDetail(spotNav))
                 },
                 onNavigateToExternalMap = context::openNaverMapNavigationWithMode,
                 modifier = Modifier

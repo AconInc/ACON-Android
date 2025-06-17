@@ -44,6 +44,7 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
 
                     // TODO - 진짜 admob으로 바꿔야 함
                     manifestPlaceholders["admobAppUnitId"] = getPropertyKey("admob_app_unit_id")
+                    manifestPlaceholders["branchIoKey"] = getPropertyKey("branch_io_key")
 
                     applicationId = catalog.findVersion("projectApplicationId").get().toString()
                     targetSdk = catalog.findVersion("projectTargetSdk").get().toString().toInt()

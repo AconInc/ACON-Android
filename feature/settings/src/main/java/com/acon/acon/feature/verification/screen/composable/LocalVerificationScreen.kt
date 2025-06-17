@@ -63,6 +63,7 @@ fun LocalVerificationScreen(
                 )
             }
 
+
             if (state.showEditAreaDialog) {
                 AconTwoActionDialog(
                     title = stringResource(R.string.delete_area_dialog_fail_title),
@@ -151,10 +152,8 @@ fun LocalVerificationScreen(
                     VerifiedAreaChipRow(
                         areaList = state.verificationAreaList,
                         onEditArea = onShowEditAreaDialog,
-                        onRemoveChip = {
-                            state.selectedAreaId?.let { verifiedAreaId ->
-                                onDeleteVerifiedAreaChip(verifiedAreaId)
-                            }
+                        onRemoveChip = { verifiedAreaId ->
+                            onDeleteVerifiedAreaChip(verifiedAreaId)
                         },
                         onClickAddArea = {
                             onclickAreaVerification(-1)
