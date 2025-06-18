@@ -21,6 +21,8 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -176,6 +178,7 @@ internal fun SpotDetailScreen(
                             contentDescription = stringResource(R.string.store_background_image_content_description),
                             contentScale = ContentScale.Crop,
                             modifier = Modifier
+                                .hazeSource(LocalHazeState.current)
                                 .fillMaxSize()
                                 .imageGradientLayer(
                                     startColor = AconTheme.color.Gray900.copy(alpha = 0.8f),
@@ -220,8 +223,9 @@ internal fun SpotDetailScreen(
 
                 Column(
                     modifier = Modifier
-                        .fillMaxSize()
                         .hazeSource(LocalHazeState.current)
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState())
                         .navigationBarsPadding()
                 ) {
                     AconTopBar(
@@ -380,7 +384,8 @@ internal fun SpotDetailScreen(
 
                     if (storeImageList.size >= 2) {
                         Box(
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier
+                                .fillMaxWidth(),
                             contentAlignment = Alignment.Center
                         ) {
                             StoreImageIndicator(
