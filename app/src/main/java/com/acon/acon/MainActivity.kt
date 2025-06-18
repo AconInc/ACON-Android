@@ -42,6 +42,7 @@ import com.acon.acon.feature.spot.SpotRoute
 import com.acon.acon.navigation.AconNavigation
 import com.acon.core.ads_api.AdProvider
 import com.acon.core.ads_api.LocalSpotListAdProvider
+import com.acon.core.analytics.amplitude.AconAmplitude
 import com.acon.feature.ads_impl.SpotListAdProvider
 import com.acon.feature.common.compose.LocalDeepLinkHandler
 import com.acon.feature.common.compose.LocalLocation
@@ -354,6 +355,7 @@ class MainActivity : ComponentActivity() {
                                                     }
                                                 }
                                             }
+                                            AconAmplitude.setUserId(it.externalUUID)
                                         }.onFailure {
 
                                         }

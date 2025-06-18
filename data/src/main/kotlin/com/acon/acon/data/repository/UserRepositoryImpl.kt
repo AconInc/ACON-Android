@@ -42,7 +42,6 @@ class UserRepositoryImpl @Inject constructor(
                 )
             )
 
-            AconAmplitude.setUserId(signInResponse.externalUUID)
             sessionManager.saveAccessToken(signInResponse.accessToken.orEmpty())
             tokenLocalDataSource.saveRefreshToken(signInResponse.refreshToken.orEmpty())
 
