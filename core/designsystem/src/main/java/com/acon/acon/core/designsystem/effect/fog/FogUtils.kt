@@ -2,6 +2,7 @@ package com.acon.acon.core.designsystem.effect.fog
 
 import android.content.Context
 import android.graphics.Paint
+import androidx.compose.runtime.Stable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
@@ -12,6 +13,7 @@ import com.acon.acon.core.designsystem.image.toBitmap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
+@Stable
 fun Modifier.fogBackground(
     glowColor: Color,
     glowAlpha: Float = .16f,
