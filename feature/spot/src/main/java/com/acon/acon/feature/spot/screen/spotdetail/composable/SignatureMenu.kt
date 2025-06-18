@@ -7,17 +7,16 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
-import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.domain.model.spot.SignatureMenu
 import com.acon.acon.feature.spot.toPriceString
@@ -43,24 +42,17 @@ internal fun SignatureMenuItem(
     menuName: String,
     menuPrice: String
 ) {
-    val displayMenuName = if (menuName.length > 8) { menuName.take(7) + stringResource(R.string.ellipsis) } else { menuName }
-
     Row(
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Box(
-            modifier = Modifier
-                .width(100.dp),
-            contentAlignment = Alignment.CenterStart
-        ) {
-            Text(
-                text = displayMenuName,
-                color = AconTheme.color.White,
-                style = AconTheme.typography.Body1,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-        }
+        Text(
+            text = menuName,
+            color = AconTheme.color.White,
+            style = AconTheme.typography.Body1,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.widthIn(min = 100.dp, max = 160.dp)
+        )
 
         Spacer(Modifier.width(8.dp))
         Text(
