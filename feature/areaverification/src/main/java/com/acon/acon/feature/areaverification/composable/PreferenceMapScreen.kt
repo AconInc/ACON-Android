@@ -165,7 +165,7 @@ fun PreferenceMapScreen(
                 initialLongitude = longitude,
                 modifier = Modifier.fillMaxSize(),
                 onClickConfirm = {
-                    if (previousVerifiedAreaId != (-1).toLong()) {
+                    if (previousVerifiedAreaId > (0).toLong()) {
                         viewModel.editVerifiedArea(
                             previousVerifiedAreaId = previousVerifiedAreaId,
                             latitude = currentLatitude,
