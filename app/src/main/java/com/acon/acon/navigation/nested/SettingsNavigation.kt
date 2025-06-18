@@ -75,15 +75,11 @@ internal fun NavGraphBuilder.settingsNavigation(
             DeleteAccountScreenContainer(
                 modifier = Modifier.fillMaxSize().background(AconTheme.color.Gray900),
                 navigateToSettings = {
-                    navController.navigate(SettingsRoute.Settings) {
-                        popUpTo(SettingsRoute.Graph) {
-                            inclusive = true
-                        }
-                    }
+                    navController.navigateUp()
                 },
                 navigateToSignIn = {
                     navController.navigate(SignInRoute.SignIn) {
-                        popUpTo(SettingsRoute.Graph) {
+                        popUpTo(navController.graph.id) {
                             inclusive = true
                         }
                     }
