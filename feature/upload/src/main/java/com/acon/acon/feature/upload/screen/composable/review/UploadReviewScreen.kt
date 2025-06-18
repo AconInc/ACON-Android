@@ -27,7 +27,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.button.v2.AconFilledTextButton
-import com.acon.acon.core.designsystem.effect.fog.fogBackground
+import com.acon.acon.core.designsystem.effect.effect.shadowLayerBackground
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.feature.upload.screen.UploadReviewUiState
@@ -143,10 +143,10 @@ internal fun UploadReviewScreen(
                     .fillMaxHeight()
                     .width(150.dp)
                     .then(
-                        if (state.selectedAcornCount > 0) Modifier.fogBackground(
-                            glowColor = AconTheme.color.PrimaryDefault,
-                            glowAlpha = .4f,
-                            glowRadius = 300f
+                        if (state.selectedAcornCount > 0) Modifier.shadowLayerBackground(
+                            shadowColor = AconTheme.color.PrimaryDefault,
+                            shadowAlpha = .4f,
+                            shadowRadius = 300f
                         ) else Modifier
                     )
             )

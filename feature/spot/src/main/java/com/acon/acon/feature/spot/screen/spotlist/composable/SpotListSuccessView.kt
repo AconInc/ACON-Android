@@ -3,7 +3,6 @@ package com.acon.acon.feature.spot.screen.spotlist.composable
 import android.location.Location
 import androidx.compose.animation.core.exponentialDecay
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.snapping.SnapPosition
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -42,8 +41,8 @@ import androidx.compose.ui.zIndex
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.bottomsheet.AconBottomSheet
 import com.acon.acon.core.designsystem.effect.LocalHazeState
-import com.acon.acon.core.designsystem.effect.fog.fogBackground
-import com.acon.acon.core.designsystem.effect.fog.getOverlayColor
+import com.acon.acon.core.designsystem.effect.effect.shadowLayerBackground
+import com.acon.acon.core.designsystem.effect.effect.getOverlayColor
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.domain.model.spot.v2.Spot
@@ -233,9 +232,9 @@ internal fun SpotListSuccessView(
                         color = AconTheme.color.White,
                         modifier = Modifier
                             .padding(bottom = 6.dp)
-                            .fogBackground(
-                                glowColor = AconTheme.color.White,
-                                glowRadius = 100f
+                            .shadowLayerBackground(
+                                shadowColor = AconTheme.color.White,
+                                shadowRadius = 100f
                             )
                             .zIndex(2f)
                     )
@@ -243,19 +242,15 @@ internal fun SpotListSuccessView(
                 if (spot != null) {
                     if (page >= MAX_GUEST_AVAILABLE_COUNT && userType == UserType.GUEST) {
                         SpotGuestItem(
+                            spot = spot,
+                            onItemClick = { onSignInRequired() },
                             modifier = Modifier
                                 .fillMaxSize()
-                                .clip(RoundedCornerShape(20.dp))
-                                .background(
-                                    shape = RoundedCornerShape(20.dp),
-                                    color = AconTheme.color.GlassBlackDefault
+                                .shadowLayerBackground(
+                                    shadowColor = spotFogColor,
+                                    shadowAlpha = 1f
                                 )
-                                .clickable {
-                                    onSignInRequired()
-                                }
-                                .fogBackground(
-                                    glowColor = AconTheme.color.White,
-                                )
+                                .zIndex(1f)
                         )
                     } else {
                         SpotItem(
@@ -265,9 +260,9 @@ internal fun SpotListSuccessView(
                             onFindWayButtonClick = onTryFindWay,
                             modifier = Modifier
                                 .fillMaxSize()
-                                .fogBackground(
-                                    glowColor = spotFogColor,
-                                    glowAlpha = 1f,
+                                .shadowLayerBackground(
+                                    shadowColor = spotFogColor,
+                                    shadowAlpha = 1f,
                                 )
                                 .zIndex(1f),
                             rank = (page + 1).takeIf { it <= 5 } ?: 0

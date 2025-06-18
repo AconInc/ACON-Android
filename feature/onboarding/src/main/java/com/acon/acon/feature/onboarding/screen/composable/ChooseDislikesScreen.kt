@@ -1,6 +1,5 @@
 package com.acon.acon.feature.onboarding.screen.composable
 
-import android.widget.Space
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,7 +28,7 @@ import androidx.compose.ui.util.fastForEach
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.button.v2.AconFilledTextButton
 import com.acon.acon.core.designsystem.component.chip.AconChip
-import com.acon.acon.core.designsystem.effect.fog.fogBackground
+import com.acon.acon.core.designsystem.effect.effect.shadowLayerBackground
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.domain.type.FoodType
 import com.acon.acon.feature.onboarding.screen.ChooseDislikesUiState
@@ -128,10 +127,10 @@ internal fun ChooseDislikesScreen(
                             .width(150.dp)
                             .align(Alignment.Center)
                             .then(
-                                if (isCompleteButtonEnabled) Modifier.fogBackground(
-                                    glowColor = AconTheme.color.PrimaryDefault,
-                                    glowAlpha = .5f,
-                                    glowRadius = 500f
+                                if (isCompleteButtonEnabled) Modifier.shadowLayerBackground(
+                                    shadowColor = AconTheme.color.PrimaryDefault,
+                                    shadowAlpha = .5f,
+                                    shadowRadius = 500f
                                 ) else Modifier
                             )
                     )
