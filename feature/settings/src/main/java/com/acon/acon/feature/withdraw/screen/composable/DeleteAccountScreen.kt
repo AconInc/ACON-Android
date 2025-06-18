@@ -122,7 +122,7 @@ fun DeleteAccountScreen(
                         .fillMaxWidth()
                         .defaultHazeEffect(
                             hazeState = LocalHazeState.current,
-                            tintColor = Color(0xFF1C1C20),
+                            tintColor = AconTheme.color.GlassGray900,
                             blurRadius = 20.dp,
                         )
                         .statusBarsPadding()

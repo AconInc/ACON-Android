@@ -1,5 +1,6 @@
 package com.acon.acon.navigation.nested
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -8,6 +9,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.toRoute
+import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.core.utils.feature.toast.showToast
 import com.acon.acon.feature.SettingsRoute
 import com.acon.acon.feature.areaverification.AreaVerificationRoute
@@ -25,7 +27,7 @@ fun NavGraphBuilder.areaVerificationNavigation(
             val routeData = backStackEntry.toRoute<AreaVerificationRoute.AreaVerification>()
 
             AreaVerificationScreenContainer(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier.fillMaxSize().background(AconTheme.color.Gray900),
                 route = routeData.route ?: "onboarding",
                 onNextScreen = { latitude, longitude ->
                     navController.navigate(
