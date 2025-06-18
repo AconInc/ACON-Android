@@ -150,7 +150,14 @@ internal fun ProfileModScreen(
 
             if (state.showPhotoEditModal) {
                 GallerySelectBottomSheet(
-                    isDefault = state.fetchedPhotoUri.contains("basic_profile_image"),
+                    isDefault =  when {
+                        state.selectedPhotoUri.isNotEmpty() -> {
+                            state.selectedPhotoUri.contains("basic_profile_image")
+                        }
+                        else -> {
+                            state.fetchedPhotoUri.contains("basic_profile_image")
+                        }
+                    },
                     onDismiss = { onDisMissProfileEditModal() },
                     onGallerySelect = { navigateToCustomGallery() },
                     onDefaultImageSelect = { onUpdateProfileImage("basic_profile_image") },
