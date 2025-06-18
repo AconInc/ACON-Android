@@ -40,8 +40,12 @@ import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.button.AconGoogleSignInButton
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
+import com.acon.acon.domain.error.user.CredentialException
 import com.acon.acon.feature.signin.screen.component.SignInTopBar
 import com.acon.acon.feature.signin.utils.SplashAudioManager
+import com.acon.core.analytics.amplitude.AconAmplitude
+import com.acon.core.analytics.constants.EventNames
+import com.acon.core.analytics.constants.PropertyKeys
 import com.acon.feature.common.compose.getScreenHeight
 import com.acon.feature.common.compose.getScreenWidth
 import com.acon.feature.common.remember.rememberSocialRepository
@@ -167,12 +171,27 @@ fun SignInScreen(
                                     scope.launch {
                                         socialRepository.googleSignIn()
                                             .onSuccess {
+                                                AconAmplitude.trackEvent(
+                                                    eventName = EventNames.SIGN_IN,
+                                                    properties = mapOf(
+                                                        PropertyKeys.SIGN_IN_OR_NOT to true
+                                                    )
+                                                )
                                                 if (it.hasVerifiedArea) {
                                                     navigateToSpotListView()
                                                 } else {
                                                     navigateToAreaVerification()
                                                 }
-                                            }.onFailure {}
+                                            }.onFailure { e ->
+                                                if (e is CredentialException.UserCanceled) {
+                                                    AconAmplitude.trackEvent(
+                                                        eventName = EventNames.SIGN_IN,
+                                                        properties = mapOf(
+                                                            PropertyKeys.SIGN_IN_OR_NOT to false
+                                                        )
+                                                    )
+                                                }
+                                            }
                                     }
                                 }
                             }

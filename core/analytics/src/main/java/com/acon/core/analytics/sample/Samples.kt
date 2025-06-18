@@ -3,7 +3,7 @@ package com.acon.core.analytics.sample
 import com.acon.core.analytics.amplitude.AconAmplitude
 
 internal fun sampleAmplitudeTrack() {
-    AconAmplitude.trackEvent(eventName = "onboarding", properties = mapOf("complete_favorite_food_rank?" to "true"))
+    AconAmplitude.trackEvent(eventName = "onboarding", properties = mapOf("complete_favorite_food_rank?" to true))
 }
 
 internal fun sampleAmplitudeProperties() {

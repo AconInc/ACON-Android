@@ -18,8 +18,17 @@ object AconAmplitude: EventTracker() {
      * @param userId 사용자 ID
      */
     override fun setUserId(userId: String) {
-        if (!::amplitude.isInitialized) {
+        if (::amplitude.isInitialized) {
             amplitude.setUserId(userId)
+        }
+    }
+
+    /**
+     * 사용자 ID 초기화
+     */
+    override fun clearUserId() {
+        if (::amplitude.isInitialized) {
+            amplitude.setUserId(null)
         }
     }
 
