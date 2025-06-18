@@ -19,7 +19,7 @@ fun createBranchDeepLink(
         .setCanonicalIdentifier("spot/$spotId") // 고유 ID
         .setContentDescription("앱에서 가게 정보를 확인해보세요!")
         .setContentMetadata(
-            ContentMetadata().addCustomMetadata("spotId", spotId.toString())
+            ContentMetadata().addCustomMetadata("spot/$spotId", spotId.toString())
         )
 
     // 링크 속성 정의
