@@ -41,6 +41,7 @@ import com.acon.acon.core.designsystem.effect.LocalHazeState
 import com.acon.acon.core.designsystem.effect.defaultHazeEffect
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
+import com.acon.acon.domain.model.profile.ProfileInfo
 import com.acon.acon.domain.type.UserType
 import com.acon.acon.feature.profile.composable.screen.mockSpotList
 import com.acon.acon.feature.profile.composable.screen.profile.ProfileUiState
@@ -163,61 +164,62 @@ fun ProfileScreen(
                         // TODO - saveSpot = isEmpty -> 저장한 장소가 없어요.
 
                         Spacer(Modifier.height(42.dp))
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 6.dp)
-                        ) {
-                            Text(
-                                text = stringResource(R.string.saved_store),
-                                color = AconTheme.color.White,
-                                style = AconTheme.typography.Title4,
-                                fontWeight = FontWeight.SemiBold
-                            )
-
-                            Spacer(Modifier.weight(1f))
-                            if (state.profileInfo.savedSpots.isNotEmpty()) {
-                                Text(
-                                    text = stringResource(R.string.show_saved_all_store),
-                                    color = AconTheme.color.Action,
-                                    style = AconTheme.typography.Body1,
-                                    fontWeight = FontWeight.SemiBold,
-                                    modifier = Modifier
-                                        .padding(vertical = 2.dp)
-                                        .padding(end = 8.dp)
-                                        .noRippleClickable { onBookmark() }
-                                )
-                            }
-                        }
-
-                        Spacer(Modifier.height(8.dp))
-                        if (state.profileInfo.savedSpots.isNotEmpty()) {
-                            LazyRow(
+                        if (state.profileInfo != ProfileInfo.Empty) {
+                            Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .height(savedStoreHeight),
-                                horizontalArrangement = Arrangement.spacedBy(10.dp)
+                                    .padding(vertical = 6.dp)
                             ) {
-                                items(
-                                    items = state.profileInfo.savedSpots,
-                                    key = { it.spotId }
-                                ) { spot ->
-                                    BookmarkItem(
-                                        spot = spot,
-                                        onClickSpotItem = { onSpotDetail(spot.spotId) },
-                                        modifier = Modifier.aspectRatio(150f / 217f)
+                                Text(
+                                    text = stringResource(R.string.saved_store),
+                                    color = AconTheme.color.White,
+                                    style = AconTheme.typography.Title4,
+                                    fontWeight = FontWeight.SemiBold
+                                )
+
+                                Spacer(Modifier.weight(1f))
+                                if (state.profileInfo.savedSpots.isNotEmpty()) {
+                                    Text(
+                                        text = stringResource(R.string.show_saved_all_store),
+                                        color = AconTheme.color.Action,
+                                        style = AconTheme.typography.Body1,
+                                        fontWeight = FontWeight.SemiBold,
+                                        modifier = Modifier
+                                            .padding(vertical = 2.dp)
+                                            .padding(end = 8.dp)
+                                            .noRippleClickable { onBookmark() }
                                     )
                                 }
                             }
-                        } else {
-                            Text(
-                                text = stringResource(R.string.no_saved_spot),
-                                style = AconTheme.typography.Body1,
-                                fontWeight = FontWeight.W400,
-                                color = AconTheme.color.Gray500,
-                            )
-                        }
 
+                            Spacer(Modifier.height(8.dp))
+                            if (state.profileInfo.savedSpots.isNotEmpty()) {
+                                LazyRow(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(savedStoreHeight),
+                                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                                ) {
+                                    items(
+                                        items = state.profileInfo.savedSpots,
+                                        key = { it.spotId }
+                                    ) { spot ->
+                                        BookmarkItem(
+                                            spot = spot,
+                                            onClickSpotItem = { onSpotDetail(spot.spotId) },
+                                            modifier = Modifier.aspectRatio(150f / 217f)
+                                        )
+                                    }
+                                }
+                            } else {
+                                Text(
+                                    text = stringResource(R.string.no_saved_spot),
+                                    style = AconTheme.typography.Body1,
+                                    fontWeight = FontWeight.W400,
+                                    color = AconTheme.color.Gray500,
+                                )
+                            }
+                        }
                         Spacer(Modifier.height(if (state.profileInfo.savedSpots.isEmpty()) 40.dp else 20.dp))
 //                        ProfileNativeAd(
 //                            screenHeight = admobHeight,
