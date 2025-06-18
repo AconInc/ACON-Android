@@ -230,7 +230,7 @@ internal fun SpotListScreen(
                         .fillMaxSize()
                         .padding(
                             horizontal = 16.dp,
-                            vertical = 30.dp
+                            vertical = 48.dp
                         )
                 )
 

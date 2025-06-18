@@ -66,7 +66,7 @@ internal fun SpotListLoadingView(
                 SkeletonItem(
                     modifier = Modifier
                         .height(36.dp)
-                        .width(140.dp)
+                        .width(180.dp)
                         .align(Alignment.CenterHorizontally),
                     shape = RoundedCornerShape(8.dp),
                 )
