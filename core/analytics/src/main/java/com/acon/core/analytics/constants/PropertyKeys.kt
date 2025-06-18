@@ -1,5 +1,24 @@
 package com.acon.core.analytics.constants
 
-object PropertyKeys {
+data object PropertyKeys {
+
     const val SIGN_IN_OR_NOT = "did_login?"
+    const val CLICK_TOGGLE = "click_toggle?"
+    const val CLICK_FILTER_TYPE_RESTAURANT = "click_filter_type_restaurant?"
+    const val CLICK_FILTER_TIME_RESTAURANT = "click_filter_time_restaurant?"
+    const val RECORD_FILTER_TIME_RESTAURANT = "record_filter_time_restaurant"
+    const val CLICK_FILTER_PRICE_RESTAURANT = "click_filter_price_restaurant?"
+    const val CLICK_FILTER_TYPE_CAFE = "click_filter_type_cafe?"
+    const val CLICK_FILTER_TIME_CAFE = "click_filter_time_cafe?"
+    const val RECORD_FILTER_TIME_CAFE = "record_filter_time_cafe"
+    const val CLICK_UPLOAD_NEXT = "click_upload_next?"
+    const val SPOT_ID = "spot_id"
+    const val CLICK_REVIEW_ACON = "click_review_acon?"
+    const val CLICK_REGISTER_FORM = "click_register_form?"
+    const val CLICK_TOGGLE_GUEST = "click_toggle_guest?"
+    const val GUEST_DURATION = "guest_duration"
+    const val CLICK_HOME_NAVIGATION_GUEST = "click_home_navigation_guest?"
+    const val CLICK_DETAIL_GUEST = "click_detail_guest?"
+    const val CLICK_LOCKED_DETAIL_GUEST = "click_locked_detail_guest?"
+    const val CLICK_UPLOAD_GUEST = "click_upload_guest?"
 }
