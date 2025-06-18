@@ -2,7 +2,6 @@ package com.acon.acon.data.api.remote
 
 import com.acon.acon.data.dto.request.AddBookmarkRequest
 import com.acon.acon.data.dto.request.SpotListRequest
-import com.acon.acon.data.dto.response.SpotDetailResponse
 import com.acon.acon.data.dto.response.SpotListResponse
 import com.acon.acon.data.dto.response.profile.SavedSpotsResponse
 import retrofit2.http.Body
@@ -17,11 +16,6 @@ interface SpotAuthApi {
     suspend fun fetchSpotList(
         @Body request: SpotListRequest
     ): SpotListResponse
-
-    @GET("/api/v1/spots/{spotId}")
-    suspend fun fetchSpotDetail(
-        @Path("spotId") spotId: Long
-    ): SpotDetailResponse
 
     @GET("/api/v1/saved-spots")
     suspend fun fetchSavedSpotList(): SavedSpotsResponse
