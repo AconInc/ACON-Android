@@ -40,11 +40,8 @@ import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.button.AconGoogleSignInButton
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.feature.signin.amplitude.amplitudeSignIn
 import com.acon.acon.feature.signin.screen.component.SignInTopBar
 import com.acon.acon.feature.signin.utils.SplashAudioManager
-import com.acon.feature.common.compose.LocalNavController
-import com.acon.feature.common.compose.LocalRequestSignIn
 import com.acon.feature.common.compose.getScreenHeight
 import com.acon.feature.common.compose.getScreenWidth
 import com.acon.feature.common.remember.rememberSocialRepository
