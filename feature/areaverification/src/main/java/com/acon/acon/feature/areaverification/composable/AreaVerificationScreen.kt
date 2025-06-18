@@ -1,5 +1,6 @@
 package com.acon.acon.feature.areaverification.composable
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -24,7 +25,6 @@ import androidx.compose.ui.unit.dp
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.button.v2.AconFilledButton
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.core.utils.feature.action.BackOnPressed
 import com.acon.feature.common.compose.getScreenHeight
 
 @Composable
@@ -34,13 +34,10 @@ internal fun AreaVerificationScreen(
     onNextButtonClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current
     val screenHeightDp = getScreenHeight()
     val offsetY = (screenHeightDp * 0.65f)
 
-    if (route != stringResource(R.string.area_verification_settings)) {
-        BackOnPressed(context)
-    }
+    BackHandler {  }
 
     Box(
         modifier = modifier
