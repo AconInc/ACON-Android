@@ -65,7 +65,7 @@ class ProfileModViewModel @Inject constructor(
         profileRepository.fetchProfile().collect {
             it.onSuccess { profile ->
                 val cleanedBirthday = profile.birthDate?.filter { it.isDigit() } ?: ""
-                val limitedNickname = profile.nickname.lowercase().take(14)
+                val limitedNickname = profile.nickname
 
                 reduce {
                     ProfileModState.Success(
