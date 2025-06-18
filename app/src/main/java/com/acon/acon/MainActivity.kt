@@ -277,6 +277,7 @@ class MainActivity : ComponentActivity() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             installSplashScreen()
         }
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
 
         // TODO - 현재 기기를 테스트 디바이스로 등록 -> 테스트 광고 노출
@@ -289,7 +290,6 @@ class MainActivity : ComponentActivity() {
             Timber.plant(Timber.DebugTree())
         }
 
-        enableEdgeToEdge()
         val windowInsetsController = WindowCompat.getInsetsController(window, window.decorView)
         windowInsetsController.isAppearanceLightStatusBars = false
 
