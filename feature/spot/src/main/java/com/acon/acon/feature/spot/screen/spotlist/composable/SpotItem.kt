@@ -47,7 +47,9 @@ import com.acon.acon.core.common.utils.toLocalTime
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.button.v2.AconFilledButton
 import com.acon.acon.core.designsystem.component.tag.AconTag
+import com.acon.acon.core.designsystem.effect.imageGradientBottomLayer
 import com.acon.acon.core.designsystem.effect.imageGradientLayer
+import com.acon.acon.core.designsystem.effect.imageGradientTopLayer
 import com.acon.acon.core.designsystem.image.rememberDefaultLoadImageErrorPainter
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.domain.model.spot.v2.Spot
@@ -83,7 +85,7 @@ internal fun SpotItem(
                     .fillMaxSize()
                     .then(
                         if (spot.image.isNotBlank()) {
-                            Modifier.imageGradientLayer()
+                            Modifier.imageGradientTopLayer(ratio = .5f).imageGradientBottomLayer()
                         } else {
                             Modifier
                         }
