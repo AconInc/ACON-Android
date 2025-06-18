@@ -281,7 +281,7 @@ fun ProfileScreen(
                             Row(
                                 modifier = Modifier
                                     .padding(start = 16.dp)
-                                    .noRippleClickable { onSignInRequired() }
+                                    .noRippleClickable { onSignInRequired(null) }
                             ) {
                                 Text(
                                     text = stringResource(R.string.you_need_sign_in),
@@ -316,7 +316,7 @@ fun ProfileScreen(
 
                     BottomNavType.UPLOAD -> {
                         if (userType == UserType.GUEST) {
-                            onSignInRequired()
+                            onSignInRequired(null)
                         } else {
                             onNavigateToUploadScreen()
                         }

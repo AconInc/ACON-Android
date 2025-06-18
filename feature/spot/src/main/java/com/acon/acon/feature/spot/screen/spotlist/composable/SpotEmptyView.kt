@@ -96,7 +96,7 @@ internal fun SpotEmptyView(
                             .padding(bottom = 12.dp)
                             .height(itemHeightPx.toDp())
                             .fillMaxWidth(),
-                        onItemClick = { onSignInRequired() }
+                        onItemClick = { onSignInRequired(null) }
                     )
                 } else {
                     SpotItem(

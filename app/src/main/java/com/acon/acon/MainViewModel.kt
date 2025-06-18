@@ -35,6 +35,10 @@ class MainViewModel @Inject constructor(
     fun updateShowPermissionDialog(show: Boolean) {
         _state.value = state.value.copy(showPermissionDialog = show)
     }
+
+    fun updateOnSignInSuccess(block: (() -> Unit)?) {
+        _state.value = state.value.copy(onSignInSuccess = block)
+    }
 }
 
 @Immutable
@@ -42,4 +46,5 @@ data class AconAppState(
     val userType: UserType = UserType.GUEST,
     val showSignInBottomSheet: Boolean = false,
     val showPermissionDialog: Boolean = false,
+    val onSignInSuccess: (() -> Unit)? = null,
 )

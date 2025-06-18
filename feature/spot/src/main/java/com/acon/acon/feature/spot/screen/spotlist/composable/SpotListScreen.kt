@@ -107,7 +107,7 @@ internal fun SpotListScreen(
                 selectedType = state.selectedSpotType,
                 onSwitched = {
                     if (userType == UserType.GUEST)
-                        onSignInRequired()
+                        onSignInRequired(null)
                     else
                         onSpotTypeChanged(it)
                 },
@@ -123,7 +123,7 @@ internal fun SpotListScreen(
                     .padding(end = 16.dp)
                     .noRippleClickable {
                         if (userType == UserType.GUEST)
-                            onSignInRequired()
+                            onSignInRequired(null)
                         else
                             onFilterButtonClick()
                     }
@@ -262,7 +262,7 @@ internal fun SpotListScreen(
                     }
                     BottomNavType.UPLOAD -> {
                         if (userType == UserType.GUEST) {
-                            onSignInRequired()
+                            onSignInRequired(null)
                         } else {
                             onNavigateToUploadScreen()
                         }

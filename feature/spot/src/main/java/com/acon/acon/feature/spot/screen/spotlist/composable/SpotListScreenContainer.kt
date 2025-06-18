@@ -62,7 +62,7 @@ fun SpotListScreenContainer(
             onSpotTypeChanged = viewModel::onSpotTypeClicked,
             onSpotClick = { spot, rank ->
                 if (userType == UserType.GUEST)
-                    onSignInRequired()
+                    onSignInRequired(null)
                 else
                     viewModel.onSpotClicked(spot, rank)
             },

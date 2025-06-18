@@ -311,7 +311,10 @@ class MainActivity : ComponentActivity() {
                     LocalNavController provides navController,
                     LocalHazeState provides hazeState,
                     LocalUserType provides appState.userType,
-                    LocalRequestSignIn provides { viewModel.updateShowSignInBottomSheet(true) },
+                    LocalRequestSignIn provides {
+                        viewModel.updateShowSignInBottomSheet(true)
+                        viewModel.updateOnSignInSuccess(it)
+                    },
                     LocalRequestLocationPermission provides ::requestLocationPermission,
                     LocalSpotListAdProvider provides spotListAdProvider,
                     LocalDeepLinkHandler provides deepLinkHandler
@@ -329,21 +332,25 @@ class MainActivity : ComponentActivity() {
                                 scope.launch {
                                     socialRepository.googleSignIn()
                                         .onSuccess {
-                                            if (it.hasVerifiedArea) {
-                                                navController.navigate(SpotRoute.SpotList) {
-                                                    popUpTo(navController.graph.id) {
-                                                        inclusive = true
+                                            if (appState.onSignInSuccess != null)
+                                                appState.onSignInSuccess!!()
+                                            else {
+                                                if (it.hasVerifiedArea) {
+                                                    navController.navigate(SpotRoute.SpotList) {
+                                                        popUpTo(navController.graph.id) {
+                                                            inclusive = true
+                                                        }
                                                     }
-                                                }
-                                            } else {
-                                                navController.navigate(
-                                                    AreaVerificationRoute.AreaVerification(
-                                                        verifiedAreaId = null,
-                                                        route = "onboarding"
-                                                    )
-                                                ) {
-                                                    popUpTo(navController.graph.id) {
-                                                        inclusive = true
+                                                } else {
+                                                    navController.navigate(
+                                                        AreaVerificationRoute.AreaVerification(
+                                                            verifiedAreaId = null,
+                                                            route = "onboarding"
+                                                        )
+                                                    ) {
+                                                        popUpTo(navController.graph.id) {
+                                                            inclusive = true
+                                                        }
                                                     }
                                                 }
                                             }

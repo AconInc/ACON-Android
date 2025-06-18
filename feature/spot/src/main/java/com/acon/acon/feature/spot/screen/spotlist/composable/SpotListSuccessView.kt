@@ -243,7 +243,7 @@ internal fun SpotListSuccessView(
                     if (page >= MAX_GUEST_AVAILABLE_COUNT && userType == UserType.GUEST) {
                         SpotGuestItem(
                             spot = spot,
-                            onItemClick = { onSignInRequired() },
+                            onItemClick = { onSignInRequired(null) },
                             modifier = Modifier
                                 .fillMaxSize()
                                 .shadowLayerBackground(
