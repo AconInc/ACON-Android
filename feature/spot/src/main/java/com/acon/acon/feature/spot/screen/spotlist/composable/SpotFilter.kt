@@ -180,6 +180,7 @@ internal fun RestaurantFilterBottomSheet(
                         fontWeight = FontWeight.SemiBold,
                     ),
                     onClick = onReset,
+                    contentPadding = PaddingValues(vertical = 12.dp),
                     modifier = Modifier.weight(3f)
                 )
 
@@ -318,6 +319,7 @@ internal fun CafeFilterBottomSheet(
                         fontWeight = FontWeight.SemiBold,
                     ),
                     onClick = onReset,
+                    contentPadding = PaddingValues(vertical = 12.dp),
                     modifier = Modifier.weight(3f)
                 )
 
