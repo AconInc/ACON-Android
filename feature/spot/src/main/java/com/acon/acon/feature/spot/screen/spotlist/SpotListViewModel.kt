@@ -4,6 +4,7 @@ import android.content.Context
 import android.location.Location
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.util.fastForEach
+import com.acon.acon.core.common.utils.toHHmmss
 import com.acon.acon.domain.error.spot.FetchSpotListError
 import com.acon.acon.domain.model.spot.Condition
 import com.acon.acon.domain.model.spot.Filter
@@ -17,6 +18,7 @@ import com.acon.acon.domain.type.SpotType
 import com.acon.acon.domain.type.TagType
 import com.acon.acon.domain.type.TransportMode
 import com.acon.acon.domain.usecase.IsDistanceExceededUseCase
+import com.acon.acon.feature.spot.getNameResId
 import com.acon.core.analytics.amplitude.AconAmplitude
 import com.acon.core.analytics.constants.EventNames
 import com.acon.core.analytics.constants.PropertyKeys
@@ -28,6 +30,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.delay
 import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.viewmodel.container
+import java.time.LocalTime
 import javax.inject.Inject
 import kotlin.reflect.KClass
 
@@ -214,6 +217,28 @@ class SpotListViewModel @Inject constructor(
     fun onRestaurantFilterSaved(
         selectedRestaurantFilters: Map<FilterDetailKey, Set<RestaurantFilterType>>,
     ) = intent {
+        selectedRestaurantFilters.forEach { (kClass, set) ->
+            if (set.isNotEmpty()) {
+                AconAmplitude.trackEvent(
+                    eventName = EventNames.FILTER_RESTAURANT,
+                    property = when (kClass) {
+                        RestaurantFilterType.RestaurantType::class -> PropertyKeys.CLICK_FILTER_TYPE_RESTAURANT
+                        RestaurantFilterType.RestaurantOperationType::class -> PropertyKeys.CLICK_FILTER_TIME_RESTAURANT
+                        RestaurantFilterType.RestaurantPriceType::class -> PropertyKeys.CLICK_FILTER_PRICE_RESTAURANT
+                        else -> return@forEach
+                    } to set.map {
+                        context.getString(it.getNameResId())
+                    }
+                )
+                if (kClass == RestaurantFilterType.RestaurantOperationType::class) {
+                    AconAmplitude.trackEvent(
+                        eventName = EventNames.FILTER_RESTAURANT,
+                        property = PropertyKeys.RECORD_FILTER_TIME_RESTAURANT to LocalTime.now().toHHmmss()
+                    )
+                }
+            }
+        }
+
         val captureState = state as? SpotListUiStateV2.Success
         reduce {
             SpotListUiStateV2.Loading(
@@ -244,6 +269,26 @@ class SpotListViewModel @Inject constructor(
     fun onCafeFilterSaved(
         selectedCafeFilters: Map<FilterDetailKey, Set<CafeFilterType>>,
     ) = intent {
+        selectedCafeFilters.forEach { (kClass, set) ->
+            if (set.isNotEmpty()) {
+                AconAmplitude.trackEvent(
+                    eventName = EventNames.FILTER_CAFE,
+                    property = when (kClass) {
+                        CafeFilterType.CafeType::class -> PropertyKeys.CLICK_FILTER_TYPE_CAFE
+                        CafeFilterType.CafeOperationType::class -> PropertyKeys.CLICK_FILTER_TIME_CAFE
+                        else -> return@forEach
+                    } to set.map {
+                        context.getString(it.getNameResId())
+                    }
+                )
+                if (kClass == RestaurantFilterType.RestaurantOperationType::class) {
+                    AconAmplitude.trackEvent(
+                        eventName = EventNames.FILTER_CAFE,
+                        property = PropertyKeys.RECORD_FILTER_TIME_CAFE to LocalTime.now().toHHmmss()
+                    )
+                }
+            }
+        }
         val captureState = state as? SpotListUiStateV2.Success
         reduce {
             SpotListUiStateV2.Loading(
