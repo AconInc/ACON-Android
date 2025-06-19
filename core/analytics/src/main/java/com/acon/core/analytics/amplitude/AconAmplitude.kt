@@ -45,6 +45,12 @@ object AconAmplitude: EventTracker() {
         }
     }
 
+    fun trackEvent(eventName: String, property: Pair<String, Any>) {
+        if (::amplitude.isInitialized) {
+            trackEvent(eventName, mapOf(property))
+        }
+    }
+
     /**
      * Amplitude에 사용자 속성을 전송
      * @param properties 사용자 속성

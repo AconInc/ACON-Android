@@ -182,15 +182,7 @@ fun SignInScreen(
                                                 } else {
                                                     navigateToAreaVerification()
                                                 }
-                                            }.onFailure { e ->
-                                                if (e is CredentialException.UserCanceled) {
-                                                    AconAmplitude.trackEvent(
-                                                        eventName = EventNames.SIGN_IN,
-                                                        properties = mapOf(
-                                                            PropertyKeys.SIGN_IN_OR_NOT to false
-                                                        )
-                                                    )
-                                                }
+                                            }.onFailure {
                                             }
                                     }
                                 }

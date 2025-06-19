@@ -3,6 +3,7 @@ package com.acon.acon.feature.spot.screen.spotlist
 import android.content.Context
 import android.location.Location
 import androidx.compose.runtime.Immutable
+import androidx.compose.ui.util.fastForEach
 import com.acon.acon.domain.error.spot.FetchSpotListError
 import com.acon.acon.domain.model.spot.Condition
 import com.acon.acon.domain.model.spot.Filter
@@ -16,6 +17,9 @@ import com.acon.acon.domain.type.SpotType
 import com.acon.acon.domain.type.TagType
 import com.acon.acon.domain.type.TransportMode
 import com.acon.acon.domain.usecase.IsDistanceExceededUseCase
+import com.acon.core.analytics.amplitude.AconAmplitude
+import com.acon.core.analytics.constants.EventNames
+import com.acon.core.analytics.constants.PropertyKeys
 import com.acon.feature.common.base.BaseContainerHost
 import com.acon.feature.common.intent.NavigationAppHandler
 import com.acon.feature.common.location.isInKorea
@@ -82,12 +86,17 @@ class SpotListViewModel @Inject constructor(
 
     fun onSpotTypeClicked(spotType: SpotType) = intent {
         val captureState = state as? SpotListUiStateV2.Success
+        if (spotType == state.selectedSpotType) return@intent
+
         runOn<SpotListUiStateV2.Success> {
-            if (spotType == state.selectedSpotType) return@runOn
             reduce {
                 SpotListUiStateV2.Loading(selectedSpotType = spotType)
             }
         }
+        AconAmplitude.trackEvent(
+            eventName = EventNames.MAIN_MENU,
+            property = PropertyKeys.CLICK_TOGGLE to true
+        )
 
         delay(500L)
         if (captureState != null) {
@@ -119,6 +128,23 @@ class SpotListViewModel @Inject constructor(
                 5 -> tags.add(TagType.TOP_5)
                 else -> {}
             }
+            if (tags.isEmpty()) {
+                AconAmplitude.trackEvent(
+                    eventName = EventNames.MAIN_MENU,
+                    property = PropertyKeys.CLICK_DETAIL_TAG_NONE to true
+                )
+            } else {
+                tags.fastForEach { tag ->
+                    AconAmplitude.trackEvent(
+                        eventName = EventNames.MAIN_MENU,
+                        property = when(tag) {
+                            TagType.NEW -> PropertyKeys.CLICK_DETAIL_TAG_NEW to true
+                            TagType.LOCAL -> PropertyKeys.CLICK_DETAIL_TAG_LOCAL to true
+                            else -> PropertyKeys.CLICK_DETAIL_TAG_RANK to true
+                        }
+                    )
+                }
+            }
 
             postSideEffect(
                 SpotListSideEffectV2.NavigateToSpotDetailScreen(
@@ -141,6 +167,11 @@ class SpotListViewModel @Inject constructor(
     }
 
     fun onNavigationAppChosen(handler: NavigationAppHandler) = intent {
+        AconAmplitude.trackEvent(
+            eventName = EventNames.MAIN_MENU,
+            property = PropertyKeys.CLICK_HOME_NAVIGATION to true
+        )
+
         runOn<SpotListUiStateV2.Success> {
             postSideEffect(SpotListSideEffectV2.NavigateToExternalMap(handler))
             reduce {
@@ -160,6 +191,11 @@ class SpotListViewModel @Inject constructor(
     }
 
     fun onFilterButtonClicked() = intent {
+        AconAmplitude.trackEvent(
+            eventName = EventNames.MAIN_MENU,
+            property = PropertyKeys.CLICK_FILTER to true
+        )
+
         runOn<SpotListUiStateV2.Success> {
             reduce {
                 state.copy(showFilterModal = true)
