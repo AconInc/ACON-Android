@@ -22,9 +22,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.acon.acon.core.common.utils.toHHmmss
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.bottomsheet.AconBottomSheet
 import com.acon.acon.core.designsystem.component.button.v2.AconFilledTextButton
@@ -36,8 +38,12 @@ import com.acon.acon.domain.type.FilterType
 import com.acon.acon.domain.type.RestaurantFilterType
 import com.acon.acon.feature.spot.getNameResId
 import com.acon.acon.feature.spot.screen.spotlist.FilterDetailKey
+import com.acon.core.analytics.amplitude.AconAmplitude
+import com.acon.core.analytics.constants.EventNames
+import com.acon.core.analytics.constants.PropertyKeys
 import kotlinx.collections.immutable.ImmutableSet
 import kotlinx.collections.immutable.toImmutableSet
+import java.time.LocalTime
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -176,6 +182,8 @@ internal fun RestaurantFilterBottomSheet(
                     onClick = onReset,
                     modifier = Modifier.weight(3f)
                 )
+
+                val context = LocalContext.current
                 AconFilledTextButton(
                     text = stringResource(R.string.see_result),
                     textStyle = AconTheme.typography.Body1.copy(
@@ -184,13 +192,39 @@ internal fun RestaurantFilterBottomSheet(
                     shape = CircleShape,
                     enabled = completeButtonEnabled &&
                             (selectedRestaurantTypes.isNotEmpty() || selectedRestaurantOperationTypes.isNotEmpty() || selectedRestaurantPriceTypes.isNotEmpty()),
-                    onClick = { onComplete(
-                        mapOf(
-                            RestaurantFilterType.RestaurantType::class to (selectedRestaurantTypes.toSet() as Set<RestaurantFilterType>),
-                            RestaurantFilterType.RestaurantOperationType::class to (selectedRestaurantOperationTypes.toSet() as Set<RestaurantFilterType>),
-                            RestaurantFilterType.RestaurantPriceType::class to (selectedRestaurantPriceTypes.toSet() as Set<RestaurantFilterType>)
+                    onClick = {
+                        if (selectedRestaurantTypes.isNotEmpty()) {
+                            AconAmplitude.trackEvent(
+                                eventName = EventNames.FILTER_RESTAURANT,
+                                property = PropertyKeys.CLICK_FILTER_TYPE_RESTAURANT to selectedRestaurantTypes.map {
+                                    context.getString(it.getNameResId())
+                                }
+                            )
+                        }
+                        if (selectedRestaurantOperationTypes.isNotEmpty()) {
+                            AconAmplitude.trackEvent(
+                                eventName = EventNames.FILTER_RESTAURANT,
+                                property = PropertyKeys.CLICK_FILTER_TIME_RESTAURANT to true
+                            )
+                            AconAmplitude.trackEvent(
+                                eventName = EventNames.FILTER_RESTAURANT,
+                                property = PropertyKeys.RECORD_FILTER_TIME_RESTAURANT to LocalTime.now().toHHmmss()
+                            )
+                        }
+                        if (selectedRestaurantPriceTypes.isNotEmpty()) {
+                            AconAmplitude.trackEvent(
+                                eventName = EventNames.FILTER_RESTAURANT,
+                                property = PropertyKeys.CLICK_FILTER_PRICE_RESTAURANT to true
+                            )
+                        }
+                        onComplete(
+                            mapOf(
+                                RestaurantFilterType.RestaurantType::class to (selectedRestaurantTypes.toSet() as Set<RestaurantFilterType>),
+                                RestaurantFilterType.RestaurantOperationType::class to (selectedRestaurantOperationTypes.toSet() as Set<RestaurantFilterType>),
+                                RestaurantFilterType.RestaurantPriceType::class to (selectedRestaurantPriceTypes.toSet() as Set<RestaurantFilterType>)
+                            )
                         )
-                    ) },
+                    },
                     contentPadding = PaddingValues(
                         vertical = 12.dp,
                     ),
@@ -286,6 +320,8 @@ internal fun CafeFilterBottomSheet(
                     onClick = onReset,
                     modifier = Modifier.weight(3f)
                 )
+
+                val context = LocalContext.current
                 AconFilledTextButton(
                     text = stringResource(R.string.see_result),
                     textStyle = AconTheme.typography.Body1.copy(
@@ -294,6 +330,20 @@ internal fun CafeFilterBottomSheet(
                     shape = CircleShape,
                     enabled = completeButtonEnabled && (selectedCafeTypes.isNotEmpty() || selectedCafeOperationTypes.isNotEmpty()),
                     onClick = {
+                        if (selectedCafeTypes.isNotEmpty()) {
+                            AconAmplitude.trackEvent(
+                                eventName = EventNames.FILTER_CAFE,
+                                property = PropertyKeys.CLICK_FILTER_TYPE_CAFE to selectedCafeTypes.map {
+                                    context.getString(it.getNameResId())
+                                }
+                            )
+                        }
+                        if (selectedCafeOperationTypes.isNotEmpty()) {
+                            AconAmplitude.trackEvent(
+                                eventName = EventNames.FILTER_CAFE,
+                                property = PropertyKeys.CLICK_FILTER_TIME_CAFE to true
+                            )
+                        }
                         onComplete(
                             mapOf(
                                 CafeFilterType.CafeType::class to (selectedCafeTypes.toSet() as Set<CafeFilterType>),
