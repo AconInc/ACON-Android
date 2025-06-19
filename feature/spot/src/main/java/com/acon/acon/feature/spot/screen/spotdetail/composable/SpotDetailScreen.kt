@@ -60,6 +60,7 @@ import com.acon.acon.feature.spot.screen.spotdetail.createBranchDeepLink
 import com.acon.acon.feature.spot.screen.spotlist.composable.SpotDetailLoadingView
 import com.acon.feature.common.compose.LocalDeepLinkHandler
 import com.acon.feature.common.compose.LocalOnRetry
+import com.acon.feature.common.compose.LocalRequestSignIn
 import com.acon.feature.common.compose.LocalUserType
 import com.acon.feature.common.compose.getTextSizeDp
 import dev.chrisbanes.haze.hazeSource
@@ -91,6 +92,7 @@ internal fun SpotDetailScreen(
 
     val userType = LocalUserType.current
     val deepLinkHandler = LocalDeepLinkHandler.current
+    val onSignInRequired = LocalRequestSignIn.current
 
     when (state) {
         is SpotDetailUiState.LoadFailed -> {
@@ -113,8 +115,10 @@ internal fun SpotDetailScreen(
 
         is SpotDetailUiState.Success -> {
             BackHandler {
-                if (deepLinkHandler.hasDeepLink.value && !state.isAreaVerified &&
-                    userType == UserType.USER
+                if (state.isAreaVerified) {
+                    onNavigateToBack()
+                } else if (deepLinkHandler.hasDeepLink.value
+                    && userType == UserType.USER
                 ) {
                     deepLinkHandler.clear()
                     onBackToAreaVerification()
@@ -233,7 +237,19 @@ internal fun SpotDetailScreen(
                     AconTopBar(
                         leadingIcon = {
                             IconButton(
-                                onClick = { onNavigateToBack() }
+                                onClick = {
+                                    if (state.isAreaVerified) {
+                                        onNavigateToBack()
+                                    } else if (deepLinkHandler.hasDeepLink.value
+                                        && userType == UserType.USER
+                                    ) {
+                                        deepLinkHandler.clear()
+                                        onBackToAreaVerification()
+                                    } else {
+                                        deepLinkHandler.clear()
+                                        onNavigateToBack()
+                                    }
+                                }
                             ) {
                                 Icon(
                                     imageVector = ImageVector.vectorResource(R.drawable.ic_topbar_arrow_left),
@@ -377,9 +393,13 @@ internal fun SpotDetailScreen(
                                 }
                             },
                             onClickBookmark = {
-                                onClickBookmark()
+                                if (state.isFromDeepLink == true && userType == UserType.GUEST) {
+                                    onSignInRequired()
+                                } else {
+                                    onClickBookmark()
+                                }
                             },
-                            isBookmarkSelected = state.spotDetail.isSaved,
+                            isBookmarkSelected = if (state.isFromDeepLink == true && userType == UserType.GUEST) false else state.spotDetail.isSaved,
                             isMenuBoardEnabled = state.spotDetail.hasMenuboardImage
                         )
                     }

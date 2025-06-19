@@ -52,21 +52,6 @@ class SpotDetailViewModel @Inject constructor(
             }
         }
 
-    fun isAreaVerified() = intent {
-        userRepository.fetchVerifiedAreaList()
-            .onSuccess { areas ->
-                val isVerified = areas.isNotEmpty()
-
-                runOn<SpotDetailUiState.Success> {
-                    reduce { state.copy(isAreaVerified = isVerified) }
-                }
-                runOn<SpotDetailUiState.LoadFailed> {
-                    reduce { state.copy(isAreaVerified = isVerified) }
-                }
-            }
-    }
-
-
     private fun fetchedSpotDetail() = intent {
         delay(800)
         val spotDetailInfoDeferred = viewModelScope.async {
@@ -80,9 +65,20 @@ class SpotDetailViewModel @Inject constructor(
                 }
             )
         }
+
+        val fetchVerifiedAreaListDeferred = viewModelScope.async {
+            userRepository.fetchVerifiedAreaList()
+        }
+
         val spotDetailResult = spotDetailInfoDeferred.await()
+        val verifiedAreaListResult = fetchVerifiedAreaListDeferred.await()
 
         reduce {
+            val isAreaVerified = verifiedAreaListResult
+                .getOrNull()
+                .orEmpty()
+                .isNotEmpty()
+
             when (val spotDetail = spotDetailResult.getOrNull()) {
                 null -> SpotDetailUiState.LoadFailed()
                 else -> {
@@ -93,6 +89,7 @@ class SpotDetailViewModel @Inject constructor(
                         transportMode = spotNavData.transportMode,
                         eta = spotNavData.eta,
                         spotDetail = spotDetail,
+                        isAreaVerified = isAreaVerified,
                         isFromDeepLink = isDeepLink,
                         navFromProfile = spotNavData.navFromProfile,
                     )
