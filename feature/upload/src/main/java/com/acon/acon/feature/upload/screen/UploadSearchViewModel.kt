@@ -9,6 +9,9 @@ import com.acon.acon.domain.model.upload.SearchedSpot
 import com.acon.acon.domain.repository.UploadRepository
 import com.acon.acon.feature.upload.BuildConfig
 import com.acon.acon.feature.upload.mock.uploadSearchUiStateMock
+import com.acon.core.analytics.amplitude.AconAmplitude
+import com.acon.core.analytics.constants.EventNames
+import com.acon.core.analytics.constants.PropertyKeys
 import com.acon.feature.common.base.BaseContainerHost
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
@@ -150,6 +153,10 @@ class UploadSearchViewModel @Inject constructor(
     }
 
     fun onNextAction() = intent {
+        AconAmplitude.trackEvent(
+            eventName = EventNames.UPLOAD,
+            property = PropertyKeys.CLICK_UPLOAD_NEXT to true
+        )
         runOn<UploadSearchUiState.Success> {
             state.selectedSpot?.let {
                 postSideEffect(UploadSearchSideEffect.NavigateToReviewScreen(it))

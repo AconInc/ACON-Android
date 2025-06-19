@@ -53,6 +53,9 @@ import com.acon.acon.domain.model.upload.UploadSpotSuggestion
 import com.acon.acon.domain.model.upload.SearchedSpot
 import com.acon.acon.feature.upload.mock.uploadSearchUiStateMock
 import com.acon.acon.feature.upload.screen.UploadSearchUiState
+import com.acon.core.analytics.amplitude.AconAmplitude
+import com.acon.core.analytics.constants.EventNames
+import com.acon.core.analytics.constants.PropertyKeys
 import com.acon.feature.common.type.getNameResId
 import dev.chrisbanes.haze.hazeSource
 import kotlinx.collections.immutable.ImmutableList
@@ -249,6 +252,10 @@ private fun SearchedSpots(
                         modifier = Modifier
                             .padding(top = 20.dp)
                             .noRippleClickable {
+                                AconAmplitude.trackEvent(
+                                    eventName = EventNames.UPLOAD,
+                                    property = PropertyKeys.CLICK_REGISTER_FORM to true
+                                )
                                 try {
                                     uriHandler.openUri(UrlConstants.REQUEST_NEW_SPOT_UPLOAD)
                                 } catch (e: Exception) {
