@@ -69,7 +69,7 @@ internal fun ProfileModScreen(
     navigateToBack: () -> Unit,
     navigateToCustomGallery: () -> Unit,
     onNicknameChanged: (String) -> Unit = {},
-    onBirthdayChanged: (TextFieldValue) -> Unit = {},
+    onBirthdayChanged: (String) -> Unit = {},
     onFocusChanged: (Boolean, FocusType) -> Unit = { _, _ -> },
     onRequestExitDialog: () -> Unit,
     onDisMissExitDialog: () -> Unit,
@@ -108,6 +108,14 @@ internal fun ProfileModScreen(
             ) {
                 mutableStateOf(TextFieldValue(state.fetchedNickname))
             }
+
+            var birthdayTextFieldValue by rememberSaveable(
+                state.fetchedBirthday,
+                stateSaver = TextFieldValue.Saver
+            ) {
+                mutableStateOf(TextFieldValue(state.fetchedBirthday))
+            }
+
 
             if (state.requestPhotoPermission) {
                 CheckAndRequestMediaPermission(
@@ -150,10 +158,11 @@ internal fun ProfileModScreen(
 
             if (state.showPhotoEditModal) {
                 GallerySelectBottomSheet(
-                    isDefault =  when {
+                    isDefault = when {
                         state.selectedPhotoUri.isNotEmpty() -> {
                             state.selectedPhotoUri.contains("basic_profile_image")
                         }
+
                         else -> {
                             state.fetchedPhotoUri.contains("basic_profile_image")
                         }
@@ -383,10 +392,13 @@ internal fun ProfileModScreen(
                                 status = state.birthdayFieldStatus,
                                 focusType = FocusType.Birthday,
                                 focusRequester = birthDayFocusRequester,
-                                value = state.birthdayTextFieldValue,
+                                value = birthdayTextFieldValue,
                                 placeholder = stringResource(R.string.birthday_placeholder),
                                 onValueChange = { fieldValue ->
-                                    onBirthdayChanged(fieldValue)
+                                    if (fieldValue.text.length <= 8) {
+                                        birthdayTextFieldValue = fieldValue
+                                        onBirthdayChanged(fieldValue.text)
+                                    }
                                 },
                                 onFocusChanged = onFocusChanged,
                                 visualTransformation = BirthdayTransformation(),
