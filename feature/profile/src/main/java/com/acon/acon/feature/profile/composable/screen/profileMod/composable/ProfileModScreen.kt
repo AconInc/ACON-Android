@@ -94,14 +94,19 @@ internal fun ProfileModScreen(
     val nickNameFocusRequester = remember { FocusRequester() }
     val birthDayFocusRequester = remember { FocusRequester() }
 
-    BackHandler(enabled = true) {
-        onRequestExitDialog()
-    }
-
     when (state) {
         ProfileModState.LoadFailed -> {}
         ProfileModState.Loading -> {}
         is ProfileModState.Success -> {
+
+            BackHandler(enabled = true) {
+                if(state.isEdited) {
+                    onRequestExitDialog()
+                } else {
+                    navigateToBack()
+                }
+            }
+
             var nicknameTextFieldValue by rememberSaveable(
                 state.fetchedNickname,
                 stateSaver = TextFieldValue.Saver
@@ -204,7 +209,10 @@ internal fun ProfileModScreen(
                 AconTopBar(
                     leadingIcon = {
                         IconButton(
-                            onClick = { onRequestExitDialog() }
+                            onClick = {
+                                if(state.isEdited) { onRequestExitDialog() }
+                                else { navigateToBack() }
+                            }
                         ) {
                             Icon(
                                 imageVector = ImageVector.vectorResource(id = R.drawable.ic_topbar_arrow_left),
