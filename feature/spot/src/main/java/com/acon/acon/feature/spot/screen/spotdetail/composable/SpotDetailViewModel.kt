@@ -36,14 +36,15 @@ class SpotDetailViewModel @Inject constructor(
     override val container =
         container<SpotDetailUiState, SpotDetailSideEffect>(SpotDetailUiState.Loading) {
             userType.collect {
-                when(it) {
+                when (it) {
                     UserType.GUEST -> {
-                        if(spotNavData.isFromDeepLink != null && spotNavData.isFromDeepLink != false){
+                        if (spotNavData.isFromDeepLink != null && spotNavData.isFromDeepLink != false) {
                             fetchedSpotDetail()
                         } else {
                             reduce { SpotDetailUiState.LoadFailed() }
                         }
                     }
+
                     else -> {
                         fetchedSpotDetail()
                     }
@@ -72,11 +73,11 @@ class SpotDetailViewModel @Inject constructor(
             spotRepository.fetchSpotDetail(
                 spotId = spotNavData.spotId,
                 isDeepLink =
-                    when {
-                        userType.value == UserType.USER -> true
-                        userType.value == UserType.GUEST && spotNavData.isFromDeepLink == true -> true
-                        else -> false
-                    }
+                when {
+                    userType.value == UserType.USER -> true
+                    userType.value == UserType.GUEST && spotNavData.isFromDeepLink == true -> true
+                    else -> false
+                }
             )
         }
         val spotDetailResult = spotDetailInfoDeferred.await()

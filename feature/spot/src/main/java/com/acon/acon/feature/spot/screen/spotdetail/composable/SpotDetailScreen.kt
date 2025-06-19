@@ -47,7 +47,7 @@ import coil3.compose.AsyncImage
 import com.acon.acon.core.common.UrlConstants
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.button.v2.AconFilledButton
-import com.acon.acon.core.designsystem.component.error.NetworkErrorView
+import com.acon.acon.core.designsystem.component.error.TopbarNetworkErrorView
 import com.acon.acon.core.designsystem.component.topbar.AconTopBar
 import com.acon.acon.core.designsystem.effect.LocalHazeState
 import com.acon.acon.core.designsystem.effect.imageGradientLayer
@@ -94,8 +94,9 @@ internal fun SpotDetailScreen(
 
     when (state) {
         is SpotDetailUiState.LoadFailed -> {
-            NetworkErrorView(
+            TopbarNetworkErrorView(
                 onRetry = LocalOnRetry.current,
+                onNavBack = { onNavigateToBack() },
                 modifier = Modifier
                     .background(AconTheme.color.Gray900)
                     .fillMaxSize()
@@ -113,7 +114,8 @@ internal fun SpotDetailScreen(
         is SpotDetailUiState.Success -> {
             BackHandler {
                 if (deepLinkHandler.hasDeepLink.value && !state.isAreaVerified &&
-                    userType == UserType.USER) {
+                    userType == UserType.USER
+                ) {
                     deepLinkHandler.clear()
                     onBackToAreaVerification()
                 } else {
