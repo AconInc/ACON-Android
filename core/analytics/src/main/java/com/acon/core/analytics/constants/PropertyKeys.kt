@@ -27,4 +27,8 @@ data object PropertyKeys {
     const val CLICK_DETAIL_GUEST = "click_detail_guest?"
     const val CLICK_LOCKED_DETAIL_GUEST = "click_locked_detail_guest?"
     const val CLICK_UPLOAD_GUEST = "click_upload_guest?"
+    const val CLICK_SHARE = "click_share?"
+    const val CLICK_DETAIL_NAVIGATION = "click_detail_navigation?"
+    const val CLICK_REPORT_ERROR = "click_report_error?"
+    const val PLACE_DETAIL_DURATION = "place_detail_duration"
 }

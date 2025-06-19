@@ -58,6 +58,9 @@ import com.acon.acon.domain.type.UserType
 import com.acon.acon.feature.spot.screen.component.OperationDot
 import com.acon.acon.feature.spot.screen.spotdetail.createBranchDeepLink
 import com.acon.acon.feature.spot.screen.spotlist.composable.SpotDetailLoadingView
+import com.acon.core.analytics.amplitude.AconAmplitude
+import com.acon.core.analytics.constants.EventNames
+import com.acon.core.analytics.constants.PropertyKeys
 import com.acon.feature.common.compose.LocalDeepLinkHandler
 import com.acon.feature.common.compose.LocalOnRetry
 import com.acon.feature.common.compose.LocalRequestSignIn
@@ -149,6 +152,10 @@ internal fun SpotDetailScreen(
                     ReportErrorBottomSheet(
                         onDismissRequest = { onDismissErrorReportModal() },
                         onClickReportError = {
+                            AconAmplitude.trackEvent(
+                                eventName = EventNames.DETAIL_PAGE,
+                                property = PropertyKeys.CLICK_REPORT_ERROR to true
+                            )
                             val intent =
                                 Intent(Intent.ACTION_VIEW, Uri.parse(UrlConstants.ERROR_REPORT))
                             context.startActivity(intent)
@@ -160,6 +167,10 @@ internal fun SpotDetailScreen(
                     // 프로필, 북마크,딥링크 진입 유저 - 길찾기 방식 -> route/public
                     FindWayBottomSheet(
                         onFindWay = {
+                            AconAmplitude.trackEvent(
+                                eventName = EventNames.DETAIL_PAGE,
+                                property = PropertyKeys.CLICK_DETAIL_NAVIGATION to true
+                            )
                             onClickFindWay()
                             onDismissFindWayModal()
                         },
@@ -372,6 +383,10 @@ internal fun SpotDetailScreen(
                         StoreFloatingButtonSet(
                             onClickMenuBoard = { onClickRequestMenuBoard() },
                             onClickShare = {
+                                AconAmplitude.trackEvent(
+                                    eventName = EventNames.DETAIL_PAGE,
+                                    property = PropertyKeys.CLICK_SHARE to true
+                                )
                                 createBranchDeepLink(
                                     context = context,
                                     spotId = state.spotDetail.spotId,

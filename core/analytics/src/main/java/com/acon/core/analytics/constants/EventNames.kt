@@ -9,4 +9,5 @@ data object EventNames {
     const val FILTER_CAFE = "filter_cafe"
     const val UPLOAD = "upload"
     const val GUEST = "guest"
+    const val DETAIL_PAGE = "detail_page"
 }
