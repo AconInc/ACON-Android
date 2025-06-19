@@ -40,12 +40,14 @@ import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.button.AconGoogleSignInButton
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.domain.error.user.CredentialException
+import com.acon.acon.domain.type.UserType
 import com.acon.acon.feature.signin.screen.component.SignInTopBar
 import com.acon.acon.feature.signin.utils.SplashAudioManager
 import com.acon.core.analytics.amplitude.AconAmplitude
 import com.acon.core.analytics.constants.EventNames
 import com.acon.core.analytics.constants.PropertyKeys
+import com.acon.feature.common.compose.LocalDeepLinkHandler
+import com.acon.feature.common.compose.LocalUserType
 import com.acon.feature.common.compose.getScreenHeight
 import com.acon.feature.common.compose.getScreenWidth
 import com.acon.feature.common.remember.rememberSocialRepository
@@ -82,11 +84,19 @@ fun SignInScreen(
     )
     val logoAnimationState = animateLottieCompositionAsState(composition = composition)
 
+    val userType = LocalUserType.current
+    val deepLinkHandler = LocalDeepLinkHandler.current
+
     LaunchedEffect(Unit) {
         snapshotFlow { logoAnimationState.value }
-            .collect {
-                if (it == 1f)
-                    onAnimationEnd()
+            .collect { animationValue ->
+                if (animationValue == 1f) {
+                    if(deepLinkHandler.hasDeepLink.value && userType == UserType.GUEST) {
+                        navigateToSpotListView()
+                    } else {
+                        onAnimationEnd()
+                    }
+                }
             }
     }
 

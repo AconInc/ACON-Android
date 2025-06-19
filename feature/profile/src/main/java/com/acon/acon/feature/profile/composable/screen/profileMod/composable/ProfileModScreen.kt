@@ -69,7 +69,7 @@ internal fun ProfileModScreen(
     navigateToBack: () -> Unit,
     navigateToCustomGallery: () -> Unit,
     onNicknameChanged: (String) -> Unit = {},
-    onBirthdayChanged: (TextFieldValue) -> Unit = {},
+    onBirthdayChanged: (String) -> Unit = {},
     onFocusChanged: (Boolean, FocusType) -> Unit = { _, _ -> },
     onRequestExitDialog: () -> Unit,
     onDisMissExitDialog: () -> Unit,
@@ -94,20 +94,33 @@ internal fun ProfileModScreen(
     val nickNameFocusRequester = remember { FocusRequester() }
     val birthDayFocusRequester = remember { FocusRequester() }
 
-    BackHandler(enabled = true) {
-        onRequestExitDialog()
-    }
-
     when (state) {
         ProfileModState.LoadFailed -> {}
         ProfileModState.Loading -> {}
         is ProfileModState.Success -> {
+
+            BackHandler(enabled = true) {
+                if(state.isEdited) {
+                    onRequestExitDialog()
+                } else {
+                    navigateToBack()
+                }
+            }
+
             var nicknameTextFieldValue by rememberSaveable(
                 state.fetchedNickname,
                 stateSaver = TextFieldValue.Saver
             ) {
                 mutableStateOf(TextFieldValue(state.fetchedNickname))
             }
+
+            var birthdayTextFieldValue by rememberSaveable(
+                state.fetchedBirthday,
+                stateSaver = TextFieldValue.Saver
+            ) {
+                mutableStateOf(TextFieldValue(state.fetchedBirthday))
+            }
+
 
             if (state.requestPhotoPermission) {
                 CheckAndRequestMediaPermission(
@@ -150,7 +163,15 @@ internal fun ProfileModScreen(
 
             if (state.showPhotoEditModal) {
                 GallerySelectBottomSheet(
-                    isDefault = state.fetchedPhotoUri.contains("basic_profile_image"),
+                    isDefault = when {
+                        state.selectedPhotoUri.isNotEmpty() -> {
+                            state.selectedPhotoUri.contains("basic_profile_image")
+                        }
+
+                        else -> {
+                            state.fetchedPhotoUri.contains("basic_profile_image")
+                        }
+                    },
                     onDismiss = { onDisMissProfileEditModal() },
                     onGallerySelect = { navigateToCustomGallery() },
                     onDefaultImageSelect = { onUpdateProfileImage("basic_profile_image") },
@@ -188,7 +209,10 @@ internal fun ProfileModScreen(
                 AconTopBar(
                     leadingIcon = {
                         IconButton(
-                            onClick = { onRequestExitDialog() }
+                            onClick = {
+                                if(state.isEdited) { onRequestExitDialog() }
+                                else { navigateToBack() }
+                            }
                         ) {
                             Icon(
                                 imageVector = ImageVector.vectorResource(id = R.drawable.ic_topbar_arrow_left),
@@ -376,10 +400,13 @@ internal fun ProfileModScreen(
                                 status = state.birthdayFieldStatus,
                                 focusType = FocusType.Birthday,
                                 focusRequester = birthDayFocusRequester,
-                                value = state.birthdayTextFieldValue,
+                                value = birthdayTextFieldValue,
                                 placeholder = stringResource(R.string.birthday_placeholder),
                                 onValueChange = { fieldValue ->
-                                    onBirthdayChanged(fieldValue)
+                                    if (fieldValue.text.length <= 8) {
+                                        birthdayTextFieldValue = fieldValue
+                                        onBirthdayChanged(fieldValue.text)
+                                    }
                                 },
                                 onFocusChanged = onFocusChanged,
                                 visualTransformation = BirthdayTransformation(),

@@ -52,7 +52,6 @@ fun SpotListScreenContainer(
                         navFromProfile = null
                     )
                 )
-                deepLinkHandler.clear()
             }
     }
 

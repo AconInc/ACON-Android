@@ -247,30 +247,24 @@ class MainActivity : ComponentActivity() {
         }
 
     /**
-     * 앱이 포그라운드에 들어올 때마다 Branch 딥링크 세션을 초기화
      * branchUniversalObject(buo) : Branch 딥링크로 전달된 컨텐츠 정보
      * linkProperties : 딥링크의 속성(채널, 파라미터 등)
      * error : 초기화 실패 시 에러 정보
      **/
-    override fun onStart() {
-        super.onStart()
-        Branch.sessionBuilder(this).withCallback { buo, _, error ->
-            error?.let { Timber.e("Branch Error: ${it.message}") }
-            buo?.contentMetadata?.customMetadata?.let { metadata ->
-                deepLinkHandler.handleDeepLink(metadata)
-            }
-        }.withData(intent?.data).init()
-    }
-
     // 딥링크 재진입 처리
     // 앱이 실행 중일 때 딥링크가 들어온 경우 (onNewIntent) 기존 인텐트 갱신 + 세션 재초기화 후 파라미터 수신
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
+        intent.putExtra("branch_force_new_session", true)
         setIntent(intent)
+
         Branch.sessionBuilder(this).withCallback { buo, _, error ->
-            error?.let { Timber.e("Branch Error on reInit: ${it.message}") }
+            error?.let {
+                Timber.e("Branch Error on reInit: ${it.message}")
+            }
+
             buo?.contentMetadata?.customMetadata?.let { metadata ->
-                deepLinkHandler.handleDeepLink(metadata)
+                deepLinkHandler.handleDeepLink(metadata, true)
             }
         }.reInit()
     }
@@ -281,6 +275,17 @@ class MainActivity : ComponentActivity() {
         }
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
+
+        Branch.sessionBuilder(this).withCallback { buo, _, error ->
+            error?.let {
+                Timber.e("Branch Error: ${it.message}")
+            }
+
+            buo?.contentMetadata?.customMetadata?.let { metadata ->
+                Timber.tag("로그").d("onCreate metadata $metadata")
+                deepLinkHandler.handleDeepLink(metadata)
+            }
+        }.withData(intent?.data).init()
 
         // TODO - 현재 기기를 테스트 디바이스로 등록 -> 테스트 광고 노출
         val testDevices =

@@ -6,8 +6,10 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.acon.acon.domain.model.spot.SpotDetail
 import com.acon.acon.domain.repository.SpotRepository
+import com.acon.acon.domain.repository.UserRepository
 import com.acon.acon.domain.type.TagType
 import com.acon.acon.domain.type.TransportMode
+import com.acon.acon.domain.type.UserType
 import com.acon.acon.feature.spot.SpotRoute
 import com.acon.feature.common.base.BaseContainerHost
 import com.acon.feature.common.navigation.spotNavigationParameterNavType
@@ -22,6 +24,7 @@ import javax.inject.Inject
 @OptIn(OrbitExperimental::class)
 @HiltViewModel
 class SpotDetailViewModel @Inject constructor(
+    private val userRepository: UserRepository,
     private val spotRepository: SpotRepository,
     savedStateHandle: SavedStateHandle
 ) : BaseContainerHost<SpotDetailUiState, SpotDetailSideEffect>() {
@@ -32,21 +35,52 @@ class SpotDetailViewModel @Inject constructor(
 
     override val container =
         container<SpotDetailUiState, SpotDetailSideEffect>(SpotDetailUiState.Loading) {
-            fetchedSpotDetail()
+            userType.collect {
+                when (it) {
+                    UserType.GUEST -> {
+                        if (spotNavData.isFromDeepLink != null && spotNavData.isFromDeepLink != false) {
+                            fetchedSpotDetail()
+                        } else {
+                            reduce { SpotDetailUiState.LoadFailed() }
+                        }
+                    }
+
+                    else -> {
+                        fetchedSpotDetail()
+                    }
+                }
+            }
         }
 
     private fun fetchedSpotDetail() = intent {
         delay(800)
         val spotDetailInfoDeferred = viewModelScope.async {
             spotRepository.fetchSpotDetail(
-                spotId = spotNavData.spotId
+                spotId = spotNavData.spotId,
+                isDeepLink =
+                when {
+                    userType.value == UserType.USER -> true
+                    userType.value == UserType.GUEST && spotNavData.isFromDeepLink == true -> true
+                    else -> false
+                }
             )
         }
+
+        val fetchVerifiedAreaListDeferred = viewModelScope.async {
+            userRepository.fetchVerifiedAreaList()
+        }
+
         val spotDetailResult = spotDetailInfoDeferred.await()
+        val verifiedAreaListResult = fetchVerifiedAreaListDeferred.await()
 
         reduce {
+            val isAreaVerified = verifiedAreaListResult
+                .getOrNull()
+                .orEmpty()
+                .isNotEmpty()
+
             when (val spotDetail = spotDetailResult.getOrNull()) {
-                null -> SpotDetailUiState.LoadFailed
+                null -> SpotDetailUiState.LoadFailed()
                 else -> {
                     val isDeepLink = spotNavData.isFromDeepLink == true
 
@@ -55,6 +89,7 @@ class SpotDetailViewModel @Inject constructor(
                         transportMode = spotNavData.transportMode,
                         eta = spotNavData.eta,
                         spotDetail = spotDetail,
+                        isAreaVerified = isAreaVerified,
                         isFromDeepLink = isDeepLink,
                         navFromProfile = spotNavData.navFromProfile,
                     )
@@ -219,6 +254,7 @@ class SpotDetailViewModel @Inject constructor(
 sealed interface SpotDetailUiState {
     @Immutable
     data class Success(
+        val isAreaVerified: Boolean = false,
         val tags: List<TagType>? = emptyList(),
         val transportMode: TransportMode? = TransportMode.WALKING,
         val eta: Int? = 0,
@@ -248,7 +284,7 @@ sealed interface SpotDetailUiState {
     }
 
     data object Loading : SpotDetailUiState
-    data object LoadFailed : SpotDetailUiState
+    data class LoadFailed(val isAreaVerified: Boolean = false) : SpotDetailUiState
 }
 
 sealed interface SpotDetailSideEffect {

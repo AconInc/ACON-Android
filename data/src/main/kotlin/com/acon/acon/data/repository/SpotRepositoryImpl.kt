@@ -67,9 +67,10 @@ class SpotRepositoryImpl @Inject constructor(
 
     override suspend fun fetchSpotDetail(
         spotId: Long,
+        isDeepLink: Boolean
     ): Result<SpotDetail> {
         return runCatchingWith(*GetSpotDetailInfoError.createErrorInstances()) {
-            spotRemoteDataSource.fetchSpotDetail(spotId).toSpotDetail()
+            spotRemoteDataSource.fetchSpotDetail(spotId, isDeepLink).toSpotDetail()
         }
     }
 

@@ -13,6 +13,7 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -37,9 +38,16 @@ internal fun StoreImageIndicator(
         indicatorScrollState.animateScrollToItem(target.coerceAtLeast(0))
     }
 
+    val displayCount = if (pageCount < visibleCount) pageCount else visibleCount
+    val dotSize = 6.dp
+    val spacing = 8.dp
+    val totalWidth = remember(displayCount) {
+        dotSize * displayCount + spacing * (displayCount - 1)
+    }
+
     LazyRow(
         state = indicatorScrollState,
-        modifier = modifier.width(68.dp),
+        modifier = modifier.width(totalWidth),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically,
         userScrollEnabled = false

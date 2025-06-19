@@ -3,8 +3,6 @@ package com.acon.acon.feature.profile.composable.screen.profileMod
 import android.app.Application
 import android.net.Uri
 import androidx.compose.runtime.Immutable
-import androidx.compose.ui.text.TextRange
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.acon.acon.domain.error.profile.ValidateNicknameError
@@ -64,19 +62,15 @@ class ProfileModViewModel @Inject constructor(
     private fun fetchUserProfileInfo() = intent {
         profileRepository.fetchProfile().collect {
             it.onSuccess { profile ->
-                val cleanedBirthday = profile.birthDate?.filter { it.isDigit() } ?: ""
-                val limitedNickname = profile.nickname.lowercase().take(14)
-
                 reduce {
                     ProfileModState.Success(
-                        fetchedNickname = limitedNickname,
-                        fetchedBirthday = cleanedBirthday,
-                        birthdayTextFieldValue = TextFieldValue(cleanedBirthday),
-                        fetchedPhotoUri = profile.image,
+                        fetchedNickname = profile.nickname,
+                        fetchedBirthday = profile.birthDate?.filter { it.isDigit() } ?: "",
+                        fetchedPhotoUri = profile.image
                     )
                 }
-                onNicknameChanged(limitedNickname, delayValidation = true)
-                onBirthdayChanged(TextFieldValue(cleanedBirthday))
+                onNicknameChanged(profile.nickname, delayValidation = true)
+                onBirthdayChanged(profile.birthDate ?: "")
             }
         }
     }
@@ -144,58 +138,34 @@ class ProfileModViewModel @Inject constructor(
         }
     }
 
-    fun onBirthdayChanged(fieldValue: TextFieldValue) = intent {
+    fun onBirthdayChanged(text: String) = intent {
         runOn<ProfileModState.Success> {
-            val digitsOnly = fieldValue.text.filter { it.isDigit() }
-
+            val digitsOnly = text.filter { it.isDigit() }
             val limitedDigits = digitsOnly.take(8)
-            val newSelection = TextRange(limitedDigits.length)
-            val newTextFieldValue = TextFieldValue(
-                text = limitedDigits,
-                selection = newSelection
-            )
 
-            when {
-                limitedDigits.isEmpty() -> {
-                    reduce {
-                        state.copy(
-                            isEdited = (state.isEdited || newTextFieldValue.text != state.fetchedBirthday),
-                            birthdayTextFieldValue = newTextFieldValue,
-                            birthdayValidationStatus = BirthdayValidationStatus.Empty,
-                            birthdayFieldStatus = TextFieldStatus.Empty
-                        )
-                    }
-                }
-
-                limitedDigits.length < 8 -> {
-                    reduce {
-                        state.copy(
-                            isEdited = (state.isEdited || newTextFieldValue.text != state.fetchedBirthday),
-                            birthdayTextFieldValue = newTextFieldValue,
-                            birthdayValidationStatus = BirthdayValidationStatus.Invalid,
-                            birthdayFieldStatus = TextFieldStatus.Error
-                        )
-                    }
-                }
-
-                limitedDigits.length == 8 -> {
+            val (validationStatus, fieldStatus) = when {
+                limitedDigits.isEmpty() -> BirthdayValidationStatus.Empty to TextFieldStatus.Empty
+                limitedDigits.length < 8 -> BirthdayValidationStatus.Empty to TextFieldStatus.Focused
+                else -> {
                     val isValid = validateBirthday(limitedDigits)
-                    reduce {
-                        state.copy(
-                            isEdited = (state.isEdited || newTextFieldValue.text != state.fetchedBirthday),
-                            birthdayTextFieldValue = newTextFieldValue,
-                            birthdayValidationStatus = if (isValid) BirthdayValidationStatus.Valid
-                            else BirthdayValidationStatus.Invalid,
-                            birthdayFieldStatus = if (isValid) TextFieldStatus.Focused else TextFieldStatus.Error
-                        )
-                    }
+                    (if (isValid) BirthdayValidationStatus.Valid else BirthdayValidationStatus.Invalid) to
+                            (if (isValid) TextFieldStatus.Focused else TextFieldStatus.Error)
                 }
+            }
+
+            reduce {
+                state.copy(
+                    isEdited = state.isEdited || limitedDigits != state.fetchedBirthday,
+                    birthday = limitedDigits,
+                    birthdayValidationStatus = validationStatus,
+                    birthdayFieldStatus = fieldStatus
+                )
             }
         }
     }
 
     private fun validateBirthday(birthday: String): Boolean {
-
+        val today = java.time.LocalDate.now()
         val year = birthday.substring(0, 4).toIntOrNull() ?: return false
         val month = birthday.substring(4, 6).toIntOrNull() ?: return false
         val day = birthday.substring(6, 8).toIntOrNull() ?: return false
@@ -205,15 +175,11 @@ class ProfileModViewModel @Inject constructor(
 
         if (month !in 1..12) return false
 
-        val maxDays = when (month) {
-            1, 3, 5, 7, 8, 10, 12 -> 31
-            4, 6, 9, 11 -> 30
-            2 -> if (java.time.Year.isLeap(year.toLong())) 29 else 28
-            else -> return false
-        }
+        val maxDays = java.time.YearMonth.of(year, month).lengthOfMonth()
+        if (day !in 1..maxDays) return false
+
         return try {
             val inputDate = java.time.LocalDate.of(year, month, day)
-            val today = java.time.LocalDate.now()
             !inputDate.isAfter(today)
         } catch (e: Exception) {
             false
@@ -313,7 +279,7 @@ class ProfileModViewModel @Inject constructor(
         runOn<ProfileModState.Success> {
             val nickname = state.nickname
             val isBirthdayValid = state.birthdayValidationStatus == BirthdayValidationStatus.Valid
-            val birthday = if (isBirthdayValid) state.birthdayTextFieldValue.text else null
+            val birthday = if (isBirthdayValid) state.birthday else null
 
             when {
                 state.selectedPhotoUri.isEmpty() -> {
@@ -340,6 +306,7 @@ class ProfileModViewModel @Inject constructor(
                             reduce { state.copy(uploadFileName = result.fileName) }
                             putPhotoToPreSignedUrl(
                                 nickname = nickname,
+                                birthday = birthday,
                                 imageUri = Uri.parse(state.selectedPhotoUri),
                                 preSignedUrl = result.preSignedUrl
                             )
@@ -352,88 +319,93 @@ class ProfileModViewModel @Inject constructor(
         }
     }
 
-    private fun putPhotoToPreSignedUrl(nickname: String, imageUri: Uri, preSignedUrl: String) =
-        intent {
-            runOn<ProfileModState.Success> {
-                val context = getApplication<Application>().applicationContext
-                val client = OkHttpClient()
-                Timber.tag(TAG).d("imageUri: $imageUri")
+    private fun putPhotoToPreSignedUrl(
+        nickname: String,
+        birthday: String?,
+        imageUri: Uri,
+        preSignedUrl: String
+    ) = intent {
+        runOn<ProfileModState.Success> {
+            val context = getApplication<Application>().applicationContext
+            val client = OkHttpClient()
+            Timber.tag(TAG).d("imageUri: $imageUri")
 
-                try {
-                    val byteArray: ByteArray
-                    val mimeType: String
+            try {
+                val byteArray: ByteArray
+                val mimeType: String
 
-                    if (state.selectedPhotoUri.startsWith("content://")) {
-                        val inputStream = context.contentResolver.openInputStream(imageUri)
-                        byteArray = inputStream?.readBytes()
-                            ?: throw IllegalArgumentException("Failed to read image")
-                        mimeType = context.contentResolver.getType(imageUri) ?: "image/jpeg"
+                if (state.selectedPhotoUri.startsWith("content://")) {
+                    val inputStream = context.contentResolver.openInputStream(imageUri)
+                    byteArray = inputStream?.readBytes()
+                        ?: throw IllegalArgumentException("Failed to read image")
+                    mimeType = context.contentResolver.getType(imageUri) ?: "image/jpeg"
 
-                    } else if (state.selectedPhotoUri.startsWith("http://") ||
-                        state.selectedPhotoUri.startsWith("https://")
-                    ) {
-                        val getRequest = Request.Builder().url(imageUri.toString()).build()
-                        val getResponse = client.newCall(getRequest).execute()
+                } else if (state.selectedPhotoUri.startsWith("http://") ||
+                    state.selectedPhotoUri.startsWith("https://")
+                ) {
+                    val getRequest = Request.Builder().url(imageUri.toString()).build()
+                    val getResponse = client.newCall(getRequest).execute()
 
-                        if (!getResponse.isSuccessful) {
-                            throw IllegalArgumentException("Failed to fetch remote image")
-                        }
-
-                        byteArray = getResponse.body?.bytes()
-                            ?: throw IllegalArgumentException("Failed to read remote image")
-                        mimeType = getResponse.header("Content-Type") ?: "image/jpeg"
-
-                    } else {
-                        throw IllegalArgumentException("Unsupported URI scheme")
+                    if (!getResponse.isSuccessful) {
+                        throw IllegalArgumentException("Failed to fetch remote image")
                     }
 
-                    val fileBody =
-                        byteArray.toRequestBody(mimeType.toMediaTypeOrNull(), 0, byteArray.size)
+                    byteArray = getResponse.body?.bytes()
+                        ?: throw IllegalArgumentException("Failed to read remote image")
+                    mimeType = getResponse.header("Content-Type") ?: "image/jpeg"
 
-                    val request = Request.Builder()
-                        .url(preSignedUrl)
-                        .put(fileBody)
-                        .addHeader("Content-Type", mimeType)
-                        .build()
-
-                    val response = client.newCall(request).execute()
-
-                    if (response.isSuccessful) {
-                        if (state.birthdayValidationStatus == BirthdayValidationStatus.Valid) {
-                            updateProfile(
-                                fileName = state.uploadFileName,
-                                nickname = nickname,
-                                birthday = state.birthdayTextFieldValue.text,
-                                uri = imageUri.toString()
-                            )
-                        } else {
-                            updateProfile(
-                                fileName = state.uploadFileName,
-                                nickname = nickname,
-                                birthday = null,
-                                uri = imageUri.toString()
-                            )
-                        }
-                    } else {
-                        // PUT 실패 시 에러 처리
-                    }
-                } catch (e: Exception) {
-                    Timber.tag(TAG).e(e, "이미지 업로드 과정에서 예외 발생: ${e.message}")
+                } else {
+                    throw IllegalArgumentException("Unsupported URI scheme")
                 }
+
+                val fileBody =
+                    byteArray.toRequestBody(mimeType.toMediaTypeOrNull(), 0, byteArray.size)
+
+                val request = Request.Builder()
+                    .url(preSignedUrl)
+                    .put(fileBody)
+                    .addHeader("Content-Type", mimeType)
+                    .build()
+
+                val response = client.newCall(request).execute()
+
+                if (response.isSuccessful) {
+                    if (state.birthdayValidationStatus == BirthdayValidationStatus.Valid) {
+                        updateProfile(
+                            fileName = state.uploadFileName,
+                            nickname = nickname,
+                            birthday = birthday,
+                            uri = imageUri.toString()
+                        )
+                    } else {
+                        updateProfile(
+                            fileName = state.uploadFileName,
+                            nickname = nickname,
+                            birthday = null,
+                            uri = imageUri.toString()
+                        )
+                    }
+                } else {
+                    // PUT 실패 시 에러 처리
+                }
+            } catch (e: Exception) {
+                Timber.tag(TAG).e(e, "이미지 업로드 과정에서 예외 발생: ${e.message}")
             }
         }
-
-    private fun updateProfile(fileName: String, nickname: String, birthday: String?, uri: String) = intent {
-        profileRepository.updateProfile(fileName, nickname, birthday, uri)
-            .onSuccess {
-                profileRepository.updateProfileType(UpdateProfileType.SUCCESS)
-                postSideEffect(ProfileModSideEffect.NavigateToProfile)
-            }
-            .onFailure {
-                profileRepository.updateProfileType(UpdateProfileType.FAILURE)
-                postSideEffect(ProfileModSideEffect.NavigateToProfile)
-            }
     }
+
+    private fun updateProfile(fileName: String, nickname: String, birthday: String?, uri: String) =
+        intent {
+            profileRepository.updateProfile(fileName, nickname, birthday, uri)
+                .onSuccess {
+                    profileRepository.updateProfileType(UpdateProfileType.SUCCESS)
+                    postSideEffect(ProfileModSideEffect.NavigateToProfile)
+                }
+                .onFailure {
+                    profileRepository.updateProfileType(UpdateProfileType.FAILURE)
+                    postSideEffect(ProfileModSideEffect.NavigateToProfile)
+                }
+        }
 
     companion object {
         const val TAG = "ProfileViewModel"
@@ -450,7 +422,7 @@ sealed interface ProfileModState {
         val nicknameCount: Int = 0,
 
         val fetchedBirthday: String = "",
-        val birthdayTextFieldValue: TextFieldValue = TextFieldValue(),
+        val birthday: String = "",
         val birthdayFieldStatus: TextFieldStatus = TextFieldStatus.Inactive,
         val birthdayValidationStatus: BirthdayValidationStatus = BirthdayValidationStatus.Empty,
 
@@ -473,13 +445,11 @@ sealed interface ProfileModState {
                     selectedPhotoUri.isNotEmpty() && selectedPhotoUri != fetchedPhotoUri -> true
                     else -> false
                 }
-                val isBirthValid =
-                    fetchedBirthday.isNotEmpty() && birthdayTextFieldValue.text.isEmpty()
+                val isBirthValid = fetchedBirthday.isNotEmpty() && birthday.isEmpty()
                 val isContentValid = nicknameValidationStatus == NicknameValidationStatus.Valid &&
-                        (birthdayTextFieldValue.text.isEmpty() ||
-                                birthdayValidationStatus == BirthdayValidationStatus.Valid)
+                        (birthday.isEmpty() || birthdayValidationStatus == BirthdayValidationStatus.Valid)
 
-                return isProfileImageChanged || isBirthValid || (isEdited && isContentValid)
+                return (isProfileImageChanged && isContentValid) || isBirthValid || (isEdited && isContentValid)
             }
     }
 
