@@ -1,8 +1,8 @@
 package com.acon.acon.data.di
 
 import com.acon.acon.core.common.IODispatcher
-import com.acon.acon.data.cache.ProfileInfoCache
-import com.acon.acon.data.datasource.remote.ProfileRemoteDataSource
+import com.acon.acon.data.SessionManager
+import com.acon.acon.data.datasource.local.TokenLocalDataSource
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -12,12 +12,12 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object CacheModule {
+object SessionModule {
 
     @Singleton
     @Provides
-    fun providesProfileInfoCache(
-        @IODispatcher scope: CoroutineScope,
-        profileRemoteDataSource: ProfileRemoteDataSource
-    ) = ProfileInfoCache(scope, profileRemoteDataSource)
+    fun providesSessionManager(
+        tokenLocalDataSource: TokenLocalDataSource,
+        @IODispatcher scope: CoroutineScope
+    ) = SessionManager(tokenLocalDataSource, scope)
 }
