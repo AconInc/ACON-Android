@@ -59,8 +59,11 @@ import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.domain.model.spot.v2.Spot
 import com.acon.acon.domain.type.TagType
 import com.acon.acon.domain.type.TransportMode
+import com.acon.acon.domain.type.UserType
 import com.acon.acon.feature.spot.mock.spotListUiStateRestaurantMock
 import com.acon.acon.feature.spot.screen.component.OperationDot
+import com.acon.feature.common.compose.LocalRequestSignIn
+import com.acon.feature.common.compose.LocalUserType
 import dev.chrisbanes.haze.hazeSource
 
 @Composable
@@ -118,6 +121,9 @@ private fun SpotInfo(
     onFindWayButtonClick: (Spot) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+
+    val onSignInRequired = LocalRequestSignIn.current
+    val userType = LocalUserType.current
 
     Column(
         modifier = modifier
@@ -203,7 +209,10 @@ private fun SpotInfo(
         AconFilledButton(
             modifier = Modifier.align(Alignment.CenterHorizontally),
             onClick = {
-                onFindWayButtonClick(spot)
+                if (userType == UserType.GUEST)
+                    onSignInRequired(null)
+                else
+                    onFindWayButtonClick(spot)
             },
             contentPadding = PaddingValues(
                 horizontal = 58.dp,
@@ -328,7 +337,8 @@ fun SpotGuestItem(
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.blur(
                     radius = 40.dp,
-                ).fillMaxSize()
+                ).fillMaxSize(),
+                error = rememberDefaultLoadImageErrorPainter()
             )
             Column(
                 modifier = Modifier.fillMaxSize().background(AconTheme.color.GlassBlackDefault),
