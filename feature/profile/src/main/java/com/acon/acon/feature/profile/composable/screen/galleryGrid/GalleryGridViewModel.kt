@@ -14,6 +14,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.viewmodel.container
 import javax.inject.Inject
@@ -34,6 +36,8 @@ class GalleryGridViewModel @Inject constructor(
     private var allPhotos: List<Uri> = emptyList()
     private var loadedPhotos: PersistentList<Uri> = persistentListOf()
 
+    private val imageLoadingDispatcher = Dispatchers.IO.limitedParallelism(4)
+
     override val container =
         container<GalleryGridUiState, GalleryGridSideEffect>(GalleryGridUiState.Loading) {
             updateStorageAccess()
@@ -42,23 +46,35 @@ class GalleryGridViewModel @Inject constructor(
     fun updateStorageAccess() = intent {
         when (getStorageAccess(context)) {
             StorageAccess.GRANTED -> {
-                allPhotos = getAllPhotos(albumId)
-                page = 0
+                try {
+                    // 백그라운드에서 이미지 로드
+                    allPhotos = withContext(imageLoadingDispatcher) {
+                        getAllPhotos(albumId)
+                    }
+                    page = 0
 
-                val initialPhotos = allPhotos.take(pageSize)
-                loadedPhotos = persistentListOf<Uri>().addAll(initialPhotos)
+                    val initialPhotos = allPhotos.take(pageSize)
+                    loadedPhotos = persistentListOf<Uri>().addAll(initialPhotos)
 
-                reduce {
-                    GalleryGridUiState.Granted(photoList = initialPhotos)
+                    // UI 업데이트는 메인 스레드에서 진행
+                    reduce {
+                        GalleryGridUiState.Granted(photoList = initialPhotos)
+                    }
+                    page = 1
+                } catch (e: Exception) {
+                    reduce { GalleryGridUiState.Denied() }
                 }
-
-                page = 1
             }
-
             StorageAccess.Partial -> {
-                reduce { GalleryGridUiState.Partial(photoList = getAllPhotos(albumId)) }
+                try {
+                    val photos = withContext(imageLoadingDispatcher) {
+                        getAllPhotos(albumId)
+                    }
+                    reduce { GalleryGridUiState.Partial(photoList = photos) }
+                } catch (e: Exception) {
+                    //reduce { GalleryGridUiState.Denied() }
+                }
             }
-
             StorageAccess.Denied -> reduce { GalleryGridUiState.Denied() }
         }
     }
@@ -70,42 +86,46 @@ class GalleryGridViewModel @Inject constructor(
         val endIndex = (page + 1) * pageSize
         if (startIndex >= allPhotos.size) return@intent
 
-        val newPhotos = allPhotos.subList(startIndex, endIndex.coerceAtMost(allPhotos.size))
+        // 백그라운드에서 다음 페이지 로드
+        val newPhotos = withContext(imageLoadingDispatcher) {
+            allPhotos.subList(startIndex, endIndex.coerceAtMost(allPhotos.size))
+        }
         val updated = loadedPhotos.addAll(newPhotos)
 
         reduce {
             when (val current = state) {
                 is GalleryGridUiState.Granted -> {
-                    loadedPhotos = updated // 꼭 갱신!
+                    loadedPhotos = updated
                     current.copy(photoList = loadedPhotos)
                 }
-
                 else -> current
             }
         }
-
         page += 1
     }
 
     fun updateAllPhotos() = intent {
-        val photoList = getAllPhotos(albumId)
+        val photoList = withContext(imageLoadingDispatcher) {
+            getAllPhotos(albumId)
+        }
         reduce { GalleryGridUiState.Granted(photoList = photoList) }
     }
 
     fun updateUserSelectedPhotos() = intent {
-        val photoList = getAllPhotos(albumId)
+        val photoList = withContext(imageLoadingDispatcher) {
+            getAllPhotos(albumId)
+        }
         reduce {
             when (state) {
                 is GalleryGridUiState.Partial -> (state as GalleryGridUiState.Partial).copy(
                     photoList = photoList
                 )
-
                 else -> GalleryGridUiState.Partial(photoList = photoList)
             }
         }
     }
 
-    private fun getAllPhotos(albumId: String): List<Uri> {
+    private suspend fun getAllPhotos(albumId: String): List<Uri> = withContext(imageLoadingDispatcher) {
         val photoList = mutableListOf<Uri>()
 
         val projection = arrayOf(MediaStore.Images.Media._ID)
@@ -113,27 +133,61 @@ class GalleryGridViewModel @Inject constructor(
         val selectionArgs = arrayOf(albumId)
         val sortOrder = "${MediaStore.Images.Media.DATE_ADDED} DESC"
 
-        context.contentResolver.query(
-            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-            projection,
-            selection,
-            selectionArgs,
-            sortOrder
-        )?.use { cursor ->
-            val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
+        try {
+            context.contentResolver.query(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                projection,
+                selection,
+                selectionArgs,
+                sortOrder
+            )?.use { cursor ->
+                val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
+                val uriList = mutableListOf<Long>()
 
-            while (cursor.moveToNext()) {
-                val imageId = cursor.getLong(idColumn)
-                val photoUri = Uri.withAppendedPath(
-                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                    imageId.toString()
-                )
-                photoList.add(photoUri)
+                while (cursor.moveToNext()) {
+                    val imageId = cursor.getLong(idColumn)
+                    val uri = Uri.withAppendedPath(
+                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                        imageId.toString()
+                    )
+                    photoList.add(uri)
+                }
             }
-        }
+        } catch (e: Exception) { }
 
-        return photoList
+        photoList
     }
+
+    // 기존의 동기 메서드 (호환성을 위해 유지)
+//    private fun getAllPhotos(albumId: String): List<Uri> {
+//        val photoList = mutableListOf<Uri>()
+//
+//        val projection = arrayOf(MediaStore.Images.Media._ID)
+//        val selection = "${MediaStore.Images.Media.BUCKET_ID} = ?"
+//        val selectionArgs = arrayOf(albumId)
+//        val sortOrder = "${MediaStore.Images.Media.DATE_ADDED} DESC"
+//
+//        context.contentResolver.query(
+//            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+//            projection,
+//            selection,
+//            selectionArgs,
+//            sortOrder
+//        )?.use { cursor ->
+//            val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
+//
+//            while (cursor.moveToNext()) {
+//                val imageId = cursor.getLong(idColumn)
+//                val photoUri = Uri.withAppendedPath(
+//                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+//                    imageId.toString()
+//                )
+//                photoList.add(photoUri)
+//            }
+//        }
+//
+//        return photoList
+//    }
 
     fun requestMediaPermissionModal() = intent {
         runOn<GalleryGridUiState.Partial> {
