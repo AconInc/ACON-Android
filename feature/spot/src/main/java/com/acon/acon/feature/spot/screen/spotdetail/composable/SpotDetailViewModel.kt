@@ -6,13 +6,16 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.acon.acon.domain.model.spot.SpotDetail
 import com.acon.acon.domain.repository.SpotRepository
+import com.acon.acon.domain.repository.UserRepository
 import com.acon.acon.domain.type.TagType
 import com.acon.acon.domain.type.TransportMode
+import com.acon.acon.domain.type.UserType
 import com.acon.acon.feature.spot.SpotRoute
 import com.acon.feature.common.base.BaseContainerHost
 import com.acon.feature.common.navigation.spotNavigationParameterNavType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.viewmodel.container
 import javax.annotation.concurrent.Immutable
@@ -21,6 +24,7 @@ import javax.inject.Inject
 @OptIn(OrbitExperimental::class)
 @HiltViewModel
 class SpotDetailViewModel @Inject constructor(
+    private val userRepository: UserRepository,
     private val spotRepository: SpotRepository,
     savedStateHandle: SavedStateHandle
 ) : BaseContainerHost<SpotDetailUiState, SpotDetailSideEffect>() {
@@ -31,29 +35,65 @@ class SpotDetailViewModel @Inject constructor(
 
     override val container =
         container<SpotDetailUiState, SpotDetailSideEffect>(SpotDetailUiState.Loading) {
-            fetchedSpotDetail()
+            userType.collect {
+                when (it) {
+                    UserType.GUEST -> {
+                        if (spotNavData.isFromDeepLink != null && spotNavData.isFromDeepLink != false) {
+                            fetchedSpotDetail()
+                        } else {
+                            reduce { SpotDetailUiState.LoadFailed() }
+                        }
+                    }
+
+                    else -> {
+                        fetchedSpotDetail()
+                    }
+                }
+            }
         }
 
     private fun fetchedSpotDetail() = intent {
+        delay(800)
         val spotDetailInfoDeferred = viewModelScope.async {
             spotRepository.fetchSpotDetail(
-                spotId = spotNavData.spotId
+                spotId = spotNavData.spotId,
+                isDeepLink =
+                when {
+                    userType.value == UserType.USER -> true
+                    userType.value == UserType.GUEST && spotNavData.isFromDeepLink == true -> true
+                    else -> false
+                }
             )
         }
 
+        val fetchVerifiedAreaListDeferred = viewModelScope.async {
+            userRepository.fetchVerifiedAreaList()
+        }
+
         val spotDetailResult = spotDetailInfoDeferred.await()
+        val verifiedAreaListResult = fetchVerifiedAreaListDeferred.await()
+
         reduce {
-            if (spotDetailResult.getOrNull() == null) {
-                SpotDetailUiState.LoadFailed
-            }
-            else {
-                SpotDetailUiState.Success(
-                    tags = spotNavData.tags,
-                    transportMode = spotNavData.transportMode,
-                    eta = spotNavData.eta,
-                    navFromProfile = spotNavData.navFromProfile,
-                    spotDetail = spotDetailResult.getOrNull()!!
-                )
+            val isAreaVerified = verifiedAreaListResult
+                .getOrNull()
+                .orEmpty()
+                .isNotEmpty()
+
+            when (val spotDetail = spotDetailResult.getOrNull()) {
+                null -> SpotDetailUiState.LoadFailed()
+                else -> {
+                    val isDeepLink = spotNavData.isFromDeepLink == true
+
+                    SpotDetailUiState.Success(
+                        tags = spotNavData.tags.takeUnless { isDeepLink },
+                        transportMode = spotNavData.transportMode,
+                        eta = spotNavData.eta,
+                        spotDetail = spotDetail,
+                        isAreaVerified = isAreaVerified,
+                        isFromDeepLink = isDeepLink,
+                        navFromProfile = spotNavData.navFromProfile,
+                    )
+                }
             }
         }
     }
@@ -85,7 +125,7 @@ class SpotDetailViewModel @Inject constructor(
 
     fun toggleBookmark() = intent {
         runOn<SpotDetailUiState.Success> {
-            if (state.isBookmarkSaved) {
+            if (state.spotDetail.isSaved) {
                 deleteBookmark()
             } else {
                 addBookmark()
@@ -97,7 +137,8 @@ class SpotDetailViewModel @Inject constructor(
         spotRepository.addBookmark(spotNavData.spotId).onSuccess {
             runOn<SpotDetailUiState.Success> {
                 reduce {
-                    state.copy(isBookmarkSaved = true)
+                    val updatedDetail = state.spotDetail.copy(isSaved = true)
+                    state.copy(spotDetail = updatedDetail)
                 }
             }
         }.onFailure {
@@ -109,7 +150,8 @@ class SpotDetailViewModel @Inject constructor(
         spotRepository.deleteBookmark(spotNavData.spotId).onSuccess {
             runOn<SpotDetailUiState.Success> {
                 reduce {
-                    state.copy(isBookmarkSaved = false)
+                    val updatedDetail = state.spotDetail.copy(isSaved = false)
+                    state.copy(spotDetail = updatedDetail)
                 }
             }
         }.onFailure {
@@ -137,8 +179,8 @@ class SpotDetailViewModel @Inject constructor(
 
     fun onFindWay(location: Location) = intent {
         runOn<SpotDetailUiState.Success> {
-            // TODO - 딥링크, 프로필로 진입한 유저 -> route/public
-            if (state.navFromProfile == true) {
+            // 딥링크, 프로필로 진입한 유저 -> route/public
+            if (state.navFromProfile == true || state.isFromDeepLink == true) {
                 postSideEffect(
                     SpotDetailSideEffect.OnFindWayButtonClick(
                         start = location,
@@ -212,12 +254,13 @@ class SpotDetailViewModel @Inject constructor(
 sealed interface SpotDetailUiState {
     @Immutable
     data class Success(
+        val isAreaVerified: Boolean = false,
         val tags: List<TagType>? = emptyList(),
         val transportMode: TransportMode? = TransportMode.WALKING,
         val eta: Int? = 0,
+        val isFromDeepLink: Boolean? = false,
         val navFromProfile: Boolean? = null,
         val spotDetail: SpotDetail,
-        val isBookmarkSaved: Boolean = false,
         val menuBoardList: List<String> = emptyList(),
         val menuBoardListLoad: Boolean = false,
         val showMenuBoardDialog: Boolean = false,
@@ -225,7 +268,7 @@ sealed interface SpotDetailUiState {
         val showFindWayModal: Boolean = false
     ) : SpotDetailUiState {
         val storeTags: List<TagType>
-            get() = if (navFromProfile == true) {
+            get() = if (navFromProfile == true || isFromDeepLink == true) {
                 runCatching {
                     spotDetail.tagList.map { TagType.valueOf(it) }
                 }.getOrElse { emptyList() }
@@ -239,8 +282,9 @@ sealed interface SpotDetailUiState {
             else -> ""
         }
     }
+
     data object Loading : SpotDetailUiState
-    data object LoadFailed : SpotDetailUiState
+    data class LoadFailed(val isAreaVerified: Boolean = false) : SpotDetailUiState
 }
 
 sealed interface SpotDetailSideEffect {
@@ -253,5 +297,6 @@ sealed interface SpotDetailSideEffect {
         val isPublic: Boolean,
         val transportMode: TransportMode? = null
     ) : SpotDetailSideEffect
+
     data object ShowErrorToast : SpotDetailSideEffect
 }

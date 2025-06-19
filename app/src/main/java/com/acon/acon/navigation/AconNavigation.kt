@@ -8,9 +8,16 @@ import androidx.compose.material3.SnackbarData
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.NavHost
 import com.acon.acon.core.designsystem.animation.defaultEnterTransition
 import com.acon.acon.core.designsystem.animation.defaultExitTransition
@@ -18,7 +25,9 @@ import com.acon.acon.core.designsystem.animation.defaultPopEnterTransition
 import com.acon.acon.core.designsystem.animation.defaultPopExitTransition
 import com.acon.acon.core.designsystem.component.popup.AconToastPopup
 import com.acon.acon.core.designsystem.theme.AconTheme
+import com.acon.acon.domain.model.spot.SpotNavigationParameter
 import com.acon.acon.feature.signin.screen.SignInRoute
+import com.acon.acon.feature.spot.SpotRoute
 import com.acon.acon.navigation.nested.areaVerificationNavigation
 import com.acon.acon.navigation.nested.onboardingNavigationNavigation
 import com.acon.acon.navigation.nested.profileNavigation
@@ -26,8 +35,11 @@ import com.acon.acon.navigation.nested.settingsNavigation
 import com.acon.acon.navigation.nested.signInNavigationNavigation
 import com.acon.acon.navigation.nested.spotNavigation
 import com.acon.acon.navigation.nested.uploadNavigation
+import com.acon.feature.common.compose.LocalDeepLinkHandler
 import com.acon.feature.common.compose.LocalNavController
 import com.acon.feature.common.compose.LocalSnackbarHostState
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.launch
 
 @Composable
 fun AconNavigation(
@@ -36,12 +48,48 @@ fun AconNavigation(
     val navController = LocalNavController.current
     val snackbarHostState = LocalSnackbarHostState.current
 
+    val deepLinkHandler = LocalDeepLinkHandler.current
+
+    val isWarmStart by deepLinkHandler.isWarmStart.collectAsState()
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    DisposableEffect(lifecycleOwner, isWarmStart) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_START && isWarmStart) {
+                lifecycleOwner.lifecycleScope.launch {
+                    deepLinkHandler.spotIdFlow
+                        .firstOrNull { it > 0 }
+                        ?.let { spotId ->
+                            navController.navigate(
+                                SpotRoute.SpotDetail(
+                                    SpotNavigationParameter(
+                                        spotId = spotId,
+                                        tags = emptyList(),
+                                        transportMode = null,
+                                        eta = null,
+                                        isFromDeepLink = true,
+                                        navFromProfile = null
+                                    )
+                                )
+                            ) {
+                                launchSingleTop = true
+                            }
+                        }
+                }
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+}
+
     Scaffold(
         containerColor = AconTheme.color.Gray9,
         modifier = modifier,
         snackbarHost = {
             SnackbarHost(
-                modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 36.dp),
+                modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 120.dp),
                 hostState = snackbarHostState
             ) { snackbarData: SnackbarData ->
                 AconToastPopup(

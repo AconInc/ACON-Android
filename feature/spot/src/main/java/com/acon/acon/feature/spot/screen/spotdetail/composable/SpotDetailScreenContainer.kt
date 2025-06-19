@@ -18,6 +18,7 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 fun SpotDetailScreenContainer(
     modifier: Modifier = Modifier,
     onNavigateToBack: () -> Unit = {},
+    onBackToAreaVerification: () -> Unit = {},
     viewModel: SpotDetailViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
@@ -28,6 +29,7 @@ fun SpotDetailScreenContainer(
             state = state,
             modifier = modifier,
             onNavigateToBack = viewModel::navigateToBack,
+            onBackToAreaVerification = onBackToAreaVerification,
             onClickBookmark = viewModel::toggleBookmark,
             onClickRequestMenuBoard = viewModel::fetchMenuBoardList,
             onDismissMenuBoard = viewModel::onDismissMenuBoard,
@@ -39,16 +41,19 @@ fun SpotDetailScreenContainer(
         )
     }
 
+    viewModel.emitUserType()
     viewModel.collectSideEffect { sideEffect ->
-        when(sideEffect) {
+        when (sideEffect) {
             is SpotDetailSideEffect.NavigateToBack -> {
                 onNavigateToBack()
             }
+
             is SpotDetailSideEffect.RecentLocationFetched -> {
                 context.onLocationReady { location ->
                     viewModel.onFindWay(location)
                 }
             }
+
             is SpotDetailSideEffect.OnFindWayButtonClick -> {
                 context.openNaverMapNavigationWithMode(
                     start = sideEffect.start,
@@ -58,6 +63,7 @@ fun SpotDetailScreenContainer(
                     isPublic = sideEffect.isPublic
                 )
             }
+
             is SpotDetailSideEffect.ShowErrorToast -> context.showToast(R.string.unknown_error_message)
         }
     }

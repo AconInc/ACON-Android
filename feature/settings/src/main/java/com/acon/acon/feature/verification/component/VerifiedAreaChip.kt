@@ -98,13 +98,13 @@ private fun AddAreaChip(
     Row(
         modifier = Modifier
             .heightIn(min = minHeight)
-            .background(
-                AconTheme.color.Gray900,
-                shape = CircleShape
-            )
             .border(
                 width = 1.dp,
                 color = AconTheme.color.GlassWhiteDefault,
+                shape = CircleShape
+            )
+            .background(
+                AconTheme.color.Gray900,
                 shape = CircleShape
             )
             .padding(horizontal = 12.dp, vertical = 11.dp)

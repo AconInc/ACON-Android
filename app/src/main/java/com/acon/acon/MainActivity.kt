@@ -1,6 +1,7 @@
 package com.acon.acon
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
 import android.location.Location
@@ -17,24 +18,19 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.rememberNavController
-import com.acon.acon.core.designsystem.R
+import com.acon.acon.core.common.DeepLinkHandler
 import com.acon.acon.core.designsystem.component.bottomsheet.SignInBottomSheet
 import com.acon.acon.core.designsystem.component.dialog.AconPermissionDialog
-import com.acon.acon.core.designsystem.component.dialog.v2.AconDefaultDialog
-import com.acon.acon.core.designsystem.component.dialog.v2.AconTwoActionDialog
 import com.acon.acon.core.designsystem.effect.LocalHazeState
 import com.acon.acon.core.designsystem.effect.rememberHazeState
 import com.acon.acon.core.designsystem.theme.AconTheme
@@ -47,14 +43,13 @@ import com.acon.acon.navigation.AconNavigation
 import com.acon.core.ads_api.AdProvider
 import com.acon.core.ads_api.LocalSpotListAdProvider
 import com.acon.feature.ads_impl.SpotListAdProvider
+import com.acon.feature.common.compose.LocalDeepLinkHandler
 import com.acon.feature.common.compose.LocalLocation
 import com.acon.feature.common.compose.LocalNavController
 import com.acon.feature.common.compose.LocalRequestLocationPermission
 import com.acon.feature.common.compose.LocalRequestSignIn
 import com.acon.feature.common.compose.LocalSnackbarHostState
 import com.acon.feature.common.compose.LocalUserType
-import com.acon.feature.common.coroutine.firstNotNull
-import com.acon.feature.common.intent.launchPlayStore
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.RequestConfiguration
 import com.google.android.gms.common.api.ResolvableApiException
@@ -65,15 +60,9 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.LocationSettingsRequest
 import com.google.android.gms.location.Priority
 import com.google.android.gms.location.SettingsClient
-import com.google.android.play.core.appupdate.AppUpdateManagerFactory
-import com.google.android.play.core.appupdate.AppUpdateOptions
-import com.google.android.play.core.install.InstallStateUpdatedListener
 import com.google.android.play.core.install.model.ActivityResult
-import com.google.android.play.core.install.model.AppUpdateType
-import com.google.android.play.core.install.model.InstallStatus
-import com.google.android.play.core.install.model.UpdateAvailability
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.async
+import io.branch.referral.Branch
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -89,11 +78,18 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    @Inject lateinit var socialRepository: SocialRepository
-    @Inject lateinit var userRepository: UserRepository
-    @Inject lateinit var aconAppRepository: AconAppRepository
+    @Inject
+    lateinit var socialRepository: SocialRepository
+
+    @Inject
+    lateinit var userRepository: UserRepository
+
+    @Inject
+    lateinit var aconAppRepository: AconAppRepository
 
     private val viewModel by viewModels<MainViewModel>()
+
+    private val deepLinkHandler = DeepLinkHandler()
 
     private val spotListAdProvider: AdProvider = SpotListAdProvider()
     private val gpsResolutionResultLauncher = registerForActivityResult(
@@ -106,7 +102,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-//    private val appUpdateManager by lazy {
+    //    private val appUpdateManager by lazy {
 //        AppUpdateManagerFactory.create(application)
 //    }
 //    private val appUpdateInfo = flow {
@@ -180,8 +176,10 @@ class MainActivity : ComponentActivity() {
 
     private val _isLocationPermissionGranted = MutableStateFlow(false)
     private val isLocationPermissionGranted = flow {
-        emit(checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-                && checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
+        emit(
+            checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                    && checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+        )
 
         emitAll(_isLocationPermissionGranted.filter { it })
     }.stateIn(
@@ -246,14 +244,49 @@ class MainActivity : ComponentActivity() {
             }
         }
 
+    /**
+     * branchUniversalObject(buo) : Branch 딥링크로 전달된 컨텐츠 정보
+     * linkProperties : 딥링크의 속성(채널, 파라미터 등)
+     * error : 초기화 실패 시 에러 정보
+     **/
+    // 딥링크 재진입 처리
+    // 앱이 실행 중일 때 딥링크가 들어온 경우 (onNewIntent) 기존 인텐트 갱신 + 세션 재초기화 후 파라미터 수신
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        intent.putExtra("branch_force_new_session", true)
+        setIntent(intent)
+
+        Branch.sessionBuilder(this).withCallback { buo, _, error ->
+            error?.let {
+                Timber.e("Branch Error on reInit: ${it.message}")
+            }
+
+            buo?.contentMetadata?.customMetadata?.let { metadata ->
+                deepLinkHandler.handleDeepLink(metadata, true)
+            }
+        }.reInit()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             installSplashScreen()
         }
         super.onCreate(savedInstanceState)
 
+        Branch.sessionBuilder(this).withCallback { buo, _, error ->
+            error?.let {
+                Timber.e("Branch Error: ${it.message}")
+            }
+
+            buo?.contentMetadata?.customMetadata?.let { metadata ->
+                Timber.tag("로그").d("onCreate metadata $metadata")
+                deepLinkHandler.handleDeepLink(metadata)
+            }
+        }.withData(intent?.data).init()
+
         // TODO - 현재 기기를 테스트 디바이스로 등록 -> 테스트 광고 노출
-        val testDevices = listOf("559854319F9393CE36A962FE0E09E02B", "2470BB3FFC6EB2D0A79866A27F78FBCD")
+        val testDevices =
+            listOf("559854319F9393CE36A962FE0E09E02B", "2470BB3FFC6EB2D0A79866A27F78FBCD")
         val configuration = RequestConfiguration.Builder().setTestDeviceIds(testDevices).build()
         MobileAds.setRequestConfiguration(configuration)
 
@@ -285,7 +318,8 @@ class MainActivity : ComponentActivity() {
                     LocalUserType provides appState.userType,
                     LocalRequestSignIn provides { viewModel.updateShowSignInBottomSheet(true) },
                     LocalRequestLocationPermission provides ::requestLocationPermission,
-                    LocalSpotListAdProvider provides spotListAdProvider
+                    LocalSpotListAdProvider provides spotListAdProvider,
+                    LocalDeepLinkHandler provides deepLinkHandler
                 ) {
                     AconNavigation(
                         modifier = Modifier
@@ -354,7 +388,8 @@ class MainActivity : ComponentActivity() {
         }.addOnFailureListener { exception ->
             if (exception is ResolvableApiException) {
                 try {
-                    val intentSenderRequest = IntentSenderRequest.Builder(exception.resolution).build()
+                    val intentSenderRequest =
+                        IntentSenderRequest.Builder(exception.resolution).build()
                     gpsResolutionResultLauncher.launch(intentSenderRequest)
                 } catch (e: IntentSender.SendIntentException) {
 

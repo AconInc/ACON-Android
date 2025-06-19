@@ -20,7 +20,7 @@ dependencies {
     implementation(projects.core.adsApi)
     implementation(projects.feature.common)
 
+    implementation(libs.branch.io)
     implementation(libs.pulltorefresh)
-
     implementation(libs.lottie.compose)
 }

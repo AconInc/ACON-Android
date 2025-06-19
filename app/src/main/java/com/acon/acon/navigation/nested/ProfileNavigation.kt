@@ -44,9 +44,11 @@ internal fun NavGraphBuilder.profileNavigation(
                     .background(AconTheme.color.Gray900)
                     .statusBarsPadding(),
                 onNavigateToSpotDetailScreen = {
-                    navController.navigate(SpotRoute.SpotDetail(
-                        SpotNavigationParameter(it, emptyList(), null, null, true)
-                    ))
+                    navController.navigate(
+                        SpotRoute.SpotDetail(
+                            SpotNavigationParameter(it, emptyList(), null, null, null, true)
+                        )
+                    )
                 },
                 onNavigateToBookMarkScreen = {
                     navController.navigate(ProfileRoute.Bookmark)
@@ -99,9 +101,11 @@ internal fun NavGraphBuilder.profileNavigation(
                     navController.popBackStack()
                 },
                 onNavigateToSpotDetailScreen = {
-                    navController.navigate(SpotRoute.SpotDetail(
-                        SpotNavigationParameter(it, emptyList(), null, null, true),
-                    ))
+                    navController.navigate(
+                        SpotRoute.SpotDetail(
+                            SpotNavigationParameter(it, emptyList(), null, null, null, true)
+                        )
+                    )
                 },
             )
         }

@@ -4,6 +4,7 @@ import com.acon.acon.domain.model.profile.SavedSpot
 import com.acon.acon.domain.repository.SpotRepository
 import com.acon.feature.common.base.BaseContainerHost
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.viewmodel.container
 import javax.inject.Inject
@@ -19,6 +20,7 @@ class BookmarkViewModel @Inject constructor(
     }
 
     private fun fetchSavedSpotList() = intent {
+        delay(800)
         spotRepository.fetchSavedSpotList().onSuccess {
             reduce {
                 BookmarkUiState.Success(savedSpots = it)

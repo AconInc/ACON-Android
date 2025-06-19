@@ -12,5 +12,6 @@ data class SpotNavigationParameter(
     val tags: List<TagType>,
     val transportMode: TransportMode?,
     val eta: Int?,
+    val isFromDeepLink: Boolean?,
     val navFromProfile: Boolean?
 )

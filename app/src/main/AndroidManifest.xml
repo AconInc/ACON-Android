@@ -27,6 +27,7 @@
         tools:targetApi="31">
         <activity
             android:name="com.acon.acon.MainActivity"
+            android:launchMode="singleTop"
             android:hardwareAccelerated="true"
             android:exported="true"
             android:theme="@style/LaunchTheme">
@@ -35,7 +36,59 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+            <!--  Branch URI Scheme --> <!-- 딥링크 테스트용 scheme, ${app_name} -->
+            <intent-filter>
+                <data
+                    android:scheme="acon"
+                    android:host="spot" />
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+            </intent-filter>
+
+            <!-- Branch App Links (Live App) -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:scheme="https"
+                    android:host="${app_domain}.app.link" />
+                <data
+                    android:scheme="https"
+                    android:host="${app_domain}-alternate.app.link" />
+            </intent-filter>
+
+            <!-- Branch App Links (Test App) -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:scheme="https"
+                    android:host="${app_domain}.test-app.link" />
+                <data
+                    android:scheme="https"
+                    android:host="${app_domain}-alternate.test-app.link" />
+            </intent-filter>
         </activity>
+
+        <!-- Branch init -->
+        <meta-data
+            android:name="io.branch.sdk.BranchKey"
+            android:value="key_live_${branchIoKey}" />
+        <meta-data
+            android:name="io.branch.sdk.BranchKey.test"
+            android:value="key_test_${branchIoKey}" />
+        <meta-data
+            android:name="io.branch.sdk.TestMode"
+            android:value="false" />
 
         <meta-data
             android:name="com.naver.maps.map.NCP_KEY_ID"
@@ -44,11 +97,18 @@
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="${admobAppUnitId}" />
     </application>
+
     <queries>
         <intent>
             <action android:name="android.intent.action.VIEW" />
             <category android:name="android.intent.category.BROWSABLE" />
             <data android:scheme="nmap" />
+        </intent>
+    </queries>
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.SEND" />
+            <data android:mimeType="text/plain" />
         </intent>
     </queries>
 </manifest>

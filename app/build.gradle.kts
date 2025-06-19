@@ -17,6 +17,7 @@ android {
             applicationIdSuffix = ".debug"
             versionNameSuffix = "-debug"
             manifestPlaceholders["app_name"] = "Acon Debug"
+            manifestPlaceholders["app_domain"] = "aconpage"
         }
         release {
             isMinifyEnabled = true
@@ -27,6 +28,7 @@ android {
             )
             signingConfig = signingConfigs.getByName("release")
             manifestPlaceholders["app_name"] = "Acon"
+            manifestPlaceholders["app_domain"] = "aconpage"
         }
     }
 }
@@ -51,6 +53,7 @@ dependencies {
     implementation(projects.feature.settings)
     implementation(projects.feature.profile)
 
+    implementation(libs.branch.io)
     implementation(libs.google.services.ads)
     implementation(libs.play.services.location)
 

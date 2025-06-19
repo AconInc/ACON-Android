@@ -2,6 +2,8 @@ package com.acon.acon.feature.spot.screen.spotdetail.composable
 
 import android.content.Intent
 import android.net.Uri
+import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -14,18 +16,22 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -41,15 +47,21 @@ import coil3.compose.AsyncImage
 import com.acon.acon.core.common.UrlConstants
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.button.v2.AconFilledButton
-import com.acon.acon.core.designsystem.component.error.NetworkErrorView
+import com.acon.acon.core.designsystem.component.error.TopbarNetworkErrorView
 import com.acon.acon.core.designsystem.component.topbar.AconTopBar
 import com.acon.acon.core.designsystem.effect.LocalHazeState
 import com.acon.acon.core.designsystem.effect.imageGradientLayer
 import com.acon.acon.core.designsystem.image.rememberDefaultLoadImageErrorPainter
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
+import com.acon.acon.domain.type.UserType
 import com.acon.acon.feature.spot.screen.component.OperationDot
+import com.acon.acon.feature.spot.screen.spotdetail.createBranchDeepLink
+import com.acon.acon.feature.spot.screen.spotlist.composable.SpotDetailLoadingView
+import com.acon.feature.common.compose.LocalDeepLinkHandler
 import com.acon.feature.common.compose.LocalOnRetry
+import com.acon.feature.common.compose.LocalRequestSignIn
+import com.acon.feature.common.compose.LocalUserType
 import com.acon.feature.common.compose.getTextSizeDp
 import dev.chrisbanes.haze.hazeSource
 import okhttp3.internal.immutableListOf
@@ -59,6 +71,7 @@ internal fun SpotDetailScreen(
     state: SpotDetailUiState,
     modifier: Modifier = Modifier,
     onNavigateToBack: () -> Unit = {},
+    onBackToAreaVerification: () -> Unit = {},
     onClickBookmark: () -> Unit = {},
     onClickRequestMenuBoard: () -> Unit = {},
     onDismissMenuBoard: () -> Unit = {},
@@ -77,15 +90,44 @@ internal fun SpotDetailScreen(
         stringResource(R.string.no_store_image_mystery)
     )
 
+    val userType = LocalUserType.current
+    val deepLinkHandler = LocalDeepLinkHandler.current
+    val onSignInRequired = LocalRequestSignIn.current
+
     when (state) {
         is SpotDetailUiState.LoadFailed -> {
-            NetworkErrorView(
+            TopbarNetworkErrorView(
                 onRetry = LocalOnRetry.current,
-                modifier = Modifier.fillMaxSize()
+                onNavBack = { onNavigateToBack() },
+                modifier = Modifier
+                    .background(AconTheme.color.Gray900)
+                    .fillMaxSize()
             )
         }
-        is SpotDetailUiState.Loading -> {}
+
+        is SpotDetailUiState.Loading -> {
+            SpotDetailLoadingView(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(AconTheme.color.Gray900)
+            )
+        }
+
         is SpotDetailUiState.Success -> {
+            BackHandler {
+                if (state.isAreaVerified) {
+                    onNavigateToBack()
+                } else if (deepLinkHandler.hasDeepLink.value
+                    && userType == UserType.USER
+                ) {
+                    deepLinkHandler.clear()
+                    onBackToAreaVerification()
+                } else {
+                    deepLinkHandler.clear()
+                    onNavigateToBack()
+                }
+            }
+
             val storeName = state.spotDetail.name
             val storeImageList = state.spotDetail.imageList
             val acornCount = state.spotDetail.acornCount
@@ -102,8 +144,6 @@ internal fun SpotDetailScreen(
 
             Box(
                 modifier = modifier
-                    .navigationBarsPadding()
-                    .statusBarsPadding()
             ) {
                 if (state.showReportErrorModal) {
                     ReportErrorBottomSheet(
@@ -117,7 +157,7 @@ internal fun SpotDetailScreen(
                 }
 
                 if (state.showFindWayModal) {
-                    // TODO - 프로필, 북마크,딥링크 진입 유저 - 길찾기 방식 -> route/public
+                    // 프로필, 북마크,딥링크 진입 유저 - 길찾기 방식 -> route/public
                     FindWayBottomSheet(
                         onFindWay = {
                             onClickFindWay()
@@ -139,14 +179,16 @@ internal fun SpotDetailScreen(
                     HorizontalPager(
                         state = pagerState
                     ) { page ->
-                       AsyncImage(
+                        AsyncImage(
                             model = storeImageList[page],
                             contentDescription = stringResource(R.string.store_background_image_content_description),
                             contentScale = ContentScale.Crop,
                             modifier = Modifier
+                                .hazeSource(LocalHazeState.current)
                                 .fillMaxSize()
                                 .imageGradientLayer(
-                                    startColor = AconTheme.color.Gray900.copy(alpha = 0.8f)
+                                    startColor = AconTheme.color.Gray900.copy(alpha = 0.8f),
+                                    ratio = 0.5f
                                 ),
                             error = rememberDefaultLoadImageErrorPainter()
                         )
@@ -160,10 +202,7 @@ internal fun SpotDetailScreen(
                             painter = painterResource(id = R.drawable.ic_background_no_store),
                             contentDescription = stringResource(R.string.no_store_background_image_content_description),
                             modifier = Modifier
-                                .fillMaxSize()
-                                .imageGradientLayer(
-                                    startColor = AconTheme.color.Gray900.copy(alpha = 0.8f),
-                                ),
+                                .fillMaxSize(),
                             contentScale = ContentScale.Crop
                         )
 
@@ -190,13 +229,27 @@ internal fun SpotDetailScreen(
 
                 Column(
                     modifier = Modifier
-                        .fillMaxSize()
                         .hazeSource(LocalHazeState.current)
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState())
+                        .navigationBarsPadding()
                 ) {
                     AconTopBar(
                         leadingIcon = {
                             IconButton(
-                                onClick = { onNavigateToBack() }
+                                onClick = {
+                                    if (state.isAreaVerified) {
+                                        onNavigateToBack()
+                                    } else if (deepLinkHandler.hasDeepLink.value
+                                        && userType == UserType.USER
+                                    ) {
+                                        deepLinkHandler.clear()
+                                        onBackToAreaVerification()
+                                    } else {
+                                        deepLinkHandler.clear()
+                                        onNavigateToBack()
+                                    }
+                                }
                             ) {
                                 Icon(
                                     imageVector = ImageVector.vectorResource(R.drawable.ic_topbar_arrow_left),
@@ -215,7 +268,8 @@ internal fun SpotDetailScreen(
                                     .noRippleClickable { onRequestErrorReportModal() }
                             )
                         },
-                        modifier = Modifier.padding(vertical = 14.dp)
+                        modifier = Modifier
+                            .padding(top = 44.dp, bottom = 14.dp)
                     )
 
                     Row(
@@ -261,10 +315,9 @@ internal fun SpotDetailScreen(
                         )
                     }
 
-                    /*  TODO - 장소 상세 Tag 처리 로직
-                         * 일반 유저: 이전 페이지 "NEW", "LOCAL", "TOP" 태그 그대로 가져오기
-                         * 프로필, 북마크, 딥링크로 진입한 유저: API 응답으로 제공
-                     */
+                    // 장소 상세 Tag 처리 로직
+                    // 일반 유저: 이전 페이지 "NEW", "LOCAL", "TOP" 태그 그대로 가져오기
+                    // 프로필, 북마크, 딥링크로 진입한 유저: API 응답으로 제공
                     Spacer(Modifier.height(8.dp))
                     StoreTagRow(
                         tags = state.storeTags,
@@ -272,7 +325,7 @@ internal fun SpotDetailScreen(
                     )
 
                     Row(
-                        modifier = Modifier.padding(start = 20.dp, top = 8.dp),
+                        modifier = Modifier.padding(start = 26.dp, top = 8.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         OperationDot(state.spotDetail.isOpen)
@@ -320,34 +373,41 @@ internal fun SpotDetailScreen(
                         StoreFloatingButtonSet(
                             onClickMenuBoard = { onClickRequestMenuBoard() },
                             onClickShare = {
-                                // TODO - 딥링크 구현 후, 수정
-                                val image = storeImageList.getOrElse(0) { "" }
-                                val shareIntent = Intent.createChooser(
-                                    Intent().apply {
-                                        action = Intent.ACTION_SEND
-                                        type = "image/*"
-                                        putExtra(
-                                            Intent.EXTRA_TEXT,
-                                            "아콘에서 내 근처 ${state.spotDetail.name} 확인해보세요!"
-                                        )
-                                        putExtra(Intent.EXTRA_STREAM, image)
-                                        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                                    },
-                                    null
-                                )
-                                context.startActivity(shareIntent)
+                                createBranchDeepLink(
+                                    context = context,
+                                    spotId = state.spotDetail.spotId,
+                                    spotName = state.spotDetail.name
+                                ) { branchLink ->
+                                    val shareIntent = Intent.createChooser(
+                                        Intent().apply {
+                                            action = Intent.ACTION_SEND
+                                            type = "text/plain"
+                                            putExtra(
+                                                Intent.EXTRA_TEXT,
+                                                "Acon에서 내 근처 ${state.spotDetail.name} 확인해보세요!$branchLink"
+                                            )
+                                        },
+                                        null
+                                    )
+                                    context.startActivity(shareIntent)
+                                }
                             },
                             onClickBookmark = {
-                                onClickBookmark()
+                                if (state.isFromDeepLink == true && userType == UserType.GUEST) {
+                                    onSignInRequired()
+                                } else {
+                                    onClickBookmark()
+                                }
                             },
-                            isBookmarkSelected = state.isBookmarkSaved,
-                            isMenuBoarEnabled = state.spotDetail.hasMenuboardImage
+                            isBookmarkSelected = if (state.isFromDeepLink == true && userType == UserType.GUEST) false else state.spotDetail.isSaved,
+                            isMenuBoardEnabled = state.spotDetail.hasMenuboardImage
                         )
                     }
 
                     if (storeImageList.size >= 2) {
                         Box(
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier
+                                .fillMaxWidth(),
                             contentAlignment = Alignment.Center
                         ) {
                             StoreImageIndicator(
@@ -366,10 +426,25 @@ internal fun SpotDetailScreen(
                         },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(start = 16.dp, end = 16.dp, bottom = 20.dp)
+                            .padding(start = 16.dp, end = 16.dp, bottom = 20.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = AconTheme.color.Gray900.copy(alpha = .8f),
+                            contentColor = AconTheme.color.White,
+                        ),
+                        border = BorderStroke(
+                            width = 1.dp,
+                            brush = Brush.horizontalGradient(
+                                colors = listOf(
+                                    AconTheme.color.PrimaryDefault,
+                                    Color(0xFF4CBD01),
+                                    AconTheme.color.White
+                                ),
+                                startX = 0f,
+                                endX = Float.POSITIVE_INFINITY
+                            )
+                        )
                     ) {
-                        // TODO - 프로필, 북마크, 딥링크로 들어온 유저 버튼명 -> 그냥 길찾기
-                        if(state.navFromProfile == true) {
+                        if (state.navFromProfile == true || state.isFromDeepLink == true) {
                             Text(
                                 text = stringResource(R.string.btn_find_way),
                                 color = AconTheme.color.White,
