@@ -174,26 +174,26 @@ internal fun SpotListSuccessView(
                             color = AconTheme.color.White,
                             fontWeight = FontWeight.W400
                         )
-                        Text(
-                            text = "구글 지도",
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .noRippleClickable {
-                                    onNavigationAppChoose(
-                                        GoogleNavigationAppHandler(
-                                            destination = Location("").apply {
-                                                latitude = spot.latitude
-                                                longitude = spot.longitude
-                                            },
-                                            mode = state.transportMode
-                                        )
-                                    )
-                                }
-                                .padding(vertical = 17.dp, horizontal = 16.dp),
-                            style = AconTheme.typography.Title4,
-                            color = AconTheme.color.White,
-                            fontWeight = FontWeight.W400
-                        )
+//                        Text(
+//                            text = "구글 지도",
+//                            modifier = Modifier
+//                                .fillMaxWidth()
+//                                .noRippleClickable {
+//                                    onNavigationAppChoose(
+//                                        GoogleNavigationAppHandler(
+//                                            destination = Location("").apply {
+//                                                latitude = spot.latitude
+//                                                longitude = spot.longitude
+//                                            },
+//                                            mode = state.transportMode
+//                                        )
+//                                    )
+//                                }
+//                                .padding(vertical = 17.dp, horizontal = 16.dp),
+//                            style = AconTheme.typography.Title4,
+//                            color = AconTheme.color.White,
+//                            fontWeight = FontWeight.W400
+//                        )
                         Spacer(Modifier.height(31.dp))
                     }
                 }
