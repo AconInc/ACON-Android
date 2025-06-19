@@ -210,7 +210,7 @@ private fun SpotInfo(
             modifier = Modifier.align(Alignment.CenterHorizontally),
             onClick = {
                 if (userType == UserType.GUEST)
-                    onSignInRequired(null)
+                    onSignInRequired("click_home_navigation_guest?")
                 else
                     onFindWayButtonClick(spot)
             },

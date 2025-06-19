@@ -43,7 +43,6 @@ import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.domain.model.profile.ProfileInfo
 import com.acon.acon.domain.type.UserType
-import com.acon.acon.feature.profile.composable.screen.mockSpotList
 import com.acon.acon.feature.profile.composable.screen.profile.ProfileUiState
 import com.acon.feature.common.compose.LocalRequestSignIn
 import com.acon.feature.common.compose.LocalUserType
@@ -281,7 +280,9 @@ fun ProfileScreen(
                             Row(
                                 modifier = Modifier
                                     .padding(start = 16.dp)
-                                    .noRippleClickable { onSignInRequired(null) }
+                                    .noRippleClickable {
+                                        onSignInRequired("")
+                                    }
                             ) {
                                 Text(
                                     text = stringResource(R.string.you_need_sign_in),
@@ -316,7 +317,7 @@ fun ProfileScreen(
 
                     BottomNavType.UPLOAD -> {
                         if (userType == UserType.GUEST) {
-                            onSignInRequired(null)
+                            onSignInRequired("click_upload_guest?")
                         } else {
                             onNavigateToUploadScreen()
                         }

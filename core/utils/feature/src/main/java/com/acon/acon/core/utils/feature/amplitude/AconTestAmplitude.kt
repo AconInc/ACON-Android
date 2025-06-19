@@ -40,9 +40,9 @@ object AconTestAmplitude {
     }
 
     fun trackEvent(eventName: String, properties: Map<String, Any> = emptyMap()) {
-        if (AconTestAmplitude::testAmplitude.isInitialized) {
-            testAmplitude.track(eventName, properties)
-        }
+//        if (AconTestAmplitude::testAmplitude.isInitialized) {
+//            testAmplitude.track(eventName, properties)
+//        }
     }
 
     fun setUserProperty(userId: String) {

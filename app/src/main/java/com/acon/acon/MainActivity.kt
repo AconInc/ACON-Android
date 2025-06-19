@@ -43,6 +43,7 @@ import com.acon.acon.navigation.AconNavigation
 import com.acon.core.ads_api.AdProvider
 import com.acon.core.ads_api.LocalSpotListAdProvider
 import com.acon.core.analytics.amplitude.AconAmplitude
+import com.acon.core.analytics.constants.EventNames
 import com.acon.feature.ads_impl.SpotListAdProvider
 import com.acon.feature.common.compose.LocalDeepLinkHandler
 import com.acon.feature.common.compose.LocalLocation
@@ -314,7 +315,7 @@ class MainActivity : ComponentActivity() {
                     LocalUserType provides appState.userType,
                     LocalRequestSignIn provides {
                         viewModel.updateShowSignInBottomSheet(true)
-                        viewModel.updateOnSignInSuccess(it)
+                        viewModel.updateAmplPropertyKey(it)
                     },
                     LocalRequestLocationPermission provides ::requestLocationPermission,
                     LocalSpotListAdProvider provides spotListAdProvider,
@@ -333,27 +334,30 @@ class MainActivity : ComponentActivity() {
                                 scope.launch {
                                     socialRepository.googleSignIn()
                                         .onSuccess {
-                                            if (appState.onSignInSuccess != null)
-                                                appState.onSignInSuccess!!()
-                                            else {
-                                                if (it.hasVerifiedArea) {
-                                                    navController.navigate(SpotRoute.SpotList) {
-                                                        popUpTo(navController.graph.id) {
-                                                            inclusive = true
-                                                        }
-                                                    }
-                                                } else {
-                                                    navController.navigate(
-                                                        AreaVerificationRoute.AreaVerification(
-                                                            verifiedAreaId = null,
-                                                            route = "onboarding"
-                                                        )
-                                                    ) {
-                                                        popUpTo(navController.graph.id) {
-                                                            inclusive = true
-                                                        }
+                                            if (it.hasVerifiedArea) {
+                                                navController.navigate(SpotRoute.SpotList) {
+                                                    popUpTo(navController.graph.id) {
+                                                        inclusive = true
                                                     }
                                                 }
+                                            } else {
+                                                navController.navigate(
+                                                    AreaVerificationRoute.AreaVerification(
+                                                        verifiedAreaId = null,
+                                                        route = "onboarding"
+                                                    )
+                                                ) {
+                                                    popUpTo(navController.graph.id) {
+                                                        inclusive = true
+                                                    }
+                                                }
+                                            }
+                                            if(appState.propertyKey.isNotBlank()) {
+                                                AconAmplitude.trackEvent(
+                                                    eventName = EventNames.GUEST,
+                                                    property = appState.propertyKey to true
+                                                )
+                                                Timber.d("dddd  " + appState.propertyKey)
                                             }
                                             AconAmplitude.setUserId(it.externalUUID)
                                         }.onFailure {

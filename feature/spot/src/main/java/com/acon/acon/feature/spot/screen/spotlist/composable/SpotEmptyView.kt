@@ -96,7 +96,7 @@ internal fun SpotEmptyView(
                             .padding(bottom = 12.dp)
                             .height(itemHeightPx.toDp())
                             .fillMaxWidth(),
-                        onItemClick = { onSignInRequired(null) }
+                        onItemClick = { onSignInRequired("click_locked_detail_guest?") }
                     )
                 } else {
                     SpotItem(
