@@ -31,4 +31,8 @@ data object PropertyKeys {
     const val CLICK_DETAIL_NAVIGATION = "click_detail_navigation?"
     const val CLICK_REPORT_ERROR = "click_report_error?"
     const val PLACE_DETAIL_DURATION = "place_detail_duration"
+    const val CLICK_EXIT_SERVICE = "click_exit_service?"
+    const val EXIT_REASON = "exit_reason"
+    const val DELETE_ID = "delete_id"
+    const val CLICK_SIGN_OUT = "click_logout?"
 }

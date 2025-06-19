@@ -10,4 +10,5 @@ data object EventNames {
     const val UPLOAD = "upload"
     const val GUEST = "guest"
     const val DETAIL_PAGE = "detail_page"
+    const val SERVICE_WITHDRAW = "service_withdraw"
 }
