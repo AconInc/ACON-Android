@@ -62,7 +62,7 @@ class SpotListViewModel @Inject constructor(
             runOn<SpotListUiStateV2.Loading> {
                 initialLocation = location
                 if (location.isInKorea(context)) {
-                    fetchSpotList(location, Condition(SpotType.RESTAURANT, emptyList())) {
+                    fetchSpotList(location, Condition(state.selectedSpotType, emptyList())) {
                         SpotListUiStateV2.Success(
                             transportMode = it.transportMode,
                             spotList = it.spots,
