@@ -196,7 +196,7 @@
     <string name="failed_verify_location_not_in_korea_description">문제가 발생했습니다. 나중에 다시 시도해주세요.</string>
 
     <!-- Onboarding -->
-    <string name="request_dislike_food_title">싫어하는 음식을 알려줄 수 있나요?</string>
+    <string name="request_dislike_food_title">싫어하는 음식을\n알려줄 수 있나요?</string>
     <string name="request_dislike_food_description">싫어하는 음식은 설정에서 다시 수정할 수 있어요</string>
     <string name="no_dislike_food">없음</string>
     <string name="shrimp">새우</string>
@@ -218,6 +218,9 @@
     <string name="user_choose_none">모든 음식을 잘 드시는 분이군요!</string>
     <string name="user_choose_dislike_food">확인했어요! 센스있게 추천해드릴게요</string>
     <string name="start">시작하기</string>
+    <string name="stop_onboarding">취향탐색을 그만둘까요?</string>
+    <string name="keep_going">계속하기</string>
+    <string name="stop">그만두기</string>
 
     <!-- Profile -->
     <string name="profile_topbar">프로필</string>
