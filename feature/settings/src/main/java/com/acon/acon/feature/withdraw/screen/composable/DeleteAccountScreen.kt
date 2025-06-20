@@ -61,6 +61,9 @@ import com.acon.acon.feature.withdraw.component.DeleteAccountBottomSheet
 import com.acon.acon.feature.withdraw.component.DeleteAccountTextField
 import com.acon.acon.feature.withdraw.screen.DeleteAccountUiState
 import com.acon.acon.feature.withdraw.type.DeleteReasonType
+import com.acon.core.analytics.amplitude.AconAmplitude
+import com.acon.core.analytics.constants.EventNames
+import com.acon.core.analytics.constants.PropertyKeys
 import dev.chrisbanes.haze.hazeSource
 
 @Composable
@@ -108,8 +111,11 @@ fun DeleteAccountScreen(
                 DeleteAccountBottomSheet(
                     onDismissRequest = { onBottomSheetShowStateChange(false) },
                     onDeleteAccount = {
+                        AconAmplitude.trackEvent(
+                            eventName = EventNames.SERVICE_WITHDRAW,
+                            property = PropertyKeys.DELETE_ID to true
+                        )
                         onDeleteAccount()
-                        deleteAccountAmplitudeWithDraw()
                     }
                 )
             }
@@ -122,7 +128,7 @@ fun DeleteAccountScreen(
                         .fillMaxWidth()
                         .defaultHazeEffect(
                             hazeState = LocalHazeState.current,
-                            tintColor = Color(0xFF1C1C20),
+                            tintColor = AconTheme.color.GlassGray900,
                             blurRadius = 20.dp,
                         )
                         .statusBarsPadding()
@@ -244,9 +250,11 @@ fun DeleteAccountScreen(
                     AconFilledButton(
                         onClick = {
                             if (submitButtonEnabled) {
+                                AconAmplitude.trackEvent(
+                                    eventName = EventNames.SERVICE_WITHDRAW,
+                                    property = PropertyKeys.EXIT_REASON to state.reason
+                                )
                                 onBottomSheetShowStateChange(true)
-                                deleteAccountAmplitudeSubmit()
-                                deleteAccountAmplitudeExitReason(state.reason)
                             }
                         },
                         modifier = Modifier

@@ -1,5 +1,6 @@
 package com.acon.acon.feature.onboarding.screen.composable
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -9,8 +10,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.acon.acon.core.utils.feature.toast.showToast
 import com.acon.acon.core.designsystem.R
+import com.acon.acon.core.utils.feature.toast.showToast
 import com.acon.acon.feature.onboarding.screen.ChooseDislikesSideEffect
 import com.acon.acon.feature.onboarding.screen.ChooseDislikesViewModel
 import org.orbitmvi.orbit.compose.collectAsState
@@ -20,6 +21,7 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 fun ChooseDislikesScreenContainer(
     onNavigateToHome: () -> Unit,
     modifier: Modifier = Modifier,
+    fromSetting: Boolean = false,
     viewModel: ChooseDislikesViewModel = hiltViewModel()
 ) {
 
@@ -31,12 +33,18 @@ fun ChooseDislikesScreenContainer(
         state = state,
         onComplete = viewModel::onCompletion,
         onNoneChosen = viewModel::onNoneClicked,
+        onDismissStopModal = viewModel::dismissStopModal,
         onDislikeFoodChosen = viewModel::onDislikeFoodClicked,
         modifier = modifier
             .verticalScroll(rememberScrollState())
             .padding(top = 86.dp, bottom = 16.dp)
-            .padding(horizontal = 16.dp)
+            .padding(horizontal = 16.dp),
     )
+
+
+    BackHandler(fromSetting) {
+        viewModel.showStopModal()
+    }
 
     viewModel.collectSideEffect { effect ->
         when (effect) {

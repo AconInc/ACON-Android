@@ -1,14 +1,11 @@
 package com.acon.acon.feature.spot.screen.spotlist.composable
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -16,7 +13,6 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalUriHandler
@@ -28,7 +24,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEachIndexed
 import com.acon.acon.core.common.UrlConstants
 import com.acon.acon.core.designsystem.R
-import com.acon.acon.core.designsystem.effect.fog.fogBackground
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.core.utils.feature.toast.showToast
@@ -48,7 +43,7 @@ private const val MAX_GUEST_AVAILABLE_COUNT = 5
 internal fun SpotEmptyView(
     userType: UserType,
     otherSpots: ImmutableList<Spot>,
-    onSpotClick: (Spot) -> Unit,
+    onSpotClick: (Spot, rank: Int) -> Unit,
     onTryFindWay: (Spot) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -96,32 +91,23 @@ internal fun SpotEmptyView(
                     )
                 if (index >= MAX_GUEST_AVAILABLE_COUNT && userType == UserType.GUEST) {
                     SpotGuestItem(
+                        spot = spot,
                         modifier = Modifier
                             .padding(bottom = 12.dp)
                             .height(itemHeightPx.toDp())
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(20.dp))
-                            .background(
-                                shape = RoundedCornerShape(20.dp),
-                                color = AconTheme.color.GlassBlackDefault
-                            )
-                            .clickable {
-                                onSignInRequired()
-                            }
-                            .fogBackground(
-                                glowColor = AconTheme.color.White,
-                            )
+                            .fillMaxWidth(),
+                        onItemClick = { onSignInRequired("click_locked_detail_guest?") }
                     )
                 } else {
                     SpotItem(
                         spot = spot,
                         transportMode = TransportMode.BIKING,
-                        onItemClick = onSpotClick,
+                        onItemClick = { onSpotClick(spot, index + 1) },
                         onFindWayButtonClick = onTryFindWay,
                         modifier = Modifier
                             .height(itemHeightPx.toDp())
                             .padding(bottom = 12.dp)
-                            .fillMaxWidth()
+                            .fillMaxWidth(),
                     )
                 }
             }
@@ -161,7 +147,7 @@ private fun SpotListEmptyView1Preview() {
     SpotEmptyView(
         userType = UserType.GUEST,
         otherSpots = spotListUiStateRestaurantMock.spotList.toImmutableList(),
-        onSpotClick = {},
+        onSpotClick = { _, _ -> },
         onTryFindWay = {},
         modifier = Modifier.fillMaxSize()
     )
@@ -173,7 +159,7 @@ private fun SpotListEmptyView2Preview() {
     SpotEmptyView(
         userType = UserType.GUEST,
         otherSpots = listOf<Spot>().toImmutableList(),
-        onSpotClick = {},
+        onSpotClick = { _, _ -> },
         onTryFindWay = {},
         modifier = Modifier.fillMaxSize()
     )

@@ -1,6 +1,7 @@
 package com.acon.acon.feature.profile.composable.screen.profile.composable
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,7 +23,6 @@ import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.effect.imageGradientLayer
 import com.acon.acon.core.designsystem.effect.imageGradientTopLayer
 import com.acon.acon.core.designsystem.image.rememberDefaultLoadImageErrorPainter
-import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.domain.model.profile.SavedSpot
 
@@ -35,7 +35,7 @@ internal fun BookmarkItem(
     Box(
         modifier = modifier
             .clip(RoundedCornerShape(8.dp))
-            .noRippleClickable { onClickSpotItem() }
+            .clickable { onClickSpotItem() }
     ) {
         if(spot.image.isNotEmpty()) {
             AsyncImage(

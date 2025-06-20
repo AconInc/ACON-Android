@@ -28,7 +28,7 @@ val LocalUserType = compositionLocalOf {
     UserType.GUEST
 }
 
-val LocalRequestSignIn = staticCompositionLocalOf {
+val LocalRequestSignIn = staticCompositionLocalOf<(propertyKey: String) -> Unit> { // TODO: core navigation 모듈 통합
     {}
 }
 

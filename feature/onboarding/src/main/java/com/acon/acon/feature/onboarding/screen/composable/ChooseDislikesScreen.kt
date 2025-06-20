@@ -1,10 +1,8 @@
 package com.acon.acon.feature.onboarding.screen.composable
 
-import android.widget.Space
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Spacer
@@ -29,13 +27,14 @@ import androidx.compose.ui.util.fastForEach
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.button.v2.AconFilledTextButton
 import com.acon.acon.core.designsystem.component.chip.AconChip
-import com.acon.acon.core.designsystem.effect.fog.fogBackground
+import com.acon.acon.core.designsystem.component.dialog.v2.AconTwoActionDialog
+import com.acon.acon.core.designsystem.effect.effect.shadowLayerBackground
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.domain.type.FoodType
 import com.acon.acon.feature.onboarding.screen.ChooseDislikesUiState
+import com.acon.feature.common.compose.LocalNavController
 import com.acon.feature.common.type.getNameResId
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 internal fun ChooseDislikesScreen(
     state: ChooseDislikesUiState,
@@ -43,10 +42,25 @@ internal fun ChooseDislikesScreen(
     onNoneChosen: () -> Unit,
     onDislikeFoodChosen: (FoodType) -> Unit,
     modifier: Modifier = Modifier,
+    onDismissStopModal: (() -> Unit) -> Unit = {},
 ) {
-
+    val navController = LocalNavController.current
     when (state) {
         is ChooseDislikesUiState.Success -> {
+            if (state.showStopModal) {
+                AconTwoActionDialog(
+                    title = stringResource(R.string.stop_onboarding),
+                    action1 = stringResource(R.string.keep_going),
+                    action2 = stringResource(R.string.stop),
+                    onAction1 = { onDismissStopModal{} },
+                    onAction2 = {
+                        onDismissStopModal {
+                            navController.navigateUp()
+                        }
+                    },
+                    onDismissRequest = { onDismissStopModal{} }
+                )
+            }
 
             val isFoodChipsEnabled by remember(state) {
                 mutableStateOf(state.isNoneChosen.not())
@@ -112,7 +126,9 @@ internal fun ChooseDislikesScreen(
                     color = AconTheme.color.Gray200,
                     modifier = Modifier.align(Alignment.CenterHorizontally)
                 )
-                Box(modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min)) {
+                Box(modifier = Modifier
+                    .fillMaxWidth()
+                    .height(IntrinsicSize.Min)) {
                     AconFilledTextButton(
                         text = stringResource(R.string.start),
                         onClick = onComplete,
@@ -128,10 +144,10 @@ internal fun ChooseDislikesScreen(
                             .width(150.dp)
                             .align(Alignment.Center)
                             .then(
-                                if (isCompleteButtonEnabled) Modifier.fogBackground(
-                                    glowColor = AconTheme.color.PrimaryDefault,
-                                    glowAlpha = .5f,
-                                    glowRadius = 500f
+                                if (isCompleteButtonEnabled) Modifier.shadowLayerBackground(
+                                    shadowColor = AconTheme.color.PrimaryDefault,
+                                    shadowAlpha = .5f,
+                                    shadowRadius = 500f
                                 ) else Modifier
                             )
                     )

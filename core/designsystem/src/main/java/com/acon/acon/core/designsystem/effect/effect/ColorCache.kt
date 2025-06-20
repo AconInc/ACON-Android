@@ -1,4 +1,4 @@
-package com.acon.acon.core.designsystem.effect.fog
+package com.acon.acon.core.designsystem.effect.effect
 
 import androidx.collection.LruCache
 import androidx.compose.ui.graphics.Color

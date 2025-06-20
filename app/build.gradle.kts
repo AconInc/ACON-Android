@@ -39,6 +39,7 @@ dependencies {
     implementation(projects.core.utils.feature)
     implementation(projects.core.map)
     implementation(projects.core.adsApi)
+    implementation(projects.core.analytics)
 
     implementation(projects.domain)
     implementation(projects.data)

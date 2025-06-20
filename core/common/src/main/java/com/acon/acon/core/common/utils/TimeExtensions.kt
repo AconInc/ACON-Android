@@ -8,6 +8,10 @@ private val HHmmFormatter by lazy {
     DateTimeFormatter.ofPattern("HH:mm")
 }
 
+private val HHmmssFormatter by lazy {
+    DateTimeFormatter.ofPattern("HH:mm:ss")
+}
+
 /**
  * HH:mm을 LocalTime으로 변환.
  * 파싱 실패 시 null 반환
@@ -28,4 +32,11 @@ fun String?.toLocalTime(): LocalTime? {
  */
 fun LocalTime.toHHmm(): String {
     return format(HHmmFormatter)
+}
+
+/**
+ * LocalTime을 HH:mm:ss 형식으로 변환
+ */
+fun LocalTime.toHHmmss(): String {
+    return format(HHmmssFormatter)
 }

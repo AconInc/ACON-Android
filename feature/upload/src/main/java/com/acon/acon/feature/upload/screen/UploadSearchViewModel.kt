@@ -9,6 +9,9 @@ import com.acon.acon.domain.model.upload.SearchedSpot
 import com.acon.acon.domain.repository.UploadRepository
 import com.acon.acon.feature.upload.BuildConfig
 import com.acon.acon.feature.upload.mock.uploadSearchUiStateMock
+import com.acon.core.analytics.amplitude.AconAmplitude
+import com.acon.core.analytics.constants.EventNames
+import com.acon.core.analytics.constants.PropertyKeys
 import com.acon.feature.common.base.BaseContainerHost
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
@@ -66,8 +69,7 @@ class UploadSearchViewModel @Inject constructor(
                             uploadRepository.getSearchedSpots(query).onSuccess {
                                 reduce {
                                     state.copy(
-                                        searchedSpots = it,
-                                        showSearchedSpots = true
+                                        searchedSpots = it
                                     )
                                 }
 
@@ -80,12 +82,18 @@ class UploadSearchViewModel @Inject constructor(
 
     private val queryFlow = MutableStateFlow("")
 
-    fun onSearchQueryChanged(query: String) = intent {
+    fun onSearchQueryChanged(query: String, isSelection: Boolean) = intent {
         runOn<UploadSearchUiState.Success> {
             reduce {
-                state.copy(
-                    selectedSpot = null
-                )
+                if (isSelection)
+                    state.copy(
+                        showSearchedSpots = false
+                    )
+                else
+                    state.copy(
+                        selectedSpot = null,
+                        showSearchedSpots = query.isNotBlank()
+                    )
             }
             queryFlow.value = query
         }
@@ -145,6 +153,10 @@ class UploadSearchViewModel @Inject constructor(
     }
 
     fun onNextAction() = intent {
+        AconAmplitude.trackEvent(
+            eventName = EventNames.UPLOAD,
+            property = PropertyKeys.CLICK_UPLOAD_NEXT to true
+        )
         runOn<UploadSearchUiState.Success> {
             state.selectedSpot?.let {
                 postSideEffect(UploadSearchSideEffect.NavigateToReviewScreen(it))

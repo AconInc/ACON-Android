@@ -6,6 +6,9 @@ import com.acon.feature.common.base.BaseContainerHost
 import com.acon.acon.domain.model.spot.SimpleSpot
 import com.acon.acon.domain.repository.UploadRepository
 import com.acon.acon.feature.upload.UploadRoute
+import com.acon.core.analytics.amplitude.AconAmplitude
+import com.acon.core.analytics.constants.EventNames
+import com.acon.core.analytics.constants.PropertyKeys
 import com.acon.feature.common.navigation.simpleSpotNavType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.orbitmvi.orbit.annotation.OrbitExperimental
@@ -37,6 +40,14 @@ class UploadReviewViewModel @Inject constructor(
                 postSideEffect(UploadReviewSideEffect.ShowToast)
                 return@runOn
             }
+            AconAmplitude.trackEvent(
+                eventName = EventNames.UPLOAD,
+                property = PropertyKeys.SPOT_ID to spot.spotId,
+            )
+            AconAmplitude.trackEvent(
+                eventName = EventNames.UPLOAD,
+                property = PropertyKeys.CLICK_REVIEW_ACON to true
+            )
 
             uploadRepository.submitReview(
                 spotId = spot.spotId,

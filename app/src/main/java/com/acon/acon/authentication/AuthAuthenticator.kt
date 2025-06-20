@@ -1,5 +1,8 @@
-package com.acon.acon.data.di
+package com.acon.acon.authentication
 
+import android.content.Context
+import android.content.Intent
+import com.acon.acon.MainActivity
 import com.acon.acon.data.BuildConfig
 import com.acon.acon.data.SessionManager
 import com.acon.acon.data.datasource.local.TokenLocalDataSource
@@ -24,6 +27,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class AuthAuthenticator @Inject constructor(
+    private val context: Context,
     private val tokenLocalDataSource: TokenLocalDataSource,
     private val reissueTokenApi: ReissueTokenApi,
     private val sessionManager: SessionManager
@@ -42,7 +46,7 @@ class AuthAuthenticator @Inject constructor(
             if (currentRefreshToken.isEmpty()) {
                 Timber.tag(TAG).e("저장된 Refresh Token이 없음. 토큰 제거 후 로그인 화면으로 이동")
                 sessionManager.clearSession()
-                goToSignInScreen()
+                startNewTask()
                 return@withLock null
             }
 
@@ -58,7 +62,7 @@ class AuthAuthenticator @Inject constructor(
 
                     if (tokenResponse == null) {
                         sessionManager.clearSession()
-                        goToSignInScreen()
+                        startNewTask()
                         return@withLock null
                     }
 
@@ -68,7 +72,7 @@ class AuthAuthenticator @Inject constructor(
                             Timber.tag(TAG).e("토큰이 비어 있음. 토큰 제거 후 로그인 화면으로 이동")
                         }
                         sessionManager.clearSession()
-                        goToSignInScreen()
+                        startNewTask()
                         return@withLock null
                     }
 
@@ -127,7 +131,7 @@ class AuthAuthenticator @Inject constructor(
                         Timber.tag(TAG).e("토큰 재발급 실패. 토큰 제거 후 로그인 화면으로 이동")
                     }
                     sessionManager.clearSession()
-                    goToSignInScreen()
+                    startNewTask()
                     return@withLock null
                 }
             }
@@ -148,8 +152,11 @@ class AuthAuthenticator @Inject constructor(
     }
 
 
-    private fun goToSignInScreen() {
-
+    private fun startNewTask() {
+        val intent = Intent(context, MainActivity::class.java).apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        }
+        context.startActivity(intent)
     }
 
     companion object {

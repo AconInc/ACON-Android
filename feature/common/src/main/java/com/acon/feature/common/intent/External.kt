@@ -114,3 +114,82 @@ fun Context.openNaverMapNavigationWithMode(
 private const val NAVER_MAP_PACKAGE_NAME = "com.nhn.android.nmap"
 private const val KAKAO_MAP_PACKAGE_NAME = "net.daum.android.map"
 private const val GOOGLE_MAP_PACKAGE_NAME = "com.google.android.apps.maps"
+
+abstract class NavigationAppHandler {
+
+    protected abstract val packageName: String
+    protected abstract val uri: Uri
+
+    fun startNavigationApp(context: Context) {
+        if (isPackageInstalled(context, packageName)) {
+            val intent = Intent(Intent.ACTION_VIEW, uri).apply {
+                setPackage(packageName)
+            }
+            context.startActivity(intent)
+        } else {
+            context.startActivity(
+                Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse("market://details?id=${packageName}")
+                )
+            )
+        }
+    }
+}
+
+class NaverNavigationAppHandler(
+    destination: Location,
+    dName: String,
+    mode: TransportMode?
+): NavigationAppHandler() {
+
+    private val transitBy = when(mode) {
+        TransportMode.WALKING -> "walk"
+        TransportMode.BIKING -> "bicycle"
+        else -> "public"
+    }
+
+    override val packageName: String = "com.nhn.android.nmap"
+    override val uri: Uri = Uri.parse(
+        "nmap://route/$transitBy?" +
+                "dlat=${destination.latitude}&dlng=${destination.longitude}&" +
+                "dname=$dName&" +
+                "appname=$packageName"
+    )
+}
+
+class KakaoNavigationAppHandler(
+    start: Location,
+    destination: Location,
+    mode: TransportMode?
+): NavigationAppHandler() {
+
+    private val transitBy = when(mode) {
+        TransportMode.WALKING -> "FOOT"
+        TransportMode.BIKING -> "FOOT"
+        else -> "PUBLICTRANSIT"
+    }
+
+    override val packageName: String = "net.daum.android.map"
+    override val uri: Uri = Uri.parse(
+        "kakaomap://route?sp=${start.latitude},${start.longitude}&ep=${destination.latitude},${destination.longitude}&by=${transitBy}"
+    )
+
+}
+
+class GoogleNavigationAppHandler(
+    destination: Location,
+    mode: TransportMode?
+): NavigationAppHandler() {
+
+    private val travelMode = when(mode) {
+        TransportMode.WALKING -> "walking"
+        TransportMode.BIKING -> "bicycling"
+        else -> "driving"
+    }
+
+    override val packageName: String = "com.google.android.apps.maps"
+    override val uri: Uri = Uri.parse(
+        "https://www.google.com/maps/dir/?api=1&destination=${destination.latitude},${destination.longitude}&travelmode=${travelMode}"
+    )
+}

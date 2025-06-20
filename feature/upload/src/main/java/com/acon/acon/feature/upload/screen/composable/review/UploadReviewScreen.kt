@@ -17,23 +17,32 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.button.v2.AconFilledTextButton
-import com.acon.acon.core.designsystem.effect.fog.fogBackground
+import com.acon.acon.core.designsystem.effect.effect.shadowLayerBackground
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.feature.upload.screen.UploadReviewUiState
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.rememberLottieComposition
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 private const val MAX_ACORN_COUNT = 5
 
@@ -52,6 +61,10 @@ internal fun UploadReviewScreen(
             state.selectedAcornCount in 1..MAX_ACORN_COUNT
         }
     }
+
+    val haptic = LocalHapticFeedback.current
+    val scope = rememberCoroutineScope()
+    var hapticJob by remember { mutableStateOf<Job?>(null) }
 
     Column(
         modifier = modifier,
@@ -95,7 +108,22 @@ internal fun UploadReviewScreen(
                 AcornIndicator(
                     isSelected = state.selectedAcornCount >= i,
                     onClick = {
-                        onAcornClick(i)
+                        if (state.selectedAcornCount != i) {
+                            hapticJob?.cancel()
+                            hapticJob = scope.launch(Dispatchers.Main.immediate) {
+                                delay(470)
+                                repeat(minOf(i,3)) {
+                                    launch(Dispatchers.Main.immediate) {
+                                        repeat(4) {
+                                            haptic.performHapticFeedback(HapticFeedbackType.Confirm)
+                                            delay(590)
+                                        }
+                                    }
+                                    delay(240L)
+                                }
+                            }
+                            onAcornClick(i)
+                        }
                     },
                 )
             }
@@ -143,10 +171,10 @@ internal fun UploadReviewScreen(
                     .fillMaxHeight()
                     .width(150.dp)
                     .then(
-                        if (state.selectedAcornCount > 0) Modifier.fogBackground(
-                            glowColor = AconTheme.color.PrimaryDefault,
-                            glowAlpha = .4f,
-                            glowRadius = 300f
+                        if (state.selectedAcornCount > 0) Modifier.shadowLayerBackground(
+                            shadowColor = AconTheme.color.PrimaryDefault,
+                            shadowAlpha = .4f,
+                            shadowRadius = 300f
                         ) else Modifier
                     )
             )

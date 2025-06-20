@@ -1,6 +1,5 @@
 package com.acon.acon.data.repository
 
-import android.net.Uri
 import com.acon.acon.core.common.IODispatcher
 import com.acon.acon.data.cache.ProfileInfoCache
 import com.acon.acon.data.datasource.remote.ProfileRemoteDataSource
@@ -24,10 +23,9 @@ import javax.inject.Inject
 
 class ProfileRepositoryImpl @Inject constructor(
     @IODispatcher private val scope: CoroutineScope,
-    private val profileRemoteDataSource: ProfileRemoteDataSource
+    private val profileRemoteDataSource: ProfileRemoteDataSource,
+    private val profileInfoCache: ProfileInfoCache
 ) : ProfileRepository {
-
-    private val profileInfoCache = ProfileInfoCache(scope, profileRemoteDataSource)
 
     override fun fetchProfile(): Flow<Result<ProfileInfo>> {
         return profileInfoCache.data

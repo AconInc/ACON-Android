@@ -63,9 +63,6 @@ class ProfileModViewModel @Inject constructor(
     private fun fetchUserProfileInfo() = intent {
         profileRepository.fetchProfile().collect {
             it.onSuccess { profile ->
-                Log.d("로그", "profile : ${profile.birthDate}")
-                Log.d("로그", "생일 filter x : ${profile.birthDate}")
-                Log.d("로그", "생일 filter o : ${profile.birthDate?.filter { it.isDigit() } ?: ""}")
                 reduce {
                     ProfileModState.Success(
                         fetchedNickname = profile.nickname,

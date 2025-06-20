@@ -14,6 +14,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.acon.acon.core.designsystem.theme.AconTheme
@@ -52,7 +54,11 @@ fun AconFilledTextButton(
     ) {
         Text(
             text = text,
-            style = textStyle
+            style = textStyle,
+            maxLines = 1,
+            textAlign = TextAlign.Center,
+            overflow = TextOverflow.Visible,
+            softWrap = false
         )
     }
 }

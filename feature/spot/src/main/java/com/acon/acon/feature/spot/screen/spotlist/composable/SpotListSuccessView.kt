@@ -1,13 +1,15 @@
 package com.acon.acon.feature.spot.screen.spotlist.composable
 
+import android.location.Location
 import androidx.compose.animation.core.exponentialDecay
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.snapping.SnapPosition
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.PageSize
 import androidx.compose.foundation.pager.PagerDefaults
@@ -17,6 +19,7 @@ import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -35,33 +38,42 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
 import androidx.compose.ui.zIndex
+import com.acon.acon.core.designsystem.R
+import com.acon.acon.core.designsystem.component.bottomsheet.AconBottomSheet
 import com.acon.acon.core.designsystem.effect.LocalHazeState
-import com.acon.acon.core.designsystem.effect.fog.fogBackground
-import com.acon.acon.core.designsystem.effect.fog.getOverlayColor
+import com.acon.acon.core.designsystem.effect.effect.shadowLayerBackground
+import com.acon.acon.core.designsystem.effect.effect.getOverlayColor
+import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.domain.model.spot.v2.Spot
 import com.acon.acon.domain.type.TransportMode
 import com.acon.acon.domain.type.UserType
-import com.acon.acon.core.designsystem.R
 import com.acon.acon.feature.spot.screen.spotlist.SpotListUiStateV2
 import com.acon.core.ads_api.LocalSpotListAdProvider
 import com.acon.feature.common.compose.LocalRequestSignIn
 import com.acon.feature.common.compose.toDp
+import com.acon.feature.common.intent.GoogleNavigationAppHandler
+import com.acon.feature.common.intent.KakaoNavigationAppHandler
+import com.acon.feature.common.intent.NaverNavigationAppHandler
+import com.acon.feature.common.intent.NavigationAppHandler
 import dev.chrisbanes.haze.hazeSource
 import kotlinx.collections.immutable.toImmutableList
 import kotlin.math.absoluteValue
 
 private const val MAX_GUEST_AVAILABLE_COUNT = 5
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun SpotListSuccessView(
     pagerState: PagerState,
     state: SpotListUiStateV2.Success,
     userType: UserType,
-    onSpotClick: (Spot) -> Unit,
+    onSpotClick: (Spot, rank: Int) -> Unit,
     onTryFindWay: (Spot) -> Unit,
     itemHeightPx: Float,
     modifier: Modifier = Modifier,
+    onNavigationAppChoose: (NavigationAppHandler) -> Unit = {},
+    onChooseNavigationAppModalDismiss: () -> Unit = {},
 ) {
 
     val adInsertedSpot: MutableList<Spot?> = state.spotList.toMutableList()
@@ -113,6 +125,80 @@ internal fun SpotListSuccessView(
             pageSize = PageSize.Fixed((itemHeightPx).toDp())
         ) { page ->
             val spot = adInsertedSpot[page]
+
+            if (state.showChooseNavigationAppModal && spot != null && pagerState.currentPage == page) {
+                AconBottomSheet(
+                    onDismissRequest = onChooseNavigationAppModalDismiss
+                ) {
+                    Column(
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(
+                            text = "네이버 지도",
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .noRippleClickable {
+                                    onNavigationAppChoose(
+                                        NaverNavigationAppHandler(
+                                            destination = Location("").apply {
+                                                latitude = spot.latitude
+                                                longitude = spot.longitude
+                                            }, dName = spot.name,
+                                            mode = state.transportMode
+                                        )
+                                    )
+                                }
+                                .padding(vertical = 17.dp, horizontal = 16.dp),
+                            style = AconTheme.typography.Title4,
+                            color = AconTheme.color.White,
+                            fontWeight = FontWeight.W400
+                        )
+                        Text(
+                            text = "카카오 지도",
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .noRippleClickable {
+                                    onNavigationAppChoose(
+                                        KakaoNavigationAppHandler(
+                                            start = state.currentLocation,
+                                            destination = Location("").apply {
+                                                latitude = spot.latitude
+                                                longitude = spot.longitude
+                                            },
+                                            mode = state.transportMode
+                                        )
+                                    )
+                                }
+                                .padding(vertical = 17.dp, horizontal = 16.dp),
+                            style = AconTheme.typography.Title4,
+                            color = AconTheme.color.White,
+                            fontWeight = FontWeight.W400
+                        )
+//                        Text(
+//                            text = "구글 지도",
+//                            modifier = Modifier
+//                                .fillMaxWidth()
+//                                .noRippleClickable {
+//                                    onNavigationAppChoose(
+//                                        GoogleNavigationAppHandler(
+//                                            destination = Location("").apply {
+//                                                latitude = spot.latitude
+//                                                longitude = spot.longitude
+//                                            },
+//                                            mode = state.transportMode
+//                                        )
+//                                    )
+//                                }
+//                                .padding(vertical = 17.dp, horizontal = 16.dp),
+//                            style = AconTheme.typography.Title4,
+//                            color = AconTheme.color.White,
+//                            fontWeight = FontWeight.W400
+//                        )
+                        Spacer(Modifier.height(31.dp))
+                    }
+                }
+            }
+
             var spotFogColor by remember {
                 mutableStateOf(Color.Transparent)
             }
@@ -134,7 +220,8 @@ internal fun SpotListSuccessView(
                             )
                             scaleX = ratio
                             scaleY = ratio
-                        } catch (_: Exception) {}
+                        } catch (_: Exception) {
+                        }
                     }
             ) {
                 if (page == 0) {
@@ -145,9 +232,9 @@ internal fun SpotListSuccessView(
                         color = AconTheme.color.White,
                         modifier = Modifier
                             .padding(bottom = 6.dp)
-                            .fogBackground(
-                                glowColor = AconTheme.color.White,
-                                glowRadius = 100f
+                            .shadowLayerBackground(
+                                shadowColor = AconTheme.color.White,
+                                shadowRadius = 100f
                             )
                             .zIndex(2f)
                     )
@@ -155,33 +242,30 @@ internal fun SpotListSuccessView(
                 if (spot != null) {
                     if (page >= MAX_GUEST_AVAILABLE_COUNT && userType == UserType.GUEST) {
                         SpotGuestItem(
+                            spot = spot,
+                            onItemClick = { onSignInRequired("click_locked_detail_guest?") },
                             modifier = Modifier
                                 .fillMaxSize()
-                                .clip(RoundedCornerShape(20.dp))
-                                .background(
-                                    shape = RoundedCornerShape(20.dp),
-                                    color = AconTheme.color.GlassBlackDefault
+                                .shadowLayerBackground(
+                                    shadowColor = spotFogColor,
+                                    shadowAlpha = 1f
                                 )
-                                .clickable {
-                                    onSignInRequired()
-                                }
-                                .fogBackground(
-                                    glowColor = AconTheme.color.White,
-                                )
+                                .zIndex(1f)
                         )
                     } else {
                         SpotItem(
                             transportMode = state.transportMode,
                             spot = spot,
-                            onItemClick = onSpotClick,
+                            onItemClick = { onSpotClick(spot, page + 1) },
                             onFindWayButtonClick = onTryFindWay,
                             modifier = Modifier
                                 .fillMaxSize()
-                                .fogBackground(
-                                    glowColor = spotFogColor,
-                                    glowAlpha = 1f,
+                                .shadowLayerBackground(
+                                    shadowColor = spotFogColor,
+                                    shadowAlpha = 1f,
                                 )
-                                .zIndex(1f)
+                                .zIndex(1f),
+                            rank = (page + 1).takeIf { it <= 5 } ?: 0
                         )
                     }
                 } else {
