@@ -27,9 +27,6 @@ fun createBranchDeepLink(
         .setChannel("share") // 링크 유입 경로 -> 대시보드에서 볼 수 있음
         .setFeature("spot_detail_share") // 생성된 링크의 목적/기능 -> 대시보드에서 볼 수 있음
         .addControlParameter("\$deeplink_path", "spot/$spotId") // 딥링크 클릭 시 앱의 URI Scheme으로 이동
-        .addControlParameter("\$always_deeplink", "true")
-        .addControlParameter("\$android_deepview", "false")
-        .addControlParameter("\$android_passive_deepview", "false")
 
     // 딥링크 생성
     buo.generateShortUrl(context, lp) { url, error ->
