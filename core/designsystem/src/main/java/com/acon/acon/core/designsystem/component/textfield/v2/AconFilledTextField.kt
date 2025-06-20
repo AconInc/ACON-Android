@@ -44,11 +44,7 @@ fun AconFilledTextField(
             .background(
                 shape = RoundedCornerShape(10.dp),
                 color = AconTheme.color.GlassWhiteDefault
-            ).padding(horizontal = 8.dp, vertical = 10.dp)
-            .defaultHazeEffect(
-                hazeState = LocalHazeState.current,
-                tintColor = AconTheme.color.GlassWhiteDefault,
-            ),
+            ).padding(horizontal = 8.dp, vertical = 10.dp),
         enabled = enabled,
         readOnly = readOnly,
         textStyle = textStyle,
