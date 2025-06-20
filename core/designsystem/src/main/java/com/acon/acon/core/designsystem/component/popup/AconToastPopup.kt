@@ -29,6 +29,8 @@ fun AconToastPopup(
     color: Color = AconTheme.color.Gray900,
     borderColor: Color = AconTheme.color.White.copy(0.6f),
     shape: Shape = RoundedCornerShape(50),
+    horizontalArrangement: Arrangement.Horizontal = Arrangement.Center,
+    contentPadding: PaddingValues = PaddingValues(vertical = 13.dp),
     content: @Composable() (RowScope.() -> Unit)
 ) {
     Row(
@@ -42,9 +44,8 @@ fun AconToastPopup(
             .background(
                 color = color,
                 shape = shape
-            )
-            ,
-        horizontalArrangement = Arrangement.Center,
+            ).padding(contentPadding),
+        horizontalArrangement = horizontalArrangement,
         verticalAlignment = Alignment.CenterVertically
     ) {
         content()

@@ -25,11 +25,11 @@
     <string name="top">Top %d</string>
 
     <!-- Etc -->
-    <string name="restart">재시작</string>
+    <string name="restart">마무리 하기</string>
     <string name="update">업데이트</string>
     <string name="update_required_title">필수적인 업데이트가 있습니다</string>
     <string name="update_available_title">최선 버전 업데이트가 가능합니다</string>
-    <string name="update_complete">최신 버전을 이용할 수 있어요</string>
+    <string name="update_complete">업데이트가 거의 끝났어요</string>
 
     <!-- Button component -->
     <string name="sign_in_btn_preview_content">button</string>

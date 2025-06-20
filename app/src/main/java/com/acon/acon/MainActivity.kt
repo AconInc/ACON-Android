@@ -24,11 +24,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -38,10 +36,14 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import com.acon.acon.core.common.DeepLinkHandler
+import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.bottomsheet.SignInBottomSheet
 import com.acon.acon.core.designsystem.component.dialog.AconPermissionDialog
+import com.acon.acon.core.designsystem.component.dialog.v2.AconDefaultDialog
+import com.acon.acon.core.designsystem.component.dialog.v2.AconTwoActionDialog
 import com.acon.acon.core.designsystem.effect.LocalHazeState
 import com.acon.acon.core.designsystem.effect.rememberHazeState
 import com.acon.acon.core.designsystem.theme.AconTheme
@@ -64,6 +66,7 @@ import com.acon.feature.common.compose.LocalRequestSignIn
 import com.acon.feature.common.compose.LocalSnackbarHostState
 import com.acon.feature.common.compose.LocalUserType
 import com.acon.feature.common.coroutine.firstNotNull
+import com.acon.feature.common.intent.launchPlayStore
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.RequestConfiguration
 import com.google.android.gms.common.api.ResolvableApiException
@@ -75,6 +78,7 @@ import com.google.android.gms.location.LocationSettingsRequest
 import com.google.android.gms.location.Priority
 import com.google.android.gms.location.SettingsClient
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
+import com.google.android.play.core.appupdate.AppUpdateOptions
 import com.google.android.play.core.install.InstallStateUpdatedListener
 import com.google.android.play.core.install.model.ActivityResult
 import com.google.android.play.core.install.model.AppUpdateType
@@ -95,11 +99,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 import javax.inject.Inject
-import com.acon.acon.core.designsystem.R
-import com.acon.acon.core.designsystem.component.dialog.v2.AconDefaultDialog
-import com.acon.acon.core.designsystem.component.dialog.v2.AconTwoActionDialog
-import com.acon.feature.common.intent.launchPlayStore
-import com.google.android.play.core.appupdate.AppUpdateOptions
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -138,41 +137,11 @@ class MainActivity : ComponentActivity() {
         initialValue = null
     )
 
-    private val updateStateFlow = flow {
-        val shouldUpdateAppDeferred = lifecycleScope.async {
-            val currentAppVersion = try {
-                val packageInfo = application.packageManager.getPackageInfo(application.packageName, 0)
-                packageInfo.versionName
-            } catch (e: Exception) {
-                null
-            }
-            currentAppVersion?.let { v ->
-                aconAppRepository.shouldUpdateApp(v).getOrElse { false }
-            }
-        }
-
-        appUpdateInfo.firstNotNull().let { updateInfo ->
-            if (updateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE) {
-                if (shouldUpdateAppDeferred.await() == true) { // 2. 강제 업데이트 (스토어 이동)
-                    emit(UpdateState.FORCE)
-                } else if (updateInfo.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE)) { // 3. 선택적 업데이트 (인앱)
-                    emit(UpdateState.OPTIONAL)
-                } else if (updateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)) {  // 1. 강제 업데이트 (인앱)
-                    // Not used
-                }
-            }
-        }
-    }.stateIn(
-        scope = lifecycleScope,
-        started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = UpdateState.NONE
-    )
-
     private val appInstallStateListener by lazy {
         InstallStateUpdatedListener { state ->
             if (state.installStatus() == InstallStatus.DOWNLOADED) {
                 lifecycleScope.launch {
-                    val result = snackbarHostState.showSnackbar(
+                    val result = viewModel.state.value.snackbarHostState.showSnackbar(
                         message = getString(R.string.update_complete),
                         actionLabel = getString(R.string.restart)
                     )
@@ -187,7 +156,6 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-    private val snackbarHostState = SnackbarHostState()
     private val appUpdateActivityResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
             if (result.resultCode == RESULT_OK) {   // Immediate에서는 받을 일 없음
@@ -325,6 +293,34 @@ class MainActivity : ComponentActivity() {
 
         checkGPS()
 
+
+        lifecycleScope.launch {
+            val shouldUpdateAppDeferred = lifecycleScope.async {
+                val currentAppVersion = try {
+                    val packageInfo =
+                        application.packageManager.getPackageInfo(application.packageName, 0)
+                    packageInfo.versionName
+                } catch (e: Exception) {
+                    null
+                }
+                currentAppVersion?.let { v ->
+                    aconAppRepository.shouldUpdateApp(v).getOrElse { false }
+                }
+            }
+
+            appUpdateInfo.firstNotNull().let { updateInfo ->
+                if (updateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE) {
+                    if (shouldUpdateAppDeferred.await() == true) { // 2. 강제 업데이트 (스토어 이동)
+                        viewModel.shouldUpdate()
+                    } else if (updateInfo.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE)) { // 3. 선택적 업데이트 (인앱)
+                        viewModel.canOptionalUpdate()
+                    } else if (updateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)) {  // 1. 강제 업데이트 (인앱)
+                        // Not used
+                    }
+                }
+            }
+        }
+
         setContent {
             AconTheme {
                 val appState by viewModel.state.collectAsStateWithLifecycle()
@@ -333,11 +329,9 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 val hazeState = rememberHazeState()
 
-                CheckAndRequireUpdate()
-
                 CompositionLocalProvider(
                     LocalLocation provides currentLocation,
-                    LocalSnackbarHostState provides snackbarHostState,
+                    LocalSnackbarHostState provides appState.snackbarHostState,
                     LocalNavController provides navController,
                     LocalHazeState provides hazeState,
                     LocalUserType provides appState.userType,
@@ -405,6 +399,7 @@ class MainActivity : ComponentActivity() {
                             _isLocationPermissionGranted.value = true
                         }
                     )
+                CheckAndRequireUpdate(appState)
             }
         }
     }
@@ -464,43 +459,32 @@ class MainActivity : ComponentActivity() {
     }
 
     @Composable
-    private fun CheckAndRequireUpdate() {
-        val updateState by updateStateFlow.collectAsStateWithLifecycle()
-        var showOptionalUpdateModal by rememberSaveable { mutableStateOf(false) }
-
-        when (updateState) {
-            UpdateState.FORCE -> {
-                AconDefaultDialog(
-                    title = stringResource(R.string.update_required_title),
-                    action = stringResource(R.string.update),
-                    onAction = { launchPlayStore() },
-                    onDismissRequest = {}
-                )
-            }
-
-            UpdateState.OPTIONAL -> {
-                showOptionalUpdateModal = true
-            }
-
-            UpdateState.NONE -> Unit
+    private fun CheckAndRequireUpdate(appState: AconAppState) {
+        if (appState.showForceUpdateModal) {
+            AconDefaultDialog(
+                title = stringResource(R.string.update_required_title),
+                action = stringResource(R.string.update),
+                onAction = { launchPlayStore() },
+                onDismissRequest = {}
+            )
         }
 
-        if (showOptionalUpdateModal) {
+        if (appState.showOptionalUpdateModal) {
             AconTwoActionDialog(
                 title = stringResource(R.string.update_available_title),
                 action1 = stringResource(R.string.cancel),
                 action2 = stringResource(R.string.update),
                 onAction1 = {
-                    showOptionalUpdateModal = false
+                    viewModel.dismissOptionalUpdateModal()
                 }, onAction2 = {
-                    showOptionalUpdateModal = false
+                    viewModel.dismissOptionalUpdateModal()
                     appUpdateManager.startUpdateFlowForResult(
                         appUpdateInfo.value ?: return@AconTwoActionDialog,
                         appUpdateActivityResultLauncher,
                         AppUpdateOptions.defaultOptions(AppUpdateType.FLEXIBLE)
                     )
                 }, onDismissRequest = {
-                    showOptionalUpdateModal = false
+                    viewModel.dismissOptionalUpdateModal()
                 }
             ) {
                 Text(
@@ -521,8 +505,4 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-}
-
-enum class UpdateState {
-    FORCE, OPTIONAL, NONE
 }

@@ -1,5 +1,7 @@
 package com.acon.acon.navigation
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -24,6 +26,7 @@ import com.acon.acon.core.designsystem.animation.defaultExitTransition
 import com.acon.acon.core.designsystem.animation.defaultPopEnterTransition
 import com.acon.acon.core.designsystem.animation.defaultPopExitTransition
 import com.acon.acon.core.designsystem.component.popup.AconToastPopup
+import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.domain.model.spot.SpotNavigationParameter
 import com.acon.acon.feature.signin.screen.SignInRoute
@@ -96,14 +99,26 @@ fun AconNavigation(
             ) { snackbarData: SnackbarData ->
                 AconToastPopup(
                     shape = RoundedCornerShape(8.dp),
+                    horizontalArrangement = if(snackbarData.visuals.actionLabel != null) Arrangement.Start else Arrangement.Center,
+                    contentPadding = PaddingValues(vertical = 13.dp, horizontal = 12.dp),
                     content = {
                         Text(
                             text = snackbarData.visuals.message,
                             color = AconTheme.color.White,
                             style = AconTheme.typography.Body1,
                             textAlign = TextAlign.Center,
-                            modifier = Modifier.padding(vertical = 16.dp)
                         )
+                        if (snackbarData.visuals.actionLabel != null) {
+                            Spacer(Modifier.weight(1f))
+                            Text(
+                                text = snackbarData.visuals.actionLabel!!,
+                                color = AconTheme.color.Action,
+                                style = AconTheme.typography.Body1,
+                                modifier = Modifier.noRippleClickable {
+                                    snackbarData.performAction()
+                                }
+                            )
+                        }
                     }
                 )
             }

@@ -1,5 +1,6 @@
 package com.acon.acon
 
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -39,12 +40,27 @@ class MainViewModel @Inject constructor(
     fun updateAmplPropertyKey(key: String) {
         _state.value = state.value.copy(propertyKey = key)
     }
+
+    fun canOptionalUpdate() {
+        _state.value = state.value.copy(showOptionalUpdateModal = true)
+    }
+
+    fun shouldUpdate() {
+        _state.value = state.value.copy(showForceUpdateModal = true)
+    }
+
+    fun dismissOptionalUpdateModal() {
+        _state.value = state.value.copy(showOptionalUpdateModal = false)
+    }
 }
 
 @Immutable
 data class AconAppState(
+    val snackbarHostState: SnackbarHostState = SnackbarHostState(),
     val userType: UserType = UserType.GUEST,
     val showSignInBottomSheet: Boolean = false,
     val showPermissionDialog: Boolean = false,
     val propertyKey: String = "",
+    val showForceUpdateModal: Boolean = false,
+    val showOptionalUpdateModal: Boolean = false
 )
