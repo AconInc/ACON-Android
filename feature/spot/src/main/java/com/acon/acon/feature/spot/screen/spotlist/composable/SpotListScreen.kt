@@ -18,14 +18,12 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
@@ -54,6 +52,7 @@ import com.acon.feature.common.compose.LocalOnRetry
 import com.acon.feature.common.compose.LocalRequestSignIn
 import com.acon.feature.common.compose.LocalUserType
 import com.acon.feature.common.compose.getScreenHeight
+import com.acon.feature.common.intent.NavigationAppHandler
 import dev.chrisbanes.haze.hazeSource
 import kotlinx.collections.immutable.toImmutableSet
 import kotlinx.coroutines.launch
@@ -63,8 +62,10 @@ internal fun SpotListScreen(
     state: SpotListUiStateV2,
     modifier: Modifier = Modifier,
     onSpotTypeChanged: (SpotType) -> Unit = {},
-    onSpotClick: (Spot) -> Unit = {},
+    onSpotClick: (Spot, rank: Int) -> Unit = { _, _ -> },
     onTryFindWay: (Spot) -> Unit = {},
+    onNavigationAppChoose: (NavigationAppHandler) -> Unit = {},
+    onChooseNavigationAppModalDismiss: () -> Unit = {},
     onFilterButtonClick: () -> Unit = {},
     onFilterModalDismissRequest: () -> Unit = {},
     onRestaurantFilterSaved: (Map<FilterDetailKey, Set<RestaurantFilterType>>) -> Unit = {},
@@ -106,7 +107,7 @@ internal fun SpotListScreen(
                 selectedType = state.selectedSpotType,
                 onSwitched = {
                     if (userType == UserType.GUEST)
-                        onSignInRequired()
+                        onSignInRequired("click_toggle_guest?")
                     else
                         onSpotTypeChanged(it)
                 },
@@ -122,7 +123,7 @@ internal fun SpotListScreen(
                     .padding(end = 16.dp)
                     .noRippleClickable {
                         if (userType == UserType.GUEST)
-                            onSignInRequired()
+                            onSignInRequired("")
                         else
                             onFilterButtonClick()
                     }
@@ -153,11 +154,6 @@ internal fun SpotListScreen(
         ) {
             when (state) {
                 is SpotListUiStateV2.Success -> {
-                    LaunchedEffect(state.spotList) {
-                        if (state.spotList.isNotEmpty()) {
-                            pagerState.scrollToPage(0)
-                        }
-                    }
                     Box(Modifier.fillMaxSize()) {
                         when (state.selectedSpotType) {
                             SpotType.RESTAURANT -> {
@@ -181,6 +177,8 @@ internal fun SpotListScreen(
                                     onTryFindWay = onTryFindWay,
                                     itemHeightPx = itemHeightPx,
                                     modifier = Modifier.fillMaxSize(),
+                                    onNavigationAppChoose = onNavigationAppChoose,
+                                    onChooseNavigationAppModalDismiss = onChooseNavigationAppModalDismiss
                                 )
                             }
 
@@ -205,6 +203,8 @@ internal fun SpotListScreen(
                                     onTryFindWay = onTryFindWay,
                                     itemHeightPx = itemHeightPx,
                                     modifier = Modifier.fillMaxSize(),
+                                    onNavigationAppChoose = onNavigationAppChoose,
+                                    onChooseNavigationAppModalDismiss = onChooseNavigationAppModalDismiss
                                 )
                             }
                         }
@@ -230,7 +230,7 @@ internal fun SpotListScreen(
                         .fillMaxSize()
                         .padding(
                             horizontal = 16.dp,
-                            vertical = 30.dp
+                            vertical = 48.dp
                         )
                 )
 
@@ -262,7 +262,7 @@ internal fun SpotListScreen(
                     }
                     BottomNavType.UPLOAD -> {
                         if (userType == UserType.GUEST) {
-                            onSignInRequired()
+                            onSignInRequired("click_upload_guest?")
                         } else {
                             onNavigateToUploadScreen()
                         }

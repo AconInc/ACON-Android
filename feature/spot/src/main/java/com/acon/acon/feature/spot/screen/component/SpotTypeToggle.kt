@@ -37,11 +37,9 @@ internal fun SpotTypeToggle(
     Row(
         modifier = modifier
             .clip(RoundedCornerShape(50))
-            .background(
-                color = AconTheme.color.GlassWhiteDefault,
-            ).defaultHazeEffect(
+            .defaultHazeEffect(
                 hazeState = LocalHazeState.current,
-                tintColor = AconTheme.color.GlassWhiteDefault
+                tintColor = AconTheme.color.Gray800
             ).height(IntrinsicSize.Min),
         verticalAlignment = Alignment.CenterVertically
     ) {

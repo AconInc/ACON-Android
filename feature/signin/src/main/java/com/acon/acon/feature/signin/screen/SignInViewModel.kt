@@ -4,6 +4,7 @@ import com.acon.acon.domain.repository.UserRepository
 import com.acon.acon.domain.type.UserType
 import com.acon.feature.common.base.BaseContainerHost
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.collectLatest
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.viewmodel.container
 import javax.inject.Inject
@@ -27,6 +28,13 @@ class SignInViewModel @Inject constructor(
                     postSideEffect(SignInSideEffect.NavigateToAreaVerification)
                 else
                     postSideEffect(SignInSideEffect.NavigateToSpotListView)
+            }
+        }
+        userType.collectLatest {
+            if (it == UserType.GUEST) {
+                reduce {
+                    SignInUiState.SignIn(showSignInInfo = true)
+                }
             }
         }
     }

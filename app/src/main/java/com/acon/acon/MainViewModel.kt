@@ -35,6 +35,10 @@ class MainViewModel @Inject constructor(
     fun updateShowPermissionDialog(show: Boolean) {
         _state.value = state.value.copy(showPermissionDialog = show)
     }
+
+    fun updateAmplPropertyKey(key: String) {
+        _state.value = state.value.copy(propertyKey = key)
+    }
 }
 
 @Immutable
@@ -42,4 +46,5 @@ data class AconAppState(
     val userType: UserType = UserType.GUEST,
     val showSignInBottomSheet: Boolean = false,
     val showPermissionDialog: Boolean = false,
+    val propertyKey: String = "",
 )

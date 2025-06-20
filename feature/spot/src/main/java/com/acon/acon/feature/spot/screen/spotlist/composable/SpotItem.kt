@@ -1,6 +1,8 @@
 package com.acon.acon.feature.spot.screen.spotlist.composable
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,6 +16,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -21,7 +24,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -43,13 +49,22 @@ import com.acon.acon.core.common.utils.toLocalTime
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.button.v2.AconFilledButton
 import com.acon.acon.core.designsystem.component.tag.AconTag
+import com.acon.acon.core.designsystem.effect.LocalHazeState
+import com.acon.acon.core.designsystem.effect.defaultHazeEffect
+import com.acon.acon.core.designsystem.effect.imageGradientBottomLayer
 import com.acon.acon.core.designsystem.effect.imageGradientLayer
+import com.acon.acon.core.designsystem.effect.imageGradientTopLayer
 import com.acon.acon.core.designsystem.image.rememberDefaultLoadImageErrorPainter
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.domain.model.spot.v2.Spot
 import com.acon.acon.domain.type.TagType
 import com.acon.acon.domain.type.TransportMode
+import com.acon.acon.domain.type.UserType
+import com.acon.acon.feature.spot.mock.spotListUiStateRestaurantMock
 import com.acon.acon.feature.spot.screen.component.OperationDot
+import com.acon.feature.common.compose.LocalRequestSignIn
+import com.acon.feature.common.compose.LocalUserType
+import dev.chrisbanes.haze.hazeSource
 
 @Composable
 internal fun SpotItem(
@@ -58,6 +73,7 @@ internal fun SpotItem(
     onItemClick: (Spot) -> Unit,
     onFindWayButtonClick: (Spot) -> Unit,
     modifier: Modifier = Modifier,
+    rank: Int = 0,
 ) {
     Card(
         modifier = modifier,
@@ -78,7 +94,7 @@ internal fun SpotItem(
                     .fillMaxSize()
                     .then(
                         if (spot.image.isNotBlank()) {
-                            Modifier.imageGradientLayer()
+                            Modifier.imageGradientTopLayer(ratio = .5f).imageGradientBottomLayer()
                         } else {
                             Modifier
                         }
@@ -86,6 +102,7 @@ internal fun SpotItem(
             )
             SpotInfo(
                 spot = spot,
+                rank = rank,
                 transportMode = transportMode,
                 onFindWayButtonClick = onFindWayButtonClick,
                 modifier = Modifier
@@ -99,10 +116,14 @@ internal fun SpotItem(
 @Composable
 private fun SpotInfo(
     spot: Spot,
+    rank: Int,
     transportMode: TransportMode,
     onFindWayButtonClick: (Spot) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+
+    val onSignInRequired = LocalRequestSignIn.current
+    val userType = LocalUserType.current
 
     Column(
         modifier = modifier
@@ -142,14 +163,22 @@ private fun SpotInfo(
             modifier = Modifier.padding(top = 8.dp),
             horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            spot.tags.fastForEach { tagType ->
+            spot.tags.sortedBy {
+                it.ordinal
+            }.fastForEach { tagType ->
                 AconTag(
-                    text = tagType.name.replace("_", " "),
+                    text = tagType.name,
                     backgroundColor = when (tagType) {
                         TagType.NEW -> AconTheme.color.TagNew
                         TagType.LOCAL -> AconTheme.color.TagLocal
                         else -> AconTheme.color.Gray900
                     }
+                )
+            }
+            if (rank >= 1) {
+                AconTag(
+                    text = stringResource(R.string.top, rank),
+                    backgroundColor = AconTheme.color.Gray900
                 )
             }
         }
@@ -178,14 +207,33 @@ private fun SpotInfo(
 
         Spacer(modifier = Modifier.weight(1f))
         AconFilledButton(
-            modifier = Modifier.align(Alignment.End),
+            modifier = Modifier.align(Alignment.CenterHorizontally),
             onClick = {
-                onFindWayButtonClick(spot)
+                if (userType == UserType.GUEST)
+                    onSignInRequired("click_home_navigation_guest?")
+                else
+                    onFindWayButtonClick(spot)
             },
             contentPadding = PaddingValues(
-                horizontal = 23.dp,
-                vertical = 8.dp
+                horizontal = 58.dp,
+                vertical = 12.dp
             ),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = AconTheme.color.Gray900.copy(alpha = .8f),
+                contentColor = AconTheme.color.White,
+            ),
+            border = BorderStroke(
+                width = 1.dp,
+                brush = Brush.horizontalGradient(
+                    colors = listOf(
+                        AconTheme.color.PrimaryDefault,
+                        Color(0xFF4CBD01),
+                        AconTheme.color.White
+                    ),
+                    startX = 0f,
+                    endX = Float.POSITIVE_INFINITY
+                )
+            )
         ) {
             Text(
                 text = stringResource(
@@ -268,32 +316,56 @@ private fun SpotImage(
 
 @Composable
 fun SpotGuestItem(
-    modifier: Modifier = Modifier
+    spot: Spot,
+    onItemClick: (Spot) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-    Column(
+    Card(
         modifier = modifier,
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+        shape = RoundedCornerShape(20.dp),
+        onClick = { onItemClick(spot) }
     ) {
-        Icon(
-            imageVector = ImageVector.vectorResource(R.drawable.ic_lock),
-            contentDescription = null,
-            tint = AconTheme.color.GlassWhiteSelected
-        )
-        Text(
-            text = stringResource(R.string.require_sign_in_for_more),
-            style = AconTheme.typography.Body1,
-            fontWeight = FontWeight.W400,
-            color = AconTheme.color.White,
-            modifier = Modifier.padding(top = 10.dp),
-        )
-        Text(
-            text = stringResource(R.string.go_to_sign_in),
-            style = AconTheme.typography.Body1,
-            fontWeight = FontWeight.SemiBold,
-            color = AconTheme.color.Action,
-            modifier = Modifier.padding(top = 20.dp),
-        )
+        Box(Modifier) {
+            AsyncImage(
+                model = ImageRequest
+                    .Builder(LocalContext.current)
+                    .crossfade(true)
+                    .data(spot.image)
+                    .scale(Scale.FILL)
+                    .build(),
+                contentDescription = spot.name,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.blur(
+                    radius = 40.dp,
+                ).fillMaxSize(),
+                error = rememberDefaultLoadImageErrorPainter()
+            )
+            Column(
+                modifier = Modifier.fillMaxSize().background(AconTheme.color.GlassBlackDefault),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_lock),
+                    contentDescription = null,
+                    tint = AconTheme.color.GlassWhiteSelected
+                )
+                Text(
+                    text = stringResource(R.string.require_sign_in_for_more),
+                    style = AconTheme.typography.Body1,
+                    fontWeight = FontWeight.W400,
+                    color = AconTheme.color.White,
+                    modifier = Modifier.padding(top = 10.dp),
+                )
+                Text(
+                    text = stringResource(R.string.go_to_sign_in),
+                    style = AconTheme.typography.Body1,
+                    fontWeight = FontWeight.SemiBold,
+                    color = AconTheme.color.Action,
+                    modifier = Modifier.padding(top = 20.dp),
+                )
+            }
+        }
     }
 }
 
@@ -319,7 +391,8 @@ private fun SpotItemV2Preview() {
         onFindWayButtonClick = {},
         modifier = Modifier
             .height(600.dp)
-            .clipToBounds()
+            .clipToBounds(),
+        rank = 1
     )
 }
 
@@ -345,7 +418,8 @@ private fun SpotItemV2EmptyImagePreview() {
         onFindWayButtonClick = {},
         modifier = Modifier
             .height(600.dp)
-            .clipToBounds()
+            .clipToBounds(),
+        rank = 3
     )
 }
 
@@ -355,6 +429,8 @@ private fun SpotGuestItemPreview() {
     SpotGuestItem(
         modifier = Modifier
             .fillMaxWidth()
-            .height(600.dp)
+            .height(600.dp),
+        onItemClick = {},
+        spot = spotListUiStateRestaurantMock.spotList[0]
     )
 }

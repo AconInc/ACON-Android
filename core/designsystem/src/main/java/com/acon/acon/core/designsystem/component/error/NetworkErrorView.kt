@@ -31,7 +31,7 @@ fun NetworkErrorView(
         verticalArrangement = Arrangement.Center
     ) {
         Icon(
-            imageVector = ImageVector.vectorResource(R.drawable.ic_wifi),
+            imageVector = ImageVector.vectorResource(R.drawable.ic_caution),
             contentDescription = null,
             modifier = Modifier.size(48.dp),
             tint = AconTheme.color.Gray50

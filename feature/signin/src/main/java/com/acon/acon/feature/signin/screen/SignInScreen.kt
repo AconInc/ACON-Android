@@ -43,6 +43,9 @@ import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.domain.type.UserType
 import com.acon.acon.feature.signin.screen.component.SignInTopBar
 import com.acon.acon.feature.signin.utils.SplashAudioManager
+import com.acon.core.analytics.amplitude.AconAmplitude
+import com.acon.core.analytics.constants.EventNames
+import com.acon.core.analytics.constants.PropertyKeys
 import com.acon.feature.common.compose.LocalDeepLinkHandler
 import com.acon.feature.common.compose.LocalUserType
 import com.acon.feature.common.compose.getScreenHeight
@@ -178,12 +181,19 @@ fun SignInScreen(
                                     scope.launch {
                                         socialRepository.googleSignIn()
                                             .onSuccess {
+                                                AconAmplitude.trackEvent(
+                                                    eventName = EventNames.SIGN_IN,
+                                                    properties = mapOf(
+                                                        PropertyKeys.SIGN_IN_OR_NOT to true
+                                                    )
+                                                )
                                                 if (it.hasVerifiedArea) {
                                                     navigateToSpotListView()
                                                 } else {
                                                     navigateToAreaVerification()
                                                 }
-                                            }.onFailure {}
+                                            }.onFailure {
+                                            }
                                     }
                                 }
                             }

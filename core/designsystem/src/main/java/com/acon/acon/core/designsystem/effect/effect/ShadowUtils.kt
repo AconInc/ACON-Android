@@ -1,7 +1,8 @@
-package com.acon.acon.core.designsystem.effect.fog
+package com.acon.acon.core.designsystem.effect.effect
 
 import android.content.Context
 import android.graphics.Paint
+import androidx.compose.runtime.Stable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
@@ -12,10 +13,11 @@ import com.acon.acon.core.designsystem.image.toBitmap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-fun Modifier.fogBackground(
-    glowColor: Color,
-    glowAlpha: Float = .16f,
-    glowRadius: Float = 200f,
+@Stable
+fun Modifier.shadowLayerBackground(
+    shadowColor: Color,
+    shadowAlpha: Float = .16f,
+    shadowRadius: Float = 200f,
 ): Modifier {
     return this.drawBehind {
         val size = this.size
@@ -30,10 +32,10 @@ fun Modifier.fogBackground(
                 Paint().apply {
                     color = Color.Transparent.toArgb()
                     setShadowLayer(
-                        glowRadius,
+                        shadowRadius,
                         0f,
                         0f,
-                        glowColor.copy(alpha = glowAlpha).toArgb()
+                        shadowColor.copy(alpha = shadowAlpha).toArgb()
                     )
                 },
             )

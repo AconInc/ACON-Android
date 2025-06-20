@@ -1,10 +1,10 @@
 package com.acon.acon.feature.upload.screen.composable.search
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -26,7 +26,10 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
@@ -50,6 +53,9 @@ import com.acon.acon.domain.model.upload.UploadSpotSuggestion
 import com.acon.acon.domain.model.upload.SearchedSpot
 import com.acon.acon.feature.upload.mock.uploadSearchUiStateMock
 import com.acon.acon.feature.upload.screen.UploadSearchUiState
+import com.acon.core.analytics.amplitude.AconAmplitude
+import com.acon.core.analytics.constants.EventNames
+import com.acon.core.analytics.constants.PropertyKeys
 import com.acon.feature.common.type.getNameResId
 import dev.chrisbanes.haze.hazeSource
 import kotlinx.collections.immutable.ImmutableList
@@ -58,7 +64,7 @@ import kotlinx.collections.immutable.toImmutableList
 @Composable
 internal fun UploadSearchScreen(
     state: UploadSearchUiState,
-    onSearchQueryChanged: (String) -> Unit,
+    onSearchQueryChanged: (String, isSelection: Boolean) -> Unit,
     onSearchedSpotClick: (SearchedSpot, onSuccess: () -> Unit) -> Unit,
     onSuggestionSpotClick: (UploadSpotSuggestion, onSuccess: () -> Unit) -> Unit,
     onVerifyLocationDialogAction: () -> Unit,
@@ -67,9 +73,14 @@ internal fun UploadSearchScreen(
     modifier: Modifier = Modifier,
 ) {
 
+    val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
+
     val hazeState = rememberHazeState()
 
     var query by rememberSaveable(stateSaver = TextFieldValue.Saver) { mutableStateOf(TextFieldValue("")) }
+    var isSelection by remember { mutableStateOf(false) }
+
     val isNextActionEnabled by remember(state) {
         derivedStateOf {
             when (state) {
@@ -81,12 +92,17 @@ internal fun UploadSearchScreen(
 
     LaunchedEffect(Unit) {
         snapshotFlow { query }.collect {
-            onSearchQueryChanged(it.text)
+            onSearchQueryChanged(it.text, isSelection)
         }
     }
 
     Column(
-        modifier = modifier,
+        modifier = modifier.pointerInput(Unit) {
+            detectTapGestures(onTap = {
+                keyboardController?.hide()
+                focusManager.clearFocus()
+            })
+        },
     ) {
         UploadTopAppBar(
             isRightActionEnabled = isNextActionEnabled,
@@ -127,7 +143,10 @@ internal fun UploadSearchScreen(
                 ) {
                     AconSearchTextField(
                         value = query,
-                        onValueChange = { query = it },
+                        onValueChange = {
+                            query = it
+                            isSelection = false
+                        },
                         placeholder = stringResource(R.string.search_spot_placeholder),
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -144,6 +163,7 @@ internal fun UploadSearchScreen(
                                     title = it.name,
                                     onClick = {
                                         onSuggestionSpotClick(it) {
+                                            isSelection = true
                                             query = TextFieldValue(text = it.name, selection = TextRange(it.name.length))
                                         }
                                     },
@@ -158,6 +178,7 @@ internal fun UploadSearchScreen(
                                 searchedSpots = state.searchedSpots.toImmutableList(),
                                 onItemClick = {
                                     onSearchedSpotClick(it) {
+                                        isSelection = true
                                         query = TextFieldValue(text = it.name, selection = TextRange(it.name.length))
                                     }
                                 },
@@ -231,6 +252,10 @@ private fun SearchedSpots(
                         modifier = Modifier
                             .padding(top = 20.dp)
                             .noRippleClickable {
+                                AconAmplitude.trackEvent(
+                                    eventName = EventNames.UPLOAD,
+                                    property = PropertyKeys.CLICK_REGISTER_FORM to true
+                                )
                                 try {
                                     uriHandler.openUri(UrlConstants.REQUEST_NEW_SPOT_UPLOAD)
                                 } catch (e: Exception) {
@@ -294,7 +319,7 @@ private fun SearchedSpotItem(
 private fun UploadSearchScreenPreview() {
     UploadSearchScreen(
         state = uploadSearchUiStateMock,
-        onSearchQueryChanged = {},
+        onSearchQueryChanged = { _, _ -> },
         onBackAction = {},
         onNextAction = {},
         onSearchedSpotClick = {_, _ ->},

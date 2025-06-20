@@ -1,5 +1,6 @@
 package com.acon.acon.data.repository
 
+import com.acon.acon.data.cache.ProfileInfoCache
 import com.acon.acon.data.datasource.remote.SpotRemoteDataSource
 import com.acon.acon.data.dto.request.AddBookmarkRequest
 import com.acon.acon.data.dto.request.ConditionRequest
@@ -20,11 +21,14 @@ import com.acon.acon.domain.model.spot.Condition
 import com.acon.acon.domain.model.spot.MenuBoardList
 import com.acon.acon.domain.model.spot.SpotDetail
 import com.acon.acon.domain.model.spot.v2.SpotList
+import com.acon.acon.domain.repository.ProfileRepository
 import com.acon.acon.domain.repository.SpotRepository
 import javax.inject.Inject
 
 class SpotRepositoryImpl @Inject constructor(
-    private val spotRemoteDataSource: SpotRemoteDataSource
+    private val spotRemoteDataSource: SpotRemoteDataSource,
+    private val profileInfoCache: ProfileInfoCache,
+    private val profileRepository: ProfileRepository
 ) : SpotRepository {
 
     override suspend fun fetchSpotList(
@@ -101,12 +105,26 @@ class SpotRepositoryImpl @Inject constructor(
     override suspend fun addBookmark(spotId: Long): Result<Unit> {
         return runCatchingWith(*AddBookmarkError.createErrorInstances()) {
             spotRemoteDataSource.addBookmark(AddBookmarkRequest(spotId))
+
+            profileRepository.fetchSavedSpots().onSuccess { fetched ->
+                (profileInfoCache.data.value.getOrNull()
+                    ?: return@onSuccess).let { profileInfo ->
+                    profileInfoCache.updateData(profileInfo.copy(savedSpots = fetched))
+                }
+            }
         }
     }
 
     override suspend fun deleteBookmark(spotId: Long): Result<Unit> {
         return runCatchingWith(*DeleteBookmarkError.createErrorInstances()) {
             spotRemoteDataSource.deleteBookmark(spotId)
+
+            profileRepository.fetchSavedSpots().onSuccess { fetched ->
+                (profileInfoCache.data.value.getOrNull()
+                    ?: return@onSuccess).let { profileInfo ->
+                    profileInfoCache.updateData(profileInfo.copy(savedSpots = fetched))
+                }
+            }
         }
     }
 }

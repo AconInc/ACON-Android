@@ -1,7 +1,10 @@
 package com.acon.feature.ads_impl
 
 import android.annotation.SuppressLint
-import android.view.LayoutInflater
+import android.view.Gravity
+import android.view.ViewGroup
+import android.widget.FrameLayout
+import android.widget.TextView
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -39,6 +43,7 @@ import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdLoader
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.LoadAdError
+import com.google.android.gms.ads.nativead.AdChoicesView
 import com.google.android.gms.ads.nativead.MediaView
 import com.google.android.gms.ads.nativead.NativeAd
 import com.google.android.gms.ads.nativead.NativeAdOptions
@@ -81,18 +86,46 @@ private fun SpotListNativeAd(modifier: Modifier) {
     when(adUiState) {
         is AdUiState.Success -> {
             val ad = (adUiState as AdUiState.Success).nativeAd
-            Box(modifier) {
+            Box(modifier.sizeIn(minHeight = 125.dp, minWidth = 125.dp)) {
                 AndroidView(
                     modifier = Modifier.fillMaxSize(),
-                    factory = {
-                        LayoutInflater.from(it)
-                            .inflate(R.layout.native_ad_layout, null)
-                    }, update = { view ->
-                        val nativeAdView = view as NativeAdView
+                    factory = { context ->
+                        val nativeAdView = NativeAdView(context)
+                        val layout = FrameLayout(context).apply {
+                            layoutParams = FrameLayout.LayoutParams(
+                                ViewGroup.LayoutParams.MATCH_PARENT,
+                                ViewGroup.LayoutParams.MATCH_PARENT
+                            )
+                        }
+
+                        val mediaView = MediaView(context).apply {
+                            layoutParams = FrameLayout.LayoutParams(
+                                ViewGroup.LayoutParams.MATCH_PARENT,
+                                ViewGroup.LayoutParams.MATCH_PARENT
+                            )
+                        }
+                        nativeAdView.mediaView = mediaView
+                        layout.addView(mediaView)
+
+                        val headlineView = TextView(context)
+                        nativeAdView.headlineView = headlineView
+                        layout.addView(headlineView)
+
+                        val adChoicesView = AdChoicesView(context)
+                        nativeAdView.adChoicesView = adChoicesView
+                        val adChoicesLayoutParams = FrameLayout.LayoutParams(
+                            FrameLayout.LayoutParams.WRAP_CONTENT,
+                            FrameLayout.LayoutParams.WRAP_CONTENT
+                        ).apply {
+                            gravity = Gravity.TOP or Gravity.END
+                        }
+                        layout.addView(adChoicesView, adChoicesLayoutParams)
+
+                        nativeAdView.addView(layout)
                         nativeAdView.setNativeAd(ad)
-                        nativeAdView.mediaView = view.findViewById(R.id.ad_media)
-                        (nativeAdView.mediaView as MediaView).mediaContent = ad.mediaContent
-                        nativeAdView.adChoicesView = view.findViewById(R.id.ad_choices_view)
+                        nativeAdView
+                    }, update = { view ->
+                        view.setNativeAd(ad)
                     }
                 )
 

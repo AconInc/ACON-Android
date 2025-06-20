@@ -42,6 +42,8 @@ import com.acon.acon.feature.spot.SpotRoute
 import com.acon.acon.navigation.AconNavigation
 import com.acon.core.ads_api.AdProvider
 import com.acon.core.ads_api.LocalSpotListAdProvider
+import com.acon.core.analytics.amplitude.AconAmplitude
+import com.acon.core.analytics.constants.EventNames
 import com.acon.feature.ads_impl.SpotListAdProvider
 import com.acon.feature.common.compose.LocalDeepLinkHandler
 import com.acon.feature.common.compose.LocalLocation
@@ -271,6 +273,7 @@ class MainActivity : ComponentActivity() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             installSplashScreen()
         }
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
 
         Branch.sessionBuilder(this).withCallback { buo, _, error ->
@@ -294,7 +297,6 @@ class MainActivity : ComponentActivity() {
             Timber.plant(Timber.DebugTree())
         }
 
-        enableEdgeToEdge()
         val windowInsetsController = WindowCompat.getInsetsController(window, window.decorView)
         windowInsetsController.isAppearanceLightStatusBars = false
 
@@ -316,7 +318,10 @@ class MainActivity : ComponentActivity() {
                     LocalNavController provides navController,
                     LocalHazeState provides hazeState,
                     LocalUserType provides appState.userType,
-                    LocalRequestSignIn provides { viewModel.updateShowSignInBottomSheet(true) },
+                    LocalRequestSignIn provides {
+                        viewModel.updateShowSignInBottomSheet(true)
+                        viewModel.updateAmplPropertyKey(it)
+                    },
                     LocalRequestLocationPermission provides ::requestLocationPermission,
                     LocalSpotListAdProvider provides spotListAdProvider,
                     LocalDeepLinkHandler provides deepLinkHandler
@@ -352,6 +357,14 @@ class MainActivity : ComponentActivity() {
                                                     }
                                                 }
                                             }
+                                            if(appState.propertyKey.isNotBlank()) {
+                                                AconAmplitude.trackEvent(
+                                                    eventName = EventNames.GUEST,
+                                                    property = appState.propertyKey to true
+                                                )
+                                                Timber.d("dddd  " + appState.propertyKey)
+                                            }
+                                            AconAmplitude.setUserId(it.externalUUID)
                                         }.onFailure {
 
                                         }

@@ -31,6 +31,9 @@ import com.acon.acon.feature.settings.component.SettingSectionVersionItem
 import com.acon.acon.feature.settings.screen.SettingsUiState
 import com.acon.acon.feature.settings.type.SettingsType
 import com.acon.acon.feature.withdraw.amplitude.deleteAccountAmplitudeSettingsToWithDraw
+import com.acon.core.analytics.amplitude.AconAmplitude
+import com.acon.core.analytics.constants.EventNames
+import com.acon.core.analytics.constants.PropertyKeys
 import com.acon.feature.common.compose.getScreenWidth
 import dev.chrisbanes.haze.hazeSource
 
@@ -72,8 +75,11 @@ fun SettingsScreen(
                         onDismissRequest = { onLogoutDialogShowStateChange(false) },
                         onAction1 = { onLogoutDialogShowStateChange(false) },
                         onAction2 = {
+                            AconAmplitude.trackEvent(
+                                eventName = EventNames.SERVICE_WITHDRAW,
+                                property = PropertyKeys.CLICK_SIGN_OUT to true
+                            )
                             onSignOut()
-                            settingsAmplitudeSignOut()
                         },
                         modifier = Modifier.width(dialogWidth)
                     )
@@ -173,8 +179,11 @@ fun SettingsScreen(
                     SettingSectionItem(
                         settingsType = SettingsType.DELETE_ACCOUNT,
                         onClickContinue = {
+                            AconAmplitude.trackEvent(
+                                eventName = EventNames.SERVICE_WITHDRAW,
+                                property = PropertyKeys.CLICK_EXIT_SERVICE to true
+                            )
                             onDeleteAccountScreen()
-                            deleteAccountAmplitudeSettingsToWithDraw()
                         }
                     )
                 }

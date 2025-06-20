@@ -17,6 +17,7 @@ dependencies {
 
     implementation(projects.domain)
     implementation(projects.feature.common)
+    implementation(projects.core.analytics)
     implementation(projects.core.designsystem)
     implementation(projects.core.utils.feature)
 }

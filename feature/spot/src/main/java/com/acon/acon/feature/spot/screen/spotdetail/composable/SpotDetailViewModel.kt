@@ -11,6 +11,9 @@ import com.acon.acon.domain.type.TagType
 import com.acon.acon.domain.type.TransportMode
 import com.acon.acon.domain.type.UserType
 import com.acon.acon.feature.spot.SpotRoute
+import com.acon.core.analytics.amplitude.AconAmplitude
+import com.acon.core.analytics.constants.EventNames
+import com.acon.core.analytics.constants.PropertyKeys
 import com.acon.feature.common.base.BaseContainerHost
 import com.acon.feature.common.navigation.spotNavigationParameterNavType
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,6 +21,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.viewmodel.container
+import java.time.LocalTime
 import javax.annotation.concurrent.Immutable
 import javax.inject.Inject
 
@@ -32,6 +36,15 @@ class SpotDetailViewModel @Inject constructor(
     private val spotNavData = savedStateHandle.toRoute<SpotRoute.SpotDetail>(
         mapOf(spotNavigationParameterNavType)
     ).spotNavigationParameter
+
+    private val entryTimeMillis = System.currentTimeMillis()
+
+    override fun onCleared() {
+        AconAmplitude.trackEvent(
+            eventName = EventNames.DETAIL_PAGE,
+            property = PropertyKeys.PLACE_DETAIL_DURATION to ((System.currentTimeMillis() - entryTimeMillis) / 1000)
+        )
+    }
 
     override val container =
         container<SpotDetailUiState, SpotDetailSideEffect>(SpotDetailUiState.Loading) {

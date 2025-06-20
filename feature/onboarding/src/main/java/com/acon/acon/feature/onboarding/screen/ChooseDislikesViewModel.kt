@@ -2,9 +2,11 @@ package com.acon.acon.feature.onboarding.screen
 
 import androidx.compose.runtime.Immutable
 import com.acon.acon.domain.repository.OnboardingRepository
-import com.acon.feature.common.base.BaseContainerHost
 import com.acon.acon.domain.type.FoodType
+import com.acon.feature.common.base.BaseContainerHost
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.viewmodel.container
 import javax.inject.Inject
@@ -28,6 +30,29 @@ class ChooseDislikesViewModel @Inject constructor(
                     selectedDislikes = if (isNoneSelectedToBe) emptySet() else state.selectedDislikes
                 )
             }
+        }
+    }
+
+    fun showStopModal() = intent {
+        runOn<ChooseDislikesUiState.Success> {
+            reduce {
+                state.copy(
+                    showStopModal = true
+                )
+            }
+        }
+    }
+
+    fun dismissStopModal(onComplete: () -> Unit) = intent {
+        runOn<ChooseDislikesUiState.Success> {
+            reduce {
+                state.copy(
+                    showStopModal = false
+                )
+            }
+        }
+        withContext(Dispatchers.Main) {
+            onComplete()
         }
     }
 
@@ -81,6 +106,7 @@ sealed interface ChooseDislikesUiState {
     data class Success(
         val isNoneChosen: Boolean = false,
         val selectedDislikes: Set<FoodType> = emptySet(),
+        val showStopModal: Boolean = false
     ) : ChooseDislikesUiState
 }
 

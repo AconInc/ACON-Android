@@ -7,7 +7,7 @@ import com.amplitude.android.Amplitude
 import com.amplitude.android.Configuration
 import com.amplitude.android.events.Identify
 
-internal class AconAmplitude: EventTracker() {
+object AconAmplitude: EventTracker() {
     private lateinit var amplitude: Amplitude
 
     override val TEST_API_KEY = BuildConfig.AMPLITUDE_API_TEST_KEY
@@ -18,8 +18,17 @@ internal class AconAmplitude: EventTracker() {
      * @param userId 사용자 ID
      */
     override fun setUserId(userId: String) {
-        if (!::amplitude.isInitialized) {
+        if (::amplitude.isInitialized) {
             amplitude.setUserId(userId)
+        }
+    }
+
+    /**
+     * 사용자 ID 초기화
+     */
+    override fun clearUserId() {
+        if (::amplitude.isInitialized) {
+            amplitude.setUserId(null)
         }
     }
 
@@ -33,6 +42,12 @@ internal class AconAmplitude: EventTracker() {
     override fun trackEvent(eventName: String, properties: Map<String, Any>) {
         if (::amplitude.isInitialized) {
             amplitude.track(eventName, properties)
+        }
+    }
+
+    fun trackEvent(eventName: String, property: Pair<String, Any>) {
+        if (::amplitude.isInitialized) {
+            trackEvent(eventName, mapOf(property))
         }
     }
 
@@ -56,7 +71,7 @@ internal class AconAmplitude: EventTracker() {
         if (!::amplitude.isInitialized) {
             amplitude = Amplitude(
                 Configuration(
-                    getApiKey(),
+                    apiKey = apiKey,
                     context = context,
                     useBatch = true,
                 )

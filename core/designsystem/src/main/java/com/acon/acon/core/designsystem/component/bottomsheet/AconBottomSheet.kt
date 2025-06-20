@@ -13,8 +13,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
@@ -46,7 +48,7 @@ fun AconBottomSheet(
     ),
     sheetMaxWidth: Dp = BottomSheetDefaults.SheetMaxWidth,
     shape: Shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
-    containerColor: Color = AconTheme.color.Gray900,
+    containerColor: Color = AconTheme.color.Gray800,
     contentColor: Color = AconTheme.color.White,
     tonalElevation: Dp = 0.dp,
     scrimColor: Color = BottomSheetDefaults.ScrimColor,
@@ -87,6 +89,7 @@ fun AconBottomSheet(
     ) {
         Column(
             modifier = Modifier
+                .verticalScroll(rememberScrollState())
                 .then(
                     if (useGlassMorphism) {
                         Modifier

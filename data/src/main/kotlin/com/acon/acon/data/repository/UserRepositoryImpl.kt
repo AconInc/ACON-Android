@@ -1,7 +1,5 @@
 package com.acon.acon.data.repository
 
-import com.acon.acon.core.utils.feature.amplitude.AconAmplitude
-import com.acon.acon.core.utils.feature.amplitude.AconTestAmplitude
 import com.acon.acon.data.SessionManager
 import com.acon.acon.data.datasource.local.TokenLocalDataSource
 import com.acon.acon.data.datasource.remote.UserRemoteDataSource
@@ -18,6 +16,7 @@ import com.acon.acon.domain.model.user.VerificationStatus
 import com.acon.acon.domain.repository.UserRepository
 import com.acon.acon.domain.type.SocialType
 import com.acon.acon.domain.type.UserType
+import com.acon.core.analytics.amplitude.AconAmplitude
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -45,12 +44,6 @@ class UserRepositoryImpl @Inject constructor(
 
             sessionManager.saveAccessToken(signInResponse.accessToken.orEmpty())
             tokenLocalDataSource.saveRefreshToken(signInResponse.refreshToken.orEmpty())
-
-            AconAmplitude.setUserProperty(signInResponse.externalUUID)
-            AconAmplitude.setUserId(signInResponse.externalUUID)
-
-            AconTestAmplitude.setUserProperty(signInResponse.externalUUID)
-            AconTestAmplitude.setUserId(signInResponse.externalUUID)
 
             signInResponse.toVerificationStatus()
         }
