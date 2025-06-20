@@ -20,8 +20,8 @@ interface SpotRepository {
     ): Result<Unit>
 
     suspend fun fetchSpotDetail(
-         spotId: Long,
-         isDeepLink: Boolean,
+        spotId: Long,
+        isDeepLink: Boolean,
     ): Result<SpotDetail>
 
     suspend fun getLegalDong(
@@ -32,6 +32,10 @@ interface SpotRepository {
     suspend fun fetchMenuBoards(
         spotId: Long
     ): Result<MenuBoardList>
+
+    suspend fun fetchSpotDetailFromUser(
+        spotId: Long
+    ): Result<SpotDetail>
 
     suspend fun fetchSavedSpotList(): Result<List<SavedSpot>>
 

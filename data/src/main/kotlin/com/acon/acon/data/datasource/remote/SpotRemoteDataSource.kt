@@ -37,6 +37,10 @@ class SpotRemoteDataSource @Inject constructor(
         return spotNoAuthApi.fetchMenuBoards(spotId)
     }
 
+    suspend fun fetchSpotDetailFromUser(spotId: Long): SpotDetailResponse {
+        return spotAuthApi.fetchSpotDetailFromUser(spotId)
+    }
+
     suspend fun fetchSavedSpotList(): SavedSpotsResponse {
         return spotAuthApi.fetchSavedSpotList()
     }

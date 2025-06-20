@@ -84,6 +84,12 @@ class SpotRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun fetchSpotDetailFromUser(spotId: Long): Result<SpotDetail> {
+        return runCatchingWith(*GetSpotDetailInfoError.createErrorInstances()) {
+            spotRemoteDataSource.fetchSpotDetailFromUser(spotId).toSpotDetail()
+        }
+    }
+
     override suspend fun fetchSavedSpotList(): Result<List<SavedSpot>> {
         return runCatchingWith() {
             spotRemoteDataSource.fetchSavedSpotList().savedSpotResponseList?.map {
