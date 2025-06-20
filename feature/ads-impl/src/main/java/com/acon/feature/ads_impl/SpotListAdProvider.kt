@@ -65,7 +65,7 @@ private fun SpotListNativeAd(modifier: Modifier) {
     var adUiState by remember { mutableStateOf<AdUiState>(AdUiState.Loading) }
 
     DisposableEffect(Unit) {
-        val adLoader = AdLoader.Builder(context, BuildConfig.ADMOB_ID_ALL)
+        val adLoader = AdLoader.Builder(context, BuildConfig.NATIVE_ADMOB_ID)
             .forNativeAd { ad ->
                 adUiState = AdUiState.Success(ad)
             }

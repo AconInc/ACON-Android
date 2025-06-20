@@ -17,7 +17,7 @@ android {
         buildConfigField("String", "AMPLITUDE_API_TEST_KEY", "\"${localProperties["AMPLITUDE_API_TEST_KEY"]}\"")
         buildConfigField("String", "AMPLITUDE_API_PRODUCTION_KEY", "\"${localProperties["AMPLITUDE_API_PRODUCTION_KEY"]}\"")
 
-        buildConfigField("String", "ADMOB_ID_ALL", "\"${localProperties["native_admob_id_all"]}\"")
+        buildConfigField("String", "NATIVE_ADMOB_ID", "\"${localProperties["native_admob_id"]}\"")
         buildConfigField("String", "SAMPLE_NATIVE_ADMOB_ID", "\"${localProperties["sample_native_admob_id"]}\"")
     }
 }
