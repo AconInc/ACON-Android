@@ -121,9 +121,7 @@ internal fun SpotDetailScreen(
                 if (state.isAreaVerified) {
                     deepLinkHandler.clear()
                     onNavigateToBack()
-                } else if (deepLinkHandler.hasDeepLink.value
-                    && userType == UserType.USER
-                ) {
+                } else if (deepLinkHandler.hasDeepLink.value && userType == UserType.USER) {
                     deepLinkHandler.clear()
                     onBackToAreaVerification()
                 } else {
@@ -252,9 +250,7 @@ internal fun SpotDetailScreen(
                                     if (state.isAreaVerified) {
                                         deepLinkHandler.clear()
                                         onNavigateToBack()
-                                    } else if (deepLinkHandler.hasDeepLink.value
-                                        && userType == UserType.USER
-                                    ) {
+                                    } else if (deepLinkHandler.hasDeepLink.value && userType == UserType.USER) {
                                         deepLinkHandler.clear()
                                         onBackToAreaVerification()
                                     } else {
@@ -400,7 +396,7 @@ internal fun SpotDetailScreen(
                                             type = "text/plain"
                                             putExtra(
                                                 Intent.EXTRA_TEXT,
-                                                "Acon에서 내 근처 ${state.spotDetail.name} 확인해보세요!$branchLink"
+                                                "\uD83D\uDC8C Acon에서 ${state.spotDetail.name} 확인해 보세요.\n$branchLink"
                                             )
                                         },
                                         null
@@ -409,13 +405,13 @@ internal fun SpotDetailScreen(
                                 }
                             },
                             onClickBookmark = {
-                                if (state.isFromDeepLink == true && userType == UserType.GUEST) {
+                                if (userType == UserType.GUEST) {
                                     onSignInRequired("")
                                 } else {
                                     onClickBookmark()
                                 }
                             },
-                            isBookmarkSelected = if (state.isFromDeepLink == true && userType == UserType.GUEST) false else state.spotDetail.isSaved,
+                            isBookmarkSelected = if (userType == UserType.GUEST) false else state.spotDetail.isSaved,
                             isMenuBoardEnabled = state.spotDetail.hasMenuboardImage
                         )
                     }
