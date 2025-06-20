@@ -64,34 +64,11 @@
                     android:scheme="https"
                     android:host="${app_domain}-alternate.app.link" />
             </intent-filter>
-
-            <!-- Branch App Links (Test App) -->
-            <intent-filter android:autoVerify="true">
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data
-                    android:scheme="https"
-                    android:host="${app_domain}.test-app.link" />
-                <data
-                    android:scheme="https"
-                    android:host="${app_domain}-alternate.test-app.link" />
-            </intent-filter>
         </activity>
 
-        <!-- Branch init -->
         <meta-data
             android:name="io.branch.sdk.BranchKey"
             android:value="key_live_${branchIoKey}" />
-        <meta-data
-            android:name="io.branch.sdk.BranchKey.test"
-            android:value="key_test_${branchIoKey}" />
-        <meta-data
-            android:name="io.branch.sdk.TestMode"
-            android:value="false" />
-
         <meta-data
             android:name="com.naver.maps.map.NCP_KEY_ID"
             android:value="${naverClientId}" />
