@@ -158,7 +158,12 @@ internal fun SpotListScreen(
                         when (state.selectedSpotType) {
                             SpotType.RESTAURANT -> {
                                 pagerState = rememberPagerState {
-                                    state.spotList.size + if (state.spotList.size >= 10) 2 else 1
+                                    val size = state.spotList.size
+                                    when {
+                                        size >= 11 -> size + 2
+                                        size >= 5  -> size + 1
+                                        else       -> size
+                                    }
                                 }
                                 if (state.showFilterModal) {
                                     RestaurantFilterBottomSheet(
@@ -184,7 +189,12 @@ internal fun SpotListScreen(
 
                             SpotType.CAFE -> {
                                 pagerState = rememberPagerState {
-                                    state.spotList.size + if (state.spotList.size >= 10) 2 else 1
+                                    val size = state.spotList.size
+                                    when {
+                                        size >= 11 -> size + 2
+                                        size >= 5  -> size + 1
+                                        else       -> size
+                                    }
                                 }
                                 if (state.showFilterModal) {
                                     CafeFilterBottomSheet(

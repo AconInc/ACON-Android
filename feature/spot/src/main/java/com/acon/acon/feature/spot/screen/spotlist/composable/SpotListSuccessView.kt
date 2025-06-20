@@ -123,7 +123,7 @@ internal fun SpotListSuccessView(
             beyondViewportPageCount = 1,
             pageSize = PageSize.Fixed((itemHeightPx).toDp())
         ) { page ->
-            val spot = adInsertedSpot[page]
+            val spot = adInsertedSpot.getOrNull(page)
 
             if (state.showChooseNavigationAppModal && spot != null && pagerState.currentPage == page) {
                 AconBottomSheet(
