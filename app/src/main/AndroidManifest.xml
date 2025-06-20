@@ -40,10 +40,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
-            <!--  Branch URI Scheme --> <!-- 딥링크 테스트용 scheme, ${app_name} -->
             <intent-filter>
                 <data
-                    android:scheme="acon"
+                    android:scheme="${app_name} "
                     android:host="spot" />
                 <action android:name="android.intent.action.VIEW" />
 
