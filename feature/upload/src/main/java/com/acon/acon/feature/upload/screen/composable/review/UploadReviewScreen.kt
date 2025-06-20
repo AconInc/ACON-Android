@@ -96,11 +96,18 @@ internal fun UploadReviewScreen(
         }
 
         Text(
-            text = stringResource(R.string.introduce_drop_acorn),
-            style = AconTheme.typography.Title2,
+            text = state.spot.name,
+            style = AconTheme.typography.Title3,
             color = AconTheme.color.White,
             fontWeight = FontWeight.SemiBold,
-            modifier = Modifier.padding(top = 35.dp)
+            modifier = Modifier.padding(top = 37.dp)
+        )
+        Text(
+            text = stringResource(R.string.introduce_drop_acorn),
+            style = AconTheme.typography.Title5,
+            color = AconTheme.color.White,
+            fontWeight = FontWeight.SemiBold,
+            modifier = Modifier.padding(top = 8.dp)
         )
 
         Row(modifier = Modifier.padding(top = 24.dp)) {
@@ -173,8 +180,8 @@ internal fun UploadReviewScreen(
                     .then(
                         if (state.selectedAcornCount > 0) Modifier.shadowLayerBackground(
                             shadowColor = AconTheme.color.PrimaryDefault,
-                            shadowAlpha = .4f,
-                            shadowRadius = 300f
+                            shadowAlpha = .6f,
+                            shadowRadius = 1000f,
                         ) else Modifier
                     )
             )
