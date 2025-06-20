@@ -30,7 +30,7 @@ fun AconToastPopup(
     borderColor: Color = AconTheme.color.White.copy(0.6f),
     shape: Shape = RoundedCornerShape(50),
     horizontalArrangement: Arrangement.Horizontal = Arrangement.Center,
-    contentPadding: PaddingValues = PaddingValues(vertical = 13.dp),
+    contentPadding: PaddingValues = PaddingValues(vertical = 0.dp),
     content: @Composable() (RowScope.() -> Unit)
 ) {
     Row(
