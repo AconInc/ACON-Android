@@ -38,6 +38,7 @@ import coil3.compose.AsyncImage
 import com.acon.acon.core.designsystem.component.button.v2.AconFilledButton
 import com.acon.acon.core.designsystem.effect.imageGradientLayer
 import com.acon.acon.core.designsystem.theme.AconTheme
+import com.acon.acon.core.utils.feature.BuildConfig
 import com.acon.core.ads_api.AdProvider
 import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdLoader
@@ -64,7 +65,7 @@ private fun SpotListNativeAd(modifier: Modifier) {
     var adUiState by remember { mutableStateOf<AdUiState>(AdUiState.Loading) }
 
     DisposableEffect(Unit) {
-        val adLoader = AdLoader.Builder(context, "ca-app-pub-3940256099942544/2247696110")
+        val adLoader = AdLoader.Builder(context, BuildConfig.ADMOB_ID_ALL)
             .forNativeAd { ad ->
                 adUiState = AdUiState.Success(ad)
             }

@@ -12,6 +12,7 @@ android {
 dependencies {
     implementation(projects.core.adsApi)
     implementation(projects.core.designsystem)
+    implementation(projects.core.utils.feature)
 
     implementation(libs.google.services.ads)
 }
