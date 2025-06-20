@@ -53,7 +53,7 @@ fun NavGraphBuilder.areaVerificationNavigation(
                 onNavigateToNext = {
                     if (route.route == "settings") {
                         context.showToast("인증 되었습니다")
-                        navController.popBackStack(route = SettingsRoute.LocalVerification, inclusive = true)
+                        navController.popBackStack(route = SettingsRoute.LocalVerification, inclusive = false)
                     } else {
                         navController.navigate(OnboardingRoute.Graph) {
                             popUpTo(0) { inclusive = true }
