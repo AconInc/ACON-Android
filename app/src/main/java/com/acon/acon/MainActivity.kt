@@ -17,8 +17,10 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
@@ -29,6 +31,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -497,7 +502,16 @@ class MainActivity : ComponentActivity() {
                 }, onDismissRequest = {
                     showOptionalUpdateModal = false
                 }
-            )
+            ) {
+                Text(
+                    text = "업데이트 중에도\n 앱을 계속 이용할 수 있습니다",
+                    style = AconTheme.typography.Body1,
+                    color = AconTheme.color.Gray200,
+                    fontWeight = FontWeight.W400,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(bottom = 22.dp)
+                )
+            }
         }
 
         DisposableEffect(appUpdateManager) {
