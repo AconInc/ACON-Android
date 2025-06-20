@@ -76,18 +76,17 @@ internal fun SpotListSuccessView(
     onChooseNavigationAppModalDismiss: () -> Unit = {},
 ) {
 
-    val adInsertedSpot: MutableList<Spot?> = state.spotList.toMutableList()
-    when {
-        adInsertedSpot.size >= 11 -> {
-            adInsertedSpot.add(5, null)
-            adInsertedSpot.add(10, null)
+    val adInsertedSpot = remember(state.spotList) {
+        val list: MutableList<Spot?> = state.spotList.toMutableList()
+
+        if (list.size >= 11) {
+            list.add(11, null)
         }
-        adInsertedSpot.size >= 6 -> {
-            adInsertedSpot.add(5, null)
+        if (list.size >= 5) {
+            list.add(5, null)
         }
-        else -> {
-            adInsertedSpot.add(null)
-        }
+
+        list
     }
 
     val context = LocalContext.current
