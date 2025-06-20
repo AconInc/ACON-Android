@@ -119,6 +119,7 @@ internal fun SpotDetailScreen(
         is SpotDetailUiState.Success -> {
             BackHandler {
                 if (state.isAreaVerified) {
+                    deepLinkHandler.clear()
                     onNavigateToBack()
                 } else if (deepLinkHandler.hasDeepLink.value
                     && userType == UserType.USER
@@ -249,6 +250,7 @@ internal fun SpotDetailScreen(
                             IconButton(
                                 onClick = {
                                     if (state.isAreaVerified) {
+                                        deepLinkHandler.clear()
                                         onNavigateToBack()
                                     } else if (deepLinkHandler.hasDeepLink.value
                                         && userType == UserType.USER

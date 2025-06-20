@@ -28,6 +28,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -35,6 +36,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
+import coil3.request.crossfade
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.dialog.v2.AconTwoActionDialog
 import com.acon.acon.core.designsystem.component.topbar.AconTopBar
@@ -44,6 +46,7 @@ import com.acon.acon.core.utils.feature.permission.media.CheckAndRequestMediaPer
 import com.acon.acon.feature.profile.composable.screen.MediaPermissionBottomSheet
 import com.acon.acon.feature.profile.composable.screen.galleryGrid.GalleryGridUiState
 import com.acon.feature.common.compose.getScreenWidth
+import kotlin.math.roundToInt
 
 @Composable
 internal fun GalleryGridScreen(
@@ -413,17 +416,22 @@ private fun PhotoItem(
     onClick: () -> Unit,
 ) {
     val configuration = LocalConfiguration.current
+    val density = LocalDensity.current
+
     val screenWidthDp = configuration.screenWidthDp
-    val itemSize = (screenWidthDp - ((columns - 1) * spacing)) / columns
+    val itemSizeDp = ((screenWidthDp - ((columns - 1) * spacing)) / columns).dp
+    val itemSizePx = with(density) { itemSizeDp.toPx().roundToInt() }
 
     Box(
         modifier = Modifier
-            .size(itemSize.dp)
+            .size(itemSizeDp)
             .noRippleClickable { onClick() }
     ) {
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
                 .data(uri)
+                .size(itemSizePx)
+                .crossfade(true)
                 .build(),
             contentDescription = stringResource(R.string.content_description_photo),
             modifier = Modifier.fillMaxSize(),
