@@ -192,6 +192,7 @@ fun SignInScreen(
                                                 } else {
                                                     navigateToAreaVerification()
                                                 }
+                                                AconAmplitude.setUserId(it.externalUUID)
                                             }.onFailure {
                                             }
                                     }
