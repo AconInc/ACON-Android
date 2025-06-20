@@ -38,7 +38,7 @@ class SpotDetailViewModel @Inject constructor(
             userType.collect {
                 when (it) {
                     UserType.GUEST -> {
-                        if (spotNavData.isFromDeepLink != null && spotNavData.isFromDeepLink != false) {
+                        if (spotNavData.isFromDeepLink == true) {
                             fetchedSpotDetail()
                         } else {
                             reduce { SpotDetailUiState.LoadFailed() }
@@ -54,24 +54,33 @@ class SpotDetailViewModel @Inject constructor(
 
     private fun fetchedSpotDetail() = intent {
         delay(800)
-        val spotDetailInfoDeferred = viewModelScope.async {
-            spotRepository.fetchSpotDetail(
-                spotId = spotNavData.spotId,
-                isDeepLink =
-                when {
-                    userType.value == UserType.USER -> true
-                    userType.value == UserType.GUEST && spotNavData.isFromDeepLink == true -> true
-                    else -> false
-                }
-            )
+
+        // 딥링크 접속 && UserType == GUEST 경우에만 isDeepLink = true
+        val isDeepLinkGuest = userType.value == UserType.GUEST && spotNavData.isFromDeepLink == true
+        val spotDetailDeferred = viewModelScope.async {
+            if (isDeepLinkGuest) {
+                spotRepository.fetchSpotDetail(
+                    spotId = spotNavData.spotId,
+                    isDeepLink = true
+                )
+            } else {
+                spotRepository.fetchSpotDetailFromUser(
+                    spotId = spotNavData.spotId
+                )
+            }
         }
 
-        val fetchVerifiedAreaListDeferred = viewModelScope.async {
-            userRepository.fetchVerifiedAreaList()
+        // GUEST 인 경우 빈 리스트
+        val verifiedAreaListDeferred = viewModelScope.async {
+            if (userType.value != UserType.GUEST) {
+                userRepository.fetchVerifiedAreaList()
+            } else {
+                Result.success(emptyList())
+            }
         }
 
-        val spotDetailResult = spotDetailInfoDeferred.await()
-        val verifiedAreaListResult = fetchVerifiedAreaListDeferred.await()
+        val spotDetailResult = spotDetailDeferred.await()
+        val verifiedAreaListResult = verifiedAreaListDeferred.await()
 
         reduce {
             val isAreaVerified = verifiedAreaListResult
