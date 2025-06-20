@@ -38,6 +38,7 @@ import com.acon.acon.navigation.nested.uploadNavigation
 import com.acon.feature.common.compose.LocalDeepLinkHandler
 import com.acon.feature.common.compose.LocalNavController
 import com.acon.feature.common.compose.LocalSnackbarHostState
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 
@@ -60,6 +61,7 @@ fun AconNavigation(
                     deepLinkHandler.spotIdFlow
                         .firstOrNull { it > 0 }
                         ?.let { spotId ->
+                            delay(400)
                             navController.navigate(
                                 SpotRoute.SpotDetail(
                                     SpotNavigationParameter(
@@ -82,7 +84,7 @@ fun AconNavigation(
         onDispose {
             lifecycleOwner.lifecycle.removeObserver(observer)
         }
-}
+    }
 
     Scaffold(
         containerColor = AconTheme.color.Gray9,

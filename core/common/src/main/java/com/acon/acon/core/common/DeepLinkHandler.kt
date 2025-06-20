@@ -20,8 +20,8 @@ class DeepLinkHandler {
     private val _isWarmStart = MutableStateFlow(false)
     val isWarmStart = _isWarmStart.asStateFlow()
 
-    fun handleDeepLink(metadata: Map<String, Any?>,  isWarm: Boolean = false) {
-        val spotIdKey = metadata.keys.firstOrNull { it.startsWith("spot/") }
+    fun handleDeepLink(metadata: Map<String, Any?>, isWarm: Boolean = false) {
+        val spotIdKey = metadata.keys.firstOrNull { it == "spotId" }
         val spotIdValue = spotIdKey?.let { metadata[it]?.toString()?.toLongOrNull() }
 
         if (spotIdValue != null) {
