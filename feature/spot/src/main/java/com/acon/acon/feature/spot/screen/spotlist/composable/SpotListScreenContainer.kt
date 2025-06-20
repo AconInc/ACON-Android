@@ -18,6 +18,7 @@ import com.acon.feature.common.compose.LocalDeepLinkHandler
 import com.acon.feature.common.compose.LocalOnRetry
 import com.acon.feature.common.compose.LocalRequestSignIn
 import com.acon.feature.common.compose.LocalUserType
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.filter
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
@@ -28,7 +29,7 @@ fun SpotListScreenContainer(
     onNavigateToProfileScreen: () -> Unit,
     onNavigateToSpotDetailScreen: (Spot, TransportMode) -> Unit,
     modifier: Modifier = Modifier,
-    onNavigateToDeeplinkSpotDetailScreen:(spotNav: SpotNavigationParameter) -> Unit = {},
+    onNavigateToDeeplinkSpotDetailScreen: (spotNav: SpotNavigationParameter) -> Unit = {},
     viewModel: SpotListViewModel = hiltViewModel()
 ) {
     val state by viewModel.collectAsState()
@@ -42,6 +43,7 @@ fun SpotListScreenContainer(
         deepLinkHandler.spotIdFlow
             .filter { it != -1L }
             .collect { spotId ->
+                delay(400)
                 onNavigateToDeeplinkSpotDetailScreen(
                     SpotNavigationParameter(
                         spotId = spotId,
@@ -86,9 +88,11 @@ fun SpotListScreenContainer(
             is SpotListSideEffectV2.ShowToastMessage -> {
                 // Handle the side effect here
             }
+
             is SpotListSideEffectV2.NavigateToSpotDetailScreen -> {
                 onNavigateToSpotDetailScreen(it.spot, it.transportMode)
             }
+
             is SpotListSideEffectV2.NavigateToExternalMap -> {
                 it.handler.startNavigationApp(context)
             }
