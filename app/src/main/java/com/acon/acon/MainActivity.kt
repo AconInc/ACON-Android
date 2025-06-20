@@ -18,13 +18,11 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -36,7 +34,6 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import com.acon.acon.core.common.DeepLinkHandler
 import com.acon.acon.core.designsystem.R
@@ -67,8 +64,6 @@ import com.acon.feature.common.compose.LocalSnackbarHostState
 import com.acon.feature.common.compose.LocalUserType
 import com.acon.feature.common.coroutine.firstNotNull
 import com.acon.feature.common.intent.launchPlayStore
-import com.google.android.gms.ads.MobileAds
-import com.google.android.gms.ads.RequestConfiguration
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -277,12 +272,6 @@ class MainActivity : ComponentActivity() {
                 deepLinkHandler.handleDeepLink(metadata)
             }
         }.withData(intent?.data).init()
-
-        // TODO - 현재 기기를 테스트 디바이스로 등록 -> 테스트 광고 노출
-        val testDevices =
-            listOf("559854319F9393CE36A962FE0E09E02B", "2470BB3FFC6EB2D0A79866A27F78FBCD")
-        val configuration = RequestConfiguration.Builder().setTestDeviceIds(testDevices).build()
-        MobileAds.setRequestConfiguration(configuration)
 
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
