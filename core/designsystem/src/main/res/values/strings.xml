@@ -221,6 +221,7 @@
     <string name="stop_onboarding">취향탐색을 그만둘까요?</string>
     <string name="keep_going">계속하기</string>
     <string name="stop">그만두기</string>
+    <string name="success_save">저장되었습니다</string>
 
     <!-- Profile -->
     <string name="profile_topbar">프로필</string>

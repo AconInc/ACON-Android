@@ -48,7 +48,12 @@ fun ChooseDislikesScreenContainer(
 
     viewModel.collectSideEffect { effect ->
         when (effect) {
-            is ChooseDislikesSideEffect.NavigateToHome -> onNavigateToHome()
+            is ChooseDislikesSideEffect.NavigateToHome -> {
+                if (fromSetting) {
+                    context.showToast(R.string.success_save)
+                }
+                onNavigateToHome()
+            }
             is ChooseDislikesSideEffect.ShowErrorToast -> context.showToast(R.string.unknown_error_message)
         }
     }

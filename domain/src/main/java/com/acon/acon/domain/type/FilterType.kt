@@ -26,7 +26,7 @@ sealed interface RestaurantFilterType : FilterType {
     }
 
     enum class RestaurantOperationType: FilterType {
-        OPEN_AFTER_MIDNIGHT
+        OPEN_AFTER_10PM
     }
 
     enum class RestaurantPriceType: FilterType {

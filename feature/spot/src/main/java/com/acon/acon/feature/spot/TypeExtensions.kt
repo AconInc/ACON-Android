@@ -37,7 +37,7 @@ internal fun FilterType.getNameResId(): Int {
         }
         is RestaurantFilterType.RestaurantOperationType -> {
             when(this) {
-                RestaurantFilterType.RestaurantOperationType.OPEN_AFTER_MIDNIGHT -> com.acon.acon.core.designsystem.R.string.after_12am
+                RestaurantFilterType.RestaurantOperationType.OPEN_AFTER_10PM -> com.acon.acon.core.designsystem.R.string.after_10pm
             }
         }
         is CafeFilterType.CafeOperationType -> {
