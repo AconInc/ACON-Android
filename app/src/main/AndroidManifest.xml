@@ -40,9 +40,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
+            <!-- ${app_name} -->
             <intent-filter>
                 <data
-                    android:scheme="${app_name} "
+                    android:scheme="acon"
                     android:host="spot" />
                 <action android:name="android.intent.action.VIEW" />
 
