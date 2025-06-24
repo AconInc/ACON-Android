@@ -97,9 +97,17 @@ internal fun SpotDetailScreen(
 
     when (state) {
         is SpotDetailUiState.LoadFailed -> {
+            BackHandler {
+                deepLinkHandler.clear()
+                onNavigateToBack()
+            }
+
             TopbarNetworkErrorView(
                 onRetry = LocalOnRetry.current,
-                onNavBack = { onNavigateToBack() },
+                onNavBack = {
+                    deepLinkHandler.clear()
+                    onNavigateToBack()
+                },
                 modifier = Modifier
                     .background(AconTheme.color.Gray900)
                     .fillMaxSize()
