@@ -121,7 +121,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-        private val appUpdateManager by lazy {
+    private val appUpdateManager by lazy {
         AppUpdateManagerFactory.create(application)
     }
     private val appUpdateInfo = flow {
@@ -250,6 +250,7 @@ class MainActivity : ComponentActivity() {
             }
 
             buo?.contentMetadata?.customMetadata?.let { metadata ->
+                Timber.tag("LifeCycle_Main").d("onNewIntent metadata $metadata")
                 deepLinkHandler.handleDeepLink(metadata, true)
             }
         }.reInit()
@@ -268,7 +269,7 @@ class MainActivity : ComponentActivity() {
             }
 
             buo?.contentMetadata?.customMetadata?.let { metadata ->
-                Timber.tag("로그").d("onCreate metadata $metadata")
+                Timber.tag("LifeCycle_Main").d("onCreate metadata $metadata")
                 deepLinkHandler.handleDeepLink(metadata)
             }
         }.withData(intent?.data).init()
@@ -363,7 +364,7 @@ class MainActivity : ComponentActivity() {
                                                     }
                                                 }
                                             }
-                                            if(appState.propertyKey.isNotBlank()) {
+                                            if (appState.propertyKey.isNotBlank()) {
                                                 AconAmplitude.trackEvent(
                                                     eventName = EventNames.GUEST,
                                                     property = appState.propertyKey to true
