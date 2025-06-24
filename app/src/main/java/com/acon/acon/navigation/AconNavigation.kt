@@ -42,7 +42,8 @@ import com.acon.feature.common.compose.LocalDeepLinkHandler
 import com.acon.feature.common.compose.LocalNavController
 import com.acon.feature.common.compose.LocalSnackbarHostState
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
 
 @Composable
@@ -62,8 +63,9 @@ fun AconNavigation(
             if (event == Lifecycle.Event.ON_START && isWarmStart) {
                 lifecycleOwner.lifecycleScope.launch {
                     deepLinkHandler.spotIdFlow
-                        .firstOrNull { it > 0 }
-                        ?.let { spotId ->
+                        .filter { it > 0 }
+                        .take(1)
+                        .collect { spotId ->
                             delay(400)
                             navController.navigate(
                                 SpotRoute.SpotDetail(
@@ -77,8 +79,9 @@ fun AconNavigation(
                                     )
                                 )
                             ) {
-                                launchSingleTop = true
+                                launchSingleTop = false
                             }
+                            deepLinkHandler.clear()
                         }
                 }
             }
@@ -99,7 +102,7 @@ fun AconNavigation(
             ) { snackbarData: SnackbarData ->
                 AconToastPopup(
                     shape = RoundedCornerShape(8.dp),
-                    horizontalArrangement = if(snackbarData.visuals.actionLabel != null) Arrangement.Start else Arrangement.Center,
+                    horizontalArrangement = if (snackbarData.visuals.actionLabel != null) Arrangement.Start else Arrangement.Center,
                     contentPadding = PaddingValues(vertical = 13.dp, horizontal = 12.dp),
                     content = {
                         Text(
