@@ -21,7 +21,6 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.viewmodel.container
-import java.time.LocalTime
 import javax.annotation.concurrent.Immutable
 import javax.inject.Inject
 
@@ -69,9 +68,11 @@ class SpotDetailViewModel @Inject constructor(
         delay(800)
 
         // 딥링크 접속 && UserType == GUEST 경우에만 isDeepLink = true
-        val isDeepLinkGuest = userType.value == UserType.GUEST && spotNavData.isFromDeepLink == true
+        //val isDeepLinkGuest = userType.value == UserType.GUEST && spotNavData.isFromDeepLink == true
+        val isDeepLink = spotNavData.isFromDeepLink == true
+
         val spotDetailDeferred = viewModelScope.async {
-            if (isDeepLinkGuest) {
+            if (isDeepLink) {
                 spotRepository.fetchSpotDetail(
                     spotId = spotNavData.spotId,
                     isDeepLink = true
