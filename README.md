@@ -7,7 +7,20 @@
 <p align="center" style="font-size:200%"><strong>No More Research</strong></p>
 <h1 align="center">Acon</h1>
 
-![Frame 2085665450](https://github.com/user-attachments/assets/1a49cf86-9ef5-4fc0-875f-4ad9e9eab564)
+<p align="center"><img width="662" alt="image" src="https://github.com/user-attachments/assets/fb268135-b2ea-4258-916e-6a6abcdfbd47" /></p>
+
+
+
+https://github.com/user-attachments/assets/9a2affda-2d1e-4a13-be4f-168b67e71403
+
+
+
+https://github.com/user-attachments/assets/e280e521-3363-4d13-9ecc-52f41f411b3d
+
+
+
+https://github.com/user-attachments/assets/f1dbd346-8141-4b72-9c57-b27c61bc6a47
+
 
 ---
 
