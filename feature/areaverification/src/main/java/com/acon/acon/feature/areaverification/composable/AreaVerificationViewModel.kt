@@ -9,8 +9,6 @@ import androidx.core.app.ActivityCompat
 import com.acon.acon.domain.error.area.ReplaceVerifiedArea
 import com.acon.core.model.area.Area
 import com.acon.acon.domain.repository.UserRepository
-import com.acon.acon.feature.areaverification.amplitude.amplitudeClickNext
-import com.acon.acon.feature.areaverification.amplitude.amplitudeCompleteArea
 import com.acon.core.ui.base.BaseContainerHost
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.orbitmvi.orbit.viewmodel.container
@@ -53,7 +51,6 @@ class AreaVerificationViewModel @Inject constructor(
                 state.longitude
             )
         )
-        amplitudeClickNext()
     }
 
     fun onDeviceGPSSettingClick(packageName: String) = intent {
@@ -121,7 +118,6 @@ class AreaVerificationViewModel @Inject constructor(
                         isVerifySuccess = true
                     )
                 }
-                amplitudeCompleteArea()
             }
             .onFailure {
                 postSideEffect(AreaVerificationSideEffect.ShowErrorToast("지역인증에 실패했습니다. 다시 시도해주세요."))
