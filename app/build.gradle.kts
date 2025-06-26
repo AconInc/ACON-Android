@@ -45,7 +45,6 @@ dependencies {
     implementation(projects.domain)
     implementation(projects.data)
 
-    implementation(projects.feature.adsImpl)
     implementation(projects.feature.signin)
     implementation(projects.feature.spot)
     implementation(projects.feature.onboarding)
@@ -53,6 +52,8 @@ dependencies {
     implementation(projects.feature.upload)
     implementation(projects.feature.settings)
     implementation(projects.feature.profile)
+
+    implementation(projects.provider.adsImpl)
 
     implementation(libs.branch.io)
     implementation(libs.google.services.ads)
