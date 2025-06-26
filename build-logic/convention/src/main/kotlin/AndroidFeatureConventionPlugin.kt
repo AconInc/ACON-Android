@@ -16,6 +16,7 @@ class AndroidFeatureConventionPlugin: Plugin<Project> {
                     implementation(project(":core:ui"))
                     implementation(project(":core:designsystem"))
                     implementation(project(":core:analytics"))
+                    implementation(project(":core:navigation"))
                     implementation(project(":domain"))
                 }
             }

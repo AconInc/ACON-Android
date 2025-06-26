@@ -28,7 +28,6 @@ import com.acon.acon.core.designsystem.animation.defaultPopExitTransition
 import com.acon.acon.core.designsystem.component.popup.AconToastPopup
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.core.model.SpotNavigationParameter
 import com.acon.acon.feature.signin.screen.SignInRoute
 import com.acon.acon.feature.spot.SpotRoute
 import com.acon.acon.navigation.nested.areaVerificationNavigation
@@ -38,6 +37,7 @@ import com.acon.acon.navigation.nested.settingsNavigation
 import com.acon.acon.navigation.nested.signInNavigationNavigation
 import com.acon.acon.navigation.nested.spotNavigation
 import com.acon.acon.navigation.nested.uploadNavigation
+import com.acon.core.model.spot.SpotNavigationParameter
 import com.acon.core.ui.compose.LocalDeepLinkHandler
 import com.acon.core.ui.compose.LocalNavController
 import com.acon.core.ui.compose.LocalSnackbarHostState
@@ -50,10 +50,10 @@ import kotlinx.coroutines.launch
 fun AconNavigation(
     modifier: Modifier = Modifier,
 ) {
-    val navController = com.acon.core.ui.compose.LocalNavController.current
-    val snackbarHostState = com.acon.core.ui.compose.LocalSnackbarHostState.current
+    val navController = LocalNavController.current
+    val snackbarHostState = LocalSnackbarHostState.current
 
-    val deepLinkHandler = com.acon.core.ui.compose.LocalDeepLinkHandler.current
+    val deepLinkHandler = LocalDeepLinkHandler.current
 
     val isWarmStart by deepLinkHandler.isWarmStart.collectAsState()
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -69,7 +69,7 @@ fun AconNavigation(
                             delay(400)
                             navController.navigate(
                                 SpotRoute.SpotDetail(
-                                    com.acon.core.model.SpotNavigationParameter(
+                                    SpotNavigationParameter(
                                         spotId = spotId,
                                         tags = emptyList(),
                                         transportMode = null,
