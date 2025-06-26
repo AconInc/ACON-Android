@@ -9,7 +9,7 @@ import com.acon.core.navigation.route.UploadRoute
 import com.acon.core.analytics.amplitude.AconAmplitude
 import com.acon.core.analytics.constants.EventNames
 import com.acon.core.analytics.constants.PropertyKeys
-import com.acon.feature.common.navigation.simpleSpotNavType
+import com.acon.core.navigation.utils.simpleSpotNavType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.viewmodel.container

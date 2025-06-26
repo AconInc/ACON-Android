@@ -1,4 +1,4 @@
-package com.acon.feature.common.navigation
+package com.acon.core.navigation.utils
 
 import android.os.Bundle
 import androidx.navigation.NavType
