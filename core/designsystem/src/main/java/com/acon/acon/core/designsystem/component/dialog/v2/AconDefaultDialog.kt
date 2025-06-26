@@ -17,8 +17,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.SecureFlagPolicy
-import com.acon.acon.core.designsystem.blur.LocalHazeState
-import com.acon.acon.core.designsystem.blur.defaultHazeEffect
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
 
@@ -35,7 +33,7 @@ fun AconDefaultDialog(
         usePlatformDefaultWidth = true,
         decorFitsSystemWindows = true
     ),
-    content: @Composable () -> Unit,
+    content: @Composable () -> Unit = {},
 ) {
     Dialog(
         onDismissRequest = onDismissRequest,
@@ -43,20 +41,19 @@ fun AconDefaultDialog(
     ) {
         Surface(
             shape = RoundedCornerShape(14.dp),
-            color = AconTheme.color.GlassWhiteDefault.copy(alpha = .4f),
+            color = AconTheme.color.Gray4545,
             modifier = Modifier.fillMaxWidth(),
         ) {
             Column(
-                modifier = Modifier.fillMaxWidth().defaultHazeEffect(
-                    hazeState = LocalHazeState.current,
-                    tintColor = AconTheme.color.GlassWhiteDefault,
-                ), horizontalAlignment = Alignment.CenterHorizontally
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
                     text = title,
                     style = AconTheme.typography.Title4,
                     fontWeight = FontWeight.SemiBold,
                     color = AconTheme.color.White,
+                    textAlign = TextAlign.Center,
                     modifier = Modifier
                         .padding(top = 24.dp, bottom = 22.dp)
                         .padding(horizontal = 16.dp)
@@ -76,7 +73,7 @@ fun AconDefaultDialog(
                         .noRippleClickable {
                             onAction()
                         }
-                        .padding(vertical = 10.dp),
+                        .padding(vertical = 14.dp),
                     textAlign = TextAlign.Center
                 )
             }

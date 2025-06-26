@@ -1,9 +1,10 @@
 package com.acon.acon.data.datasource.remote
 
-import com.acon.acon.data.dto.request.updateProfileRequest
+import com.acon.acon.data.dto.request.UpdateProfileRequest
 import com.acon.acon.data.dto.response.profile.PreSignedUrlResponse
-import com.acon.acon.data.remote.ProfileApi
 import com.acon.acon.data.dto.response.profile.ProfileResponse
+import com.acon.acon.data.api.remote.ProfileApi
+import com.acon.acon.data.dto.request.SaveSpotRequest
 import retrofit2.Response
 import javax.inject.Inject
 
@@ -24,9 +25,12 @@ class ProfileRemoteDataSource @Inject constructor(
 
     suspend fun updateProfile(fileName: String, nickname: String, birthday: String?): Response<Unit> {
         return profileApi.updateProfile(
-            request = updateProfileRequest(profileImage = fileName, nickname = nickname, birthDate = formatBirthday(birthday))
+            request = UpdateProfileRequest(profileImage = fileName, nickname = nickname, birthDate = formatBirthday(birthday))
         )
     }
+
+    suspend fun fetchSavedSpots() = profileApi.fetchSavedSpots()
+    suspend fun saveSpot(saveSpotRequest: SaveSpotRequest) = profileApi.saveSpot(saveSpotRequest)
 }
 
 private fun formatBirthday(birthday: String?): String? {

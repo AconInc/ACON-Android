@@ -1,21 +1,18 @@
 package com.acon.acon.data.di
 
-import android.content.Context
 import com.acon.acon.core.common.Auth
 import com.acon.acon.core.common.Naver
 import com.acon.acon.core.common.NaverAuthInterceptor
 import com.acon.acon.core.common.NoAuth
 import com.acon.acon.core.common.TokenInterceptor
+import com.acon.acon.core.common.UrlConstants
 import com.acon.acon.data.BuildConfig
-import com.acon.acon.data.SessionManager
 import com.acon.acon.data.datasource.local.TokenLocalDataSource
 import com.acon.acon.data.error.RemoteErrorCallAdapterFactory
-import com.acon.acon.data.remote.ReissueTokenApi
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
@@ -102,7 +99,7 @@ internal object NetworkModule {
     ): Retrofit {
         val json = Json { ignoreUnknownKeys = true }
         return Retrofit.Builder()
-            .baseUrl("https://naveropenapi.apigw.ntruss.com/")
+            .baseUrl(UrlConstants.NAVER_OPEN_API)
             .client(client)
             .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
             .build()
@@ -136,6 +133,7 @@ internal object NetworkModule {
             .baseUrl(BuildConfig.BASE_URL)
             .client(client)
             .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
+            .addCallAdapterFactory(RemoteErrorCallAdapterFactory(json))
             .build()
     }
 
@@ -168,13 +166,4 @@ internal object NetworkModule {
             chain.proceed(newRequest)
         }
     }
-
-    @Provides
-    @Singleton
-    fun provideRefreshInterceptor(
-        @ApplicationContext context: Context,
-        tokenLocalDataSource: TokenLocalDataSource,
-        reissueTokenApi: ReissueTokenApi,
-        sessionManager: SessionManager
-    ): Authenticator = AuthAuthenticator(tokenLocalDataSource, reissueTokenApi, sessionManager)
 }

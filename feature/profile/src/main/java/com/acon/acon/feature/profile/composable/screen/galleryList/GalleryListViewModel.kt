@@ -1,80 +1,231 @@
 package com.acon.acon.feature.profile.composable.screen.galleryList
 
-import android.app.Application
+import android.content.ContentResolver
 import android.content.Context
 import android.net.Uri
 import android.provider.MediaStore
-import androidx.lifecycle.ViewModel
+import androidx.compose.runtime.Immutable
+import com.acon.acon.core.utils.feature.permission.media.StorageAccess
+import com.acon.acon.core.utils.feature.permission.media.getStorageAccess
+import com.acon.feature.common.base.BaseContainerHost
 import dagger.hilt.android.lifecycle.HiltViewModel
-import org.orbitmvi.orbit.ContainerHost
+import dagger.hilt.android.qualifiers.ApplicationContext
+import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.viewmodel.container
 import javax.inject.Inject
 
+@OptIn(OrbitExperimental::class)
 @HiltViewModel
 class GalleryListViewModel @Inject constructor(
-    private val application: Application
-) : ViewModel(), ContainerHost<GalleryListState, GalleryListSideEffect> {
+    @ApplicationContext private val context: Context,
+) : BaseContainerHost<GalleryListUiState, GalleryListSideEffect>() {
 
-    override val container = container<GalleryListState, GalleryListSideEffect>(GalleryListState())
+    override val container =
+        container<GalleryListUiState, GalleryListSideEffect>(GalleryListUiState.Loading) {
+            updateStorageAccess()
+        }
 
-    private fun getAlbumList(context: Context): List<Album> {
+    fun updateStorageAccess() = intent {
+        when (getStorageAccess(context)) {
+            StorageAccess.GRANTED -> {
+                updateAllAlbums()
+            }
+
+            StorageAccess.Partial -> {
+                reduce { GalleryListUiState.Partial(albumList = getAlbumList(context.contentResolver)) }
+            }
+
+            StorageAccess.Denied -> reduce { GalleryListUiState.Denied() }
+        }
+    }
+
+    fun updateAllAlbums() = intent {
+        val albums = getAlbumList(context.contentResolver)
+        reduce { GalleryListUiState.Granted(albumList = albums) }
+    }
+
+    fun updateUserSelectedAlbums() = intent {
+        val albums = getAlbumList(context.contentResolver)
+        reduce {
+            when (state) {
+                is GalleryListUiState.Partial -> (state as GalleryListUiState.Partial).copy(
+                    albumList = albums
+                )
+
+                else -> GalleryListUiState.Partial(albumList = albums)
+            }
+        }
+    }
+
+    private fun getAlbumList(contentResolver: ContentResolver): List<Album> {
         val albumMap = mutableMapOf<String, Album>()
+        val bucketCountMap = mutableMapOf<String, Int>()
 
         val projection = arrayOf(
-            MediaStore.Images.Media.BUCKET_DISPLAY_NAME,
+            MediaStore.Images.Media._ID,
             MediaStore.Images.Media.BUCKET_ID,
-            MediaStore.Images.Media.DATA,
-            MediaStore.Images.Media._ID
+            MediaStore.Images.Media.BUCKET_DISPLAY_NAME
         )
-
         val sortOrder = "${MediaStore.Images.Media.DATE_ADDED} DESC"
 
-        context.contentResolver.query(
+        contentResolver.query(
             MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
             projection,
             null,
             null,
             sortOrder
         )?.use { cursor ->
-            val bucketColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_DISPLAY_NAME)
-            val bucketIdColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_ID)
-            val dataColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
             val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
+            val bucketIdColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_ID)
+            val bucketNameColumn =
+                cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_DISPLAY_NAME)
 
             while (cursor.moveToNext()) {
-                val albumName = cursor.getString(bucketColumn) ?: "기타"
                 val albumId = cursor.getString(bucketIdColumn)
-
+                val albumName = cursor.getString(bucketNameColumn) ?: "기타"
                 val imageId = cursor.getLong(idColumn)
-                val coverUri = Uri.withAppendedPath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, imageId.toString())
+                val coverUri = Uri.withAppendedPath(
+                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                    imageId.toString()
+                )
+
+                bucketCountMap[albumId] = bucketCountMap.getOrDefault(albumId, 0) + 1
 
                 if (!albumMap.containsKey(albumId)) {
-                    albumMap[albumId] = Album(albumId, albumName, coverUri)
+                    albumMap[albumId] = Album(
+                        id = albumId,
+                        name = albumName,
+                        coverUri = coverUri,
+                        imageCount = 0
+                    )
                 }
             }
         }
 
-        return albumMap.values.toMutableList()
+        return albumMap.values.map { album ->
+            album.copy(imageCount = bucketCountMap[album.id] ?: 0)
+        }.toMutableList()
     }
 
-
-    fun loadAlbums() = intent {
-        val albums = getAlbumList(application.applicationContext)
-        reduce { state.copy(albumList = albums) }
+    fun requestMediaPermissionModal() = intent {
+        runOn<GalleryListUiState.Partial> {
+            reduce {
+                state.copy(showMediaPermissionModal = true)
+            }
+        }
     }
 
+    fun dismissMediaPermissionModal() = intent {
+        runOn<GalleryListUiState.Partial> {
+            reduce {
+                state.copy(showMediaPermissionModal = false)
+            }
+        }
+    }
+
+    fun requestMediaPermission() = intent {
+        when (state) {
+            is GalleryListUiState.Partial -> {
+                reduce { (state as GalleryListUiState.Partial).copy(requestMediaPermission = true) }
+            }
+
+            is GalleryListUiState.Denied -> {
+                reduce { (state as GalleryListUiState.Denied).copy(requestMediaPermission = true) }
+            }
+
+            else -> Unit
+        }
+    }
+
+    fun resetMediaPermission() = intent {
+        when (state) {
+            is GalleryListUiState.Partial -> {
+                reduce { (state as GalleryListUiState.Partial).copy(requestMediaPermission = false) }
+            }
+
+            is GalleryListUiState.Denied -> {
+                reduce { (state as GalleryListUiState.Denied).copy(requestMediaPermission = false) }
+            }
+
+            else -> Unit
+        }
+    }
+
+    fun requestMediaPermissionDialog() = intent {
+        when (state) {
+            is GalleryListUiState.Partial -> {
+                reduce { (state as GalleryListUiState.Partial).copy(showMediaPermissionDialog = true) }
+            }
+
+            is GalleryListUiState.Denied -> {
+                reduce { (state as GalleryListUiState.Denied).copy(showMediaPermissionDialog = true) }
+            }
+
+            else -> Unit
+        }
+    }
+
+    fun dismissMediaPermissionDialog() = intent {
+        when (state) {
+            is GalleryListUiState.Partial -> {
+                reduce { (state as GalleryListUiState.Partial).copy(showMediaPermissionDialog = false) }
+            }
+
+            is GalleryListUiState.Denied -> {
+                reduce { (state as GalleryListUiState.Denied).copy(showMediaPermissionDialog = false) }
+            }
+
+            else -> Unit
+        }
+    }
+
+    fun onPermissionSettingClick(packageName: String) = intent {
+        when (state) {
+            is GalleryListUiState.Partial,
+            is GalleryListUiState.Denied -> {
+                postSideEffect(GalleryListSideEffect.NavigateToSettings(packageName))
+            }
+
+            else -> Unit
+        }
+    }
+
+    fun onClickAlbum(albumId: String, albumName: String) = intent {
+        postSideEffect(GalleryListSideEffect.NavigateToAlbumGrid(albumId, albumName))
+    }
 }
 
-data class GalleryListState(
-    val albumList: List<Album> = mutableListOf()
-)
+sealed class GalleryListUiState {
+    data object Loading : GalleryListUiState()
+
+    @Immutable
+    data class Granted(
+        val albumList: List<Album> = emptyList()
+    ) : GalleryListUiState()
+
+    @Immutable
+    data class Partial(
+        val albumList: List<Album> = emptyList(),
+        val requestMediaPermission: Boolean = false,
+        val showMediaPermissionModal: Boolean = false,
+        val showMediaPermissionDialog: Boolean = false
+    ) : GalleryListUiState()
+
+    data class Denied(
+        val requestMediaPermission: Boolean = false,
+        val showMediaPermissionDialog: Boolean = false
+    ) : GalleryListUiState()
+}
 
 sealed interface GalleryListSideEffect {
-    data class NavigateToAlbumGrid(val albumId: String, val albumName: String) : GalleryListSideEffect
+    data class NavigateToSettings(val packageName: String) : GalleryListSideEffect
+    data class NavigateToAlbumGrid(val albumId: String, val albumName: String) :
+        GalleryListSideEffect
 }
 
 data class Album(
     val id: String,
     val name: String,
-    val coverUri: Uri
+    val coverUri: Uri,
+    val imageCount: Int
 )

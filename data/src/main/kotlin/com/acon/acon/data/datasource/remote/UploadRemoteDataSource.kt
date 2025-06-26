@@ -1,46 +1,41 @@
 package com.acon.acon.data.datasource.remote
 
 import com.acon.acon.data.dto.request.ReviewRequest
-import com.acon.acon.data.dto.response.upload.UploadGetDotoriResponse
-import com.acon.acon.data.dto.response.upload.UploadGetKeyWordResponse
-import com.acon.acon.data.dto.response.upload.UploadGetSpotVerifyResponse
-import com.acon.acon.data.dto.response.upload.UploadGetSuggestionsResponse
-import com.acon.acon.data.remote.UploadApi
+import com.acon.acon.data.dto.response.upload.UploadSpotSuggestionsResponse
+import com.acon.acon.data.dto.response.upload.VerifyLocationResponse
+import com.acon.acon.data.api.remote.UploadApi
 import javax.inject.Inject
 
 class UploadRemoteDataSource @Inject constructor(
     private val uploadApi: UploadApi
 ) {
-    suspend fun getDotoriCount(): UploadGetDotoriResponse {
-        return uploadApi.getDotoriCount()
-    }
-
-    suspend fun getKeyWord(keyword: String): UploadGetKeyWordResponse {
-        return uploadApi.getKeyWord(keyword)
-    }
 
     suspend fun getSuggestions(
         latitude: Double,
         longitude: Double
-    ): UploadGetSuggestionsResponse {
+    ): UploadSpotSuggestionsResponse {
         return uploadApi.getSuggestions(latitude, longitude)
     }
 
-    suspend fun getVerifySpotLocation(
+    suspend fun verifyLocation(
         spotId: Long,
         latitude: Double,
         longitude: Double
-    ): UploadGetSpotVerifyResponse {
-        return uploadApi.getVerifySpotLocation(spotId, latitude, longitude)
+    ): VerifyLocationResponse {
+        return uploadApi.verifyLocation(spotId, latitude, longitude)
     }
 
-    suspend fun postReview(
+    suspend fun submitReview(
         spotId: Long,
         acornCount: Int
-    ) = uploadApi.uploadPostReview(
+    ) = uploadApi.submitReview(
         ReviewRequest(
             spotId = spotId,
             acornCount = acornCount
         )
     )
+
+    suspend fun getSearchedSpots(
+        query: String
+    ) = uploadApi.getSearchedSpots(query)
 }

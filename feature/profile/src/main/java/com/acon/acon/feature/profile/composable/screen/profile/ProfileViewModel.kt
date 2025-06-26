@@ -1,76 +1,53 @@
 package com.acon.acon.feature.profile.composable.screen.profile
 
 import androidx.compose.runtime.Immutable
-import com.acon.acon.core.utils.feature.base.BaseContainerHost
-import com.acon.acon.domain.model.profile.VerifiedArea
+import androidx.lifecycle.viewModelScope
+import com.acon.acon.domain.model.profile.ProfileInfo
 import com.acon.acon.domain.repository.ProfileRepository
-import com.acon.acon.domain.repository.SocialRepository
-import com.acon.acon.domain.repository.UserRepository
 import com.acon.acon.domain.type.UserType
+import com.acon.feature.common.base.BaseContainerHost
 import dagger.hilt.android.lifecycle.HiltViewModel
-import org.orbitmvi.orbit.annotation.OrbitExperimental
+import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.viewmodel.container
 import javax.inject.Inject
-import kotlin.coroutines.cancellation.CancellationException
 
-@OptIn(OrbitExperimental::class)
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
-    private val profileRepository: ProfileRepository,
-    private val userRepository: UserRepository
+    private val profileRepository: ProfileRepository
 ) : BaseContainerHost<ProfileUiState, ProfileUiSideEffect>() {
 
+    val updateProfileState = profileRepository.getProfileType()
+
     override val container =
-        container<ProfileUiState, ProfileUiSideEffect>(ProfileUiState.Loading) {
-            userRepository.getUserType().collect {
+        container<ProfileUiState, ProfileUiSideEffect>(ProfileUiState.Success(ProfileInfo.Empty)) {
+            userType.collect {
                 when(it) {
-                    UserType.GUEST -> reduce { ProfileUiState.Guest() }
-                    else -> fetchUserProfileInfo()
+                    UserType.GUEST -> reduce { ProfileUiState.Guest }
+                    else -> {
+                        profileRepository.fetchProfile().collect { profileInfoResult ->
+                            profileInfoResult.onSuccess {
+                                reduce { ProfileUiState.Success(profileInfo = it) }
+                            }.onFailure {
+                                postSideEffect(ProfileUiSideEffect.FailedToLoadProfileInfo)
+                            }
+                        }
+                    }
                 }
             }
         }
 
-    fun googleLogin(socialRepository: SocialRepository) = intent {
-        socialRepository.googleLogin()
-            .onSuccess {
-                if(it.hasVerifiedArea) {
-                    postSideEffect(ProfileUiSideEffect.OnNavigateToSpotListScreen)
-                } else {
-                    postSideEffect(ProfileUiSideEffect.OnNavigateToAreaVerificationScreen)
-                }
-            }.onFailure { error ->
-                when (error) {
-                    is CancellationException -> {
-                        reduce { ProfileUiState.Guest() }
-                    }
-                    is NoSuchElementException -> {
-                        reduce { ProfileUiState.Guest() }
-                    }
-                    is SecurityException -> {
-                        reduce { ProfileUiState.Guest() }
-                    }
-                    else -> {
-                        reduce { ProfileUiState.Guest() }
-                    }
-                }
-            }
+    fun resetUpdateProfileType() {
+        viewModelScope.launch {
+            profileRepository.resetProfileType()
+        }
     }
 
-     fun fetchUserProfileInfo() = intent {
-        profileRepository.fetchProfile()
-            .onSuccess { profile ->
-                reduce {
-                    ProfileUiState.Success(
-                        profileImage = profile.image,
-                        nickname = profile.nickname,
-                        aconCount = profile.leftAcornCount,
-                        verifiedArea = profile.verifiedAreaList
-                    )
-                }
-            }
-            .onFailure {
-                reduce { ProfileUiState.LoadFailed }
-            }
+    fun onSpotDetail(spotId: Long) = intent {
+        postSideEffect(ProfileUiSideEffect.OnNavigateToSpotDetailScreen(spotId))
+    }
+
+    fun onBookmark() = intent {
+        postSideEffect(ProfileUiSideEffect.OnNavigateToBookmarkScreen)
     }
 
     fun onSettings() = intent {
@@ -80,46 +57,23 @@ class ProfileViewModel @Inject constructor(
     fun onEditProfile() = intent {
         postSideEffect(ProfileUiSideEffect.OnNavigateToProfileEditScreen)
     }
-
-    fun onTermOfUse() = intent {
-        postSideEffect(ProfileUiSideEffect.OnTermOfUse)
-    }
-
-    fun onPrivatePolicy() = intent {
-        postSideEffect(ProfileUiSideEffect.OnPrivatePolicy)
-    }
-
-    fun onBottomSheetShowStateChange(show: Boolean) = intent {
-        runOn<ProfileUiState.Guest> {
-            reduce {
-                state.copy(showLoginBottomSheet = show)
-            }
-        }
-    }
 }
 
 sealed interface ProfileUiState {
     @Immutable
     data class Success(
-        val profileImage: String,
-        val nickname: String,
-        val aconCount: Int,
-        val verifiedArea: List<VerifiedArea>
+        val profileInfo: ProfileInfo
     ) : ProfileUiState
 
-    data object Loading : ProfileUiState
-    data object LoadFailed : ProfileUiState
-
-    data class Guest(
-        val showLoginBottomSheet: Boolean = false
-    ) : ProfileUiState
+    data object Guest : ProfileUiState
 }
 
 sealed interface ProfileUiSideEffect {
+    data class OnNavigateToSpotDetailScreen(val spotId: Long) : ProfileUiSideEffect
+    data object OnNavigateToBookmarkScreen : ProfileUiSideEffect
     data object OnNavigateToSpotListScreen : ProfileUiSideEffect
     data object OnNavigateToSettingsScreen : ProfileUiSideEffect
     data object OnNavigateToProfileEditScreen : ProfileUiSideEffect
-    data object OnNavigateToAreaVerificationScreen : ProfileUiSideEffect
-    data object OnTermOfUse : ProfileUiSideEffect
-    data object OnPrivatePolicy : ProfileUiSideEffect
+
+    data object FailedToLoadProfileInfo : ProfileUiSideEffect
 }

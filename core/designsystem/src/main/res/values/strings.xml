@@ -1,31 +1,297 @@
 <resources>
     <string name="app_name">designsystem</string>
 
+    <!-- Common -->
+    <string name="back">뒤로가기</string>
+    <string name="cancel">취소</string>
+    <string name="ok">확인</string>
+    <string name="done">완료</string>
+    <string name="exit">나가기</string>
+    <string name="save">저장</string>
+    <string name="select">선택</string>
+    <string name="submit">제출하기</string>
+    <string name="continue_writing">계속 작성</string>
+    <string name="title_spot">추천</string>
+    <string name="title_upload">업로드</string>
+    <string name="title_profile">프로필</string>
+    <string name="network_error_title">일시적인 오류가 발생했습니다</string>
+    <string name="network_error_content">잠시 후에 다시 시도해주세요</string>
+    <string name="network_retry">다시 시도하기</string>
+    <string name="unknown_error">알 수 없는 오류가 발생했습니다</string>
+    <string name="advertisement">광고</string>
+    <string name="unknown_error_message">알 수 없는 오류가 발생했어요</string>
+    <string name="ellipsis">…</string>
+    <string name="fail_to_load_image">이미지 로딩에 실패했어요</string>
+    <string name="top">Top %d</string>
+
+    <!-- Etc -->
+    <string name="restart">마무리 하기</string>
+    <string name="update">업데이트</string>
+    <string name="update_required_title">필수적인 업데이트가 있습니다</string>
+    <string name="update_available_title">최선 버전 업데이트가 가능합니다</string>
+    <string name="update_complete">업데이트가 거의 끝났어요</string>
+
     <!-- Button component -->
-    <string name="login_btn_preview_content">button</string>
-    <string name="google_login_btn_description">구글 로그인 버튼</string>
-    <string name="google_login_btn_content">Google로 계속하기</string>
+    <string name="sign_in_btn_preview_content">button</string>
+    <string name="google_sign_in_btn_description">구글 로그인 버튼</string>
+    <string name="google_sign_in_btn_content">Google로 계속하기</string>
+    <string name="area_verification_btn_content">인증완료</string>
+    <string name="btn_change">변경하기</string>
 
     <!-- Content Description -->
+    <string name="splash_animation_content_description">스플래시 애니메이션</string>
+    <string name="splash_image_content_description">스플래시 이미지</string>
     <string name="location_content_description">위치</string>
     <string name="map_content_description">지도</string>
-    <string name="filter_content_description">필터</string>
     <string name="dismiss_content_description">닫기</string>
     <string name="reset_content_description">초기화</string>
     <string name="content_description_dismiss_bottom_sheet">로그인 창 닫기</string>
     <string name="search_content_description">검색</string>
     <string name="clear_search_content_description">검색어 초기화</string>
+    <string name="menu_board_content_description">메뉴판 이미지</string>
+    <string name="store_background_image_content_description">가게 사진</string>
+    <string name="complaint_content_description">정보 오류 신고하기</string>
+    <string name="no_store_background_image_content_description">가게 사진 없음</string>
+    <string name="btn_next_image_content_description">다음 메뉴판 사진</string>
+    <string name="btn_previous_background_image_content_description">이전 메뉴판 사진</string>
+    <string name="content_description_your_acon_count">보유한 도토리 수</string>
+    <string name="content_description_my_verified_neighborhood">나의 인증 동네</string>
+    <string name="content_description_photo">사진</string>
+    <string name="content_description_thumbnail">앨범 대표 이미지</string>
+    <string name="content_description_profile_image">프로필 이미지</string>
+    <string name="content_description_select_profile_image">선택한 프로필 사진</string>
+    <string name="content_description_default_profile_image">기본 프로필 이미지</string>
+    <string name="content_description_edit_profile">프로필 수정</string>
+    <string name="content_description_settings">설정 화면 이동</string>
+    <string name="content_description_go_sign_in">로그인 창으로 이동</string>
+    <string name="content_description_valid_nickname">닉네임 사용 가능</string>
+    <string name="content_description_empty_nickname">닉네임 미입력</string>
+    <string name="content_description_duplicate_nickname">닉네임 중복</string>
+    <string name="content_description_invalid_language">지원하지 않는 언어</string>
+    <string name="content_description_invalid_birthday">잘못된 생년월일</string>
+    <string name="content_description_delete_area">인증 지역 삭제</string>
 
-    <!-- login BottomSheet -->
-    <string name="login_bottom_sheet_title">acon에 로그인</string>
-    <string name="login_bottom_sheet_content">지금 당신의 위치에서\n 최고의 맛집을 추천받아보세요</string>
-    <string name="login_bottom_sheet_google_login">Google로 계속하기</string>
-    <string name="login_bottom_sheet_policy_agreement">가입을 진행할 경우,\n아래의 정책에 대해 동의한 것으로 간주합니다.</string>
-    <string name="login_bottom_sheet_term_of_use">이용약관</string>
-    <string name="login_bottom_sheet_private_policy">개인정보처리방침</string>
+    <!-- SignIn BottomSheet -->
+    <string name="sign_in_bottom_sheet_title">Acon에 로그인</string>
+    <string name="sign_in_bottom_sheet_content">지금 당신의 위치에서\n최고의 맛집을 추천받아보세요</string>
+    <string name="sign_in_bottom_sheet_google_sign_in">Google로 계속하기</string>
+    <string name="sign_in_bottom_sheet_policy_agreement">가입을 진행할 경우,아래의 정책에 대해 동의한 것으로 간주합니다.</string>
+    <string name="sign_in_bottom_sheet_term_of_use">이용약관</string>
+    <string name="sign_in_bottom_sheet_private_policy">개인정보처리방침</string>
 
     <!-- dialog -->
-    <string name="no_permission_title">\'acon\'에 대한 위치접근\n 권한이 없습니다</string>
+    <string name="no_permission_title">Acon을 이용하기 위해\n 위치 권한이 필요해요</string>
     <string name="no_permission_content">설정에서 정확한 위치 권한을 허용해주세요</string>
     <string name="go_to_setting">설정으로 이동</string>
+    <string name="location_unsupported_area_title">위치 인식 실패</string>
+    <string name="location_unsupported_area_content">문제가 발생했습니다.\n나중에 다시 시도해주세요.</string>
+    <string name="location_permission_denied_title">\'Acon\'에 대한 위치접근\n권한이 없습니다.</string>
+    <string name="location_permission_denied_content">설정에서 위치접근 권한을 허용해주세요.</string>
+
+    <!-- SignIn -->
+    <string name="signin_logo_title_content_description">acon 로고 이미지</string>
+    <string name="signin_policy">가입을 진행할 경우, 아래의 정책에 대해 동의한 것으로 간주합니다.</string>
+    <string name="signin_terms_of_service">이용약관</string>
+    <string name="signin_privacy_policy">개인정보처리방침</string>
+    <string name="signin_topbar_text">건너뛰기</string>
+    <string name="sign_in_failed_toast">로그인에 실패했습니다.</string>
+
+    <!-- AreaVerification -->
+    <string name="area_verification_settings">settings</string>
+    <string name="area_verification_topbar">지역인증</string>
+    <string name="area_verification_main_title">믿을 수 있는 리뷰를 위해\n지역인증이 필요해요</string>
+    <string name="area_verification_main_subtitle">더 정확한 로컬맛집을 추천해드릴 수 있어요</string>
+    <string name="area_verification_one_second_verify">1초만에 인증하기</string>
+    <string name="area_verification_popup">인증 지역은 프로필에서 수정 가능합니다.</string>
+    <string name="photo_permission_title">\'Acon\'에 대해 라이브러리\n읽기\/쓰기 권한이 없습니다.</string>
+    <string name="photo_permission_content">설정에서 권한을 켤 수 있습니다.</string>
+    <string name="photo_permission_alert_left_btn">취소</string>
+    <string name="photo_permission_alert_right_btn">설정으로 가기</string>
+    <string name="profile_mod_exit_title">변경사항이 저장되지 않았습니다.</string>
+    <string name="profile_mod_exit_content">지금 나가면 변경한 내용이 삭제돼요</string>
+    <string name="delete_area_dialog_fail_title">지역 삭제 불가</string>
+    <string name="delete_area_dialog_fail_content">인증한지 1주일이 지난 지역은\n3개월 간 삭제가 불가능해요.</string>
+    <string name="delete_area_dialog_edit_content">지역은 최소 1개 이상을 등록해야 해요.\n현재 설정된 지역을 변경할까요?</string>
+
+    <!-- SpotList -->
+    <string name="acorn_count_content_description">도토리 개수</string>
+    <string name="filter_content_description">필터</string>
+    <string name="restaurant">식당</string>
+    <string name="cafe">카페</string>
+    <string name="find_way">길찾기</string>
+    <string name="empty_spot_image1">등록된 사진은 없지만\n맛집임을 아콘이 보장해요</string>
+    <string name="empty_spot_image2">쉿! 비밀스러운 곳인가 봐요\n아직 등록된 사진이 없어요</string>
+    <string name="empty_spot_image3">직접 가봐야 알 수 있는 장소네요\n설레임을 안고 떠나볼까요?</string>
+    <string name="korean">한식</string>
+    <string name="chinese">중식</string>
+    <string name="japanese">일식</string>
+    <string name="western">양식</string>
+    <string name="korean_street">분식</string>
+    <string name="asian">아시안</string>
+    <string name="fusion">퓨전</string>
+    <string name="buffet">뷔페</string>
+    <string name="drink_bar">술/Bar</string>
+    <string name="for_work">작업하기 좋은 곳</string>
+    <string name="exclude_franchise">프랜차이즈 제외</string>
+    <string name="after_12am">밤 12시 이후</string>
+    <string name="after_10pm">밤 10시 이후</string>
+    <string name="cost_effectiveness">가성비</string>
+    <string name="filter_detail">상세 조건</string>
+    <string name="type">종류</string>
+    <string name="operation_time">운영시간</string>
+    <string name="price">가격</string>
+    <string name="reset">초기화</string>
+    <string name="see_result">결과 보기</string>
+    <string name="require_sign_in_for_more">더 많은 장소를 보기 위해 로그인이 필요해요</string>
+    <string name="go_to_sign_in">3초만에 로그인 하러 가기</string>
+    <string name="no_available_spots">이런…\n딱 맞는 장소가 없어요</string>
+    <string name="apologize_for_no_spots">원하시는 결과를 보여드리지 못해 죄송해요</string>
+    <string name="recommend_other_spots">대신 여기는 어떠세요?</string>
+    <string name="no_other_spots">다음에 들어오실 땐,\n꼭 찾아서 추천드릴게요</string>
+    <string name="ask_for_new_spot">장소 등록 신청하기</string>
+    <string name="walking_eta">도보 %d분 길찾기</string>
+    <string name="biking_eta">자전거로 %d분 길찾기</string>
+    <string name="refresh_spot">지금 위치 기준으로 다시 추천 받기</string>
+    <string name="unavailable_location_title">서비스 불가 지역이에요</string>
+    <string name="unavailable_location_description">서비스 지원이 불가능한 지역에 있어요\n지역을 옮기신 후 다시 시도해주세요</string>
+    <string name="best_choice">최고의 선택.</string>
+    <string name="closing">영업종료</string>
+    <string name="opening">영업시작</string>
+
+    <!-- SpotDetail -->
+    <string name="no_store_image_verified">등록된 사진은 없지만\n맛집임을 아콘이 보장해요</string>
+    <string name="no_store_image_secret">쉿! 비밀스러운 곳인가 봐요\n아직 등록된 사진이 없어요</string>
+    <string name="no_store_image_mystery">직접 가봐야 알 수 있는 장소네요\n설레임을 안고 떠나볼까요?</string>
+    <string name="signature_menu">대표메뉴</string>
+    <string name="btn_find_way">길찾기</string>
+    <string name="btn_find_way_walking_time">%1$s %2$d분 길찾기</string>
+    <string name="floating_btn_menu_board">메뉴판</string>
+    <string name="floating_btn_share">공유</string>
+    <string name="floating_btn_more_option">더보기</string>
+    <string name="store_tag_new">NEW</string>
+    <string name="store_tag_local">LOCAL</string>
+    <string name="store_tag_ranking">TOP %d</string>
+    <string name="over_max_acon_count">9999+</string>
+    <string name="menu_board_load_failed">이미지 로딩에 실패했어요</string>
+    <string name="retry">재시도</string>
+    <string name="see_more">더보기</string>
+    <string name="store_closed">영업종료</string>
+
+    <!-- Upload -->
+    <string name="close_upload">리뷰 그만두기</string>
+    <string name="next">다음</string>
+    <string name="search_spot_placeholder">장소를 입력해주세요</string>
+    <string name="no_search_result">앗… 검색 결과가 없어요</string>
+    <string name="request_new_spot_description1">현재 장소를 바로 등록할 수 있어요</string>
+    <string name="request_new_spot_description2">더욱 더 정확하게 추천이 가능해요</string>
+    <string name="go_to_register_spot">5초만에 등록하러 가기</string>
+    <string name="introduce_drop_acorn">도토리를 떨어트려 리뷰를 남겨 볼까요?</string>
+    <string name="introduce_click_acorn">도토리를 선택해보세요</string>
+    <string name="complete_drop_acorn">도토리로 리뷰 남기기</string>
+    <string name="review_complete">%s의\n리뷰 작성을 완료했어요!</string>
+    <string name="wish_was_your_spot">당신의 취향이 가득 담긴 장소였길 바래요</string>
+    <string name="failed_submit_review">리뷰를 남기지 못했어요</string>
+    <string name="failed_verify_location">위치 인식 실패</string>
+    <string name="failed_verify_location_description">현재 위치와 리뷰 등록 장소가\n오차범위 밖에 있습니다.\n좀 더 가까이 이동해보세요.</string>
+    <string name="failed_verify_location_not_in_korea_description">문제가 발생했습니다. 나중에 다시 시도해주세요.</string>
+
+    <!-- Onboarding -->
+    <string name="request_dislike_food_title">싫어하는 음식을\n알려줄 수 있나요?</string>
+    <string name="request_dislike_food_description">싫어하는 음식은 설정에서 다시 수정할 수 있어요</string>
+    <string name="no_dislike_food">없음</string>
+    <string name="shrimp">새우</string>
+    <string name="crab">게</string>
+    <string name="clam">조개</string>
+    <string name="oyster">굴</string>
+    <string name="raw_fish">회</string>
+    <string name="fish">생선</string>
+    <string name="seafood">해산물</string>
+    <string name="yukhoe">육회</string>
+    <string name="blood_curd">선지</string>
+    <string name="sundae">순대</string>
+    <string name="beef_tripe">곱창/대창/막창</string>
+    <string name="chicken_feet">닭발</string>
+    <string name="chicken_gizzard">닭똥집</string>
+    <string name="lamb">양고기</string>
+    <string name="pork_beef_offal">돼지/소 특수부위</string>
+    <string name="vegetables">채소</string>
+    <string name="user_choose_none">모든 음식을 잘 드시는 분이군요!</string>
+    <string name="user_choose_dislike_food">확인했어요! 센스있게 추천해드릴게요</string>
+    <string name="start">시작하기</string>
+    <string name="stop_onboarding">취향탐색을 그만둘까요?</string>
+    <string name="keep_going">계속하기</string>
+    <string name="stop">그만두기</string>
+    <string name="success_save">저장되었습니다</string>
+
+    <!-- Profile -->
+    <string name="profile_topbar">프로필</string>
+    <string name="profile_edit_topbar">프로필 편집</string>
+    <string name="you_need_sign_in">로그인이 필요해요</string>
+    <string name="profile_save_success">프로필이 저장되었습니다</string>
+    <string name="edit_profile">프로필 수정하기</string>
+    <string name="star">*</string>
+    <string name="max_nickname_count">/14</string>
+    <string name="nickname_textfield_title">닉네임</string>
+    <string name="nickname_birthday_title">생년월일</string>
+    <string name="birthday_placeholder">2025.01.01</string>
+    <string name="nickname_valid">사용할 수 있는 닉네임이에요.</string>
+    <string name="nickname_error_empty">닉네임을 입력해주세요.</string>
+    <string name="nickname_error_duplicate">이미 사용 중인 닉네임이에요.</string>
+    <string name="nickname_error_invalid">영어, 숫자, 밑줄 및 마침표만 사용 가능해요.</string>
+    <string name="birthday_error_invalid">정확한 생년월일을 입력해주세요.</string>
+
+    <!-- Gallery -->
+    <string name="album">앨범</string>
+    <string name="my_album">나의 앨범</string>
+    <string name="upload_photo_from_album">앨범에서 사진 업로드</string>
+    <string name="set_default_profile_image">기본 이미지로 변경</string>
+    <string name="selected_image">선택 이미지</string>
+    <string name="no_store_image">이미지 준비 중</string>
+    <string name="saved_store">저장한 장소</string>
+    <string name="show_saved_all_store">전체보기</string>
+    <string name="no_saved_spot">저장한 장소가 없어요</string>
+    <string name="change_photo_permission">사진 권한 변경</string>
+    <string name="change_photo_permission_call_to_action">"지금 모든 사진 접근 권한을 허용하면 더 쉽고 편하게 사진을 올릴 수 있어요"</string>
+    <string name="no_photo">이미지가 없습니다.</string>
+    <string name="select_more_photo">더 많은 사진 선택</string>
+    <string name="grant_access_all_photo">모든 사진에 대한 접근 허용</string>
+
+    <!-- setting -->
+    <string name="settings_screen_topbar">설정</string>
+    <string name="settings_title_version_info">버전 정보</string>
+    <string name="settings_title_terms_and_policies">약관 및 정책</string>
+    <string name="settings_title_service_settings">서비스 설정</string>
+    <string name="settings_title_sign_in_and_delete_account">로그인/탈퇴</string>
+    <string name="toast_logout_failed">로그아웃에 실패했습니다</string>-->
+    <string name="toast_delete_account_failed">서비스 탈퇴에 실패했습니다</string>
+    <string name="settings_section_current_version">현재 버전</string>
+    <string name="latest_version">최신버전</string>
+    <string name="do_update">업데이트 하기</string>
+    <string name="settings_section_term_of_use">이용약관</string>
+    <string name="settings_section_private_policy">개인정보처리방침</string>
+    <string name="settings_section_retry_onboarding">취향탐색 다시하기</string>
+    <string name="settings_section_verify_area">지역 인증하기</string>
+    <string name="settings_section_logout">로그아웃하기</string>
+    <string name="settings_section_delete_account">서비스 탈퇴</string>
+    <string name="logout_dialog_title">로그아웃 하시겠어요?</string>
+
+    <!-- Delete Account -->
+    <string name="settings_delete_account_topbar">서비스 탈퇴</string>
+    <string name="settings_delete_account_title">이별의 순간이 왔네요…\n떠나시려는 이유가 있을까요?</string>
+    <string name="settings_delete_account_content">지금까지 저희 서비스를 사용해주셔서 감사해요.\n마음에 들지 않았던 서비스에 대해 알려주시면\n더 성장해서 찾아올게요.</string>
+    <string name="reason_other_placeholder">탈퇴하려는 이유를 적어주세요</string>
+    <string name="delete_account_bottom_sheet_title">지금 탈퇴를 진행할까요?</string>
+    <string name="delete_account_bottom_sheet_content">탈퇴하면 취향정보, 리뷰 등\n모든 데이터는 영구적으로 삭제되며 복구할 수 없어요.</string>
+    <string name="delete_account_btn_content">아쉽지만 탈퇴하기</string>
+    <string name="reason_few_restaurants">다양한 맛집이 없어요</string>
+    <string name="reason_unsatisfied_recommendations">추천 결과가 만족스럽지 않아요</string>
+    <string name="reason_fake_reviews">거짓 리뷰를 봤어요</string>
+    <string name="reason_other">기타</string>
+    <string name="reason_max_length">50</string>
+
+    <!-- settings - AreaVerification-->
+    <string name="settings_area_verification_topbar">지역 인증</string>
+    <string name="settings_area_verification_title">인증 지역</string>
+    <string name="settings_area_verification_content">등록한 지 1주일 이내 지역은 수정이 가능하며 이후 3개월 동안 변경이 불가해요.</string>
+    <string name="settings_area_verification_add_area">지역 추가하기</string>
 </resources>

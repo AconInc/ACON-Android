@@ -67,6 +67,8 @@ internal val AconColors = AconColor(
     PrimaryDefault = Color(0xFFFF4A02),
     PrimaryDark = Color(0xFFDE3F00),
 
+    Gray4545 = Color(0xFF454545),
+
     Gray900 = Color(0xFF111111),
     Gray800 = Color(0xFF333333),
     Gray700 = Color(0xFF505050),
@@ -86,12 +88,22 @@ internal val AconColors = AconColor(
     GlassWhitePressed = Color(0X99FFFFFF),
     GlassWhiteSelected = Color(0X4DFFFFFF),
     GlassWhiteDisabled = Color(0X1AFFFFFF),
+    GlassWhiteLight = Color(0X1AFFFFFF),
 
     GlassBlackDefault = Color(0X33000000),
 
     Light = Color(0x33E1E1E1),
 
-    New = Color(0xFFFF4646)
+    TagNew = Color(0xFFFF4646),
+    TagLocal = Color(0xFF00D157),
+
+    GlowOrange = Color(0x99FF5402),
+    GlowInnerShadow = Color(0X40000000),
+
+    DimDefault = Color(0xCC111111),
+    DimThin = Color(0x99111111),
+
+    GlassGray900 = Color(0xFF060505)
 )
 
 @Immutable
@@ -136,11 +148,12 @@ data class AconColor(
     val Success_blue1: Color,
     val Error_blue2: Color,
 
-
     // Acon 2.0
     val PrimaryLighten: Color,
     val PrimaryDefault: Color,
     val PrimaryDark: Color,
+
+    val Gray4545: Color,
 
     val Gray900: Color,
     val Gray800: Color,
@@ -161,12 +174,22 @@ data class AconColor(
     val GlassWhitePressed: Color,
     val GlassWhiteSelected: Color,
     val GlassWhiteDisabled: Color,
+    val GlassWhiteLight: Color,
 
     val GlassBlackDefault: Color,
 
     val Light: Color,
 
-    val New: Color
+    val TagNew: Color,
+    val TagLocal: Color,
+
+    val GlowOrange: Color,
+    val GlowInnerShadow: Color,
+
+    val DimDefault: Color,
+    val DimThin: Color,
+
+    val GlassGray900: Color
 )
 
 internal val LocalAconColor = staticCompositionLocalOf {

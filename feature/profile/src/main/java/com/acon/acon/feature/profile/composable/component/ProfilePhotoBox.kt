@@ -18,14 +18,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import coil3.compose.AsyncImage
 import coil3.compose.rememberAsyncImagePainter
-import com.acon.acon.core.designsystem.noRippleClickable
-import com.acon.acon.feature.profile.R
+import com.acon.acon.core.designsystem.R
+import com.acon.acon.core.designsystem.image.rememberDefaultLoadImageErrorPainter
 
 @Composable
 fun ProfilePhotoBox(
-    modifier: Modifier = Modifier,
-    onProfileClicked: () -> Unit = {},
-    photoUri: String = "",
+    photoUri: String,
+    modifier: Modifier = Modifier
 ) {
     BoxWithConstraints(
         modifier = modifier.fillMaxSize()
@@ -37,15 +36,14 @@ fun ProfilePhotoBox(
                     .fillMaxSize()
                     .width(imageWidth)
                     .height(imageWidth)
-                    .clip(CircleShape)
-                    .noRippleClickable { onProfileClicked() },
+                    .clip(CircleShape),
                 contentAlignment = Alignment.Center
             ) {
                 when {
                     photoUri.startsWith("content://") -> {
                         Image(
                             painter = rememberAsyncImagePainter(Uri.parse(photoUri)),
-                            contentDescription = "선택한 프로필 사진",
+                            contentDescription = stringResource(R.string.content_description_settings),
                             modifier = Modifier.fillMaxSize(),
                             contentScale = ContentScale.Crop,
                             alignment = Alignment.Center
@@ -55,7 +53,18 @@ fun ProfilePhotoBox(
                     photoUri.startsWith("https://") -> {
                         AsyncImage(
                             model = photoUri,
-                            contentDescription = "선택한 프로필 사진",
+                            contentDescription = stringResource(R.string.content_description_settings),
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop,
+                            alignment = Alignment.Center,
+                            error = rememberDefaultLoadImageErrorPainter()
+                        )
+                    }
+
+                    photoUri == "basic_profile_image" -> {
+                        Image(
+                            imageVector = ImageVector.vectorResource(R.drawable.ic_default_profile),
+                            contentDescription = stringResource(R.string.content_description_default_profile_image),
                             modifier = Modifier.fillMaxSize(),
                             contentScale = ContentScale.Crop,
                             alignment = Alignment.Center
@@ -65,7 +74,7 @@ fun ProfilePhotoBox(
             }
         } else {
             Image(
-                imageVector = ImageVector.vectorResource(R.drawable.img_profile_basic_80),
+                imageVector = ImageVector.vectorResource(R.drawable.ic_default_profile),
                 contentDescription = stringResource(R.string.content_description_default_profile_image),
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop,

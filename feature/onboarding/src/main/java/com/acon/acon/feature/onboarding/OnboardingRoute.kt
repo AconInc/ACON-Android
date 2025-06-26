@@ -8,13 +8,5 @@ sealed interface OnboardingRoute {
     data object Graph : OnboardingRoute
 
     @Serializable
-    data class OnboardingScreen(val fromSettings: Boolean = false) : OnboardingRoute {
-        companion object {
-            fun fromSettings() = OnboardingScreen(fromSettings = true)
-            fun notfromSettings() = OnboardingScreen(fromSettings = false)
-        }
-    }
-
-    @Serializable
-    data object LastLoading : OnboardingRoute
+    data object ChooseDislikes : OnboardingRoute
 }

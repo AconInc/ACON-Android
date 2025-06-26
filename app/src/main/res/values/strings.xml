@@ -1,7 +1,3 @@
 <resources>
     <string name="app_name">Acon</string>
-
-    <string name="title_spot">장소</string>
-    <string name="title_upload">업로드</string>
-    <string name="title_profile">프로필</string>
 </resources>

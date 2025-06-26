@@ -1,11 +1,16 @@
 package com.acon.acon.feature.verification.screen.composable
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.acon.acon.core.designsystem.R
+import com.acon.acon.core.utils.feature.toast.showToast
 import com.acon.acon.feature.verification.screen.LocalVerificationSideEffect
 import com.acon.acon.feature.verification.screen.LocalVerificationViewModel
+import com.acon.feature.common.compose.LocalOnRetry
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
@@ -13,29 +18,35 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 fun LocalVerificationScreenContainer(
     modifier: Modifier = Modifier,
     navigateToSettingsScreen: () -> Unit = {},
-    navigateToAreaVerificationToAdd: () -> Unit = {},
-    navigateToAreaVerificationToEdit: () -> Unit = {},
+    navigateToAreaVerification: (Long) -> Unit = {},
     viewModel: LocalVerificationViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
     val state by viewModel.collectAsState()
 
-    LocalVerificationScreen(
-        state = state,
-        modifier = modifier,
-        onNavigateBack = viewModel::onNavigateToSettingsScreen,
-        onclickAddArea = viewModel::onNavigateToAreaVerificationAdd,
-        onclickEditArea = viewModel::onNavigateToAreaVerificationEdit,
-        onDeleteVerifiedAreaChip = viewModel::deleteVerifiedArea,
-        onShowEditVerifiedAreaChipDialog = viewModel::onShowEditVerifiedAreaChipDialog,
-        onShowDeleteVerifiedAreaChipDialog = viewModel::onShowDeleteVerifiedAreaChipDialog,
-    )
-
-    viewModel.collectSideEffect {
-        when(it) {
-            is LocalVerificationSideEffect.NavigateToSettingsScreen -> navigateToSettingsScreen()
-            is LocalVerificationSideEffect.NavigateToAreaVerificationToAdd -> navigateToAreaVerificationToAdd()
-            is LocalVerificationSideEffect.NavigateToAreaVerificationToEdit -> navigateToAreaVerificationToEdit()
-        }
+    CompositionLocalProvider(LocalOnRetry provides viewModel::retry) {
+        LocalVerificationScreen(
+            state = state,
+            modifier = modifier,
+            onNavigateBack = viewModel::onNavigateToSettingsScreen,
+            onclickAreaVerification = viewModel::onNavigateToAreaVerification,
+            onDeleteVerifiedAreaChip = viewModel::deleteVerifiedArea,
+            onShowEditAreaDialog = viewModel::showEditAreaDialog,
+            onDismissEditAreaDialog = viewModel::dismissEditAreaDialog,
+            onDismissDeleteFailDialog = viewModel::dismissAreaDeleteFailDialog
+        )
     }
 
+    viewModel.collectSideEffect {
+        when (it) {
+            is LocalVerificationSideEffect.ShowUnKnownErrorToast -> {
+                context.showToast(R.string.unknown_error)
+            }
+
+            is LocalVerificationSideEffect.NavigateToSettingsScreen -> navigateToSettingsScreen()
+            is LocalVerificationSideEffect.NavigateToAreaVerification-> navigateToAreaVerification(
+                it.verifiedAreaId
+            )
+        }
+    }
 }

@@ -1,5 +1,6 @@
 package com.acon.acon.feature.upload
 
+import com.acon.acon.domain.model.spot.SimpleSpot
 import kotlinx.serialization.Serializable
 
 sealed interface UploadRoute {
@@ -8,8 +9,15 @@ sealed interface UploadRoute {
     data object Graph : UploadRoute
 
     @Serializable
-    data object Upload : UploadRoute
+    data object Search : UploadRoute
 
     @Serializable
-    data object Success : UploadRoute
+    data class Review(
+        val spot: SimpleSpot
+    ) : UploadRoute
+
+    @Serializable
+    data class Complete(
+        val spot: SimpleSpot
+    ) : UploadRoute
 }

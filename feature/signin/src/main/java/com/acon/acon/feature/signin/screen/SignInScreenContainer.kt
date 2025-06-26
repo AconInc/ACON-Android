@@ -8,16 +8,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.acon.acon.core.utils.feature.constants.AppURL
+import com.acon.acon.core.common.UrlConstants
+import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.utils.feature.toast.showToast
-import com.acon.acon.domain.repository.SocialRepository
-import com.acon.acon.feature.signin.R
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
 fun SignInScreenContainer(
-    socialRepository: SocialRepository,
     navigateToSpotListView: () -> Unit,
     navigateToAreaVerification: () -> Unit,
     modifier: Modifier = Modifier,
@@ -30,29 +28,28 @@ fun SignInScreenContainer(
         state = state,
         modifier = modifier.fillMaxSize(),
         navigateToSpotListView = viewModel::navigateToSpotListView,
+        navigateToAreaVerification = viewModel::navigateToAreaVerification,
         onClickTermsOfUse = viewModel::onClickTermsOfUse,
         onClickPrivacyPolicy = viewModel::onClickPrivacyPolicy,
-        onClickLoginGoogle = {
-            viewModel.googleLogin(socialRepository)
-        }
+        onAnimationEnd = viewModel::signIn,
     )
 
+    viewModel.emitUserType()
     viewModel.collectSideEffect { sideEffect ->
         when(sideEffect) {
-            is SignInSideEffect.ShowToastMessage -> { context.showToast(R.string.signin_login_failed_toast) }
+            is SignInSideEffect.ShowToastMessage -> { context.showToast(R.string.sign_in_failed_toast) }
             is SignInSideEffect.NavigateToSpotListView -> { navigateToSpotListView() }
             is SignInSideEffect.NavigateToAreaVerification -> { navigateToAreaVerification() }
             is SignInSideEffect.OnClickTermsOfUse -> {
-                val url = AppURL.TERM_OF_USE
+                val url = UrlConstants.TERM_OF_USE
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
                 context.startActivity(intent)
             }
             is SignInSideEffect.OnClickPrivacyPolicy -> {
-                val url = AppURL.PRIVATE_POLICY
+                val url = UrlConstants.PRIVATE_POLICY
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
                 context.startActivity(intent)
             }
         }
     }
-
 }

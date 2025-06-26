@@ -3,6 +3,7 @@ package com.acon.acon.data
 import com.acon.acon.core.common.IODispatcher
 import com.acon.acon.data.datasource.local.TokenLocalDataSource
 import com.acon.acon.domain.type.UserType
+import com.acon.core.analytics.amplitude.AconAmplitude
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -42,6 +43,7 @@ class SessionManager @Inject constructor(
     }
 
     suspend fun clearSession() {
+        AconAmplitude.clearUserId()
         tokenLocalDataSource.removeAllTokens()
         _userType.emit(UserType.GUEST)
     }

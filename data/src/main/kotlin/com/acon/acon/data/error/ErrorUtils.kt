@@ -11,14 +11,14 @@ internal inline fun <R> runCatchingWith(
     return try {
         Result.success(block())
     } catch (e: RemoteError) {
-        Timber.d("RemoteError: $e")
+        Timber.e(e)
         definedErrors.find { definedError ->
             e.errorCode == definedError.code
         }?.let { Result.failure(it) } ?: Result.failure(e)
     } catch (e: CancellationException) {
         throw e
     } catch (e: Throwable) {
-        Timber.d("Throwable: $e")
+        Timber.e(e)
         Result.failure(e)
     }
 }

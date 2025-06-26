@@ -1,13 +1,15 @@
 package com.acon.acon.data.datasource.remote
 
+import com.acon.acon.data.api.remote.SpotAuthApi
+import com.acon.acon.data.api.remote.SpotNoAuthApi
+import com.acon.acon.data.dto.request.AddBookmarkRequest
 import com.acon.acon.data.dto.request.RecentNavigationLocationRequest
 import com.acon.acon.data.dto.request.SpotListRequest
-import com.acon.acon.data.dto.response.SpotDetailInfoResponse
-import com.acon.acon.data.dto.response.SpotDetailMenuListResponse
+import com.acon.acon.data.dto.response.MenuBoardListResponse
+import com.acon.acon.data.dto.response.SpotDetailResponse
 import com.acon.acon.data.dto.response.SpotListResponse
 import com.acon.acon.data.dto.response.area.LegalAreaResponse
-import com.acon.acon.data.remote.SpotNoAuthApi
-import com.acon.acon.data.remote.SpotAuthApi
+import com.acon.acon.data.dto.response.profile.SavedSpotsResponse
 import javax.inject.Inject
 
 class SpotRemoteDataSource @Inject constructor(
@@ -23,15 +25,31 @@ class SpotRemoteDataSource @Inject constructor(
         return spotNoAuthApi.fetchRecentNavigationLocation(request)
     }
 
-    suspend fun getSpotDetailInfo(spotId: Long): SpotDetailInfoResponse {
-        return spotNoAuthApi.getSpotDetailInfo(spotId)
-    }
-
-    suspend fun getSpotMenuList(spotId: Long): SpotDetailMenuListResponse {
-        return spotNoAuthApi.getSpotMenuList(spotId)
+    suspend fun fetchSpotDetail(spotId: Long, isDeepLink: Boolean): SpotDetailResponse {
+        return spotNoAuthApi.fetchSpotDetail(spotId, isDeepLink)
     }
 
     suspend fun getLegalDong(latitude: Double, longitude: Double): LegalAreaResponse {
         return spotNoAuthApi.getLegalDong(latitude, longitude)
+    }
+
+    suspend fun fetchMenuBoards(spotId: Long): MenuBoardListResponse {
+        return spotNoAuthApi.fetchMenuBoards(spotId)
+    }
+
+    suspend fun fetchSpotDetailFromUser(spotId: Long): SpotDetailResponse {
+        return spotAuthApi.fetchSpotDetailFromUser(spotId)
+    }
+
+    suspend fun fetchSavedSpotList(): SavedSpotsResponse {
+        return spotAuthApi.fetchSavedSpotList()
+    }
+
+    suspend fun addBookmark(request: AddBookmarkRequest) {
+        return spotAuthApi.addBookmark(request)
+    }
+
+    suspend fun deleteBookmark(spotId: Long) {
+        return spotAuthApi.deleteBookmark(spotId)
     }
 }

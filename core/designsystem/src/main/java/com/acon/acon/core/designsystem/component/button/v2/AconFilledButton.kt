@@ -17,8 +17,6 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.acon.acon.core.designsystem.blur.LocalHazeState
-import com.acon.acon.core.designsystem.blur.defaultHazeEffect
 import com.acon.acon.core.designsystem.component.loading.AconCircularProgressBar
 import com.acon.acon.core.designsystem.theme.AconTheme
 
@@ -44,10 +42,7 @@ fun AconFilledButton(
 
     Button(
         onClick = onClick,
-        modifier = modifier.defaultHazeEffect(
-            hazeState = LocalHazeState.current,
-            tintColor = AconTheme.color.GlassWhiteDefault,
-        ),
+        modifier = modifier,
         enabled = enabled,
         shape = shape,
         colors = colors,

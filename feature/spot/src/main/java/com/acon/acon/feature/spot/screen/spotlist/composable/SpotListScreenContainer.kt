@@ -1,85 +1,100 @@
 package com.acon.acon.feature.spot.screen.spotlist.composable
 
-import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.acon.acon.core.map.onLocationReady
-import com.acon.acon.core.utils.feature.constants.AppURL
-import com.acon.acon.core.utils.feature.permission.CheckAndRequestLocationPermission
-import com.acon.acon.core.utils.feature.toast.showToast
-import com.acon.acon.domain.repository.SocialRepository
-import com.acon.acon.feature.spot.R
-import com.acon.acon.feature.spot.screen.spotlist.SpotListSideEffect
-import com.acon.acon.feature.spot.screen.spotlist.SpotListUiState
+import com.acon.acon.domain.model.spot.SpotNavigationParameter
+import com.acon.acon.domain.model.spot.v2.Spot
+import com.acon.acon.domain.type.TransportMode
+import com.acon.acon.domain.type.UserType
+import com.acon.acon.feature.spot.screen.spotlist.SpotListSideEffectV2
 import com.acon.acon.feature.spot.screen.spotlist.SpotListViewModel
+import com.acon.feature.common.compose.LocalDeepLinkHandler
+import com.acon.feature.common.compose.LocalOnRetry
+import com.acon.feature.common.compose.LocalRequestSignIn
+import com.acon.feature.common.compose.LocalUserType
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.filter
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
 fun SpotListScreenContainer(
-    socialRepository: SocialRepository,
+    onNavigateToUploadScreen: () -> Unit,
+    onNavigateToProfileScreen: () -> Unit,
+    onNavigateToSpotDetailScreen: (Spot, TransportMode) -> Unit,
     modifier: Modifier = Modifier,
-    onNavigateToAreaVerification: () -> Unit = {},
-    onNavigateToSpotDetailScreen: (id: Long) -> Unit = {},
-    viewModel: SpotListViewModel = hiltViewModel(),
+    onNavigateToDeeplinkSpotDetailScreen: (spotNav: SpotNavigationParameter) -> Unit = {},
+    viewModel: SpotListViewModel = hiltViewModel()
 ) {
-
-    val context = LocalContext.current
     val state by viewModel.collectAsState()
+    val deepLinkHandler = LocalDeepLinkHandler.current
+    val context = LocalContext.current
 
-    CheckAndRequestLocationPermission(
-        onPermissionGranted = {
-            if (state !is SpotListUiState.Success) {
-                context.onLocationReady(viewModel::fetchSpots)
-            }
-        }
-    )
+    val userType = LocalUserType.current
+    val onSignInRequired = LocalRequestSignIn.current
 
-    SpotListScreen(
-        state = state,
-        modifier = modifier.fillMaxSize(),
-        onRefresh = {
-            context.onLocationReady(viewModel::onRefresh)
-        },
-        onLoginBottomSheetShowStateChange = viewModel::onLoginBottomSheetShowStateChange,
-        onFilterBottomSheetShowStateChange = viewModel::onFilterBottomSheetStateChange,
-        onResetFilter = {
-            context.onLocationReady(viewModel::onResetFilter)
-        },
-        onCompleteFilter = { condition, proceed ->
-            context.onLocationReady {
-                viewModel.onCompleteFilter(it, condition, proceed)
+    LaunchedEffect(Unit) {
+        deepLinkHandler.spotIdFlow
+            .filter { it != -1L }
+            .collect { spotId ->
+                delay(400)
+                onNavigateToDeeplinkSpotDetailScreen(
+                    SpotNavigationParameter(
+                        spotId = spotId,
+                        tags = emptyList(),
+                        transportMode = null,
+                        eta = null,
+                        isFromDeepLink = true,
+                        navFromProfile = null
+                    )
+                )
             }
-        },
-        onSpotItemClick = viewModel::onSpotItemClick,
-        onTermOfUse = viewModel::onTermOfUse,
-        onPrivatePolicy = viewModel::onPrivatePolicy,
-        onGoogleSignIn = {
-            context.onLocationReady {
-                viewModel.googleLogin(socialRepository, it)
-            }
-        },
-    )
+    }
 
+    CompositionLocalProvider(LocalOnRetry provides viewModel::retry) {
+        SpotListScreen(
+            state = state,
+            onSpotTypeChanged = viewModel::onSpotTypeClicked,
+            onSpotClick = { spot, rank ->
+                if (userType == UserType.GUEST)
+                    onSignInRequired("click_detail_guest?")
+                else
+                    viewModel.onSpotClicked(spot, rank)
+            },
+            onTryFindWay = viewModel::onTryFindWay,
+            onNavigationAppChoose = viewModel::onNavigationAppChosen,
+            onChooseNavigationAppModalDismiss = viewModel::onChooseNavigationAppModalDismissed,
+            onFilterButtonClick = viewModel::onFilterButtonClicked,
+            onFilterModalDismissRequest = viewModel::onFilterModalDismissed,
+            onRestaurantFilterSaved = viewModel::onRestaurantFilterSaved,
+            onCafeFilterSaved = viewModel::onCafeFilterSaved,
+            modifier = modifier.fillMaxSize(),
+            onNavigateToUploadScreen = onNavigateToUploadScreen,
+            onNavigateToProfileScreen = onNavigateToProfileScreen
+        )
+    }
+
+    viewModel.requestLocationPermission()
+    viewModel.emitUserType()
+    viewModel.emitLiveLocation()
     viewModel.collectSideEffect {
         when (it) {
-            is SpotListSideEffect.ShowToastMessage -> { context.showToast(R.string.signin_login_failed_toast) }
-            is SpotListSideEffect.NavigateToAreaVerification -> { onNavigateToAreaVerification() }
-            is SpotListSideEffect.NavigateToSpotDetail -> { onNavigateToSpotDetailScreen(it.id) }
-            is SpotListSideEffect.OnTermOfUse -> {
-                val url = AppURL.TERM_OF_USE
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-                context.startActivity(intent)
+            is SpotListSideEffectV2.ShowToastMessage -> {
+                // Handle the side effect here
             }
-            is SpotListSideEffect.OnPrivatePolicy -> {
-                val url = AppURL.PRIVATE_POLICY
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-                context.startActivity(intent)
+
+            is SpotListSideEffectV2.NavigateToSpotDetailScreen -> {
+                onNavigateToSpotDetailScreen(it.spot, it.transportMode)
+            }
+
+            is SpotListSideEffectV2.NavigateToExternalMap -> {
+                it.handler.startNavigationApp(context)
             }
         }
     }

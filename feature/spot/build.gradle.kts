@@ -15,10 +15,13 @@ dependencies {
 
     implementation(projects.domain)
     implementation(projects.core.designsystem)
+    implementation(projects.core.analytics)
     implementation(projects.core.utils.feature)
     implementation(projects.core.map)
+    implementation(projects.core.adsApi)
+    implementation(projects.feature.common)
 
+    implementation(libs.branch.io)
     implementation(libs.pulltorefresh)
-
     implementation(libs.lottie.compose)
 }

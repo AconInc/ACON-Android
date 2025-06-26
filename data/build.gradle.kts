@@ -25,6 +25,7 @@ dependencies {
 
     implementation(projects.domain)
     implementation(projects.core.utils.feature)
+    implementation(projects.core.analytics)
 
     implementation(platform(libs.okhttp.bom))
     implementation(libs.okhttp)
@@ -37,4 +38,6 @@ dependencies {
 
     implementation(libs.androidx.security.crypto.ktx)
     implementation(libs.bundles.googleSignIn)
+
+    implementation(libs.preferences.datastore)
 }

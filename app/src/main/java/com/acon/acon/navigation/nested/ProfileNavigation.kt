@@ -2,37 +2,35 @@ package com.acon.acon.navigation.nested
 
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.SnackbarDuration
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.toRoute
-import com.acon.acon.domain.repository.SocialRepository
+import com.acon.acon.core.designsystem.theme.AconTheme
+import com.acon.acon.domain.model.spot.SpotNavigationParameter
 import com.acon.acon.feature.SettingsRoute
-import com.acon.acon.feature.areaverification.AreaVerificationRoute
 import com.acon.acon.feature.profile.composable.ProfileRoute
+import com.acon.acon.feature.profile.composable.screen.bookmark.composable.BookmarkScreenContainer
 import com.acon.acon.feature.profile.composable.screen.galleryGrid.composable.GalleryGridContainer
 import com.acon.acon.feature.profile.composable.screen.galleryList.composable.GalleryListContainer
 import com.acon.acon.feature.profile.composable.screen.photoCrop.composable.PhotoCropContainer
 import com.acon.acon.feature.profile.composable.screen.profile.composable.ProfileScreenContainer
 import com.acon.acon.feature.profile.composable.screen.profileMod.composable.ProfileModScreenContainer
 import com.acon.acon.feature.spot.SpotRoute
-import kotlinx.coroutines.launch
+import com.acon.acon.feature.upload.UploadRoute
 
 internal fun NavGraphBuilder.profileNavigation(
     navController: NavHostController,
-    socialRepository: SocialRepository,
     snackbarHostState: SnackbarHostState
 ) {
-
     navigation<ProfileRoute.Graph>(
         startDestination = ProfileRoute.Profile,
         enterTransition = { EnterTransition.None },
@@ -40,23 +38,37 @@ internal fun NavGraphBuilder.profileNavigation(
     ) {
         composable<ProfileRoute.Profile> {
             ProfileScreenContainer(
-                socialRepository = socialRepository,
-                modifier = Modifier.fillMaxSize(),
+                snackbarHostState = snackbarHostState,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(AconTheme.color.Gray900)
+                    .statusBarsPadding(),
+                onNavigateToSpotDetailScreen = {
+                    navController.navigate(
+                        SpotRoute.SpotDetail(
+                            SpotNavigationParameter(it, emptyList(), null, null, null, true)
+                        )
+                    )
+                },
+                onNavigateToBookMarkScreen = {
+                    navController.navigate(ProfileRoute.Bookmark)
+                },
                 onNavigateToSpotListScreen = {
-                    navController.navigate(SpotRoute.SpotList) {
-                        popUpTo(ProfileRoute.Graph) {
-                            inclusive = true
-                        }
-                    }
+                    navController.popBackStack(
+                        route = SpotRoute.SpotList,
+                        inclusive = false
+                    )
                 },
                 onNavigateToSettingsScreen = { navController.navigate(SettingsRoute.Settings) },
-                onNavigateToProfileEditScreen = { navController.navigate(ProfileRoute.ProfileMod(null)) },
-                onNavigateToAreaVerificationScreen = {
-                    navController.navigate(AreaVerificationRoute.RequireAreaVerification("onboarding")) {
-                        popUpTo(ProfileRoute.Graph) {
-                            inclusive = true
-                        }
-                    }
+                onNavigateToProfileEditScreen = {
+                    navController.navigate(
+                        ProfileRoute.ProfileMod(
+                            null
+                        )
+                    )
+                },
+                onNavigateToUploadScreen = {
+                    navController.navigate(UploadRoute.Graph)
                 }
             )
         }
@@ -67,27 +79,34 @@ internal fun NavGraphBuilder.profileNavigation(
                 .getStateFlow<String?>("selectedPhotoId", null)
                 .collectAsState()
 
-            val coroutineScope = rememberCoroutineScope()
-            val snackbar = stringResource(com.acon.acon.feature.profile.R.string.snackbar_profile_save_success)
-
             ProfileModScreenContainer(
                 modifier = Modifier.fillMaxSize(),
                 selectedPhotoId = selectedPhotoId,
-                backToProfile = {
+                onNavigateToBack = {
                     navController.popBackStack()
                 },
                 onClickComplete = {
-                    coroutineScope.launch {
-                        snackbarHostState.showSnackbar(
-                            message = snackbar,
-                            duration = SnackbarDuration.Long,
-                        )
-                    }
                     navController.popBackStack()
                 },
                 onNavigateToCustomGallery = {
                     navController.navigate(ProfileRoute.GalleryList)
                 }
+            )
+        }
+
+        composable<ProfileRoute.Bookmark> {
+            BookmarkScreenContainer(
+                modifier = Modifier.fillMaxSize(),
+                onNavigateToBack = {
+                    navController.popBackStack()
+                },
+                onNavigateToSpotDetailScreen = {
+                    navController.navigate(
+                        SpotRoute.SpotDetail(
+                            SpotNavigationParameter(it, emptyList(), null, null, null, true)
+                        )
+                    )
+                },
             )
         }
 
@@ -103,15 +122,17 @@ internal fun NavGraphBuilder.profileNavigation(
             )
         }
 
-        composable<ProfileRoute.GalleryGrid> { backStackEntry ->
-            val route = backStackEntry.toRoute<ProfileRoute.GalleryGrid>()
-
+        composable<ProfileRoute.GalleryGrid> {
             GalleryGridContainer(
                 modifier = Modifier.fillMaxSize(),
-                albumId = route.albumId,
-                albumName = route.albumName,
                 onBackClicked = {
-                    navController.popBackStack()
+                    navController.navigate(ProfileRoute.GalleryList) {
+                        popUpTo(ProfileRoute.GalleryList) {
+                            inclusive = true
+                        }
+                        launchSingleTop = true
+                        restoreState = false
+                    }
                 },
                 onNavigateToPhotoCrop = { photoId ->
                     navController.navigate(ProfileRoute.PhotoCrop(photoId))

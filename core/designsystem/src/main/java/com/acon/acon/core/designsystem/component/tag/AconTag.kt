@@ -3,10 +3,12 @@ package com.acon.acon.core.designsystem.component.tag
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
@@ -23,14 +25,16 @@ fun AconTag(
     modifier: Modifier = Modifier,
     shape: Shape = RoundedCornerShape(4.dp),
     textStyle: TextStyle = AconTheme.typography.Caption1.copy(fontWeight = FontWeight.W400),
-    contentPadding: PaddingValues = PaddingValues(vertical = 3.dp, horizontal = 17.dp)
+    contentPadding: PaddingValues = PaddingValues(vertical = 3.dp, horizontal = 15.dp)
 ) {
     Row(
         modifier = modifier
+            .heightIn(min = 24.dp)
             .background(
                 color = backgroundColor,
                 shape = shape
             ).padding(contentPadding),
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
             text = text,
@@ -45,6 +49,6 @@ fun AconTag(
 private fun AconTagPreview() {
     AconTag(
         text = "Tag",
-        backgroundColor = AconTheme.color.New,
+        backgroundColor = AconTheme.color.TagNew,
     )
 }

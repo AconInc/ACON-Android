@@ -13,6 +13,10 @@ sealed class DeleteVerifiedAreaError : RootError() {
         override val code: Int = 40032
     }
 
+    class PeriodRestrictedDeleteError : DeleteVerifiedAreaError() {
+        override val code: Int = 40055
+    }
+
     class VerifiedAreaNotFound : DeleteVerifiedAreaError() {
         override val code: Int = 40404
     }
@@ -22,6 +26,7 @@ sealed class DeleteVerifiedAreaError : RootError() {
             return arrayOf(
                 InvalidVerifiedArea(),
                 VerifiedAreaLimitViolation(),
+                PeriodRestrictedDeleteError(),
                 VerifiedAreaNotFound()
             )
         }

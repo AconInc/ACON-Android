@@ -13,8 +13,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -31,49 +33,59 @@ import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.rememberAsyncImagePainter
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.topbar.AconTopBar
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.feature.profile.composable.screen.photoCrop.PhotoCropState
+import com.acon.acon.feature.profile.composable.screen.photoCrop.PhotoCropSideEffect
 import com.acon.acon.feature.profile.composable.screen.photoCrop.PhotoCropViewModel
-import org.orbitmvi.orbit.compose.collectAsState
+import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
 fun PhotoCropContainer(
-    modifier : Modifier = Modifier,
+    photoId: String,
+    modifier: Modifier = Modifier,
     viewModel: PhotoCropViewModel = hiltViewModel(),
-    photoId: String = "",
     onCloseClicked: () -> Unit = {},
     onCompleteSelected: (String) -> Unit = {}
-){
-    val state = viewModel.collectAsState().value
+) {
+    viewModel.collectSideEffect {
+        when (it) {
+            PhotoCropSideEffect.NavigateToBack -> {
+                onCloseClicked()
+            }
+
+            is PhotoCropSideEffect.NavigateToProfileMod -> {
+                onCompleteSelected(it.selectedPhotoUri)
+            }
+        }
+    }
 
     PhotoCropScreen(
-        modifier = modifier,
-        state = state,
         photoId = photoId,
-        onCloseClicked = onCloseClicked,
-        onCompleteSelected = onCompleteSelected
+        modifier = modifier,
+        onCloseClicked = viewModel::navigateToBack,
+        onCompleteSelected = viewModel::navigateToProfileMod
     )
 }
 
 @Composable
-fun PhotoCropScreen(
-    modifier: Modifier = Modifier,
-    state: PhotoCropState,
+internal fun PhotoCropScreen(
     photoId: String,
+    modifier: Modifier = Modifier,
     onCloseClicked: () -> Unit = {},
     onCompleteSelected: (String) -> Unit
 ) {
-
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(color = AconTheme.color.Gray9)
+            .background(color = AconTheme.color.Gray900)
             .statusBarsPadding()
             .navigationBarsPadding(),
         verticalArrangement = Arrangement.Center
@@ -81,17 +93,21 @@ fun PhotoCropScreen(
 
         AconTopBar(
             leadingIcon = {
-                IconButton(onClick = onCloseClicked) {
-                    Image(
-                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_dissmiss_28),
-                        contentDescription = "Close",
+                IconButton(
+                    onClick = { onCloseClicked() }
+                ) {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(R.drawable.ic_topbar_arrow_left),
+                        contentDescription = stringResource(R.string.back),
+                        tint = AconTheme.color.Gray50
                     )
                 }
             },
             content = {
                 Text(
-                    text = "앨범",
-                    style = AconTheme.typography.head5_22_sb,
+                    text = stringResource(R.string.album),
+                    style = AconTheme.typography.Title4,
+                    fontWeight = FontWeight.SemiBold,
                     color = AconTheme.color.White
                 )
             },
@@ -100,16 +116,21 @@ fun PhotoCropScreen(
                     onClick = { onCompleteSelected(photoId) }
                 ) {
                     Text(
-                        text = "완료",
-                        style = AconTheme.typography.subtitle1_16_med,
-                        color = AconTheme.color.White
+                        text = stringResource(R.string.done),
+                        style = AconTheme.typography.Title4,
+                        fontWeight = FontWeight.SemiBold,
+                        color = AconTheme.color.Action
                     )
                 }
-            }
+            },
+            modifier = Modifier.padding(vertical = 14.dp)
         )
 
         BoxWithConstraints(
-            modifier = Modifier.fillMaxWidth().aspectRatio(1f).weight(1f),
+            modifier = Modifier
+                .fillMaxWidth()
+                .aspectRatio(1f)
+                .weight(1f),
             contentAlignment = Alignment.Center
         ) {
             val imageWidth = maxWidth
@@ -121,13 +142,15 @@ fun PhotoCropScreen(
             val circleCenter = Offset(imageWidthPx / 2, imageHeightPx / 2)
 
             Box(
-                modifier = Modifier.width(imageWidth).height(imageHeight),
+                modifier = Modifier
+                    .width(imageWidth)
+                    .height(imageHeight),
                 contentAlignment = Alignment.Center
             ) {
                 Image(
                     painter = rememberAsyncImagePainter(Uri.parse(photoId)),
                     modifier = Modifier.fillMaxSize(),
-                    contentDescription = "선택한 프로필 사진",
+                    contentDescription = stringResource(R.string.selected_image),
                     contentScale = ContentScale.Crop,
                     alignment = Alignment.Center
                 )
@@ -160,6 +183,8 @@ fun PhotoCropScreen(
 
 @Preview
 @Composable
-private fun PreviewPhotoCropScreen(){
-    PhotoCropContainer()
+private fun PreviewPhotoCropScreen() {
+    PhotoCropContainer(
+        photoId = ""
+    )
 }

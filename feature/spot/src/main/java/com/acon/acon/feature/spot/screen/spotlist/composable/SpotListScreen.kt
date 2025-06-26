@@ -1,480 +1,316 @@
 package com.acon.acon.feature.spot.screen.spotlist.composable
 
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.SpringSpec
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.collectIsDraggedAsState
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.util.fastForEachIndexed
-import com.acon.acon.core.designsystem.blur.LocalHazeState
-import com.acon.acon.core.designsystem.blur.defaultHazeEffect
-import com.acon.acon.core.designsystem.component.bottomsheet.LoginBottomSheet
-import com.acon.acon.core.designsystem.component.loading.SkeletonItem
+import com.acon.acon.core.designsystem.R
+import com.acon.acon.core.designsystem.component.bottombar.AconBottomBar
+import com.acon.acon.core.designsystem.component.bottombar.BottomNavType
+import com.acon.acon.core.designsystem.component.error.NetworkErrorView
+import com.acon.acon.core.designsystem.component.popup.AconTextPopup
+import com.acon.acon.core.designsystem.effect.LocalHazeState
+import com.acon.acon.core.designsystem.effect.defaultHazeEffect
+import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.core.utils.feature.action.BackOnPressed
+import com.acon.acon.domain.model.spot.v2.Spot
+import com.acon.acon.domain.type.CafeFilterType
+import com.acon.acon.domain.type.RestaurantFilterType
 import com.acon.acon.domain.type.SpotType
 import com.acon.acon.domain.type.UserType
-import com.acon.acon.feature.spot.R
-import com.acon.acon.feature.spot.amplitudeFilterCafe
-import com.acon.acon.feature.spot.amplitudeFilterCompleteCafe
-import com.acon.acon.feature.spot.amplitudeFilterCompleteRestaurant
-import com.acon.acon.feature.spot.amplitudeFilterPassengerRestaurant
-import com.acon.acon.feature.spot.amplitudeFilterPriceSlideCafe
-import com.acon.acon.feature.spot.amplitudeFilterPriceSlideRestaurant
-import com.acon.acon.feature.spot.amplitudeFilterPurposeCafe
-import com.acon.acon.feature.spot.amplitudeFilterRestaurant
-import com.acon.acon.feature.spot.amplitudeFilterVisitCafe
-import com.acon.acon.feature.spot.amplitudeFilterVisitRestaurant
-import com.acon.acon.feature.spot.amplitudeFilterWalkSlideCafe
-import com.acon.acon.feature.spot.amplitudeFilterWalkSlideRestaurant
-import com.acon.acon.feature.spot.screen.spotlist.SpotListUiState
-import com.acon.acon.feature.spot.screen.spotlist.amplitude.amplitudeSpotListSignIn
-import com.acon.acon.feature.spot.screen.spotlist.amplitude.spotListSpotNumberAmplitude
-import com.acon.acon.feature.spot.screen.spotlist.composable.bottomsheet.SpotFilterBottomSheet
-import com.acon.acon.feature.spot.state.ConditionState
-import com.acon.acon.feature.spot.type.AvailableWalkingTimeType
-import com.acon.acon.feature.spot.type.CafePriceRangeType
-import com.acon.acon.feature.spot.type.RestaurantPriceRangeType
-import com.github.fengdai.compose.pulltorefresh.PullToRefresh
-import com.github.fengdai.compose.pulltorefresh.rememberPullToRefreshState
+import com.acon.acon.feature.spot.mock.spotListUiStateRestaurantMock
+import com.acon.acon.feature.spot.screen.component.SpotTypeToggle
+import com.acon.acon.feature.spot.screen.spotlist.FilterDetailKey
+import com.acon.acon.feature.spot.screen.spotlist.SpotListUiStateV2
+import com.acon.feature.common.compose.LocalOnRetry
+import com.acon.feature.common.compose.LocalRequestSignIn
+import com.acon.feature.common.compose.LocalUserType
+import com.acon.feature.common.compose.getScreenHeight
+import com.acon.feature.common.intent.NavigationAppHandler
 import dev.chrisbanes.haze.hazeSource
+import kotlinx.collections.immutable.toImmutableSet
 import kotlinx.coroutines.launch
 
 @Composable
 internal fun SpotListScreen(
-    state: SpotListUiState,
+    state: SpotListUiStateV2,
     modifier: Modifier = Modifier,
-    onRefresh: () -> Unit = {},
-    onResetFilter: () -> Unit = {},
-    onCompleteFilter: (ConditionState, () -> Unit) -> Unit = { _, _ -> },
-    onLoginBottomSheetShowStateChange: (Boolean) -> Unit = {},
-    onFilterBottomSheetShowStateChange: (Boolean) -> Unit = {},
-    onSpotItemClick: (id: Long) -> Unit = {},
-    onTermOfUse: () -> Unit = {},
-    onPrivatePolicy: () -> Unit = {},
-    onGoogleSignIn: () -> Unit = {}
+    onSpotTypeChanged: (SpotType) -> Unit = {},
+    onSpotClick: (Spot, rank: Int) -> Unit = { _, _ -> },
+    onTryFindWay: (Spot) -> Unit = {},
+    onNavigationAppChoose: (NavigationAppHandler) -> Unit = {},
+    onChooseNavigationAppModalDismiss: () -> Unit = {},
+    onFilterButtonClick: () -> Unit = {},
+    onFilterModalDismissRequest: () -> Unit = {},
+    onRestaurantFilterSaved: (Map<FilterDetailKey, Set<RestaurantFilterType>>) -> Unit = {},
+    onCafeFilterSaved: (Map<FilterDetailKey, Set<CafeFilterType>>) -> Unit = {},
+    onNavigateToUploadScreen: () -> Unit = {},
+    onNavigateToProfileScreen: () -> Unit = {},
 ) {
-    val context = LocalContext.current
-    val scrollState = rememberScrollState()
-    val coroutineScope = rememberCoroutineScope()
-    val isDragged by scrollState.interactionSource.collectIsDraggedAsState()
-
-    var scrollableScreenHeightPx by remember {
-        mutableIntStateOf(0)
-    }
-    var scrollableInvisibleHeightPx by remember {
-        mutableIntStateOf(0)
-    }
-    var fullVisibleScreenHeight by remember {
-        mutableIntStateOf(0)
+    val screenHeightDp = getScreenHeight()
+    val screenHeightPx = with(LocalDensity.current) {
+        screenHeightDp.toPx()
     }
 
-    BackOnPressed(context)
-
-    LaunchedEffect(scrollState.value, isDragged) {
-        if (isDragged.not()) {
-            if (scrollState.value != 0 && scrollableScreenHeightPx != 0 && scrollableInvisibleHeightPx != 0 && fullVisibleScreenHeight != 0)
-                if (scrollState.value > scrollableScreenHeightPx - scrollableInvisibleHeightPx - fullVisibleScreenHeight) {
-                    scrollState.animateScrollTo(
-                        value = scrollState.maxValue - scrollableInvisibleHeightPx,
-                        animationSpec = SpringSpec(stiffness = Spring.StiffnessHigh)
-                    )
-                }
-        }
+    val itemHeightPx by remember {
+        mutableFloatStateOf(screenHeightPx * .64f)
     }
 
-    Surface(
-        modifier = modifier.onSizeChanged {
-            fullVisibleScreenHeight = it.height
-        },
-        color = AconTheme.color.Gray9
+    var pagerState = rememberPagerState { 0 }
+    val scope = rememberCoroutineScope()
+
+    val userType = LocalUserType.current
+    val onSignInRequired = LocalRequestSignIn.current
+
+    Column(
+        modifier = modifier
     ) {
-        when (state) {
-            is SpotListUiState.Success -> {
-                if (state.showLoginBottomSheet) {
-                    LoginBottomSheet(
-                        hazeState = LocalHazeState.current,
-                        onDismissRequest = { onLoginBottomSheetShowStateChange(false) },
-                        onGoogleSignIn = {
-                            onGoogleSignIn()
-                            amplitudeSpotListSignIn()
-                        },
-                        onTermOfUse = onTermOfUse,
-                        onPrivatePolicy = onPrivatePolicy
-                    )
-                }
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(IntrinsicSize.Min)
+                .defaultHazeEffect(
+                    hazeState = LocalHazeState.current,
+                    tintColor = AconTheme.color.GlassGray900,
+                    blurRadius = 20.dp,
+                )
+                .padding(bottom = 14.dp, top = 6.dp)
+                .statusBarsPadding()
+        ) {
+            SpotTypeToggle(
+                selectedType = state.selectedSpotType,
+                onSwitched = {
+                    if (userType == UserType.GUEST)
+                        onSignInRequired("click_toggle_guest?")
+                    else
+                        onSpotTypeChanged(it)
+                },
+                modifier = Modifier.align(Alignment.Center)
+            )
 
-                if (state.userType != UserType.GUEST && state.showFilterBottomSheet) {
-                    SpotFilterBottomSheet(
-                        hazeState = LocalHazeState.current,
-                        condition = state.currentCondition,
-                        onComplete = {
-                            onCompleteFilter(it) {
-                                coroutineScope.launch {
-                                    scrollState.animateScrollTo(0)
-                                }
-                            }
-
-                            if (it.spotType == SpotType.RESTAURANT) {
-                                amplitudeFilterRestaurant()
-
-                                if (it.restaurantFeatureOptionType.isNotEmpty()) {
-                                    val restaurantCategories =
-                                        it.restaurantFeatureOptionType.map { option -> option.name }
-                                            .toSet()
-                                    amplitudeFilterVisitRestaurant(restaurantCategories)
-                                }
-
-                                if (it.companionTypeOptionType.isNotEmpty()) {
-                                    val companions =
-                                        it.companionTypeOptionType.map { option -> option.name }
-                                            .toSet()
-                                    amplitudeFilterPassengerRestaurant(companions)
-                                }
-
-                                val walkingTime = when (it.restaurantWalkingTime) {
-                                    AvailableWalkingTimeType.UNDER_5_MINUTES -> "5분 이내"
-                                    AvailableWalkingTimeType.UNDER_10_MINUTES -> "10분"
-                                    AvailableWalkingTimeType.UNDER_15_MINUTES -> "15분"
-                                    AvailableWalkingTimeType.UNDER_20_MINUTES -> "20분"
-                                    AvailableWalkingTimeType.OVER_20_MINUTES -> "25분 이상"
-                                }
-                                val isWalkingTimeDefault =
-                                    it.restaurantWalkingTime == AvailableWalkingTimeType.UNDER_15_MINUTES
-                                amplitudeFilterWalkSlideRestaurant(
-                                    walkingTime,
-                                    isWalkingTimeDefault
+            Icon(
+                imageVector = ImageVector.vectorResource(R.drawable.ic_filter),
+                contentDescription = stringResource(R.string.filter_content_description),
+                tint = AconTheme.color.Gray50,
+                modifier = Modifier
+                    .align(Alignment.CenterEnd)
+                    .padding(end = 16.dp)
+                    .noRippleClickable {
+                        if (userType == UserType.GUEST)
+                            onSignInRequired("")
+                        else
+                            onFilterButtonClick()
+                    }
+                    .then(
+                        if (state is SpotListUiStateV2.Success) {
+                            if (state.selectedRestaurantFilters.values.flatten().isNotEmpty() ||
+                                state.selectedCafeFilters.values.flatten().isNotEmpty()
+                            ) Modifier
+                                .border(
+                                    width = 1.dp,
+                                    color = AconTheme.color.GlassWhiteSelected,
+                                    shape = CircleShape
                                 )
-
-
-                                val priceRange = when (it.restaurantPriceRange) {
-                                    RestaurantPriceRangeType.UNDER_5000 -> "5천원 이하"
-                                    RestaurantPriceRangeType.UNDER_10000 -> "1만원"
-                                    RestaurantPriceRangeType.UNDER_30000 -> "3만원"
-                                    RestaurantPriceRangeType.UNDER_50000 -> "5만원"
-                                    RestaurantPriceRangeType.OVER_50000 -> "5만원 이상"
-                                }
-                                val isPriceDefault =
-                                    it.restaurantPriceRange == RestaurantPriceRangeType.UNDER_10000
-                                amplitudeFilterPriceSlideRestaurant(priceRange, isPriceDefault)
-
-                                val isCompleteFilter =
-                                    !(isWalkingTimeDefault && isPriceDefault && it.restaurantFeatureOptionType.isEmpty() && it.companionTypeOptionType.isEmpty())
-                                amplitudeFilterCompleteRestaurant(isCompleteFilter)
-                            } else {
-                                amplitudeFilterCafe()
-
-                                if (it.cafeFeatureOptionType.isNotEmpty()) {
-                                    val cafeCategories =
-                                        it.cafeFeatureOptionType.map { option -> option.name }
-                                            .toSet()
-                                    amplitudeFilterVisitCafe(cafeCategories)
-                                }
-
-                                if (it.visitPurposeOptionType.isNotEmpty()) {
-                                    val purposes =
-                                        it.visitPurposeOptionType.map { option -> option.name }
-                                            .toSet()
-                                    amplitudeFilterPurposeCafe(purposes)
-                                }
-
-                                val walkingTime = when (it.cafeWalkingTime) {
-                                    AvailableWalkingTimeType.UNDER_5_MINUTES -> "5분 이내"
-                                    AvailableWalkingTimeType.UNDER_10_MINUTES -> "10분"
-                                    AvailableWalkingTimeType.UNDER_15_MINUTES -> "15분"
-                                    AvailableWalkingTimeType.UNDER_20_MINUTES -> "20분"
-                                    AvailableWalkingTimeType.OVER_20_MINUTES -> "25분 이상"
-                                }
-                                val isWalkingTimeDefault =
-                                    it.cafeWalkingTime == AvailableWalkingTimeType.UNDER_15_MINUTES
-                                amplitudeFilterWalkSlideCafe(walkingTime, isWalkingTimeDefault)
-
-                                val priceRange = when (it.cafePriceRange) {
-                                    CafePriceRangeType.UNDER_3000 -> "3천원 이하"
-                                    CafePriceRangeType.UNDER_5000 -> "5천원 이하"
-                                    CafePriceRangeType.OVER_10000 -> "1만원 이상"
-                                }
-                                val isPriceDefault =
-                                    it.cafePriceRange == CafePriceRangeType.UNDER_5000
-                                amplitudeFilterPriceSlideCafe(priceRange, isPriceDefault)
-
-                                val isCompleteFilter =
-                                    !(isWalkingTimeDefault && isPriceDefault && it.visitPurposeOptionType.isEmpty() && it.cafeFeatureOptionType.isEmpty())
-                                amplitudeFilterCompleteCafe(isCompleteFilter)
-                            }
-                        },
-                        onReset = {
-                            onResetFilter()
-                            coroutineScope.launch {
-                                scrollState.scrollTo(0)
-                            }
-                        },
-                        onDismissRequest = {
-                            onFilterBottomSheetShowStateChange(false)
-                        },
-                        modifier = Modifier
-                            .padding(top = 50.dp)
-                            .fillMaxSize(),
-                        isFilteredResultFetching = state.isFilteredResultFetching
+                                .background(
+                                    color = AconTheme.color.GlassWhiteSelected,
+                                    shape = CircleShape
+                                ) else Modifier
+                        } else Modifier
                     )
-                }
+                    .padding(6.dp)
+            )
+        }
 
-                Box(
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    PullToRefresh(
-                        modifier = Modifier,
-                        state = rememberPullToRefreshState(state.isRefreshing),
-                        onRefresh = onRefresh,
-                        dragMultiplier = .35f,
-                        refreshTriggerDistance = 60.dp,
-                        refreshingOffset = 60.dp,
-                        indicator = { state, refreshTriggerDistance, _ ->
-                            SpotListPullToRefreshIndicator(refreshTriggerDistance, state)
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth()
+        ) {
+            when (state) {
+                is SpotListUiStateV2.Success -> {
+                    Box(Modifier.fillMaxSize()) {
+                        when (state.selectedSpotType) {
+                            SpotType.RESTAURANT -> {
+                                pagerState = rememberPagerState {
+                                    val size = state.spotList.size
+                                    when {
+                                        size >= 11 -> size + 2
+                                        size >= 5  -> size + 1
+                                        else       -> size
+                                    }
+                                }
+                                if (state.showFilterModal) {
+                                    RestaurantFilterBottomSheet(
+                                        selectedItems = state.selectedRestaurantFilters.values.flatten()
+                                            .toImmutableSet(),
+                                        onComplete = onRestaurantFilterSaved,
+                                        onReset = LocalOnRetry.current,
+                                        onDismissRequest = onFilterModalDismissRequest
+                                    )
+                                }
+                                SpotListSuccessView(
+                                    pagerState = pagerState,
+                                    state = state,
+                                    userType = userType,
+                                    onSpotClick = onSpotClick,
+                                    onTryFindWay = onTryFindWay,
+                                    itemHeightPx = itemHeightPx,
+                                    modifier = Modifier.fillMaxSize(),
+                                    onNavigationAppChoose = onNavigationAppChoose,
+                                    onChooseNavigationAppModalDismiss = onChooseNavigationAppModalDismiss
+                                )
+                            }
+
+                            SpotType.CAFE -> {
+                                pagerState = rememberPagerState {
+                                    val size = state.spotList.size
+                                    when {
+                                        size >= 11 -> size + 2
+                                        size >= 5  -> size + 1
+                                        else       -> size
+                                    }
+                                }
+                                if (state.showFilterModal) {
+                                    CafeFilterBottomSheet(
+                                        selectedItems = state.selectedCafeFilters.values.flatten()
+                                            .toImmutableSet(),
+                                        onComplete = onCafeFilterSaved,
+                                        onReset = LocalOnRetry.current,
+                                        onDismissRequest = onFilterModalDismissRequest
+                                    )
+                                }
+                                SpotListSuccessView(
+                                    pagerState = pagerState,
+                                    state = state,
+                                    userType = userType,
+                                    onSpotClick = onSpotClick,
+                                    onTryFindWay = onTryFindWay,
+                                    itemHeightPx = itemHeightPx,
+                                    modifier = Modifier.fillMaxSize(),
+                                    onNavigationAppChoose = onNavigationAppChoose,
+                                    onChooseNavigationAppModalDismiss = onChooseNavigationAppModalDismiss
+                                )
+                            }
                         }
-                    ) {
-                        Column {
-                            Text(
-                                text = state.legalAddressName,
-                                style = AconTheme.typography.head5_22_sb,
-                                color = AconTheme.color.White,
+
+                        if (state.showRefreshPopup)
+                            AconTextPopup(
+                                text = stringResource(R.string.refresh_spot),
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .defaultHazeEffect(
-                                        hazeState = LocalHazeState.current,
-                                        tintColor = AconTheme.color.Dim_b_30,
-                                        backgroundColor = Color(0xFF25262A)
-                                    )
-                                    .padding(vertical = 14.dp, horizontal = 20.dp)
-                                    .padding(top = 44.dp),
+                                    .padding(bottom = 8.dp)
+                                    .padding(horizontal = 16.dp)
+                                    .align(Alignment.BottomCenter),
+                                onClick = LocalOnRetry.current
                             )
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .verticalScroll(scrollState)
-                                    .padding(horizontal = 20.dp)
-                                    .hazeSource(LocalHazeState.current)
-                                    .onSizeChanged { size ->
-                                        scrollableScreenHeightPx = size.height
-                                    }
-                            ) {
-                                if (state.isFilteredListEmpty) {
-                                    Spacer(Modifier.height(100.dp))
-                                    EmptySpotListView(modifier = Modifier.fillMaxSize())
-                                } else {
-                                    Text(
-                                        text = stringResource(R.string.spot_recommendation_description),
-                                        style = AconTheme.typography.head6_20_sb,
-                                        color = AconTheme.color.White,
-                                        modifier = Modifier.padding(top = 16.dp)
-                                    )
-
-                                    Spacer(modifier = Modifier.height(12.dp))
-                                    state.spotList.fastForEachIndexed { index, spot ->
-                                        val isFirstRank = spot === state.spotList.first()
-                                        SpotItem(
-                                            spot = spot,
-                                            isFirstRank = isFirstRank,
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .aspectRatio(if (isFirstRank) 328f / 408f else 328f / 128f)
-                                                .clickable {
-                                                    onSpotItemClick(spot.id)
-                                                    spotListSpotNumberAmplitude(index + 1)
-                                                },
-                                        )
-                                        if (spot !== state.spotList.last())
-                                            Spacer(modifier = Modifier.height(12.dp))
-                                    }
-
-                                    Column(
-                                        modifier = Modifier
-                                            .padding(top = 12.dp)
-                                            .fillMaxWidth()
-                                            .onSizeChanged { size ->
-                                                scrollableInvisibleHeightPx = size.height
-                                            },
-                                        horizontalAlignment = Alignment.CenterHorizontally
-                                    ) {
-                                        Text(
-                                            modifier = Modifier.padding(
-                                                top = 38.dp,
-                                                bottom = 50.dp
-                                            ),
-                                            text = stringResource(R.string.alert_max_spot_count),
-                                            style = AconTheme.typography.body2_14_reg,
-                                            color = AconTheme.color.Gray5
-                                        )
-                                    }
-                                }
-
-                            }
-                        }
-                        Column(
-                            modifier = Modifier
-                                .align(Alignment.BottomEnd)
-                                .padding(bottom = 16.dp)
-                                .padding(horizontal = 20.dp),
-                            verticalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            Icon(
-                                imageVector = ImageVector.vectorResource(com.acon.acon.core.designsystem.R.drawable.ic_filter_w_28),
-                                tint = if (state.currentCondition != null) {
-                                    AconTheme.color.Main_org1
-                                } else {
-                                    AconTheme.color.White
-                                },
-                                contentDescription = stringResource(com.acon.acon.core.designsystem.R.string.filter_content_description),
-                                modifier = Modifier
-                                    .clip(CircleShape)
-                                    .size(48.dp)
-                                    .defaultHazeEffect(
-                                        hazeState = LocalHazeState.current,
-                                        tintColor = AconTheme.color.Dim_b_30,
-                                        blurRadius = 8.dp
-                                    )
-                                    .clickable {
-                                        if (state.userType == UserType.GUEST)
-                                            onLoginBottomSheetShowStateChange(true)
-                                        else
-                                            onFilterBottomSheetShowStateChange(true)
-                                    }
-                                    .padding(12.dp)
-                            )
-                        }
                     }
                 }
-            }
 
-            is SpotListUiState.Loading -> {
-                Column(
+                is SpotListUiStateV2.Loading -> SpotListLoadingView(
+                    itemHeightPx = itemHeightPx,
                     modifier = Modifier
-                        .verticalScroll(scrollState)
+                        .verticalScroll(rememberScrollState())
+                        .hazeSource(LocalHazeState.current)
                         .fillMaxSize()
-                        .padding(horizontal = 20.dp)
-                ) {
-                    Spacer(modifier = Modifier.height(44.dp))
-                    Text(
-                        text = "",
-                        style = AconTheme.typography.head5_22_sb,
-                        color = AconTheme.color.White,
-                        modifier = Modifier.padding(vertical = 14.dp)
-                    )
-                    Text(
-                        text = stringResource(R.string.spot_recommendation_description),
-                        style = AconTheme.typography.head6_20_sb,
-                        color = AconTheme.color.White,
-                        modifier = Modifier.padding(top = 16.dp)
-                    )
-                    Spacer(modifier = Modifier.height(12.dp))
-                    SkeletonItem(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .aspectRatio(328f / 408f)
-                            .clip(RoundedCornerShape(6.dp))
-                            .hazeSource(LocalHazeState.current)
-                    )
-                    repeat(5) {
-                        SkeletonItem(
-                            modifier = Modifier
-                                .padding(top = 12.dp)
-                                .fillMaxWidth()
-                                .aspectRatio(328f / 128f)
-                                .clip(RoundedCornerShape(6.dp))
-                                .hazeSource(LocalHazeState.current)
+                        .padding(
+                            horizontal = 16.dp,
+                            vertical = 48.dp
                         )
-                    }
-                    Spacer(modifier = Modifier.height(46.dp))
+                )
+
+                is SpotListUiStateV2.LoadFailed -> {
+                    NetworkErrorView(
+                        onRetry = LocalOnRetry.current,
+                        modifier = Modifier.fillMaxSize()
+                    )
                 }
-            }
 
-            is SpotListUiState.LoadFailed -> {
-
-            }
-
-            is SpotListUiState.OutOfServiceArea -> {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                ) {
-                    Text(
-                        text = stringResource(R.string.out_of_service_area_name),
-                        style = AconTheme.typography.head5_22_sb,
-                        color = AconTheme.color.White,
+                is SpotListUiStateV2.OutOfServiceArea -> {
+                    UnavailableLocationView(
                         modifier = Modifier
-                            .padding(start = 16.dp, top = 57.dp)
-                    )
-
-                    Spacer(Modifier.height(110.dp))
-                    Image(
-                        imageVector = ImageVector.vectorResource(com.acon.acon.core.designsystem.R.drawable.ic_warning_acon_140),
-                        contentDescription = stringResource(R.string.out_of_service_area_content_description),
-                        modifier = Modifier
-                            .align(Alignment.CenterHorizontally)
-                    )
-
-                    Spacer(Modifier.height(24.dp))
-                    Text(
-                        text = stringResource(R.string.out_of_service_area_content),
-                        style = AconTheme.typography.subtitle1_16_med,
-                        color = AconTheme.color.Gray4,
-                        modifier = Modifier
-                            .align(Alignment.CenterHorizontally)
-
+                            .fillMaxSize()
+                            .padding(top = 24.dp)
                     )
                 }
             }
         }
+
+        AconBottomBar(
+            selectedItem = BottomNavType.SPOT,
+            onItemClick = { bottomType ->
+                when(bottomType) {
+                    BottomNavType.SPOT -> {
+                        scope.launch {
+                            pagerState.animateScrollToPage(0)
+                        }
+                    }
+                    BottomNavType.UPLOAD -> {
+                        if (userType == UserType.GUEST) {
+                            onSignInRequired("click_upload_guest?")
+                        } else {
+                            onNavigateToUploadScreen()
+                        }
+                    }
+                    BottomNavType.PROFILE -> onNavigateToProfileScreen()
+                }
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .defaultHazeEffect(
+                    hazeState = LocalHazeState.current,
+                    tintColor = AconTheme.color.GlassGray900
+                )
+                .navigationBarsPadding()
+        )
     }
 }
 
-@Preview
 @Composable
-private fun SpotListScreenPreview() {
+@Preview
+private fun SpotListScreenV2Preview() {
     SpotListScreen(
-        state = SpotListUiState.Success(emptyList(), "법정동")
+        state = spotListUiStateRestaurantMock,
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(AconTheme.color.Gray900)
+            .width(400.dp)
     )
 }
 
-@Preview
 @Composable
-private fun SpotListLoadingScreenPreview() {
+@Preview
+private fun SpotListScreenV2LoadingPreview() {
     SpotListScreen(
-        state = SpotListUiState.LoadFailed
+        state = SpotListUiStateV2.Loading(SpotType.RESTAURANT),
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(AconTheme.color.Gray900)
+            .width(400.dp)
     )
 }
