@@ -28,8 +28,8 @@ import com.acon.acon.core.designsystem.animation.defaultPopExitTransition
 import com.acon.acon.core.designsystem.component.popup.AconToastPopup
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.feature.signin.screen.SignInRoute
-import com.acon.acon.feature.spot.SpotRoute
+import com.acon.core.navigation.route.SignInRoute
+import com.acon.core.navigation.route.SpotRoute
 import com.acon.acon.navigation.nested.areaVerificationNavigation
 import com.acon.acon.navigation.nested.onboardingNavigationNavigation
 import com.acon.acon.navigation.nested.profileNavigation

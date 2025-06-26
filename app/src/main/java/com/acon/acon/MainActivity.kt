@@ -47,8 +47,8 @@ import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.domain.repository.AconAppRepository
 import com.acon.acon.domain.repository.SocialRepository
 import com.acon.acon.domain.repository.UserRepository
-import com.acon.acon.feature.areaverification.AreaVerificationRoute
-import com.acon.acon.feature.spot.SpotRoute
+import com.acon.core.navigation.route.AreaVerificationRoute
+import com.acon.core.navigation.route.SpotRoute
 import com.acon.acon.navigation.AconNavigation
 import com.acon.core.ads_api.AdProvider
 import com.acon.core.ads_api.LocalSpotListAdProvider

@@ -5,7 +5,7 @@ import androidx.navigation.toRoute
 import com.acon.core.ui.base.BaseContainerHost
 import com.acon.core.model.spot.SimpleSpot
 import com.acon.acon.domain.repository.UploadRepository
-import com.acon.acon.feature.upload.UploadRoute
+import com.acon.core.navigation.route.UploadRoute
 import com.acon.core.analytics.amplitude.AconAmplitude
 import com.acon.core.analytics.constants.EventNames
 import com.acon.core.analytics.constants.PropertyKeys

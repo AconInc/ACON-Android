@@ -16,16 +16,16 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.toRoute
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.core.model.SpotNavigationParameter
-import com.acon.acon.feature.SettingsRoute
-import com.acon.acon.feature.profile.composable.ProfileRoute
+import com.acon.core.navigation.route.SettingsRoute
+import com.acon.core.navigation.route.ProfileRoute
 import com.acon.acon.feature.profile.composable.screen.bookmark.composable.BookmarkScreenContainer
 import com.acon.acon.feature.profile.composable.screen.galleryGrid.composable.GalleryGridContainer
 import com.acon.acon.feature.profile.composable.screen.galleryList.composable.GalleryListContainer
 import com.acon.acon.feature.profile.composable.screen.photoCrop.composable.PhotoCropContainer
 import com.acon.acon.feature.profile.composable.screen.profile.composable.ProfileScreenContainer
 import com.acon.acon.feature.profile.composable.screen.profileMod.composable.ProfileModScreenContainer
-import com.acon.acon.feature.spot.SpotRoute
-import com.acon.acon.feature.upload.UploadRoute
+import com.acon.core.navigation.route.SpotRoute
+import com.acon.core.navigation.route.UploadRoute
 
 internal fun NavGraphBuilder.profileNavigation(
     navController: NavHostController,

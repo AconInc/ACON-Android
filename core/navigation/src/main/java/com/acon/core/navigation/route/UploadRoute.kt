@@ -1,4 +1,4 @@
-package com.acon.acon.feature.upload
+package com.acon.core.navigation.route
 
 import com.acon.core.model.spot.SimpleSpot
 import kotlinx.serialization.Serializable

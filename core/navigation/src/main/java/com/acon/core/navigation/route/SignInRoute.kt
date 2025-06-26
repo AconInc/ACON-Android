@@ -1,4 +1,4 @@
-package com.acon.acon.feature.signin.screen
+package com.acon.core.navigation.route
 
 import kotlinx.serialization.Serializable
 
