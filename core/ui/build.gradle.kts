@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.acon.android.library.compose)
     alias(libs.plugins.acon.android.library.haze)
     alias(libs.plugins.acon.android.library.coil)
+    alias(libs.plugins.acon.android.library.orbit)
 }
 
 android {

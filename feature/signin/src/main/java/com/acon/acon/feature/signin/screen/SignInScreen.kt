@@ -46,8 +46,8 @@ import com.acon.acon.feature.signin.utils.SplashAudioManager
 import com.acon.core.analytics.amplitude.AconAmplitude
 import com.acon.core.analytics.constants.EventNames
 import com.acon.core.analytics.constants.PropertyKeys
-import com.acon.feature.common.compose.LocalDeepLinkHandler
-import com.acon.feature.common.compose.LocalUserType
+import com.acon.core.ui.compose.LocalDeepLinkHandler
+import com.acon.core.ui.compose.LocalUserType
 import com.acon.feature.common.compose.getScreenHeight
 import com.acon.feature.common.compose.getScreenWidth
 import com.acon.feature.common.remember.rememberSocialRepository

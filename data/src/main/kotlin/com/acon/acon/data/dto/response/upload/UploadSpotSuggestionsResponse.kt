@@ -14,7 +14,7 @@ data class UploadSpotSuggestionResponse(
     @SerialName("spotId") val spotId: Long,
     @SerialName("name") val spotName: String
 ) {
-    fun toSuggestion() = com.acon.core.model.upload.UploadSpotSuggestion(
+    fun toSuggestion() = UploadSpotSuggestion(
         spotId = spotId,
         name = spotName
     )

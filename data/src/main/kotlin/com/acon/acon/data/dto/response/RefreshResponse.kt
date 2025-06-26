@@ -9,7 +9,7 @@ data class RefreshResponse(
     @SerialName("accessToken") val accessToken: String?,
     @SerialName("refreshToken") val refreshToken: String?,
 ) {
-    fun toRefreshToken() = com.acon.core.model.user.RefreshToken(
+    fun toRefreshToken() = RefreshToken(
         accessToken = accessToken,
         refreshToken = refreshToken,
     )

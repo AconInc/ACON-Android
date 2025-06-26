@@ -25,14 +25,14 @@ class UserRepositoryImpl @Inject constructor(
     private val sessionManager: SessionManager
 ) : UserRepository {
 
-    override fun getUserType(): Flow<com.acon.core.type.UserType> {
+    override fun getUserType(): Flow<UserType> {
         return sessionManager.getUserType()
     }
 
     override suspend fun signIn(
-        socialType: com.acon.core.type.SocialType,
+        socialType: SocialType,
         idToken: String
-    ): Result<com.acon.core.model.user.VerificationStatus> {
+    ): Result<VerificationStatus> {
         return runCatchingWith(*PostSignInError.createErrorInstances()) {
             val signInResponse = userRemoteDataSource.signIn(
                 SignInRequest(
@@ -84,7 +84,7 @@ class UserRepositoryImpl @Inject constructor(
         )
     }
 
-    override suspend fun fetchVerifiedAreaList(): Result<List<com.acon.core.model.area.Area>> {
+    override suspend fun fetchVerifiedAreaList(): Result<List<Area>> {
         // TODO - 인증 지역 조회 API Error 처리 안됨
         return runCatchingWith() {
             userRemoteDataSource.fetchVerifiedAreaList().verifiedAreaList

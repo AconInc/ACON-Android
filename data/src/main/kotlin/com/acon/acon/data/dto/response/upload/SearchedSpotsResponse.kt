@@ -17,7 +17,7 @@ data class SearchedSpotResponse(
     @SerialName("address") val address: String,
     @SerialName("spotType") val spotType: String
 ) {
-    fun toSearchedSpot() = com.acon.core.model.upload.SearchedSpot(
+    fun toSearchedSpot() = SearchedSpot(
         spotId = spotId,
         name = name,
         address = address,

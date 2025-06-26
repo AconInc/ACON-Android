@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.acon.core.model.profile.ProfileInfo
 import com.acon.acon.domain.repository.ProfileRepository
 import com.acon.core.type.UserType
-import com.acon.feature.common.base.BaseContainerHost
+import com.acon.core.ui.base.BaseContainerHost
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.viewmodel.container

@@ -59,8 +59,8 @@ import com.acon.core.type.TransportMode
 import com.acon.core.type.UserType
 import com.acon.acon.feature.spot.mock.spotListUiStateRestaurantMock
 import com.acon.acon.feature.spot.screen.component.OperationDot
-import com.acon.feature.common.compose.LocalRequestSignIn
-import com.acon.feature.common.compose.LocalUserType
+import com.acon.core.ui.compose.LocalRequestSignIn
+import com.acon.core.ui.compose.LocalUserType
 
 @Composable
 internal fun SpotItem(

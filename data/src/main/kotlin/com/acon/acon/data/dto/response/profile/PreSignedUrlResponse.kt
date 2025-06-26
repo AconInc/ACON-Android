@@ -9,7 +9,7 @@ data class PreSignedUrlResponse(
     @SerialName("fileName") val fileName: String,
     @SerialName("preSignedUrl") val preSignedUrl: String,
 ) {
-    fun toPreSignedUrl() = com.acon.core.model.profile.PreSignedUrl(
+    fun toPreSignedUrl() = PreSignedUrl(
         fileName = fileName,
         preSignedUrl = preSignedUrl,
     )

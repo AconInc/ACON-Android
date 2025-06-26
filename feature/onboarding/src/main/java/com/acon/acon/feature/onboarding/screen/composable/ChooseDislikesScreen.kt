@@ -32,7 +32,7 @@ import com.acon.acon.core.designsystem.effect.effect.shadowLayerBackground
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.core.type.FoodType
 import com.acon.acon.feature.onboarding.screen.ChooseDislikesUiState
-import com.acon.feature.common.compose.LocalNavController
+import com.acon.core.ui.compose.LocalNavController
 import com.acon.feature.common.type.getNameResId
 
 @Composable

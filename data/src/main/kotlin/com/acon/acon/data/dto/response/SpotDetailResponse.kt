@@ -1,7 +1,7 @@
 package com.acon.acon.data.dto.response
 
-import com.acon.core.model.SignatureMenu
-import com.acon.core.model.SpotDetail
+import com.acon.core.model.spot.SignatureMenu
+import com.acon.core.model.spot.SpotDetail
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -21,7 +21,7 @@ data class SpotDetailResponse(
     @SerialName("latitude") val latitude: Double,
     @SerialName("longitude") val longitude: Double
 ) {
-    fun toSpotDetail() = com.acon.core.model.SpotDetail(
+    fun toSpotDetail() = SpotDetail(
         spotId = spotId,
         imageList = imageList ?: emptyList(),
         name = name,
@@ -45,7 +45,7 @@ data class SignatureMenuResponse(
     @SerialName("name") val name: String,
     @SerialName("price") val price: Int
 ) {
-    fun toSignatureMenu() = com.acon.core.model.SignatureMenu(
+    fun toSignatureMenu() = SignatureMenu(
         name = name,
         price = price
     )

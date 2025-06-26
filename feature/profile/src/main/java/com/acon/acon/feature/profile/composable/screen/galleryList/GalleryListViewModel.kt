@@ -7,7 +7,7 @@ import android.provider.MediaStore
 import androidx.compose.runtime.Immutable
 import com.acon.acon.core.utils.feature.permission.media.StorageAccess
 import com.acon.acon.core.utils.feature.permission.media.getStorageAccess
-import com.acon.feature.common.base.BaseContainerHost
+import com.acon.core.ui.base.BaseContainerHost
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import org.orbitmvi.orbit.annotation.OrbitExperimental

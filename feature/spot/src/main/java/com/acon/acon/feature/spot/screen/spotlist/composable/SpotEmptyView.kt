@@ -31,7 +31,7 @@ import com.acon.core.model.spot.Spot
 import com.acon.core.type.TransportMode
 import com.acon.core.type.UserType
 import com.acon.acon.feature.spot.mock.spotListUiStateRestaurantMock
-import com.acon.feature.common.compose.LocalRequestSignIn
+import com.acon.core.ui.compose.LocalRequestSignIn
 import com.acon.feature.common.compose.getScreenHeight
 import com.acon.feature.common.compose.toDp
 import kotlinx.collections.immutable.ImmutableList

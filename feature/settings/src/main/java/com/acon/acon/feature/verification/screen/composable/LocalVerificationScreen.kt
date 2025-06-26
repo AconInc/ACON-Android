@@ -31,7 +31,7 @@ import com.acon.acon.core.designsystem.component.topbar.AconTopBar
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.feature.verification.component.VerifiedAreaChipRow
 import com.acon.acon.feature.verification.screen.LocalVerificationUiState
-import com.acon.feature.common.compose.LocalOnRetry
+import com.acon.core.ui.compose.LocalOnRetry
 
 @Composable
 fun LocalVerificationScreen(

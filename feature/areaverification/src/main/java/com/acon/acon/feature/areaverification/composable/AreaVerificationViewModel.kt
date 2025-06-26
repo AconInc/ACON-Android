@@ -11,7 +11,7 @@ import com.acon.core.model.area.Area
 import com.acon.acon.domain.repository.UserRepository
 import com.acon.acon.feature.areaverification.amplitude.amplitudeClickNext
 import com.acon.acon.feature.areaverification.amplitude.amplitudeCompleteArea
-import com.acon.feature.common.base.BaseContainerHost
+import com.acon.core.ui.base.BaseContainerHost
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.orbitmvi.orbit.viewmodel.container
 import timber.log.Timber

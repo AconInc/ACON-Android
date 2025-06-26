@@ -1,6 +1,6 @@
 package com.acon.acon.feature.settings.screen
 
-import com.acon.feature.common.base.BaseContainerHost
+import com.acon.core.ui.base.BaseContainerHost
 import com.acon.acon.domain.repository.UserRepository
 import com.acon.core.type.UserType
 import dagger.hilt.android.lifecycle.HiltViewModel

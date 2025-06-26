@@ -11,7 +11,7 @@ data class ProfileResponse(
     @SerialName("birthDate") val birthDate: String? = null,
     @SerialName("savedSpotList") val savedSpotList: List<SavedSpotResponse>,
 ) {
-    fun toProfile() = com.acon.core.model.profile.ProfileInfo(
+    fun toProfile() = ProfileInfo(
         image = image,
         nickname = nickname,
         birthDate = birthDate,

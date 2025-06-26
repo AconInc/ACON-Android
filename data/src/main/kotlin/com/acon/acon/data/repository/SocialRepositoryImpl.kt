@@ -13,12 +13,12 @@ class SocialRepositoryImpl @Inject constructor(
     private val tokenRemoteDataSource: TokenRemoteDataSource,
     private val userRepository: UserRepository,
 ) : SocialRepository {
-    override suspend fun googleSignIn(): Result<com.acon.core.model.user.VerificationStatus> {
+    override suspend fun googleSignIn(): Result<VerificationStatus> {
         return runCatchingWith(*PostSignInError.createErrorInstances()) {
             val idToken = tokenRemoteDataSource.googleSignIn().getOrThrow()
 
             userRepository.signIn(
-                socialType = com.acon.core.type.SocialType.GOOGLE, idToken = idToken
+                socialType = SocialType.GOOGLE, idToken = idToken
             ).getOrThrow()
         }
     }

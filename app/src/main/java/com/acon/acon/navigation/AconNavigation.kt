@@ -38,9 +38,9 @@ import com.acon.acon.navigation.nested.settingsNavigation
 import com.acon.acon.navigation.nested.signInNavigationNavigation
 import com.acon.acon.navigation.nested.spotNavigation
 import com.acon.acon.navigation.nested.uploadNavigation
-import com.acon.feature.common.compose.LocalDeepLinkHandler
-import com.acon.feature.common.compose.LocalNavController
-import com.acon.feature.common.compose.LocalSnackbarHostState
+import com.acon.core.ui.compose.LocalDeepLinkHandler
+import com.acon.core.ui.compose.LocalNavController
+import com.acon.core.ui.compose.LocalSnackbarHostState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.take
@@ -50,10 +50,10 @@ import kotlinx.coroutines.launch
 fun AconNavigation(
     modifier: Modifier = Modifier,
 ) {
-    val navController = LocalNavController.current
-    val snackbarHostState = LocalSnackbarHostState.current
+    val navController = com.acon.core.ui.compose.LocalNavController.current
+    val snackbarHostState = com.acon.core.ui.compose.LocalSnackbarHostState.current
 
-    val deepLinkHandler = LocalDeepLinkHandler.current
+    val deepLinkHandler = com.acon.core.ui.compose.LocalDeepLinkHandler.current
 
     val isWarmStart by deepLinkHandler.isWarmStart.collectAsState()
     val lifecycleOwner = LocalLifecycleOwner.current

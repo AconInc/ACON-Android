@@ -8,7 +8,7 @@ import kotlinx.serialization.Serializable
 data class LegalAreaResponse(
     @SerialName("area") val area: String
 ) {
-    fun toLegalArea() = com.acon.core.model.area.LegalArea(
+    fun toLegalArea() = LegalArea(
         area = area
     )
 }

@@ -16,7 +16,7 @@ data class SavedSpotResponse(
     @SerialName("image") val image: String?
 ) {
 
-    fun toSavedSpot() = com.acon.core.model.profile.SavedSpot(
+    fun toSavedSpot() = SavedSpot(
         spotId = spotId ?: 0L,
         name = name.orEmpty(),
         image = image.orEmpty()

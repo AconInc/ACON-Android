@@ -9,7 +9,7 @@ data class AreaVerificationResponse(
     @SerialName("verifiedAreaId") val verifiedAreaId: Long,
     @SerialName("name") val name: String
 ) {
-    fun toArea() = com.acon.core.model.area.Area(
+    fun toArea() = Area(
         verifiedAreaId = verifiedAreaId,
         name = name
     )

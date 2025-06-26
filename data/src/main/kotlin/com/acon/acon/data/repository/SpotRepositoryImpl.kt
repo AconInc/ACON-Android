@@ -15,14 +15,14 @@ import com.acon.acon.domain.error.spot.FetchMenuBoardsError
 import com.acon.acon.domain.error.spot.FetchRecentNavigationLocationError
 import com.acon.acon.domain.error.spot.FetchSpotListError
 import com.acon.acon.domain.error.spot.GetSpotDetailInfoError
-import com.acon.core.model.area.LegalArea
-import com.acon.core.model.profile.SavedSpot
-import com.acon.core.model.Condition
-import com.acon.core.model.MenuBoardList
-import com.acon.core.model.SpotDetail
-import com.acon.core.model.spot.v2.SpotList
 import com.acon.acon.domain.repository.ProfileRepository
 import com.acon.acon.domain.repository.SpotRepository
+import com.acon.core.model.area.LegalArea
+import com.acon.core.model.profile.SavedSpot
+import com.acon.core.model.spot.Condition
+import com.acon.core.model.spot.MenuBoardList
+import com.acon.core.model.spot.SpotDetail
+import com.acon.core.model.spot.SpotList
 import javax.inject.Inject
 
 class SpotRepositoryImpl @Inject constructor(
@@ -34,8 +34,8 @@ class SpotRepositoryImpl @Inject constructor(
     override suspend fun fetchSpotList(
         latitude: Double,
         longitude: Double,
-        condition: com.acon.core.model.Condition,
-    ): Result<com.acon.core.model.spot.v2.SpotList> {
+        condition: Condition,
+    ): Result<SpotList> {
         return runCatchingWith(*FetchSpotListError.createErrorInstances()) {
             spotRemoteDataSource.fetchSpotList(
                 SpotListRequest(
@@ -68,13 +68,13 @@ class SpotRepositoryImpl @Inject constructor(
     override suspend fun fetchSpotDetail(
         spotId: Long,
         isDeepLink: Boolean
-    ): Result<com.acon.core.model.SpotDetail> {
+    ): Result<SpotDetail> {
         return runCatchingWith(*GetSpotDetailInfoError.createErrorInstances()) {
             spotRemoteDataSource.fetchSpotDetail(spotId, isDeepLink).toSpotDetail()
         }
     }
 
-    override suspend fun getLegalDong(latitude: Double, longitude: Double): Result<com.acon.core.model.area.LegalArea> {
+    override suspend fun getLegalDong(latitude: Double, longitude: Double): Result<LegalArea> {
         return runCatchingWith(*GetLegalDongError.createErrorInstances()) {
             spotRemoteDataSource.getLegalDong(latitude, longitude).toLegalArea()
         }
@@ -82,19 +82,19 @@ class SpotRepositoryImpl @Inject constructor(
 
     override suspend fun fetchMenuBoards(
         spotId: Long
-    ): Result<com.acon.core.model.MenuBoardList> {
+    ): Result<MenuBoardList> {
         return runCatchingWith(*FetchMenuBoardsError.createErrorInstances()) {
             spotRemoteDataSource.fetchMenuBoards(spotId).toMenuBoardList()
         }
     }
 
-    override suspend fun fetchSpotDetailFromUser(spotId: Long): Result<com.acon.core.model.SpotDetail> {
+    override suspend fun fetchSpotDetailFromUser(spotId: Long): Result<SpotDetail> {
         return runCatchingWith(*GetSpotDetailInfoError.createErrorInstances()) {
             spotRemoteDataSource.fetchSpotDetailFromUser(spotId).toSpotDetail()
         }
     }
 
-    override suspend fun fetchSavedSpotList(): Result<List<com.acon.core.model.profile.SavedSpot>> {
+    override suspend fun fetchSavedSpotList(): Result<List<SavedSpot>> {
         return runCatchingWith() {
             spotRemoteDataSource.fetchSavedSpotList().savedSpotResponseList?.map {
                 it.toSavedSpot()

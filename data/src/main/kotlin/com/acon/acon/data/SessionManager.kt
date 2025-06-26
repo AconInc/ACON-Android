@@ -18,33 +18,33 @@ class SessionManager @Inject constructor(
     @IODispatcher private val scope: CoroutineScope
 ) {
 
-    private val _userType = MutableStateFlow(com.acon.core.type.UserType.GUEST)
+    private val _userType = MutableStateFlow(UserType.GUEST)
     private val userType = flow {
         val accessToken = tokenLocalDataSource.getAccessToken()
         if (accessToken.isNullOrEmpty())
-            _userType.emit(com.acon.core.type.UserType.GUEST)
+            _userType.emit(UserType.GUEST)
         else
-            _userType.emit(com.acon.core.type.UserType.USER)
+            _userType.emit(UserType.USER)
 
         emitAll(_userType)
     }.stateIn(
         scope = scope,
         started = SharingStarted.Lazily,
-        initialValue = com.acon.core.type.UserType.GUEST
+        initialValue = UserType.GUEST
     )
 
-    fun getUserType(): Flow<com.acon.core.type.UserType> {
+    fun getUserType(): Flow<UserType> {
         return userType
     }
 
     suspend fun saveAccessToken(accessToken: String) {
         tokenLocalDataSource.saveAccessToken(accessToken)
-        _userType.emit(com.acon.core.type.UserType.USER)
+        _userType.emit(UserType.USER)
     }
 
     suspend fun clearSession() {
         AconAmplitude.clearUserId()
         tokenLocalDataSource.removeAllTokens()
-        _userType.emit(com.acon.core.type.UserType.GUEST)
+        _userType.emit(UserType.GUEST)
     }
 }

@@ -1,8 +1,8 @@
 package com.acon.acon.data.dto.response
 
 import com.acon.acon.core.common.utils.toLocalTime
-import com.acon.core.model.spot.v2.SpotList
-import com.acon.core.model.spot.v2.Spot
+import com.acon.core.model.spot.Spot
+import com.acon.core.model.spot.SpotList
 import com.acon.core.type.TagType
 import com.acon.core.type.TransportMode
 import kotlinx.serialization.SerialName
@@ -12,11 +12,11 @@ import java.time.LocalTime
 
 @Serializable
 data class SpotListResponse(
-    @SerialName("transportMode") val transportMode: com.acon.core.type.TransportMode?,
+    @SerialName("transportMode") val transportMode: TransportMode?,
     @SerialName("spotList") val spotList: List<SpotResponse>?
 ) {
-    fun toSpotList() = com.acon.core.model.spot.v2.SpotList(
-        transportMode = transportMode ?: com.acon.core.type.TransportMode.WALKING,
+    fun toSpotList() = SpotList(
+        transportMode = transportMode ?: TransportMode.WALKING,
         spots = spotList?.map { it.toSpot() } ?: emptyList(),
     )
 }
@@ -36,20 +36,20 @@ data class SpotResponse(
     @SerialName("longitude") val longitude: Double?,
 ) {
 
-    fun toSpot() = com.acon.core.model.spot.v2.Spot(
+    fun toSpot() = Spot(
         id = id ?: 0L,
         image = image.orEmpty(),
         name = name.orEmpty(),
         acorn = acornCount ?: 0,
         tags = tags?.mapNotNull { tagString ->
             when (tagString) {
-                "NEW" -> com.acon.core.type.TagType.NEW
-                "LOCAL" -> com.acon.core.type.TagType.LOCAL
-                "TOP 1" -> com.acon.core.type.TagType.TOP_1
-                "TOP 2" -> com.acon.core.type.TagType.TOP_2
-                "TOP 3" -> com.acon.core.type.TagType.TOP_3
-                "TOP 4" -> com.acon.core.type.TagType.TOP_4
-                "TOP 5" -> com.acon.core.type.TagType.TOP_5
+                "NEW" -> TagType.NEW
+                "LOCAL" -> TagType.LOCAL
+                "TOP 1" -> TagType.TOP_1
+                "TOP 2" -> TagType.TOP_2
+                "TOP 3" -> TagType.TOP_3
+                "TOP 4" -> TagType.TOP_4
+                "TOP 5" -> TagType.TOP_5
                 else -> {
                     Timber.e("Unknown tag type: $tagString")
                     null

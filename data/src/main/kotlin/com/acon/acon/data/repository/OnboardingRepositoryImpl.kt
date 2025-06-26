@@ -18,7 +18,7 @@ class OnboardingRepositoryImpl @Inject constructor(
 ) : OnboardingRepository {
 
     override suspend fun submitOnboardingResult(
-        dislikeFoodList: List<com.acon.core.type.FoodType>
+        dislikeFoodList: List<FoodType>
     ): Result<Unit> {
         return runCatchingWith(*PostOnboardingResultError.createErrorInstances()) {
             val request = OnboardingRequest(dislikeFoods = dislikeFoodList.map { it.name })

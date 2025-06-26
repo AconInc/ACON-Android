@@ -50,7 +50,7 @@ import com.acon.core.type.TransportMode
 import com.acon.core.type.UserType
 import com.acon.acon.feature.spot.screen.spotlist.SpotListUiStateV2
 import com.acon.core.ads_api.LocalSpotListAdProvider
-import com.acon.feature.common.compose.LocalRequestSignIn
+import com.acon.core.ui.compose.LocalRequestSignIn
 import com.acon.feature.common.compose.toDp
 import com.acon.feature.common.intent.KakaoNavigationAppHandler
 import com.acon.feature.common.intent.NaverNavigationAppHandler

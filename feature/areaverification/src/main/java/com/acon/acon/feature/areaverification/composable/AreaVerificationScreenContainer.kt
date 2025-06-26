@@ -10,7 +10,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.acon.acon.core.utils.feature.permission.checkLocationPermission
 import com.acon.acon.core.utils.feature.toast.showToast
-import com.acon.feature.common.compose.LocalRequestLocationPermission
+import com.acon.core.ui.compose.LocalRequestLocationPermission
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 

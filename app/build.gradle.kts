@@ -40,6 +40,7 @@ dependencies {
     implementation(projects.core.map)
     implementation(projects.core.adsApi)
     implementation(projects.core.analytics)
+    implementation(projects.core.ui)
 
     implementation(projects.domain)
     implementation(projects.data)

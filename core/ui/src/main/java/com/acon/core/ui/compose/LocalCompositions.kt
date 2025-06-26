@@ -1,4 +1,4 @@
-package com.acon.feature.common.compose
+package com.acon.core.ui.compose
 
 import android.location.Location
 import androidx.compose.material3.SnackbarHostState
@@ -25,7 +25,7 @@ val LocalNavController = staticCompositionLocalOf<NavHostController> {
 }
 
 val LocalUserType = compositionLocalOf {
-    com.acon.core.type.UserType.GUEST
+    UserType.GUEST
 }
 
 val LocalRequestSignIn = staticCompositionLocalOf<(propertyKey: String) -> Unit> { // TODO: core navigation 모듈 통합
