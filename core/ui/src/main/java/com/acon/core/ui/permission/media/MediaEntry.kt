@@ -1,4 +1,4 @@
-package com.acon.acon.core.utils.feature.permission.media
+package com.acon.core.ui.permission.media
 
 import android.net.Uri
 

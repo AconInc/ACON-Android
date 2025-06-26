@@ -14,7 +14,5 @@ android {
 
 dependencies {
 
-    implementation(projects.core.utils.feature)
-
     implementation(libs.lottie.compose)
 }

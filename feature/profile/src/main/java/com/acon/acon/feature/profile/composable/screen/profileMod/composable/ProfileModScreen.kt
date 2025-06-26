@@ -45,7 +45,7 @@ import com.acon.acon.core.designsystem.component.topbar.AconTopBar
 import com.acon.acon.core.designsystem.effect.LocalHazeState
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.core.utils.feature.permission.media.CheckAndRequestMediaPermission
+import com.acon.core.ui.permission.media.CheckAndRequestMediaPermission
 import com.acon.acon.feature.profile.composable.component.GallerySelectBottomSheet
 import com.acon.acon.feature.profile.composable.component.NicknameValidMessageRow
 import com.acon.acon.feature.profile.composable.component.ProfilePhotoBox

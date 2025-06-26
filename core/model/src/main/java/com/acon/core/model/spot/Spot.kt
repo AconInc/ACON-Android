@@ -1,12 +1,10 @@
 package com.acon.core.model.spot
 
-import androidx.compose.runtime.Immutable
 import com.acon.core.serializer.LocalTimeSerializer
 import com.acon.core.type.TagType
 import kotlinx.serialization.Serializable
 import java.time.LocalTime
 
-@Immutable
 @Serializable
 data class Spot(
     val id: Long,

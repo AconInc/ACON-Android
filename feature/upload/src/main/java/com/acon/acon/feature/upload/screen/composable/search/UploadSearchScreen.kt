@@ -48,7 +48,7 @@ import com.acon.acon.core.designsystem.effect.defaultHazeEffect
 import com.acon.acon.core.designsystem.effect.rememberHazeState
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.core.utils.feature.toast.showToast
+import com.acon.core.ui.android.showToast
 import com.acon.core.model.upload.UploadSpotSuggestion
 import com.acon.core.model.upload.SearchedSpot
 import com.acon.acon.feature.upload.mock.uploadSearchUiStateMock

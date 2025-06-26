@@ -13,7 +13,6 @@ android {
 
 dependencies {
 
-    implementation(projects.core.utils.feature)
     implementation(projects.core.map)
     implementation(projects.core.common)
 

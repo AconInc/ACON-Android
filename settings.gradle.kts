@@ -29,8 +29,6 @@ include(":app")
 
 include(
     ":core:designsystem",
-    ":core:utils:feature",
-    ":core:utils:feature",
     ":core:common",
     ":core:map"
 )

@@ -21,12 +21,6 @@ class NonAndroidLibraryConventionPlugin: Plugin<Project> {
                 sourceCompatibility = JavaVersion.VERSION_17
                 targetCompatibility = JavaVersion.VERSION_17
             }
-
-            dependencies {
-                implementation(catalog.findLibrary("javax-inject").get())
-                implementation(catalog.findLibrary("kotlinx-coroutines-core").get())
-                compileOnly(catalog.findLibrary("compose-stable-marker").get())
-            }
         }
     }
 }

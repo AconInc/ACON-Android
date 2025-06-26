@@ -1,8 +1,5 @@
 package com.acon.core.model.spot
 
-import androidx.compose.runtime.Immutable
-
-@Immutable
 data class SpotDetail(
     val spotId: Long,
     val imageList: List<String>,
@@ -19,7 +16,6 @@ data class SpotDetail(
     val longitude: Double
 )
 
-@Immutable
 data class SignatureMenu(
    val name: String,
    val price: Int

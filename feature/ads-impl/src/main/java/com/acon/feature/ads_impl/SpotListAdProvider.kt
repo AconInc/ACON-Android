@@ -38,7 +38,6 @@ import coil3.compose.AsyncImage
 import com.acon.acon.core.designsystem.component.button.v2.AconFilledButton
 import com.acon.acon.core.designsystem.effect.imageGradientLayer
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.core.utils.feature.BuildConfig
 import com.acon.core.ads_api.AdProvider
 import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdLoader

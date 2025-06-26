@@ -9,7 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.app.ActivityCompat
-import com.acon.acon.core.utils.feature.permission.CheckAndRequestLocationPermission
+import com.acon.core.ui.permission.CheckAndRequestLocationPermission
 import com.google.android.gms.location.LocationServices
 
 @Composable

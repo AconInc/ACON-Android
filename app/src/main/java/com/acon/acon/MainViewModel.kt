@@ -57,7 +57,7 @@ class MainViewModel @Inject constructor(
 @Immutable
 data class AconAppState(
     val snackbarHostState: SnackbarHostState = SnackbarHostState(),
-    val userType: com.acon.core.type.UserType = com.acon.core.type.UserType.GUEST,
+    val userType: UserType = UserType.GUEST,
     val showSignInBottomSheet: Boolean = false,
     val showPermissionDialog: Boolean = false,
     val propertyKey: String = "",

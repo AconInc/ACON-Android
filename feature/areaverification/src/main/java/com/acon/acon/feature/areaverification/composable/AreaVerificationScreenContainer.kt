@@ -8,8 +8,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.acon.acon.core.utils.feature.permission.checkLocationPermission
-import com.acon.acon.core.utils.feature.toast.showToast
+import com.acon.core.ui.permission.checkLocationPermission
+import com.acon.core.ui.android.showToast
 import com.acon.core.ui.compose.LocalRequestLocationPermission
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect

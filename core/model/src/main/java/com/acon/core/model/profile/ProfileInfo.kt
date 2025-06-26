@@ -1,8 +1,5 @@
 package com.acon.core.model.profile
 
-import androidx.compose.runtime.Immutable
-
-@Immutable
 data class ProfileInfo(
     val image: String,
     val nickname: String,
@@ -14,7 +11,6 @@ data class ProfileInfo(
     }
 }
 
-@Immutable
 data class PreSignedUrl(
     val fileName: String,
     val preSignedUrl: String

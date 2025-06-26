@@ -6,8 +6,8 @@ import android.provider.MediaStore
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.toRoute
-import com.acon.acon.core.utils.feature.permission.media.StorageAccess
-import com.acon.acon.core.utils.feature.permission.media.getStorageAccess
+import com.acon.core.ui.permission.media.StorageAccess
+import com.acon.core.ui.permission.media.getStorageAccess
 import com.acon.core.navigation.route.ProfileRoute
 import com.acon.core.ui.base.BaseContainerHost
 import dagger.hilt.android.lifecycle.HiltViewModel

@@ -26,7 +26,7 @@ import com.acon.acon.core.common.UrlConstants
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.core.utils.feature.toast.showToast
+import com.acon.core.ui.android.showToast
 import com.acon.core.model.spot.Spot
 import com.acon.core.type.TransportMode
 import com.acon.core.type.UserType
