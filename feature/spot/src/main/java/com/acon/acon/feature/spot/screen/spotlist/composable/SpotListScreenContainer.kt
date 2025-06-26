@@ -81,8 +81,8 @@ fun SpotListScreenContainer(
     }
 
     viewModel.requestLocationPermission()
-    viewModel.emitUserType()
-    viewModel.emitLiveLocation()
+    viewModel.useUserType()
+    viewModel.useLiveLocation()
     viewModel.collectSideEffect {
         when (it) {
             is SpotListSideEffectV2.ShowToastMessage -> {

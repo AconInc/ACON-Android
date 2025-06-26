@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.location.Location
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import com.acon.acon.domain.type.UserType
 import com.acon.feature.common.compose.LocalLocation
@@ -12,6 +13,8 @@ import com.acon.feature.common.compose.LocalUserType
 import com.acon.feature.common.coroutine.firstNotNull
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.suspendCancellableCoroutine
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.annotation.OrbitDsl
@@ -20,7 +23,10 @@ import org.orbitmvi.orbit.annotation.OrbitDsl
 abstract class BaseContainerHost<STATE : Any, SIDE_EFFECT : Any>() :
     ContainerHost<STATE, SIDE_EFFECT>, ViewModel() {
 
-    private val liveLocation = MutableStateFlow<Location?>(null)
+    private val _liveLocation = MutableStateFlow<Location?>(null)
+    private val liveLocation = _liveLocation.filterNotNull().onEach {
+        onNewLocation(it)
+    }
 
     private val _userType = MutableStateFlow(UserType.GUEST)
     protected val userType = _userType.asStateFlow()
@@ -35,21 +41,24 @@ abstract class BaseContainerHost<STATE : Any, SIDE_EFFECT : Any>() :
     }
 
     @Composable
-    fun emitUserType() {
+    fun useUserType() {
         val userType = LocalUserType.current
 
-        LaunchedEffect(userType) {
-            _userType.value = userType
+        LaunchedEffect(Unit) {
+            snapshotFlow { userType }.collect {
+                _userType.value = userType
+            }
         }
     }
 
     @Composable
-    fun emitLiveLocation() {
+    fun useLiveLocation() {
         val newLocation = LocalLocation.current
 
-        LaunchedEffect(newLocation) {
-            liveLocation.emit(newLocation)
-            newLocation?.let { onNewLocation(it) }
+        LaunchedEffect(Unit) {
+            snapshotFlow { newLocation }.filterNotNull().collect {
+                _liveLocation.emit(it)
+            }
         }
     }
 

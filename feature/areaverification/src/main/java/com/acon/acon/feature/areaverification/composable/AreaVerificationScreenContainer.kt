@@ -40,7 +40,7 @@ fun AreaVerificationScreenContainer(
         modifier = modifier
     )
 
-    viewModel.emitLiveLocation()
+    viewModel.useLiveLocation()
     viewModel.collectSideEffect {
         when (it) {
             is AreaVerificationSideEffect.NavigateToAppLocationSettings -> {

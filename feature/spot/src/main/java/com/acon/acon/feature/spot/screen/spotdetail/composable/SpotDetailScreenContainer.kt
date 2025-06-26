@@ -41,7 +41,7 @@ fun SpotDetailScreenContainer(
         )
     }
 
-    viewModel.emitUserType()
+    viewModel.useUserType()
     viewModel.collectSideEffect { sideEffect ->
         when (sideEffect) {
             is SpotDetailSideEffect.NavigateToBack -> {

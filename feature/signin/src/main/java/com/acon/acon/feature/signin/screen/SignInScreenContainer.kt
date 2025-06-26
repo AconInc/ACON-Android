@@ -34,7 +34,7 @@ fun SignInScreenContainer(
         onAnimationEnd = viewModel::signIn,
     )
 
-    viewModel.emitUserType()
+    viewModel.useUserType()
     viewModel.collectSideEffect { sideEffect ->
         when(sideEffect) {
             is SignInSideEffect.ShowToastMessage -> { context.showToast(R.string.sign_in_failed_toast) }

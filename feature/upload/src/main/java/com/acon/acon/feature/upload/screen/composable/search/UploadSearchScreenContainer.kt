@@ -31,7 +31,7 @@ fun UploadSearchScreenContainer(
         modifier = modifier
     )
 
-    viewModel.emitLiveLocation()
+    viewModel.useLiveLocation()
     viewModel.collectSideEffect { sideEffect ->
         when (sideEffect) {
             is UploadSearchSideEffect.NavigateToReviewScreen -> onNavigateToReview(sideEffect.spot)

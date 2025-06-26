@@ -67,7 +67,7 @@ fun ProfileScreenContainer(
         onNavigateToUploadScreen = onNavigateToUploadScreen
     )
 
-    viewModel.emitUserType()
+    viewModel.useUserType()
     viewModel.collectSideEffect {
         when(it) {
             is ProfileUiSideEffect.OnNavigateToSpotDetailScreen -> { onNavigateToSpotDetailScreen(it.spotId) }
