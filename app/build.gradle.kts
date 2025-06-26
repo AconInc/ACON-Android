@@ -46,7 +46,6 @@ dependencies {
     implementation(projects.domain)
     implementation(projects.data)
 
-    implementation(projects.feature.common)
     implementation(projects.feature.adsImpl)
     implementation(projects.feature.signin)
     implementation(projects.feature.spot)

@@ -13,6 +13,5 @@ android {
 }
 
 dependencies {
-    implementation(projects.feature.common)
     implementation(projects.core.utils.feature)
 }
