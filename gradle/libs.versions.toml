@@ -212,6 +212,7 @@ google-services = { id = "com.google.gms.google-services", version.ref = "google
 acon-non-android-library = { id = "com.acon.non.android.library", version = "unspecified" }
 acon-android-application = { id = "com.acon.android.application", version = "unspecified" }
 acon-android-application-compose = { id = "com.acon.android.application.compose", version = "unspecified" }
+acon-android-feature = { id = "com.acon.android.feature", version = "unspecified" }
 acon-android-library = { id = "com.acon.android.library", version = "unspecified" }
 acon-android-library-compose = { id = "com.acon.android.library.compose", version = "unspecified" }
 acon-android-library-hilt = { id = "com.acon.android.library.hilt", version = "unspecified" }

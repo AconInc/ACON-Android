@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.acon.android.library)
+    alias(libs.plugins.acon.android.feature)
     alias(libs.plugins.acon.android.library.compose)
     alias(libs.plugins.acon.android.library.hilt)
     alias(libs.plugins.acon.android.library.orbit)
@@ -12,10 +13,7 @@ android {
 
 dependencies {
 
-    implementation(projects.domain)
     implementation(projects.feature.common)
-    implementation(projects.core.designsystem)
-    implementation(projects.core.analytics)
     implementation(projects.core.utils.feature)
 
     implementation(libs.lottie.compose)
