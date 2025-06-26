@@ -7,7 +7,7 @@ import android.content.pm.PackageManager
 import android.location.LocationManager
 import androidx.core.app.ActivityCompat
 import com.acon.acon.domain.error.area.ReplaceVerifiedArea
-import com.acon.acon.domain.model.area.Area
+import com.acon.core.model.area.Area
 import com.acon.acon.domain.repository.UserRepository
 import com.acon.acon.feature.areaverification.amplitude.amplitudeClickNext
 import com.acon.acon.feature.areaverification.amplitude.amplitudeCompleteArea

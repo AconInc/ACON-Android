@@ -49,8 +49,8 @@ import com.acon.acon.core.designsystem.effect.rememberHazeState
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.core.utils.feature.toast.showToast
-import com.acon.acon.domain.model.upload.UploadSpotSuggestion
-import com.acon.acon.domain.model.upload.SearchedSpot
+import com.acon.core.model.upload.UploadSpotSuggestion
+import com.acon.core.model.upload.SearchedSpot
 import com.acon.acon.feature.upload.mock.uploadSearchUiStateMock
 import com.acon.acon.feature.upload.screen.UploadSearchUiState
 import com.acon.core.analytics.amplitude.AconAmplitude

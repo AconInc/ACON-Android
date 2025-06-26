@@ -26,7 +26,7 @@ import com.acon.acon.core.designsystem.effect.LocalHazeState
 import com.acon.acon.core.designsystem.effect.defaultHazeEffect
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.domain.type.SpotType
+import com.acon.core.type.SpotType
 
 @Composable
 internal fun SpotTypeToggle(

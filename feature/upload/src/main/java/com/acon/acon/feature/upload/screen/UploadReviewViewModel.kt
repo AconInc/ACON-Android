@@ -3,7 +3,7 @@ package com.acon.acon.feature.upload.screen
 import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.toRoute
 import com.acon.feature.common.base.BaseContainerHost
-import com.acon.acon.domain.model.spot.SimpleSpot
+import com.acon.core.model.spot.SimpleSpot
 import com.acon.acon.domain.repository.UploadRepository
 import com.acon.acon.feature.upload.UploadRoute
 import com.acon.core.analytics.amplitude.AconAmplitude

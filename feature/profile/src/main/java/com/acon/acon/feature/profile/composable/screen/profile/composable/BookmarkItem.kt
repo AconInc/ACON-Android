@@ -24,7 +24,7 @@ import com.acon.acon.core.designsystem.effect.imageGradientLayer
 import com.acon.acon.core.designsystem.effect.imageGradientTopLayer
 import com.acon.acon.core.designsystem.image.rememberDefaultLoadImageErrorPainter
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.domain.model.profile.SavedSpot
+import com.acon.core.model.profile.SavedSpot
 
 @Composable
 internal fun BookmarkItem(

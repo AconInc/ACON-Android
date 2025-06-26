@@ -4,12 +4,12 @@ import android.location.Location
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
-import com.acon.acon.domain.model.spot.SpotDetail
+import com.acon.core.model.spot.SpotDetail
 import com.acon.acon.domain.repository.SpotRepository
 import com.acon.acon.domain.repository.UserRepository
-import com.acon.acon.domain.type.TagType
-import com.acon.acon.domain.type.TransportMode
-import com.acon.acon.domain.type.UserType
+import com.acon.core.type.TagType
+import com.acon.core.type.TransportMode
+import com.acon.core.type.UserType
 import com.acon.acon.feature.spot.SpotRoute
 import com.acon.core.analytics.amplitude.AconAmplitude
 import com.acon.core.analytics.constants.EventNames

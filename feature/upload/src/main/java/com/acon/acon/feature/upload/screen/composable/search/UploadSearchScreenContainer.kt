@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.acon.acon.domain.model.spot.SimpleSpot
+import com.acon.core.model.spot.SimpleSpot
 import com.acon.acon.feature.upload.screen.UploadSearchSideEffect
 import com.acon.acon.feature.upload.screen.UploadSearchViewModel
 import org.orbitmvi.orbit.compose.collectAsState

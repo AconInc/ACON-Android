@@ -41,8 +41,8 @@ import com.acon.acon.core.designsystem.effect.LocalHazeState
 import com.acon.acon.core.designsystem.effect.defaultHazeEffect
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.domain.model.profile.ProfileInfo
-import com.acon.acon.domain.type.UserType
+import com.acon.core.model.profile.ProfileInfo
+import com.acon.core.type.UserType
 import com.acon.acon.feature.profile.composable.screen.profile.ProfileUiState
 import com.acon.feature.common.compose.LocalRequestSignIn
 import com.acon.feature.common.compose.LocalUserType

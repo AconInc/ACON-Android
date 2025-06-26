@@ -52,7 +52,7 @@ import com.acon.acon.core.designsystem.effect.imageGradientLayer
 import com.acon.acon.core.designsystem.image.rememberDefaultLoadImageErrorPainter
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.domain.type.UserType
+import com.acon.core.type.UserType
 import com.acon.acon.feature.spot.screen.component.OperationDot
 import com.acon.acon.feature.spot.screen.spotdetail.createBranchDeepLink
 import com.acon.acon.feature.spot.screen.spotlist.composable.SpotDetailLoadingView

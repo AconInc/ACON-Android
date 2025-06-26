@@ -1,9 +1,9 @@
 package com.acon.acon.domain.repository
 
-import com.acon.acon.domain.model.profile.PreSignedUrl
-import com.acon.acon.domain.model.profile.ProfileInfo
-import com.acon.acon.domain.model.profile.SavedSpot
-import com.acon.acon.domain.type.UpdateProfileType
+import com.acon.core.model.profile.PreSignedUrl
+import com.acon.core.model.profile.ProfileInfo
+import com.acon.core.model.profile.SavedSpot
+import com.acon.core.type.UpdateProfileType
 import kotlinx.coroutines.flow.Flow
 
 interface ProfileRepository {

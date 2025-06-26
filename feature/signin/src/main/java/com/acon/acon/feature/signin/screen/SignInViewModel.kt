@@ -1,7 +1,7 @@
 package com.acon.acon.feature.signin.screen
 
 import com.acon.acon.domain.repository.UserRepository
-import com.acon.acon.domain.type.UserType
+import com.acon.core.type.UserType
 import com.acon.feature.common.base.BaseContainerHost
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest

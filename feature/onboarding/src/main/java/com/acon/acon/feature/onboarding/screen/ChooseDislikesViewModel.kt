@@ -2,7 +2,7 @@ package com.acon.acon.feature.onboarding.screen
 
 import androidx.compose.runtime.Immutable
 import com.acon.acon.domain.repository.OnboardingRepository
-import com.acon.acon.domain.type.FoodType
+import com.acon.core.type.FoodType
 import com.acon.feature.common.base.BaseContainerHost
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers

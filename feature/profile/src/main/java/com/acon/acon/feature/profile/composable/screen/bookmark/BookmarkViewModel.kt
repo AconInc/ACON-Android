@@ -1,6 +1,6 @@
 package com.acon.acon.feature.profile.composable.screen.bookmark
 
-import com.acon.acon.domain.model.profile.SavedSpot
+import com.acon.core.model.profile.SavedSpot
 import com.acon.acon.domain.repository.SpotRepository
 import com.acon.feature.common.base.BaseContainerHost
 import dagger.hilt.android.lifecycle.HiltViewModel

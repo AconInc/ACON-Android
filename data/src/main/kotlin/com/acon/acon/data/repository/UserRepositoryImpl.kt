@@ -11,12 +11,11 @@ import com.acon.acon.domain.error.area.DeleteVerifiedAreaError
 import com.acon.acon.domain.error.area.ReplaceVerifiedArea
 import com.acon.acon.domain.error.user.PostLogoutError
 import com.acon.acon.domain.error.user.PostSignInError
-import com.acon.acon.domain.model.area.Area
-import com.acon.acon.domain.model.user.VerificationStatus
+import com.acon.core.model.area.Area
+import com.acon.core.model.user.VerificationStatus
 import com.acon.acon.domain.repository.UserRepository
-import com.acon.acon.domain.type.SocialType
-import com.acon.acon.domain.type.UserType
-import com.acon.core.analytics.amplitude.AconAmplitude
+import com.acon.core.type.SocialType
+import com.acon.core.type.UserType
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -26,14 +25,14 @@ class UserRepositoryImpl @Inject constructor(
     private val sessionManager: SessionManager
 ) : UserRepository {
 
-    override fun getUserType(): Flow<UserType> {
+    override fun getUserType(): Flow<com.acon.core.type.UserType> {
         return sessionManager.getUserType()
     }
 
     override suspend fun signIn(
-        socialType: SocialType,
+        socialType: com.acon.core.type.SocialType,
         idToken: String
-    ): Result<VerificationStatus> {
+    ): Result<com.acon.core.model.user.VerificationStatus> {
         return runCatchingWith(*PostSignInError.createErrorInstances()) {
             val signInResponse = userRemoteDataSource.signIn(
                 SignInRequest(
@@ -85,7 +84,7 @@ class UserRepositoryImpl @Inject constructor(
         )
     }
 
-    override suspend fun fetchVerifiedAreaList(): Result<List<Area>> {
+    override suspend fun fetchVerifiedAreaList(): Result<List<com.acon.core.model.area.Area>> {
         // TODO - 인증 지역 조회 API Error 처리 안됨
         return runCatchingWith() {
             userRemoteDataSource.fetchVerifiedAreaList().verifiedAreaList

@@ -49,22 +49,18 @@ import com.acon.acon.core.common.utils.toLocalTime
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.button.v2.AconFilledButton
 import com.acon.acon.core.designsystem.component.tag.AconTag
-import com.acon.acon.core.designsystem.effect.LocalHazeState
-import com.acon.acon.core.designsystem.effect.defaultHazeEffect
 import com.acon.acon.core.designsystem.effect.imageGradientBottomLayer
-import com.acon.acon.core.designsystem.effect.imageGradientLayer
 import com.acon.acon.core.designsystem.effect.imageGradientTopLayer
 import com.acon.acon.core.designsystem.image.rememberDefaultLoadImageErrorPainter
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.domain.model.spot.v2.Spot
-import com.acon.acon.domain.type.TagType
-import com.acon.acon.domain.type.TransportMode
-import com.acon.acon.domain.type.UserType
+import com.acon.core.model.spot.Spot
+import com.acon.core.type.TagType
+import com.acon.core.type.TransportMode
+import com.acon.core.type.UserType
 import com.acon.acon.feature.spot.mock.spotListUiStateRestaurantMock
 import com.acon.acon.feature.spot.screen.component.OperationDot
 import com.acon.feature.common.compose.LocalRequestSignIn
 import com.acon.feature.common.compose.LocalUserType
-import dev.chrisbanes.haze.hazeSource
 
 @Composable
 internal fun SpotItem(

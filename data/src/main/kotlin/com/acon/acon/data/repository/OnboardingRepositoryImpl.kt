@@ -5,7 +5,7 @@ import com.acon.acon.data.dto.request.OnboardingRequest
 import com.acon.acon.data.error.runCatchingWith
 import com.acon.acon.domain.error.onboarding.PostOnboardingResultError
 import com.acon.acon.domain.repository.OnboardingRepository
-import com.acon.acon.domain.type.FoodType
+import com.acon.core.type.FoodType
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,7 +18,7 @@ class OnboardingRepositoryImpl @Inject constructor(
 ) : OnboardingRepository {
 
     override suspend fun submitOnboardingResult(
-        dislikeFoodList: List<FoodType>
+        dislikeFoodList: List<com.acon.core.type.FoodType>
     ): Result<Unit> {
         return runCatchingWith(*PostOnboardingResultError.createErrorInstances()) {
             val request = OnboardingRequest(dislikeFoods = dislikeFoodList.map { it.name })

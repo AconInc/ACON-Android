@@ -24,7 +24,7 @@ import androidx.compose.ui.util.fastForEach
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.domain.model.area.Area
+import com.acon.core.model.area.Area
 
 @Composable
 internal fun VerifiedAreaChipRow(

@@ -1,9 +1,9 @@
 package com.acon.acon.domain.repository
 
-import com.acon.acon.domain.model.area.Area
-import com.acon.acon.domain.model.user.VerificationStatus
-import com.acon.acon.domain.type.SocialType
-import com.acon.acon.domain.type.UserType
+import com.acon.core.model.area.Area
+import com.acon.core.model.user.VerificationStatus
+import com.acon.core.type.SocialType
+import com.acon.core.type.UserType
 import kotlinx.coroutines.flow.Flow
 
 interface UserRepository {

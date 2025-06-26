@@ -2,10 +2,10 @@ package com.acon.acon.feature.spot.mock
 
 import android.location.Location
 import com.acon.acon.core.common.utils.toLocalTime
-import com.acon.acon.domain.model.spot.v2.Spot
-import com.acon.acon.domain.type.SpotType
-import com.acon.acon.domain.type.TagType
-import com.acon.acon.domain.type.TransportMode
+import com.acon.core.model.spot.Spot
+import com.acon.core.type.SpotType
+import com.acon.core.type.TagType
+import com.acon.core.type.TransportMode
 import com.acon.acon.feature.spot.screen.spotlist.SpotListUiStateV2
 
 internal val spotListUiStateRestaurantMock = SpotListUiStateV2.Success(

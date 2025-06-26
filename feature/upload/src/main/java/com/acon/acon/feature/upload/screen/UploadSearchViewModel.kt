@@ -3,9 +3,9 @@ package com.acon.acon.feature.upload.screen
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.viewModelScope
 import com.acon.acon.domain.error.upload.GetVerifySpotLocationError
-import com.acon.acon.domain.model.spot.SimpleSpot
-import com.acon.acon.domain.model.upload.UploadSpotSuggestion
-import com.acon.acon.domain.model.upload.SearchedSpot
+import com.acon.core.model.spot.SimpleSpot
+import com.acon.core.model.upload.UploadSpotSuggestion
+import com.acon.core.model.upload.SearchedSpot
 import com.acon.acon.domain.repository.UploadRepository
 import com.acon.acon.feature.upload.BuildConfig
 import com.acon.acon.feature.upload.mock.uploadSearchUiStateMock

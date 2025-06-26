@@ -1,7 +1,7 @@
 package com.acon.acon.domain.repository
 
-import com.acon.acon.domain.model.upload.UploadSpotSuggestion
-import com.acon.acon.domain.model.upload.SearchedSpot
+import com.acon.core.model.upload.UploadSpotSuggestion
+import com.acon.core.model.upload.SearchedSpot
 
 interface UploadRepository {
     suspend fun getSuggestions(latitude: Double, longitude: Double): Result<List<UploadSpotSuggestion>>

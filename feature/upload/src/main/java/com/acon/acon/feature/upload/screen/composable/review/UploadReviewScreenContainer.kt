@@ -6,7 +6,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.acon.acon.core.utils.feature.toast.showToast
-import com.acon.acon.domain.model.spot.SimpleSpot
+import com.acon.core.model.spot.SimpleSpot
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.feature.upload.screen.UploadReviewSideEffect
 import com.acon.acon.feature.upload.screen.UploadReviewViewModel

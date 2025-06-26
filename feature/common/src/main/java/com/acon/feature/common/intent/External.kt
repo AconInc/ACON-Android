@@ -5,7 +5,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.net.Uri
-import com.acon.acon.domain.type.TransportMode
+import com.acon.core.type.TransportMode
 
 /**
  * Acon 플레이스토어로 이동
@@ -81,12 +81,12 @@ fun Context.openNaverMapNavigationWithMode(
     destination: Location,
     destinationName: String,
     isPublic: Boolean,
-    transportMode: TransportMode? = null,
+    transportMode: com.acon.core.type.TransportMode? = null,
 ) {
     val mode = when {
         isPublic -> "public"
-        transportMode == TransportMode.WALKING -> "walk"
-        transportMode == TransportMode.BIKING -> "bicycle"
+        transportMode == com.acon.core.type.TransportMode.WALKING -> "walk"
+        transportMode == com.acon.core.type.TransportMode.BIKING -> "bicycle"
         else -> "public"
     }
     val uri = Uri.parse(
@@ -140,12 +140,12 @@ abstract class NavigationAppHandler {
 class NaverNavigationAppHandler(
     destination: Location,
     dName: String,
-    mode: TransportMode?
+    mode: com.acon.core.type.TransportMode?
 ): NavigationAppHandler() {
 
     private val transitBy = when(mode) {
-        TransportMode.WALKING -> "walk"
-        TransportMode.BIKING -> "bicycle"
+        com.acon.core.type.TransportMode.WALKING -> "walk"
+        com.acon.core.type.TransportMode.BIKING -> "bicycle"
         else -> "public"
     }
 
@@ -161,12 +161,12 @@ class NaverNavigationAppHandler(
 class KakaoNavigationAppHandler(
     start: Location,
     destination: Location,
-    mode: TransportMode?
+    mode: com.acon.core.type.TransportMode?
 ): NavigationAppHandler() {
 
     private val transitBy = when(mode) {
-        TransportMode.WALKING -> "FOOT"
-        TransportMode.BIKING -> "FOOT"
+        com.acon.core.type.TransportMode.WALKING -> "FOOT"
+        com.acon.core.type.TransportMode.BIKING -> "FOOT"
         else -> "PUBLICTRANSIT"
     }
 
@@ -179,12 +179,12 @@ class KakaoNavigationAppHandler(
 
 class GoogleNavigationAppHandler(
     destination: Location,
-    mode: TransportMode?
+    mode: com.acon.core.type.TransportMode?
 ): NavigationAppHandler() {
 
     private val travelMode = when(mode) {
-        TransportMode.WALKING -> "walking"
-        TransportMode.BIKING -> "bicycling"
+        com.acon.core.type.TransportMode.WALKING -> "walking"
+        com.acon.core.type.TransportMode.BIKING -> "bicycling"
         else -> "driving"
     }
 

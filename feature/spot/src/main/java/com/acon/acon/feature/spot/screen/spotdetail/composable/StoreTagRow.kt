@@ -11,7 +11,7 @@ import androidx.compose.ui.unit.dp
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.tag.AconTag
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.domain.type.TagType
+import com.acon.core.type.TagType
 
 @Composable
 internal fun StoreTagRow(

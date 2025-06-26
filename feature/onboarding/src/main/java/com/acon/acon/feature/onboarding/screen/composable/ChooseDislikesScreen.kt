@@ -30,7 +30,7 @@ import com.acon.acon.core.designsystem.component.chip.AconChip
 import com.acon.acon.core.designsystem.component.dialog.v2.AconTwoActionDialog
 import com.acon.acon.core.designsystem.effect.effect.shadowLayerBackground
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.domain.type.FoodType
+import com.acon.core.type.FoodType
 import com.acon.acon.feature.onboarding.screen.ChooseDislikesUiState
 import com.acon.feature.common.compose.LocalNavController
 import com.acon.feature.common.type.getNameResId

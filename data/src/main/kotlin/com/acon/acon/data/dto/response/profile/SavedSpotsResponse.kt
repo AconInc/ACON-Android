@@ -1,6 +1,6 @@
 package com.acon.acon.data.dto.response.profile
 
-import com.acon.acon.domain.model.profile.SavedSpot
+import com.acon.core.model.profile.SavedSpot
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -16,7 +16,7 @@ data class SavedSpotResponse(
     @SerialName("image") val image: String?
 ) {
 
-    fun toSavedSpot() = SavedSpot(
+    fun toSavedSpot() = com.acon.core.model.profile.SavedSpot(
         spotId = spotId ?: 0L,
         name = name.orEmpty(),
         image = image.orEmpty()

@@ -1,7 +1,7 @@
 package com.acon.acon.feature.verification.screen
 
 import com.acon.acon.domain.error.area.DeleteVerifiedAreaError
-import com.acon.acon.domain.model.area.Area
+import com.acon.core.model.area.Area
 import com.acon.acon.domain.repository.UserRepository
 import com.acon.feature.common.base.BaseContainerHost
 import dagger.hilt.android.lifecycle.HiltViewModel

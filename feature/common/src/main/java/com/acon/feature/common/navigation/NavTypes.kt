@@ -1,13 +1,13 @@
 package com.acon.feature.common.navigation
 
-import com.acon.acon.domain.model.spot.SimpleSpot
-import com.acon.acon.domain.model.spot.SpotNavigationParameter
+import com.acon.core.model.SimpleSpot
+import com.acon.core.model.SpotNavigationParameter
 import kotlin.reflect.typeOf
 
 val simpleSpotNavType by lazy {
-    typeOf<SimpleSpot>() to createNavType<SimpleSpot>()
+    typeOf<com.acon.core.model.SimpleSpot>() to createNavType<com.acon.core.model.SimpleSpot>()
 }
 
 val spotNavigationParameterNavType by lazy {
-    typeOf<SpotNavigationParameter>() to createNavType<SpotNavigationParameter>()
+    typeOf<com.acon.core.model.SpotNavigationParameter>() to createNavType<com.acon.core.model.SpotNavigationParameter>()
 }

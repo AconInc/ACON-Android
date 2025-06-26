@@ -1,11 +1,11 @@
 package com.acon.feature.common.type
 
-import com.acon.acon.domain.type.SpotType
+import com.acon.core.type.SpotType
 import com.acon.acon.core.designsystem.R
 
-fun SpotType.getNameResId(): Int {
+fun com.acon.core.type.SpotType.getNameResId(): Int {
     return when (this) {
-        SpotType.RESTAURANT -> R.string.restaurant
-        SpotType.CAFE -> R.string.cafe
+        com.acon.core.type.SpotType.RESTAURANT -> R.string.restaurant
+        com.acon.core.type.SpotType.CAFE -> R.string.cafe
     }
 }

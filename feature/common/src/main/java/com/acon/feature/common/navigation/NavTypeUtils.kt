@@ -2,10 +2,8 @@ package com.acon.feature.common.navigation
 
 import android.os.Bundle
 import androidx.navigation.NavType
-import com.acon.acon.domain.model.spot.SimpleSpot
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import kotlin.reflect.typeOf
 
 inline fun <reified T : Any> createNavType(
     isNullableAllowed: Boolean = false,

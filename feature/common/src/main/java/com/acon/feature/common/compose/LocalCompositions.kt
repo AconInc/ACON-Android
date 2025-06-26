@@ -6,7 +6,7 @@ import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.navigation.NavHostController
 import com.acon.acon.core.common.DeepLinkHandler
-import com.acon.acon.domain.type.UserType
+import com.acon.core.type.UserType
 
 val LocalOnRetry = staticCompositionLocalOf {
     {}
@@ -25,7 +25,7 @@ val LocalNavController = staticCompositionLocalOf<NavHostController> {
 }
 
 val LocalUserType = compositionLocalOf {
-    UserType.GUEST
+    com.acon.core.type.UserType.GUEST
 }
 
 val LocalRequestSignIn = staticCompositionLocalOf<(propertyKey: String) -> Unit> { // TODO: core navigation 모듈 통합

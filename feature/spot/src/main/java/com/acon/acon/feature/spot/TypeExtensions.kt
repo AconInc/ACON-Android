@@ -1,10 +1,10 @@
 package com.acon.acon.feature.spot
 
 import com.acon.acon.core.designsystem.R
-import com.acon.acon.domain.type.CafeFilterType
-import com.acon.acon.domain.type.FilterType
-import com.acon.acon.domain.type.RestaurantFilterType
-import com.acon.acon.domain.type.SpotType
+import com.acon.core.type.CafeFilterType
+import com.acon.core.type.FilterType
+import com.acon.core.type.RestaurantFilterType
+import com.acon.core.type.SpotType
 
 internal fun SpotType.getNameResId(): Int {
     return when (this) {

@@ -45,14 +45,13 @@ import com.acon.acon.core.designsystem.effect.effect.shadowLayerBackground
 import com.acon.acon.core.designsystem.effect.effect.getOverlayColor
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.domain.model.spot.v2.Spot
-import com.acon.acon.domain.type.TransportMode
-import com.acon.acon.domain.type.UserType
+import com.acon.core.model.spot.Spot
+import com.acon.core.type.TransportMode
+import com.acon.core.type.UserType
 import com.acon.acon.feature.spot.screen.spotlist.SpotListUiStateV2
 import com.acon.core.ads_api.LocalSpotListAdProvider
 import com.acon.feature.common.compose.LocalRequestSignIn
 import com.acon.feature.common.compose.toDp
-import com.acon.feature.common.intent.GoogleNavigationAppHandler
 import com.acon.feature.common.intent.KakaoNavigationAppHandler
 import com.acon.feature.common.intent.NaverNavigationAppHandler
 import com.acon.feature.common.intent.NavigationAppHandler

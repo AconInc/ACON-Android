@@ -1,8 +1,8 @@
 package com.acon.acon.feature.upload.mock
 
-import com.acon.acon.domain.model.upload.UploadSpotSuggestion
-import com.acon.acon.domain.model.upload.SearchedSpot
-import com.acon.acon.domain.type.SpotType
+import com.acon.core.model.upload.UploadSpotSuggestion
+import com.acon.core.model.upload.SearchedSpot
+import com.acon.core.type.SpotType
 import com.acon.acon.feature.upload.screen.UploadSearchUiState
 
 internal val uploadSearchUiStateMock = UploadSearchUiState.Success(

@@ -33,9 +33,9 @@ import com.acon.acon.core.designsystem.component.button.v2.AconFilledTextButton
 import com.acon.acon.core.designsystem.component.button.v2.AconOutlinedTextButton
 import com.acon.acon.core.designsystem.component.chip.AconChip
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.domain.type.CafeFilterType
-import com.acon.acon.domain.type.FilterType
-import com.acon.acon.domain.type.RestaurantFilterType
+import com.acon.core.type.CafeFilterType
+import com.acon.core.type.FilterType
+import com.acon.core.type.RestaurantFilterType
 import com.acon.acon.feature.spot.getNameResId
 import com.acon.acon.feature.spot.screen.spotlist.FilterDetailKey
 import com.acon.core.analytics.amplitude.AconAmplitude

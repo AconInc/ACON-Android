@@ -18,7 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.domain.model.spot.SignatureMenu
+import com.acon.core.model.spot.SignatureMenu
 import com.acon.acon.feature.spot.toPriceString
 
 @Composable

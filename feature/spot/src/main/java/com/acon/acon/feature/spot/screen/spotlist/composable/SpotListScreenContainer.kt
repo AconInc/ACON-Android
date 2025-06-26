@@ -8,10 +8,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.acon.acon.domain.model.spot.SpotNavigationParameter
-import com.acon.acon.domain.model.spot.v2.Spot
-import com.acon.acon.domain.type.TransportMode
-import com.acon.acon.domain.type.UserType
+import com.acon.core.model.spot.SpotNavigationParameter
+import com.acon.core.model.spot.Spot
+import com.acon.core.type.TransportMode
+import com.acon.core.type.UserType
 import com.acon.acon.feature.spot.screen.spotlist.SpotListSideEffectV2
 import com.acon.acon.feature.spot.screen.spotlist.SpotListViewModel
 import com.acon.feature.common.compose.LocalDeepLinkHandler

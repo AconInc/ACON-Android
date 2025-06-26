@@ -2,9 +2,9 @@ package com.acon.acon.feature.profile.composable.screen.profile
 
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.viewModelScope
-import com.acon.acon.domain.model.profile.ProfileInfo
+import com.acon.core.model.profile.ProfileInfo
 import com.acon.acon.domain.repository.ProfileRepository
-import com.acon.acon.domain.type.UserType
+import com.acon.core.type.UserType
 import com.acon.feature.common.base.BaseContainerHost
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch

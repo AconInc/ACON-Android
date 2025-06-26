@@ -1,6 +1,6 @@
 package com.acon.acon.feature.profile.composable.screen
 
-import com.acon.acon.domain.model.profile.SavedSpot
+import com.acon.core.model.profile.SavedSpot
 import okhttp3.internal.immutableListOf
 
 internal val mockSpotList = immutableListOf(

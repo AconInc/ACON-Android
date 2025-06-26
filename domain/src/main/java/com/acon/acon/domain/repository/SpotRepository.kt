@@ -1,11 +1,11 @@
 package com.acon.acon.domain.repository
 
-import com.acon.acon.domain.model.area.LegalArea
-import com.acon.acon.domain.model.profile.SavedSpot
-import com.acon.acon.domain.model.spot.Condition
-import com.acon.acon.domain.model.spot.MenuBoardList
-import com.acon.acon.domain.model.spot.SpotDetail
-import com.acon.acon.domain.model.spot.v2.SpotList
+import com.acon.core.model.area.LegalArea
+import com.acon.core.model.profile.SavedSpot
+import com.acon.core.model.spot.Condition
+import com.acon.core.model.spot.MenuBoardList
+import com.acon.core.model.spot.SpotDetail
+import com.acon.core.model.spot.SpotList
 
 interface SpotRepository {
 

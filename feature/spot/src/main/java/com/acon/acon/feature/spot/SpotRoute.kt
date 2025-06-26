@@ -1,6 +1,6 @@
 package com.acon.acon.feature.spot
 
-import com.acon.acon.domain.model.spot.SpotNavigationParameter
+import com.acon.core.model.spot.SpotNavigationParameter
 import kotlinx.serialization.Serializable
 
 interface SpotRoute {

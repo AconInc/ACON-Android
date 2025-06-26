@@ -28,7 +28,7 @@ import com.acon.acon.core.designsystem.animation.defaultPopExitTransition
 import com.acon.acon.core.designsystem.component.popup.AconToastPopup
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.domain.model.spot.SpotNavigationParameter
+import com.acon.core.model.SpotNavigationParameter
 import com.acon.acon.feature.signin.screen.SignInRoute
 import com.acon.acon.feature.spot.SpotRoute
 import com.acon.acon.navigation.nested.areaVerificationNavigation
@@ -69,7 +69,7 @@ fun AconNavigation(
                             delay(400)
                             navController.navigate(
                                 SpotRoute.SpotDetail(
-                                    SpotNavigationParameter(
+                                    com.acon.core.model.SpotNavigationParameter(
                                         spotId = spotId,
                                         tags = emptyList(),
                                         transportMode = null,

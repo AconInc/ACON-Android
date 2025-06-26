@@ -12,7 +12,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.utils.feature.toast.showToast
-import com.acon.acon.domain.type.UpdateProfileType
+import com.acon.core.type.UpdateProfileType
 import com.acon.acon.feature.profile.composable.screen.profile.ProfileUiSideEffect
 import com.acon.acon.feature.profile.composable.screen.profile.ProfileViewModel
 import kotlinx.coroutines.flow.collectLatest

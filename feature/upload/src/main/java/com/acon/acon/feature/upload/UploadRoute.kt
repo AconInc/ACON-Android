@@ -1,6 +1,6 @@
 package com.acon.acon.feature.upload
 
-import com.acon.acon.domain.model.spot.SimpleSpot
+import com.acon.core.model.spot.SimpleSpot
 import kotlinx.serialization.Serializable
 
 sealed interface UploadRoute {
