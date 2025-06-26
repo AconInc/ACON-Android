@@ -58,8 +58,8 @@ import com.acon.acon.feature.profile.composable.type.NicknameValidationStatus
 import com.acon.acon.feature.profile.composable.type.contentDescriptionResId
 import com.acon.acon.feature.profile.composable.type.validMessageResId
 import com.acon.acon.feature.profile.composable.utils.BirthdayTransformation
-import com.acon.feature.common.compose.getScreenHeight
-import com.acon.feature.common.compose.getScreenWidth
+import com.acon.core.ui.compose.getScreenHeight
+import com.acon.core.ui.compose.getScreenWidth
 import dev.chrisbanes.haze.hazeSource
 
 @Composable

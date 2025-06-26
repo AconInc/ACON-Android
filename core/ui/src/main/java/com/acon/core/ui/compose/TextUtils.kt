@@ -1,4 +1,4 @@
-package com.acon.feature.common.compose
+package com.acon.core.ui.compose
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember

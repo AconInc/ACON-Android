@@ -15,7 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.acon.acon.core.designsystem.animation.skeleton
 import com.acon.acon.core.designsystem.component.loading.SkeletonItem
-import com.acon.feature.common.compose.toDp
+import com.acon.core.ui.compose.toDp
 
 @Composable
 internal fun SpotListLoadingView(

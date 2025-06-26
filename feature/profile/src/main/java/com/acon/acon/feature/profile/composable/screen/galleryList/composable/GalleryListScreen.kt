@@ -44,7 +44,7 @@ import com.acon.acon.core.utils.feature.permission.media.CheckAndRequestMediaPer
 import com.acon.acon.feature.profile.composable.screen.MediaPermissionBottomSheet
 import com.acon.acon.feature.profile.composable.screen.galleryList.Album
 import com.acon.acon.feature.profile.composable.screen.galleryList.GalleryListUiState
-import com.acon.feature.common.compose.getScreenWidth
+import com.acon.core.ui.compose.getScreenWidth
 
 @Composable
 internal fun GalleryListScreen(

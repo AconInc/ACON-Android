@@ -63,7 +63,7 @@ import com.acon.core.ui.compose.LocalDeepLinkHandler
 import com.acon.core.ui.compose.LocalOnRetry
 import com.acon.core.ui.compose.LocalRequestSignIn
 import com.acon.core.ui.compose.LocalUserType
-import com.acon.feature.common.compose.getTextSizeDp
+import com.acon.core.ui.compose.getTextSizeDp
 import dev.chrisbanes.haze.hazeSource
 import okhttp3.internal.immutableListOf
 
