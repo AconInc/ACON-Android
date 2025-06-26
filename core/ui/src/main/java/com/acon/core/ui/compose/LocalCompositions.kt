@@ -20,10 +20,6 @@ val LocalSnackbarHostState = staticCompositionLocalOf {
     SnackbarHostState()
 }
 
-val LocalNavController = staticCompositionLocalOf<NavHostController> {
-    error("CompositionLocal LocalNavController not present")
-}
-
 val LocalUserType = compositionLocalOf {
     UserType.GUEST
 }

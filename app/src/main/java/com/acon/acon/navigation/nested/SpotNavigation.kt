@@ -17,7 +17,7 @@ import com.acon.core.navigation.route.SpotRoute
 import com.acon.acon.feature.spot.screen.spotdetail.composable.SpotDetailScreenContainer
 import com.acon.acon.feature.spot.screen.spotlist.composable.SpotListScreenContainer
 import com.acon.core.navigation.route.UploadRoute
-import com.acon.core.navigation.utils.spotNavigationParameterNavType
+import com.acon.core.navigation.type.spotNavigationParameterNavType
 
 internal fun NavGraphBuilder.spotNavigation(
     navController: NavHostController

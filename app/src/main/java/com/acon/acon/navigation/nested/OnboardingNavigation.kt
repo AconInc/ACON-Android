@@ -13,6 +13,7 @@ import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.core.navigation.route.SettingsRoute
 import com.acon.core.navigation.route.OnboardingRoute
 import com.acon.acon.feature.onboarding.screen.composable.ChooseDislikesScreenContainer
+import com.acon.core.navigation.LocalNavController
 import com.acon.core.navigation.route.SpotRoute
 
 
@@ -24,7 +25,7 @@ internal fun NavGraphBuilder.onboardingNavigationNavigation(
         startDestination = OnboardingRoute.ChooseDislikes
     ) {
         composable<OnboardingRoute.ChooseDislikes> {
-            val fromSetting = com.acon.core.ui.compose.LocalNavController.current.previousBackStackEntry?.destination?.hasRoute(
+            val fromSetting = LocalNavController.current.previousBackStackEntry?.destination?.hasRoute(
                 SettingsRoute.Settings::class) ?: false
 
             ChooseDislikesScreenContainer(

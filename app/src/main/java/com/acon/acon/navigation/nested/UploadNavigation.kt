@@ -19,7 +19,7 @@ import com.acon.core.navigation.route.UploadRoute
 import com.acon.acon.feature.upload.screen.composable.complete.UploadCompleteScreenContainer
 import com.acon.acon.feature.upload.screen.composable.review.UploadReviewScreenContainer
 import com.acon.acon.feature.upload.screen.composable.search.UploadSearchScreenContainer
-import com.acon.core.navigation.utils.simpleSpotNavType
+import com.acon.core.navigation.type.simpleSpotNavType
 
 internal fun NavGraphBuilder.uploadNavigation(
     navController: NavHostController

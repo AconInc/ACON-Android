@@ -56,9 +56,9 @@ import com.acon.core.analytics.amplitude.AconAmplitude
 import com.acon.core.analytics.constants.EventNames
 import com.acon.feature.ads_impl.SpotListAdProvider
 import com.acon.acon.core.common.utils.firstNotNull
+import com.acon.core.navigation.LocalNavController
 import com.acon.core.ui.compose.LocalDeepLinkHandler
 import com.acon.core.ui.compose.LocalLocation
-import com.acon.core.ui.compose.LocalNavController
 import com.acon.core.ui.compose.LocalRequestLocationPermission
 import com.acon.core.ui.compose.LocalRequestSignIn
 import com.acon.core.ui.compose.LocalSnackbarHostState

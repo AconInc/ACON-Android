@@ -28,8 +28,6 @@ import com.acon.acon.core.designsystem.animation.defaultPopExitTransition
 import com.acon.acon.core.designsystem.component.popup.AconToastPopup
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.core.navigation.route.SignInRoute
-import com.acon.core.navigation.route.SpotRoute
 import com.acon.acon.navigation.nested.areaVerificationNavigation
 import com.acon.acon.navigation.nested.onboardingNavigationNavigation
 import com.acon.acon.navigation.nested.profileNavigation
@@ -38,8 +36,10 @@ import com.acon.acon.navigation.nested.signInNavigationNavigation
 import com.acon.acon.navigation.nested.spotNavigation
 import com.acon.acon.navigation.nested.uploadNavigation
 import com.acon.core.model.spot.SpotNavigationParameter
+import com.acon.core.navigation.LocalNavController
+import com.acon.core.navigation.route.SignInRoute
+import com.acon.core.navigation.route.SpotRoute
 import com.acon.core.ui.compose.LocalDeepLinkHandler
-import com.acon.core.ui.compose.LocalNavController
 import com.acon.core.ui.compose.LocalSnackbarHostState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.filter
