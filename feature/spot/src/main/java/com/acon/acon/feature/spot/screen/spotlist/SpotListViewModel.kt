@@ -21,8 +21,8 @@ import com.acon.core.analytics.amplitude.AconAmplitude
 import com.acon.core.analytics.constants.EventNames
 import com.acon.core.analytics.constants.PropertyKeys
 import com.acon.core.ui.base.BaseContainerHost
-import com.acon.feature.common.intent.NavigationAppHandler
-import com.acon.feature.common.location.isInKorea
+import com.acon.core.ui.android.NavigationAppHandler
+import com.acon.core.ui.android.isInKorea
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.delay

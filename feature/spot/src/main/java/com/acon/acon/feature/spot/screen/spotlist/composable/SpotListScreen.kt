@@ -52,7 +52,7 @@ import com.acon.core.ui.compose.LocalOnRetry
 import com.acon.core.ui.compose.LocalRequestSignIn
 import com.acon.core.ui.compose.LocalUserType
 import com.acon.core.ui.compose.getScreenHeight
-import com.acon.feature.common.intent.NavigationAppHandler
+import com.acon.core.ui.android.NavigationAppHandler
 import dev.chrisbanes.haze.hazeSource
 import kotlinx.collections.immutable.toImmutableSet
 import kotlinx.coroutines.launch

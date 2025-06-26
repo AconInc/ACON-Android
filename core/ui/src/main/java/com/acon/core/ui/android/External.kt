@@ -1,11 +1,10 @@
-package com.acon.feature.common.intent
+package com.acon.core.ui.android
 
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.net.Uri
-import com.acon.core.type.TransportMode
 
 /**
  * Acon 플레이스토어로 이동
@@ -30,7 +29,7 @@ fun Context.openMapNavigation(
             startActivity(
                 Intent(
                     Intent.ACTION_VIEW,
-                    Uri.parse("market://details?id=${NAVER_MAP_PACKAGE_NAME}")
+                    Uri.parse("market://details?id=$NAVER_MAP_PACKAGE_NAME")
                 )
             )
         }
@@ -105,7 +104,7 @@ fun Context.openNaverMapNavigationWithMode(
         startActivity(
             Intent(
                 Intent.ACTION_VIEW,
-                Uri.parse("market://details?id=${NAVER_MAP_PACKAGE_NAME}")
+                Uri.parse("market://details?id=$NAVER_MAP_PACKAGE_NAME")
             )
         )
     }

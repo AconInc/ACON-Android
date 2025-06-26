@@ -56,7 +56,14 @@ import com.acon.core.analytics.amplitude.AconAmplitude
 import com.acon.core.analytics.constants.EventNames
 import com.acon.feature.ads_impl.SpotListAdProvider
 import com.acon.acon.core.common.utils.firstNotNull
-import com.acon.feature.common.intent.launchPlayStore
+import com.acon.core.ui.compose.LocalDeepLinkHandler
+import com.acon.core.ui.compose.LocalLocation
+import com.acon.core.ui.compose.LocalNavController
+import com.acon.core.ui.compose.LocalRequestLocationPermission
+import com.acon.core.ui.compose.LocalRequestSignIn
+import com.acon.core.ui.compose.LocalSnackbarHostState
+import com.acon.core.ui.compose.LocalUserType
+import com.acon.core.ui.android.launchPlayStore
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -313,18 +320,18 @@ class MainActivity : ComponentActivity() {
                 val hazeState = rememberHazeState()
 
                 CompositionLocalProvider(
-                    com.acon.core.ui.compose.LocalLocation provides currentLocation,
-                    com.acon.core.ui.compose.LocalSnackbarHostState provides appState.snackbarHostState,
-                    com.acon.core.ui.compose.LocalNavController provides navController,
+                    LocalLocation provides currentLocation,
+                    LocalSnackbarHostState provides appState.snackbarHostState,
+                    LocalNavController provides navController,
                     LocalHazeState provides hazeState,
-                    com.acon.core.ui.compose.LocalUserType provides appState.userType,
-                    com.acon.core.ui.compose.LocalRequestSignIn provides {
+                    LocalUserType provides appState.userType,
+                    LocalRequestSignIn provides {
                         viewModel.updateShowSignInBottomSheet(true)
                         viewModel.updateAmplPropertyKey(it)
                     },
-                    com.acon.core.ui.compose.LocalRequestLocationPermission provides ::requestLocationPermission,
+                    LocalRequestLocationPermission provides ::requestLocationPermission,
                     LocalSpotListAdProvider provides spotListAdProvider,
-                    com.acon.core.ui.compose.LocalDeepLinkHandler provides deepLinkHandler
+                    LocalDeepLinkHandler provides deepLinkHandler
                 ) {
                     AconNavigation(
                         modifier = Modifier

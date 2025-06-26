@@ -56,7 +56,7 @@ import com.acon.acon.feature.upload.screen.UploadSearchUiState
 import com.acon.core.analytics.amplitude.AconAmplitude
 import com.acon.core.analytics.constants.EventNames
 import com.acon.core.analytics.constants.PropertyKeys
-import com.acon.feature.common.type.getNameResId
+import com.acon.core.ui.ext.getNameResId
 import dev.chrisbanes.haze.hazeSource
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList

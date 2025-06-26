@@ -1,4 +1,4 @@
-package com.acon.feature.common.di
+package com.acon.acon.feature.signin.utils
 
 import com.acon.acon.domain.repository.SocialRepository
 import com.acon.acon.domain.repository.UserRepository

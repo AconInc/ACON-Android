@@ -10,7 +10,7 @@ import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.map.onLocationReady
 import com.acon.acon.core.utils.feature.toast.showToast
 import com.acon.core.ui.compose.LocalOnRetry
-import com.acon.feature.common.intent.openNaverMapNavigationWithMode
+import com.acon.core.ui.android.openNaverMapNavigationWithMode
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 

@@ -50,7 +50,7 @@ import com.acon.core.ui.compose.LocalDeepLinkHandler
 import com.acon.core.ui.compose.LocalUserType
 import com.acon.core.ui.compose.getScreenHeight
 import com.acon.core.ui.compose.getScreenWidth
-import com.acon.feature.common.remember.rememberSocialRepository
+import com.acon.acon.feature.signin.utils.rememberSocialRepository
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
