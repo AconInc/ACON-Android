@@ -2,7 +2,6 @@ package com.acon.acon.feature.profile.composable.screen.profileMod
 
 import android.app.Application
 import android.net.Uri
-import android.util.Log
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope

@@ -6,11 +6,6 @@ import com.acon.acon.data.error.runCatchingWith
 import com.acon.acon.domain.error.onboarding.PostOnboardingResultError
 import com.acon.acon.domain.repository.OnboardingRepository
 import com.acon.core.type.FoodType
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 class OnboardingRepositoryImpl @Inject constructor(

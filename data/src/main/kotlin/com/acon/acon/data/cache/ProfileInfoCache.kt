@@ -2,7 +2,6 @@ package com.acon.acon.data.cache
 
 import com.acon.acon.data.cache.base.ReadWriteCache
 import com.acon.acon.data.datasource.remote.ProfileRemoteDataSource
-import com.acon.core.model.profile.ProfileInfo
 import kotlinx.coroutines.CoroutineScope
 import javax.inject.Inject
 

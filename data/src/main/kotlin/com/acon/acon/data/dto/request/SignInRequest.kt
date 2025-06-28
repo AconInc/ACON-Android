@@ -1,6 +1,5 @@
 package com.acon.acon.data.dto.request
 
-import com.acon.core.type.SocialType
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 

@@ -4,7 +4,6 @@ import android.location.Location
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.staticCompositionLocalOf
-import androidx.navigation.NavHostController
 import com.acon.acon.core.common.DeepLinkHandler
 import com.acon.core.type.UserType
 

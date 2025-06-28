@@ -1,7 +1,6 @@
 package com.acon.acon.data.dto.response.upload
 
 import com.acon.core.model.upload.SearchedSpot
-import com.acon.core.type.SpotType
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
