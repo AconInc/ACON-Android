@@ -8,11 +8,11 @@ import javax.inject.Inject
 class ProfileInfoCache @Inject constructor(
     private val scope: CoroutineScope,
     private val profileRemoteDataSource: ProfileRemoteDataSource
-) : ReadWriteCache<com.acon.core.model.profile.ProfileInfo>(scope) {
+) : ReadWriteCache<com.acon.acon.core.model.model.profile.ProfileInfo>(scope) {
 
-    override val emptyData = Result.success(com.acon.core.model.profile.ProfileInfo.Empty)
+    override val emptyData = Result.success(com.acon.acon.core.model.model.profile.ProfileInfo.Empty)
 
-    override suspend fun fetchRemoteData(): com.acon.core.model.profile.ProfileInfo {
+    override suspend fun fetchRemoteData(): com.acon.acon.core.model.model.profile.ProfileInfo {
         return profileRemoteDataSource.fetchProfile().toProfile()
     }
 }

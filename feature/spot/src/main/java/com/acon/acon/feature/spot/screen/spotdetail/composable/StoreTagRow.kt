@@ -11,11 +11,11 @@ import androidx.compose.ui.unit.dp
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.tag.AconTag
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.core.type.TagType
+import com.acon.acon.core.model.type.TagType
 
 @Composable
 internal fun StoreTagRow(
-    tags: List<TagType>,
+    tags: List<com.acon.acon.core.model.type.TagType>,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -23,14 +23,14 @@ internal fun StoreTagRow(
         horizontalArrangement = Arrangement.spacedBy(4.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        if (TagType.NEW in tags) {
+        if (com.acon.acon.core.model.type.TagType.NEW in tags) {
             AconTag(
                 text = stringResource(R.string.store_tag_new),
                 backgroundColor = AconTheme.color.TagNew
             )
         }
 
-        if (TagType.LOCAL in tags) {
+        if (com.acon.acon.core.model.type.TagType.LOCAL in tags) {
             AconTag(
                 text = stringResource(R.string.store_tag_local),
                 backgroundColor = AconTheme.color.TagLocal

@@ -1,6 +1,6 @@
 package com.acon.acon.data.dto.response.upload
 
-import com.acon.core.model.upload.SearchedSpot
+import com.acon.acon.core.model.model.upload.SearchedSpot
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -16,10 +16,10 @@ data class SearchedSpotResponse(
     @SerialName("address") val address: String,
     @SerialName("spotType") val spotType: String
 ) {
-    fun toSearchedSpot() = SearchedSpot(
+    fun toSearchedSpot() = com.acon.acon.core.model.model.upload.SearchedSpot(
         spotId = spotId,
         name = name,
         address = address,
-        spotType = com.acon.core.type.SpotType.valueOf(spotType)
+        spotType = com.acon.acon.core.model.type.SpotType.valueOf(spotType)
     )
 }

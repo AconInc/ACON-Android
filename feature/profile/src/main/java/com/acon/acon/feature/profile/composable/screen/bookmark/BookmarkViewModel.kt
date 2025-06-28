@@ -1,6 +1,6 @@
 package com.acon.acon.feature.profile.composable.screen.bookmark
 
-import com.acon.core.model.profile.SavedSpot
+import com.acon.acon.core.model.model.profile.SavedSpot
 import com.acon.acon.domain.repository.SpotRepository
 import com.acon.acon.core.ui.base.BaseContainerHost
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -45,7 +45,7 @@ class BookmarkViewModel @Inject constructor(
 }
 
 sealed interface BookmarkUiState {
-    data class Success(val savedSpots: List<SavedSpot>? = emptyList()) : BookmarkUiState
+    data class Success(val savedSpots: List<com.acon.acon.core.model.model.profile.SavedSpot>? = emptyList()) : BookmarkUiState
     data object Loading : BookmarkUiState
     data object LoadFailed : BookmarkUiState
 }

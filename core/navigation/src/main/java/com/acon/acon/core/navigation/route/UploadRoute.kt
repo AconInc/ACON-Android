@@ -1,6 +1,6 @@
 package com.acon.acon.core.navigation.route
 
-import com.acon.core.model.spot.SimpleSpot
+import com.acon.acon.core.model.model.spot.SimpleSpot
 import kotlinx.serialization.Serializable
 
 sealed interface UploadRoute {
@@ -13,11 +13,11 @@ sealed interface UploadRoute {
 
     @Serializable
     data class Review(
-        val spot: SimpleSpot
+        val spot: com.acon.acon.core.model.model.spot.SimpleSpot
     ) : UploadRoute
 
     @Serializable
     data class Complete(
-        val spot: SimpleSpot
+        val spot: com.acon.acon.core.model.model.spot.SimpleSpot
     ) : UploadRoute
 }

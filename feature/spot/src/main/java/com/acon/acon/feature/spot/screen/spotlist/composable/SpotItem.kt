@@ -53,10 +53,10 @@ import com.acon.acon.core.designsystem.effect.imageGradientBottomLayer
 import com.acon.acon.core.designsystem.effect.imageGradientTopLayer
 import com.acon.acon.core.designsystem.image.rememberDefaultLoadImageErrorPainter
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.core.model.spot.Spot
-import com.acon.core.type.TagType
-import com.acon.core.type.TransportMode
-import com.acon.core.type.UserType
+import com.acon.acon.core.model.model.spot.Spot
+import com.acon.acon.core.model.type.TagType
+import com.acon.acon.core.model.type.TransportMode
+import com.acon.acon.core.model.type.UserType
 import com.acon.acon.feature.spot.mock.spotListUiStateRestaurantMock
 import com.acon.acon.feature.spot.screen.component.OperationDot
 import com.acon.acon.core.ui.compose.LocalRequestSignIn
@@ -64,10 +64,10 @@ import com.acon.acon.core.ui.compose.LocalUserType
 
 @Composable
 internal fun SpotItem(
-    spot: Spot,
-    transportMode: TransportMode,
-    onItemClick: (Spot) -> Unit,
-    onFindWayButtonClick: (Spot) -> Unit,
+    spot: com.acon.acon.core.model.model.spot.Spot,
+    transportMode: com.acon.acon.core.model.type.TransportMode,
+    onItemClick: (com.acon.acon.core.model.model.spot.Spot) -> Unit,
+    onFindWayButtonClick: (com.acon.acon.core.model.model.spot.Spot) -> Unit,
     modifier: Modifier = Modifier,
     rank: Int = 0,
 ) {
@@ -111,10 +111,10 @@ internal fun SpotItem(
 
 @Composable
 private fun SpotInfo(
-    spot: Spot,
+    spot: com.acon.acon.core.model.model.spot.Spot,
     rank: Int,
-    transportMode: TransportMode,
-    onFindWayButtonClick: (Spot) -> Unit,
+    transportMode: com.acon.acon.core.model.type.TransportMode,
+    onFindWayButtonClick: (com.acon.acon.core.model.model.spot.Spot) -> Unit,
     modifier: Modifier = Modifier,
 ) {
 
@@ -165,8 +165,8 @@ private fun SpotInfo(
                 AconTag(
                     text = tagType.name,
                     backgroundColor = when (tagType) {
-                        TagType.NEW -> AconTheme.color.TagNew
-                        TagType.LOCAL -> AconTheme.color.TagLocal
+                        com.acon.acon.core.model.type.TagType.NEW -> AconTheme.color.TagNew
+                        com.acon.acon.core.model.type.TagType.LOCAL -> AconTheme.color.TagLocal
                         else -> AconTheme.color.Gray900
                     }
                 )
@@ -205,7 +205,7 @@ private fun SpotInfo(
         AconFilledButton(
             modifier = Modifier.align(Alignment.CenterHorizontally),
             onClick = {
-                if (userType == UserType.GUEST)
+                if (userType == com.acon.acon.core.model.type.UserType.GUEST)
                     onSignInRequired("click_home_navigation_guest?")
                 else
                     onFindWayButtonClick(spot)
@@ -233,7 +233,7 @@ private fun SpotInfo(
         ) {
             Text(
                 text = stringResource(
-                    if (transportMode == TransportMode.WALKING) R.string.walking_eta else R.string.biking_eta,
+                    if (transportMode == com.acon.acon.core.model.type.TransportMode.WALKING) R.string.walking_eta else R.string.biking_eta,
                     spot.eta
                 ),
                 style = AconTheme.typography.Body1,
@@ -246,7 +246,7 @@ private fun SpotInfo(
 
 @Composable
 private fun SpotImage(
-    spot: Spot,
+    spot: com.acon.acon.core.model.model.spot.Spot,
     modifier: Modifier = Modifier,
 ) {
     if (spot.image.isBlank()) {
@@ -312,8 +312,8 @@ private fun SpotImage(
 
 @Composable
 fun SpotGuestItem(
-    spot: Spot,
-    onItemClick: (Spot) -> Unit,
+    spot: com.acon.acon.core.model.model.spot.Spot,
+    onItemClick: (com.acon.acon.core.model.model.spot.Spot) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Card(
@@ -369,7 +369,7 @@ fun SpotGuestItem(
 @Preview
 private fun SpotItemV2Preview() {
     SpotItem(
-        spot = Spot(
+        spot = com.acon.acon.core.model.model.spot.Spot(
             id = 1L,
             name = "장소명",
             image = "ddd",
@@ -382,7 +382,7 @@ private fun SpotItemV2Preview() {
             isOpen = true,
             nextOpening = "10:00".toLocalTime()!!
         ),
-        transportMode = TransportMode.WALKING,
+        transportMode = com.acon.acon.core.model.type.TransportMode.WALKING,
         onItemClick = {},
         onFindWayButtonClick = {},
         modifier = Modifier
@@ -396,7 +396,7 @@ private fun SpotItemV2Preview() {
 @Preview
 private fun SpotItemV2EmptyImagePreview() {
     SpotItem(
-        spot = Spot(
+        spot = com.acon.acon.core.model.model.spot.Spot(
             id = 1L,
             name = "장소명",
             image = "",
@@ -409,7 +409,7 @@ private fun SpotItemV2EmptyImagePreview() {
             isOpen = true,
             nextOpening = "10:00".toLocalTime()!!
         ),
-        transportMode = TransportMode.WALKING,
+        transportMode = com.acon.acon.core.model.type.TransportMode.WALKING,
         onItemClick = {},
         onFindWayButtonClick = {},
         modifier = Modifier

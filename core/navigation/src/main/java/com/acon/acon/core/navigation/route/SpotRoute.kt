@@ -1,6 +1,6 @@
 package com.acon.acon.core.navigation.route
 
-import com.acon.core.model.spot.SpotNavigationParameter
+import com.acon.acon.core.model.model.spot.SpotNavigationParameter
 import kotlinx.serialization.Serializable
 
 interface SpotRoute {
@@ -12,5 +12,5 @@ interface SpotRoute {
     data object SpotList : SpotRoute
 
     @Serializable
-    data class SpotDetail(val spotNavigationParameter: SpotNavigationParameter) : SpotRoute
+    data class SpotDetail(val spotNavigationParameter: com.acon.acon.core.model.model.spot.SpotNavigationParameter) : SpotRoute
 }

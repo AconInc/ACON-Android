@@ -8,10 +8,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.acon.core.model.spot.SpotNavigationParameter
-import com.acon.core.model.spot.Spot
-import com.acon.core.type.TransportMode
-import com.acon.core.type.UserType
+import com.acon.acon.core.model.model.spot.SpotNavigationParameter
+import com.acon.acon.core.model.model.spot.Spot
+import com.acon.acon.core.model.type.TransportMode
+import com.acon.acon.core.model.type.UserType
 import com.acon.acon.feature.spot.screen.spotlist.SpotListSideEffectV2
 import com.acon.acon.feature.spot.screen.spotlist.SpotListViewModel
 import com.acon.acon.core.ui.compose.LocalDeepLinkHandler
@@ -27,9 +27,9 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 fun SpotListScreenContainer(
     onNavigateToUploadScreen: () -> Unit,
     onNavigateToProfileScreen: () -> Unit,
-    onNavigateToSpotDetailScreen: (Spot, TransportMode) -> Unit,
+    onNavigateToSpotDetailScreen: (com.acon.acon.core.model.model.spot.Spot, com.acon.acon.core.model.type.TransportMode) -> Unit,
     modifier: Modifier = Modifier,
-    onNavigateToDeeplinkSpotDetailScreen: (spotNav: SpotNavigationParameter) -> Unit = {},
+    onNavigateToDeeplinkSpotDetailScreen: (spotNav: com.acon.acon.core.model.model.spot.SpotNavigationParameter) -> Unit = {},
     viewModel: SpotListViewModel = hiltViewModel()
 ) {
     val state by viewModel.collectAsState()
@@ -45,7 +45,7 @@ fun SpotListScreenContainer(
             .collect { spotId ->
                 delay(400)
                 onNavigateToDeeplinkSpotDetailScreen(
-                    SpotNavigationParameter(
+                    com.acon.acon.core.model.model.spot.SpotNavigationParameter(
                         spotId = spotId,
                         tags = emptyList(),
                         transportMode = null,
@@ -62,7 +62,7 @@ fun SpotListScreenContainer(
             state = state,
             onSpotTypeChanged = viewModel::onSpotTypeClicked,
             onSpotClick = { spot, rank ->
-                if (userType == UserType.GUEST)
+                if (userType == com.acon.acon.core.model.type.UserType.GUEST)
                     onSignInRequired("click_detail_guest?")
                 else
                     viewModel.onSpotClicked(spot, rank)

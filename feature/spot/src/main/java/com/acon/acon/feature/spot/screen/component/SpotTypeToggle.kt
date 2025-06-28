@@ -26,12 +26,12 @@ import com.acon.acon.core.designsystem.effect.LocalHazeState
 import com.acon.acon.core.designsystem.effect.defaultHazeEffect
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.core.type.SpotType
+import com.acon.acon.core.model.type.SpotType
 
 @Composable
 internal fun SpotTypeToggle(
-    selectedType: SpotType,
-    onSwitched: (SpotType) -> Unit,
+    selectedType: com.acon.acon.core.model.type.SpotType,
+    onSwitched: (com.acon.acon.core.model.type.SpotType) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -44,21 +44,21 @@ internal fun SpotTypeToggle(
         verticalAlignment = Alignment.CenterVertically
     ) {
         SpotTypeToggleItem(
-            spotType = SpotType.RESTAURANT,
-            isSelected = selectedType == SpotType.RESTAURANT,
-            onClick = { onSwitched(SpotType.RESTAURANT) }
+            spotType = com.acon.acon.core.model.type.SpotType.RESTAURANT,
+            isSelected = selectedType == com.acon.acon.core.model.type.SpotType.RESTAURANT,
+            onClick = { onSwitched(com.acon.acon.core.model.type.SpotType.RESTAURANT) }
         )
         SpotTypeToggleItem(
-            spotType = SpotType.CAFE,
-            isSelected = selectedType == SpotType.CAFE,
-            onClick = { onSwitched(SpotType.CAFE) }
+            spotType = com.acon.acon.core.model.type.SpotType.CAFE,
+            isSelected = selectedType == com.acon.acon.core.model.type.SpotType.CAFE,
+            onClick = { onSwitched(com.acon.acon.core.model.type.SpotType.CAFE) }
         )
     }
 }
 
 @Composable
 private fun SpotTypeToggleItem(
-    spotType: SpotType,
+    spotType: com.acon.acon.core.model.type.SpotType,
     isSelected: Boolean,
     onClick: () -> Unit,
 ) {
@@ -77,14 +77,14 @@ private fun SpotTypeToggleItem(
     ) {
         Icon(
             painter = painterResource(
-                if (spotType == SpotType.RESTAURANT) R.drawable.ic_restaurant else R.drawable.ic_cafe
+                if (spotType == com.acon.acon.core.model.type.SpotType.RESTAURANT) R.drawable.ic_restaurant else R.drawable.ic_cafe
             ),
-            contentDescription = stringResource(if (spotType == SpotType.RESTAURANT) R.string.restaurant else R.string.cafe),
+            contentDescription = stringResource(if (spotType == com.acon.acon.core.model.type.SpotType.RESTAURANT) R.string.restaurant else R.string.cafe),
             modifier = Modifier.size(24.dp),
             tint = Color.Unspecified
         )
         Text(
-            text = stringResource(if (spotType == SpotType.RESTAURANT) R.string.restaurant else R.string.cafe),
+            text = stringResource(if (spotType == com.acon.acon.core.model.type.SpotType.RESTAURANT) R.string.restaurant else R.string.cafe),
             style = AconTheme.typography.Caption1,
             fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.W400,
             color = if (isSelected) AconTheme.color.Gray900 else AconTheme.color.Gray300,
@@ -97,7 +97,7 @@ private fun SpotTypeToggleItem(
 private fun SpotTypeTogglePreview1() {
     AconTheme {
         SpotTypeToggle(
-            selectedType = SpotType.RESTAURANT,
+            selectedType = com.acon.acon.core.model.type.SpotType.RESTAURANT,
             onSwitched = {},
             modifier = Modifier
         )
@@ -108,7 +108,7 @@ private fun SpotTypeTogglePreview1() {
 private fun SpotTypeTogglePreview2() {
     AconTheme {
         SpotTypeToggle(
-            selectedType = SpotType.CAFE,
+            selectedType = com.acon.acon.core.model.type.SpotType.CAFE,
             onSwitched = {},
             modifier = Modifier
         )

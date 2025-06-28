@@ -15,7 +15,7 @@ import com.acon.acon.core.navigation.route.ProfileRoute
 import com.acon.acon.core.navigation.route.SpotRoute
 import com.acon.acon.feature.spot.screen.spotdetail.composable.SpotDetailScreenContainer
 import com.acon.acon.feature.spot.screen.spotlist.composable.SpotListScreenContainer
-import com.acon.core.model.spot.SpotNavigationParameter
+import com.acon.acon.core.model.model.spot.SpotNavigationParameter
 import com.acon.acon.core.navigation.route.UploadRoute
 import com.acon.acon.core.navigation.type.spotNavigationParameterNavType
 
@@ -40,7 +40,7 @@ internal fun NavGraphBuilder.spotNavigation(
                 onNavigateToSpotDetailScreen = { spot, tm ->
                     navController.navigate(
                         SpotRoute.SpotDetail(
-                            SpotNavigationParameter(
+                            com.acon.acon.core.model.model.spot.SpotNavigationParameter(
                                 spot.id,
                                 spot.tags,
                                 tm,

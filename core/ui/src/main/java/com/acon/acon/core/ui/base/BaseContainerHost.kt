@@ -7,7 +7,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import com.acon.acon.core.common.utils.firstNotNull
-import com.acon.core.type.UserType
+import com.acon.acon.core.model.type.UserType
 import com.acon.acon.core.ui.compose.LocalLocation
 import com.acon.acon.core.ui.compose.LocalRequestLocationPermission
 import com.acon.acon.core.ui.compose.LocalUserType
@@ -24,7 +24,7 @@ abstract class BaseContainerHost<STATE : Any, SIDE_EFFECT : Any>() :
 
     private val currentLocation = MutableStateFlow<Location?>(null)
 
-    private val _userType = MutableStateFlow(UserType.GUEST)
+    private val _userType = MutableStateFlow(com.acon.acon.core.model.type.UserType.GUEST)
     protected val userType = _userType.asStateFlow()
 
     @Composable

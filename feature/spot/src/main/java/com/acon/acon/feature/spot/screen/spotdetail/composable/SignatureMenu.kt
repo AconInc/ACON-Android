@@ -18,12 +18,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.core.model.spot.SignatureMenu
+import com.acon.acon.core.model.model.spot.SignatureMenu
 import com.acon.acon.feature.spot.toPriceString
 
 @Composable
 internal fun SignatureMenu(
-    signatureMenuList: List<SignatureMenu>
+    signatureMenuList: List<com.acon.acon.core.model.model.spot.SignatureMenu>
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(4.dp)

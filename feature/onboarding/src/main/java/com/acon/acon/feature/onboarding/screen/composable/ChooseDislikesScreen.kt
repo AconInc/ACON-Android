@@ -32,7 +32,7 @@ import com.acon.acon.core.designsystem.effect.effect.shadowLayerBackground
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.feature.onboarding.screen.ChooseDislikesUiState
 import com.acon.acon.core.navigation.LocalNavController
-import com.acon.core.type.FoodType
+import com.acon.acon.core.model.type.FoodType
 import com.acon.acon.core.ui.ext.getNameResId
 
 @Composable
@@ -40,7 +40,7 @@ internal fun ChooseDislikesScreen(
     state: ChooseDislikesUiState,
     onComplete: () -> Unit,
     onNoneChosen: () -> Unit,
-    onDislikeFoodChosen: (FoodType) -> Unit,
+    onDislikeFoodChosen: (com.acon.acon.core.model.type.FoodType) -> Unit,
     modifier: Modifier = Modifier,
     onDismissStopModal: (() -> Unit) -> Unit = {},
 ) {
@@ -103,7 +103,7 @@ internal fun ChooseDislikesScreen(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    FoodType.entries.fastForEach { foodType ->
+                    com.acon.acon.core.model.type.FoodType.entries.fastForEach { foodType ->
                         AconChip(
                             title = stringResource(foodType.getNameResId()),
                             isSelected = state.selectedDislikes.contains(foodType),

@@ -24,11 +24,11 @@ import androidx.compose.ui.util.fastForEach
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.core.model.area.Area
+import com.acon.acon.core.model.model.area.Area
 
 @Composable
 internal fun VerifiedAreaChipRow(
-    areaList: List<Area>,
+    areaList: List<com.acon.acon.core.model.model.area.Area>,
     onEditArea: () -> Unit,
     onRemoveChip: (Long) -> Unit,
     onClickAddArea: () -> Unit,
@@ -122,9 +122,9 @@ private fun AddAreaChip(
 @Preview(showBackground = true)
 @Composable
 private fun VerifiedAreaChipPreview() {
-    val list: List<Area> = listOf(
-        Area(1, "망원동"),
-        Area(1, "을지로4가")
+    val list: List<com.acon.acon.core.model.model.area.Area> = listOf(
+        com.acon.acon.core.model.model.area.Area(1, "망원동"),
+        com.acon.acon.core.model.model.area.Area(1, "을지로4가")
     )
     AconTheme {
         Box(

@@ -40,7 +40,7 @@ import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.button.AconGoogleSignInButton
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.core.type.UserType
+import com.acon.acon.core.model.type.UserType
 import com.acon.acon.feature.signin.screen.component.SignInTopBar
 import com.acon.acon.feature.signin.utils.SplashAudioManager
 import com.acon.core.analytics.amplitude.AconAmplitude
@@ -91,7 +91,7 @@ fun SignInScreen(
         snapshotFlow { logoAnimationState.value }
             .collect { animationValue ->
                 if (animationValue == 1f) {
-                    if(deepLinkHandler.hasDeepLink.value && userType == UserType.GUEST) {
+                    if(deepLinkHandler.hasDeepLink.value && userType == com.acon.acon.core.model.type.UserType.GUEST) {
                         navigateToSpotListView()
                     } else {
                         onAnimationEnd()

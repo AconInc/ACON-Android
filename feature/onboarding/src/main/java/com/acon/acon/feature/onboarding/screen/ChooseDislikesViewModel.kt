@@ -2,7 +2,7 @@ package com.acon.acon.feature.onboarding.screen
 
 import androidx.compose.runtime.Immutable
 import com.acon.acon.domain.repository.OnboardingRepository
-import com.acon.core.type.FoodType
+import com.acon.acon.core.model.type.FoodType
 import com.acon.acon.core.ui.base.BaseContainerHost
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -56,22 +56,22 @@ class ChooseDislikesViewModel @Inject constructor(
         }
     }
 
-    fun onDislikeFoodClicked(foodType: FoodType) = intent {
+    fun onDislikeFoodClicked(foodType: com.acon.acon.core.model.type.FoodType) = intent {
         runOn<ChooseDislikesUiState.Success> {
-            if (foodType == FoodType.SEAFOOD) {
+            if (foodType == com.acon.acon.core.model.type.FoodType.SEAFOOD) {
                 reduce {
                     state.copy(
-                        selectedDislikes = if (state.selectedDislikes.contains(FoodType.SEAFOOD)) {
-                            state.selectedDislikes - FoodType.SEAFOOD
+                        selectedDislikes = if (state.selectedDislikes.contains(com.acon.acon.core.model.type.FoodType.SEAFOOD)) {
+                            state.selectedDislikes - com.acon.acon.core.model.type.FoodType.SEAFOOD
                         } else {
                             state.selectedDislikes + setOf(
-                                FoodType.SEAFOOD,
-                                FoodType.SHRIMP,
-                                FoodType.CRAB,
-                                FoodType.CLAM,
-                                FoodType.OYSTER,
-                                FoodType.SASHIMI,
-                                FoodType.FISH
+                                com.acon.acon.core.model.type.FoodType.SEAFOOD,
+                                com.acon.acon.core.model.type.FoodType.SHRIMP,
+                                com.acon.acon.core.model.type.FoodType.CRAB,
+                                com.acon.acon.core.model.type.FoodType.CLAM,
+                                com.acon.acon.core.model.type.FoodType.OYSTER,
+                                com.acon.acon.core.model.type.FoodType.SASHIMI,
+                                com.acon.acon.core.model.type.FoodType.FISH
                             )
                         },
                     )
@@ -105,7 +105,7 @@ sealed interface ChooseDislikesUiState {
     @Immutable
     data class Success(
         val isNoneChosen: Boolean = false,
-        val selectedDislikes: Set<FoodType> = emptySet(),
+        val selectedDislikes: Set<com.acon.acon.core.model.type.FoodType> = emptySet(),
         val showStopModal: Boolean = false
     ) : ChooseDislikesUiState
 }

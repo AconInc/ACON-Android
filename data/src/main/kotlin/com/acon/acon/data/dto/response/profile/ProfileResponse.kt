@@ -1,6 +1,6 @@
 package com.acon.acon.data.dto.response.profile
 
-import com.acon.core.model.profile.ProfileInfo
+import com.acon.acon.core.model.model.profile.ProfileInfo
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -11,7 +11,7 @@ data class ProfileResponse(
     @SerialName("birthDate") val birthDate: String? = null,
     @SerialName("savedSpotList") val savedSpotList: List<SavedSpotResponse>,
 ) {
-    fun toProfile() = ProfileInfo(
+    fun toProfile() = com.acon.acon.core.model.model.profile.ProfileInfo(
         image = image,
         nickname = nickname,
         birthDate = birthDate,

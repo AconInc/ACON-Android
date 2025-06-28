@@ -49,8 +49,8 @@ import com.acon.acon.core.designsystem.effect.rememberHazeState
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.core.ui.android.showToast
-import com.acon.core.model.upload.UploadSpotSuggestion
-import com.acon.core.model.upload.SearchedSpot
+import com.acon.acon.core.model.model.upload.UploadSpotSuggestion
+import com.acon.acon.core.model.model.upload.SearchedSpot
 import com.acon.acon.feature.upload.mock.uploadSearchUiStateMock
 import com.acon.acon.feature.upload.screen.UploadSearchUiState
 import com.acon.core.analytics.amplitude.AconAmplitude
@@ -65,8 +65,8 @@ import kotlinx.collections.immutable.toImmutableList
 internal fun UploadSearchScreen(
     state: UploadSearchUiState,
     onSearchQueryChanged: (String, isSelection: Boolean) -> Unit,
-    onSearchedSpotClick: (SearchedSpot, onSuccess: () -> Unit) -> Unit,
-    onSuggestionSpotClick: (UploadSpotSuggestion, onSuccess: () -> Unit) -> Unit,
+    onSearchedSpotClick: (com.acon.acon.core.model.model.upload.SearchedSpot, onSuccess: () -> Unit) -> Unit,
+    onSuggestionSpotClick: (com.acon.acon.core.model.model.upload.UploadSpotSuggestion, onSuccess: () -> Unit) -> Unit,
     onVerifyLocationDialogAction: () -> Unit,
     onBackAction: () -> Unit,
     onNextAction: () -> Unit,
@@ -208,8 +208,8 @@ internal fun UploadSearchScreen(
 
 @Composable
 private fun SearchedSpots(
-    searchedSpots: ImmutableList<SearchedSpot>,
-    onItemClick: (SearchedSpot) -> Unit,
+    searchedSpots: ImmutableList<com.acon.acon.core.model.model.upload.SearchedSpot>,
+    onItemClick: (com.acon.acon.core.model.model.upload.SearchedSpot) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val uriHandler = LocalUriHandler.current
@@ -286,7 +286,7 @@ private fun SearchedSpots(
 
 @Composable
 private fun SearchedSpotItem(
-    searchedSpot: SearchedSpot,
+    searchedSpot: com.acon.acon.core.model.model.upload.SearchedSpot,
     modifier: Modifier = Modifier,
 ) {
     Row(

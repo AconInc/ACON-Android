@@ -7,7 +7,7 @@ import android.content.pm.PackageManager
 import android.location.LocationManager
 import androidx.core.app.ActivityCompat
 import com.acon.acon.domain.error.area.ReplaceVerifiedArea
-import com.acon.core.model.area.Area
+import com.acon.acon.core.model.model.area.Area
 import com.acon.acon.domain.repository.UserRepository
 import com.acon.acon.core.ui.base.BaseContainerHost
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -136,7 +136,7 @@ data class AreaVerificationUiState(
     val latitude: Double = 0.0,
     val longitude: Double = 0.0,
     val isVerifySuccess: Boolean = false,
-    val verifiedAreaList: List<Area> = emptyList(),
+    val verifiedAreaList: List<com.acon.acon.core.model.model.area.Area> = emptyList(),
 )
 
 sealed interface AreaVerificationSideEffect {

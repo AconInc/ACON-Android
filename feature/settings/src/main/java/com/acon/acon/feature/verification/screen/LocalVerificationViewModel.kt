@@ -1,7 +1,7 @@
 package com.acon.acon.feature.verification.screen
 
 import com.acon.acon.domain.error.area.DeleteVerifiedAreaError
-import com.acon.core.model.area.Area
+import com.acon.acon.core.model.model.area.Area
 import com.acon.acon.domain.repository.UserRepository
 import com.acon.acon.core.ui.base.BaseContainerHost
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -122,7 +122,7 @@ class LocalVerificationViewModel @Inject constructor(
 sealed interface LocalVerificationUiState {
     data class Success(
         val selectedAreaId: Long? = null,
-        val verificationAreaList: List<Area>,
+        val verificationAreaList: List<com.acon.acon.core.model.model.area.Area>,
         val showAreaDeleteFailDialog: Boolean = false,
         val showEditAreaDialog: Boolean = false
     ) : LocalVerificationUiState

@@ -3,9 +3,9 @@ package com.acon.acon.feature.upload.screen
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.viewModelScope
 import com.acon.acon.domain.error.upload.GetVerifySpotLocationError
-import com.acon.core.model.spot.SimpleSpot
-import com.acon.core.model.upload.UploadSpotSuggestion
-import com.acon.core.model.upload.SearchedSpot
+import com.acon.acon.core.model.model.spot.SimpleSpot
+import com.acon.acon.core.model.model.upload.UploadSpotSuggestion
+import com.acon.acon.core.model.model.upload.SearchedSpot
 import com.acon.acon.domain.repository.UploadRepository
 import com.acon.acon.feature.upload.BuildConfig
 import com.acon.acon.feature.upload.mock.uploadSearchUiStateMock
@@ -99,7 +99,7 @@ class UploadSearchViewModel @Inject constructor(
         }
     }
 
-    fun onSuggestionSpotClicked(spot: UploadSpotSuggestion, onSuccess: () -> Unit) = intent {
+    fun onSuggestionSpotClicked(spot: com.acon.acon.core.model.model.upload.UploadSpotSuggestion, onSuccess: () -> Unit) = intent {
         runOn<UploadSearchUiState.Success> {
             val verifyingLocation = getCurrentLocation()
             uploadRepository.verifyLocation(
@@ -110,7 +110,10 @@ class UploadSearchViewModel @Inject constructor(
                 onSuccess()
                 reduce {
                     state.copy(
-                        selectedSpot = SimpleSpot(spot.spotId, spot.name),
+                        selectedSpot = com.acon.acon.core.model.model.spot.SimpleSpot(
+                            spot.spotId,
+                            spot.name
+                        ),
                         showSearchedSpots = false
                     )
                 }
@@ -129,10 +132,10 @@ class UploadSearchViewModel @Inject constructor(
         }
     }
 
-    fun onSearchedSpotClicked(spot: SearchedSpot, onSuccess: () -> Unit) = intent {
+    fun onSearchedSpotClicked(spot: com.acon.acon.core.model.model.upload.SearchedSpot, onSuccess: () -> Unit) = intent {
         runOn<UploadSearchUiState.Success> {
             onSuggestionSpotClicked(
-                UploadSpotSuggestion(spot.spotId, spot.name), onSuccess
+                com.acon.acon.core.model.model.upload.UploadSpotSuggestion(spot.spotId, spot.name), onSuccess
             )
         }
     }
@@ -168,9 +171,9 @@ class UploadSearchViewModel @Inject constructor(
 sealed interface UploadSearchUiState {
     @Immutable
     data class Success(
-        val uploadSpotSuggestions: List<UploadSpotSuggestion> = listOf(),
-        val selectedSpot: SimpleSpot? = null,
-        val searchedSpots: List<SearchedSpot> = listOf(),
+        val uploadSpotSuggestions: List<com.acon.acon.core.model.model.upload.UploadSpotSuggestion> = listOf(),
+        val selectedSpot: com.acon.acon.core.model.model.spot.SimpleSpot? = null,
+        val searchedSpots: List<com.acon.acon.core.model.model.upload.SearchedSpot> = listOf(),
         val showSearchedSpots: Boolean = false,
         val showNotAvailableLocationDialog: Boolean = false,
         val showNotInKoreaDialog: Boolean = false
@@ -178,6 +181,6 @@ sealed interface UploadSearchUiState {
 }
 
 sealed interface UploadSearchSideEffect {
-    data class NavigateToReviewScreen(val spot: SimpleSpot) : UploadSearchSideEffect
+    data class NavigateToReviewScreen(val spot: com.acon.acon.core.model.model.spot.SimpleSpot) : UploadSearchSideEffect
     data object NavigateBack : UploadSearchSideEffect
 }

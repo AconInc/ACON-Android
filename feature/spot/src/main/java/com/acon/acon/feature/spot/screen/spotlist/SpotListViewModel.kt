@@ -5,17 +5,17 @@ import android.location.Location
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.util.fastForEach
 import com.acon.acon.domain.error.spot.FetchSpotListError
-import com.acon.core.model.spot.Condition
-import com.acon.core.model.spot.Filter
-import com.acon.core.model.spot.Spot
-import com.acon.core.model.spot.SpotList
+import com.acon.acon.core.model.model.spot.Condition
+import com.acon.acon.core.model.model.spot.Filter
+import com.acon.acon.core.model.model.spot.Spot
+import com.acon.acon.core.model.model.spot.SpotList
 import com.acon.acon.domain.repository.SpotRepository
-import com.acon.core.type.CafeFilterType
-import com.acon.core.type.CategoryType
-import com.acon.core.type.RestaurantFilterType
-import com.acon.core.type.SpotType
-import com.acon.core.type.TagType
-import com.acon.core.type.TransportMode
+import com.acon.acon.core.model.type.CafeFilterType
+import com.acon.acon.core.model.type.CategoryType
+import com.acon.acon.core.model.type.RestaurantFilterType
+import com.acon.acon.core.model.type.SpotType
+import com.acon.acon.core.model.type.TagType
+import com.acon.acon.core.model.type.TransportMode
 import com.acon.acon.domain.usecase.IsDistanceExceededUseCase
 import com.acon.core.analytics.amplitude.AconAmplitude
 import com.acon.core.analytics.constants.EventNames
@@ -40,7 +40,7 @@ class SpotListViewModel @Inject constructor(
 ) : BaseContainerHost<SpotListUiStateV2, SpotListSideEffectV2>() {
 
     override val container =
-        container<SpotListUiStateV2, SpotListSideEffectV2>(SpotListUiStateV2.Loading(SpotType.RESTAURANT))
+        container<SpotListUiStateV2, SpotListSideEffectV2>(SpotListUiStateV2.Loading(com.acon.acon.core.model.type.SpotType.RESTAURANT))
 
     private lateinit var initialLocation: Location
 
@@ -66,7 +66,12 @@ class SpotListViewModel @Inject constructor(
             runOn<SpotListUiStateV2.Loading> {
                 initialLocation = location
                 if (location.isInKorea(context)) {
-                    fetchSpotList(location, Condition(state.selectedSpotType, emptyList())) {
+                    fetchSpotList(location,
+                        com.acon.acon.core.model.model.spot.Condition(
+                            state.selectedSpotType,
+                            emptyList()
+                        )
+                    ) {
                         SpotListUiStateV2.Success(
                             transportMode = it.transportMode,
                             spotList = it.spots,
@@ -84,7 +89,7 @@ class SpotListViewModel @Inject constructor(
         }
     }
 
-    fun onSpotTypeClicked(spotType: SpotType) = intent {
+    fun onSpotTypeClicked(spotType: com.acon.acon.core.model.type.SpotType) = intent {
         val captureState = state as? SpotListUiStateV2.Success
         if (spotType == state.selectedSpotType) return@intent
 
@@ -102,7 +107,7 @@ class SpotListViewModel @Inject constructor(
         if (captureState != null) {
             fetchSpotList(
                 location = captureState.currentLocation,
-                condition = Condition(spotType, emptyList())
+                condition = com.acon.acon.core.model.model.spot.Condition(spotType, emptyList())
             ) {
                 SpotListUiStateV2.Success(
                     transportMode = it.transportMode,
@@ -117,15 +122,15 @@ class SpotListViewModel @Inject constructor(
         }
     }
 
-    fun onSpotClicked(spot: Spot, rank: Int) = intent {
+    fun onSpotClicked(spot: com.acon.acon.core.model.model.spot.Spot, rank: Int) = intent {
         runOn<SpotListUiStateV2.Success> {
             val tags = spot.tags.toMutableList()
             when (rank) {
-                1 -> tags.add(TagType.TOP_1)
-                2 -> tags.add(TagType.TOP_2)
-                3 -> tags.add(TagType.TOP_3)
-                4 -> tags.add(TagType.TOP_4)
-                5 -> tags.add(TagType.TOP_5)
+                1 -> tags.add(com.acon.acon.core.model.type.TagType.TOP_1)
+                2 -> tags.add(com.acon.acon.core.model.type.TagType.TOP_2)
+                3 -> tags.add(com.acon.acon.core.model.type.TagType.TOP_3)
+                4 -> tags.add(com.acon.acon.core.model.type.TagType.TOP_4)
+                5 -> tags.add(com.acon.acon.core.model.type.TagType.TOP_5)
                 else -> {}
             }
             if (tags.isEmpty()) {
@@ -138,8 +143,8 @@ class SpotListViewModel @Inject constructor(
                     AconAmplitude.trackEvent(
                         eventName = EventNames.MAIN_MENU,
                         property = when(tag) {
-                            TagType.NEW -> PropertyKeys.CLICK_DETAIL_TAG_NEW to true
-                            TagType.LOCAL -> PropertyKeys.CLICK_DETAIL_TAG_LOCAL to true
+                            com.acon.acon.core.model.type.TagType.NEW -> PropertyKeys.CLICK_DETAIL_TAG_NEW to true
+                            com.acon.acon.core.model.type.TagType.LOCAL -> PropertyKeys.CLICK_DETAIL_TAG_LOCAL to true
                             else -> PropertyKeys.CLICK_DETAIL_TAG_RANK to true
                         }
                     )
@@ -156,7 +161,7 @@ class SpotListViewModel @Inject constructor(
         }
     }
 
-    fun onTryFindWay(spot: Spot) = intent {
+    fun onTryFindWay(spot: com.acon.acon.core.model.model.spot.Spot) = intent {
         runOn<SpotListUiStateV2.Success> {
             reduce {
                 state.copy(
@@ -212,7 +217,7 @@ class SpotListViewModel @Inject constructor(
     }
 
     fun onRestaurantFilterSaved(
-        selectedRestaurantFilters: Map<FilterDetailKey, Set<RestaurantFilterType>>,
+        selectedRestaurantFilters: Map<FilterDetailKey, Set<com.acon.acon.core.model.type.RestaurantFilterType>>,
     ) = intent {
         val captureState = state as? SpotListUiStateV2.Success
         reduce {
@@ -242,7 +247,7 @@ class SpotListViewModel @Inject constructor(
     }
 
     fun onCafeFilterSaved(
-        selectedCafeFilters: Map<FilterDetailKey, Set<CafeFilterType>>,
+        selectedCafeFilters: Map<FilterDetailKey, Set<com.acon.acon.core.model.type.CafeFilterType>>,
     ) = intent {
         val captureState = state as? SpotListUiStateV2.Success
         reduce {
@@ -271,7 +276,7 @@ class SpotListViewModel @Inject constructor(
         }
     }
 
-    private fun fetchSpotList(location: Location, condition: Condition, onSuccess: (SpotList) -> SpotListUiStateV2.Success) = intent {
+    private fun fetchSpotList(location: Location, condition: com.acon.acon.core.model.model.spot.Condition, onSuccess: (com.acon.acon.core.model.model.spot.SpotList) -> SpotListUiStateV2.Success) = intent {
         spotRepository.fetchSpotList(
             latitude = location.latitude,
             longitude = location.longitude,
@@ -293,16 +298,16 @@ class SpotListViewModel @Inject constructor(
         }
     }
 
-    private fun mapCondition(state: SpotListUiStateV2): Condition {
-        return Condition(
+    private fun mapCondition(state: SpotListUiStateV2): com.acon.acon.core.model.model.spot.Condition {
+        return com.acon.acon.core.model.model.spot.Condition(
             spotType = state.selectedSpotType,
-            filterList = if (state.selectedSpotType == SpotType.RESTAURANT) {
+            filterList = if (state.selectedSpotType == com.acon.acon.core.model.type.SpotType.RESTAURANT) {
                 state.selectedRestaurantFilters.map {
-                    Filter(
+                    com.acon.acon.core.model.model.spot.Filter(
                         category = when (it.key) {
-                            RestaurantFilterType.RestaurantType::class -> CategoryType.RESTAURANT_FEATURE
-                            RestaurantFilterType.RestaurantOperationType::class -> CategoryType.OPENING_HOURS
-                            RestaurantFilterType.RestaurantPriceType::class -> CategoryType.PRICE
+                            com.acon.acon.core.model.type.RestaurantFilterType.RestaurantType::class -> com.acon.acon.core.model.type.CategoryType.RESTAURANT_FEATURE
+                            com.acon.acon.core.model.type.RestaurantFilterType.RestaurantOperationType::class -> com.acon.acon.core.model.type.CategoryType.OPENING_HOURS
+                            com.acon.acon.core.model.type.RestaurantFilterType.RestaurantPriceType::class -> com.acon.acon.core.model.type.CategoryType.PRICE
                             else -> throw IllegalArgumentException("Unknown filter type")
                         },
                         optionList = it.value.toList()
@@ -310,10 +315,10 @@ class SpotListViewModel @Inject constructor(
                 }
             } else {
                 state.selectedCafeFilters.map {
-                    Filter(
+                    com.acon.acon.core.model.model.spot.Filter(
                         category = when (it.key) {
-                            CafeFilterType.CafeType::class -> CategoryType.CAFE_FEATURE
-                            CafeFilterType.CafeOperationType::class -> CategoryType.OPENING_HOURS
+                            com.acon.acon.core.model.type.CafeFilterType.CafeType::class -> com.acon.acon.core.model.type.CategoryType.CAFE_FEATURE
+                            com.acon.acon.core.model.type.CafeFilterType.CafeOperationType::class -> com.acon.acon.core.model.type.CategoryType.OPENING_HOURS
                             else -> throw IllegalArgumentException("Unknown filter type")
                         },
                         optionList = it.value.toList()
@@ -325,47 +330,47 @@ class SpotListViewModel @Inject constructor(
 }
 
 sealed interface SpotListUiStateV2 {
-    val selectedSpotType: SpotType
-    val selectedRestaurantFilters: Map<FilterDetailKey, Set<RestaurantFilterType>>
-    val selectedCafeFilters: Map<FilterDetailKey, Set<CafeFilterType>>
+    val selectedSpotType: com.acon.acon.core.model.type.SpotType
+    val selectedRestaurantFilters: Map<FilterDetailKey, Set<com.acon.acon.core.model.type.RestaurantFilterType>>
+    val selectedCafeFilters: Map<FilterDetailKey, Set<com.acon.acon.core.model.type.CafeFilterType>>
 
     @Immutable
     data class Success(
-        override val selectedSpotType: SpotType,
-        val transportMode: TransportMode,
-        val spotList: List<Spot>,
+        override val selectedSpotType: com.acon.acon.core.model.type.SpotType,
+        val transportMode: com.acon.acon.core.model.type.TransportMode,
+        val spotList: List<com.acon.acon.core.model.model.spot.Spot>,
         val headTitle: String,
         val currentLocation: Location,
-        override val selectedRestaurantFilters: Map<FilterDetailKey, Set<RestaurantFilterType>> = emptyMap(),
-        override val selectedCafeFilters: Map<FilterDetailKey, Set<CafeFilterType>> = emptyMap(),
+        override val selectedRestaurantFilters: Map<FilterDetailKey, Set<com.acon.acon.core.model.type.RestaurantFilterType>> = emptyMap(),
+        override val selectedCafeFilters: Map<FilterDetailKey, Set<com.acon.acon.core.model.type.CafeFilterType>> = emptyMap(),
         val showFilterModal: Boolean = false,
         val showRefreshPopup: Boolean = false,
         val showChooseNavigationAppModal: Boolean = false
     ) : SpotListUiStateV2
 
     data class Loading(
-        override val selectedSpotType: SpotType,
-        override val selectedRestaurantFilters: Map<FilterDetailKey, Set<RestaurantFilterType>> = emptyMap(),
-        override val selectedCafeFilters: Map<FilterDetailKey, Set<CafeFilterType>> = emptyMap(),
+        override val selectedSpotType: com.acon.acon.core.model.type.SpotType,
+        override val selectedRestaurantFilters: Map<FilterDetailKey, Set<com.acon.acon.core.model.type.RestaurantFilterType>> = emptyMap(),
+        override val selectedCafeFilters: Map<FilterDetailKey, Set<com.acon.acon.core.model.type.CafeFilterType>> = emptyMap(),
     ) : SpotListUiStateV2
 
     data class LoadFailed(
-        override val selectedSpotType: SpotType,
-        override val selectedRestaurantFilters: Map<FilterDetailKey, Set<RestaurantFilterType>> = emptyMap(),
-        override val selectedCafeFilters: Map<FilterDetailKey, Set<CafeFilterType>> = emptyMap(),
+        override val selectedSpotType: com.acon.acon.core.model.type.SpotType,
+        override val selectedRestaurantFilters: Map<FilterDetailKey, Set<com.acon.acon.core.model.type.RestaurantFilterType>> = emptyMap(),
+        override val selectedCafeFilters: Map<FilterDetailKey, Set<com.acon.acon.core.model.type.CafeFilterType>> = emptyMap(),
     ) : SpotListUiStateV2
 
     data class OutOfServiceArea(
-        override val selectedSpotType: SpotType,
-        override val selectedRestaurantFilters: Map<FilterDetailKey, Set<RestaurantFilterType>> = emptyMap(),
-        override val selectedCafeFilters: Map<FilterDetailKey, Set<CafeFilterType>> = emptyMap(),
+        override val selectedSpotType: com.acon.acon.core.model.type.SpotType,
+        override val selectedRestaurantFilters: Map<FilterDetailKey, Set<com.acon.acon.core.model.type.RestaurantFilterType>> = emptyMap(),
+        override val selectedCafeFilters: Map<FilterDetailKey, Set<com.acon.acon.core.model.type.CafeFilterType>> = emptyMap(),
     ) : SpotListUiStateV2
 }
 
 sealed interface SpotListSideEffectV2 {
     data object ShowToastMessage : SpotListSideEffectV2
     data class NavigateToExternalMap(val handler: NavigationAppHandler) : SpotListSideEffectV2
-    data class NavigateToSpotDetailScreen(val spot: Spot, val transportMode: TransportMode) : SpotListSideEffectV2
+    data class NavigateToSpotDetailScreen(val spot: com.acon.acon.core.model.model.spot.Spot, val transportMode: com.acon.acon.core.model.type.TransportMode) : SpotListSideEffectV2
 }
 
 internal typealias FilterDetailKey = KClass<out Enum<*>>

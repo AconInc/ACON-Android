@@ -1,10 +1,10 @@
 package com.acon.acon.data.dto.response
 
 import com.acon.acon.core.common.utils.toLocalTime
-import com.acon.core.model.spot.Spot
-import com.acon.core.model.spot.SpotList
-import com.acon.core.type.TagType
-import com.acon.core.type.TransportMode
+import com.acon.acon.core.model.model.spot.Spot
+import com.acon.acon.core.model.model.spot.SpotList
+import com.acon.acon.core.model.type.TagType
+import com.acon.acon.core.model.type.TransportMode
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import timber.log.Timber
@@ -12,11 +12,11 @@ import java.time.LocalTime
 
 @Serializable
 data class SpotListResponse(
-    @SerialName("transportMode") val transportMode: TransportMode?,
+    @SerialName("transportMode") val transportMode: com.acon.acon.core.model.type.TransportMode?,
     @SerialName("spotList") val spotList: List<SpotResponse>?
 ) {
-    fun toSpotList() = SpotList(
-        transportMode = transportMode ?: TransportMode.WALKING,
+    fun toSpotList() = com.acon.acon.core.model.model.spot.SpotList(
+        transportMode = transportMode ?: com.acon.acon.core.model.type.TransportMode.WALKING,
         spots = spotList?.map { it.toSpot() } ?: emptyList(),
     )
 }
@@ -36,20 +36,20 @@ data class SpotResponse(
     @SerialName("longitude") val longitude: Double?,
 ) {
 
-    fun toSpot() = Spot(
+    fun toSpot() = com.acon.acon.core.model.model.spot.Spot(
         id = id ?: 0L,
         image = image.orEmpty(),
         name = name.orEmpty(),
         acorn = acornCount ?: 0,
         tags = tags?.mapNotNull { tagString ->
             when (tagString) {
-                "NEW" -> TagType.NEW
-                "LOCAL" -> TagType.LOCAL
-                "TOP 1" -> TagType.TOP_1
-                "TOP 2" -> TagType.TOP_2
-                "TOP 3" -> TagType.TOP_3
-                "TOP 4" -> TagType.TOP_4
-                "TOP 5" -> TagType.TOP_5
+                "NEW" -> com.acon.acon.core.model.type.TagType.NEW
+                "LOCAL" -> com.acon.acon.core.model.type.TagType.LOCAL
+                "TOP 1" -> com.acon.acon.core.model.type.TagType.TOP_1
+                "TOP 2" -> com.acon.acon.core.model.type.TagType.TOP_2
+                "TOP 3" -> com.acon.acon.core.model.type.TagType.TOP_3
+                "TOP 4" -> com.acon.acon.core.model.type.TagType.TOP_4
+                "TOP 5" -> com.acon.acon.core.model.type.TagType.TOP_5
                 else -> {
                     Timber.e("Unknown tag type: $tagString")
                     null
