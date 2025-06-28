@@ -5,11 +5,11 @@ import androidx.navigation.toRoute
 import com.acon.acon.core.ui.base.BaseContainerHost
 import com.acon.core.model.spot.SimpleSpot
 import com.acon.acon.domain.repository.UploadRepository
-import com.acon.core.navigation.route.UploadRoute
+import com.acon.acon.core.navigation.route.UploadRoute
 import com.acon.core.analytics.amplitude.AconAmplitude
 import com.acon.core.analytics.constants.EventNames
 import com.acon.core.analytics.constants.PropertyKeys
-import com.acon.core.navigation.type.simpleSpotNavType
+import com.acon.acon.core.navigation.type.simpleSpotNavType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.viewmodel.container

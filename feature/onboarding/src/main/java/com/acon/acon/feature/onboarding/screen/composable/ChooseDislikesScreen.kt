@@ -31,7 +31,7 @@ import com.acon.acon.core.designsystem.component.dialog.v2.AconTwoActionDialog
 import com.acon.acon.core.designsystem.effect.effect.shadowLayerBackground
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.feature.onboarding.screen.ChooseDislikesUiState
-import com.acon.core.navigation.LocalNavController
+import com.acon.acon.core.navigation.LocalNavController
 import com.acon.core.type.FoodType
 import com.acon.acon.core.ui.ext.getNameResId
 

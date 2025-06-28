@@ -10,14 +10,14 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.core.navigation.route.AreaVerificationRoute
-import com.acon.core.navigation.route.ProfileRoute
-import com.acon.core.navigation.route.SpotRoute
+import com.acon.acon.core.navigation.route.AreaVerificationRoute
+import com.acon.acon.core.navigation.route.ProfileRoute
+import com.acon.acon.core.navigation.route.SpotRoute
 import com.acon.acon.feature.spot.screen.spotdetail.composable.SpotDetailScreenContainer
 import com.acon.acon.feature.spot.screen.spotlist.composable.SpotListScreenContainer
 import com.acon.core.model.spot.SpotNavigationParameter
-import com.acon.core.navigation.route.UploadRoute
-import com.acon.core.navigation.type.spotNavigationParameterNavType
+import com.acon.acon.core.navigation.route.UploadRoute
+import com.acon.acon.core.navigation.type.spotNavigationParameterNavType
 
 internal fun NavGraphBuilder.spotNavigation(
     navController: NavHostController

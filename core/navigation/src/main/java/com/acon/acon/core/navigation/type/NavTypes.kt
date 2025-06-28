@@ -1,4 +1,4 @@
-package com.acon.core.navigation.type
+package com.acon.acon.core.navigation.type
 
 import com.acon.core.model.spot.SimpleSpot
 import com.acon.core.model.spot.SpotNavigationParameter

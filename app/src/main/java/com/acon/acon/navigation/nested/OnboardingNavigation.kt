@@ -10,11 +10,11 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.core.navigation.route.SettingsRoute
-import com.acon.core.navigation.route.OnboardingRoute
+import com.acon.acon.core.navigation.route.SettingsRoute
+import com.acon.acon.core.navigation.route.OnboardingRoute
 import com.acon.acon.feature.onboarding.screen.composable.ChooseDislikesScreenContainer
-import com.acon.core.navigation.LocalNavController
-import com.acon.core.navigation.route.SpotRoute
+import com.acon.acon.core.navigation.LocalNavController
+import com.acon.acon.core.navigation.route.SpotRoute
 
 
 internal fun NavGraphBuilder.onboardingNavigationNavigation(

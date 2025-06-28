@@ -31,8 +31,8 @@
 -keep class kotlin.** { *; }
 -dontwarn kotlin.**
 
--keep interface com.acon.core.navigation.route.ProfileRoute { *; }
--keep interface com.acon.core.navigation.route.SpotRoute { *; }
+-keep interface com.acon.acon.core.navigation.route.ProfileRoute { *; }
+-keep interface com.acon.acon.core.navigation.route.SpotRoute { *; }
 
 # Android 기본 구성 요소
 -keep public class * extends android.app.Activity

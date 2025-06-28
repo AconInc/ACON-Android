@@ -10,12 +10,12 @@ import com.acon.acon.domain.repository.UserRepository
 import com.acon.core.type.TagType
 import com.acon.core.type.TransportMode
 import com.acon.core.type.UserType
-import com.acon.core.navigation.route.SpotRoute
+import com.acon.acon.core.navigation.route.SpotRoute
 import com.acon.core.analytics.amplitude.AconAmplitude
 import com.acon.core.analytics.constants.EventNames
 import com.acon.core.analytics.constants.PropertyKeys
 import com.acon.acon.core.ui.base.BaseContainerHost
-import com.acon.core.navigation.type.spotNavigationParameterNavType
+import com.acon.acon.core.navigation.type.spotNavigationParameterNavType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay

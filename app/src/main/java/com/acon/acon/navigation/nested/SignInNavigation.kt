@@ -6,10 +6,10 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
-import com.acon.core.navigation.route.AreaVerificationRoute
-import com.acon.core.navigation.route.SignInRoute
+import com.acon.acon.core.navigation.route.AreaVerificationRoute
+import com.acon.acon.core.navigation.route.SignInRoute
 import com.acon.acon.feature.signin.screen.SignInScreenContainer
-import com.acon.core.navigation.route.SpotRoute
+import com.acon.acon.core.navigation.route.SpotRoute
 
 internal fun NavGraphBuilder.signInNavigationNavigation(
     navController: NavHostController,

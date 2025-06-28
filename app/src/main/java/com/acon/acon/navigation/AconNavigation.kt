@@ -36,9 +36,9 @@ import com.acon.acon.navigation.nested.signInNavigationNavigation
 import com.acon.acon.navigation.nested.spotNavigation
 import com.acon.acon.navigation.nested.uploadNavigation
 import com.acon.core.model.spot.SpotNavigationParameter
-import com.acon.core.navigation.LocalNavController
-import com.acon.core.navigation.route.SignInRoute
-import com.acon.core.navigation.route.SpotRoute
+import com.acon.acon.core.navigation.LocalNavController
+import com.acon.acon.core.navigation.route.SignInRoute
+import com.acon.acon.core.navigation.route.SpotRoute
 import com.acon.acon.core.ui.compose.LocalDeepLinkHandler
 import com.acon.acon.core.ui.compose.LocalSnackbarHostState
 import kotlinx.coroutines.delay
