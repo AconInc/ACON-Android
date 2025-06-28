@@ -61,9 +61,5 @@ gradlePlugin {
             id = "com.acon.firebase"
             implementationClass = "FirebaseConventionPlugin"
         }
-        register("nonAndroidTest") {
-            id = "com.acon.non.android.test"
-            implementationClass = "NonAndroidTestConventionPlugin"
-        }
     }
 }

@@ -233,7 +233,6 @@ acon-android-library-haze = { id = "com.acon.android.library.haze", version = "u
 acon-android-library-coil = { id = "com.acon.android.library.coil", version = "unspecified" }
 acon-android-library-naver-map = { id = "com.acon.android.library.naver.map", version = "unspecified" }
 acon-firebase = { id = "com.acon.firebase", version = "unspecified" }
-acon-non-android-test = { id = "com.acon.non.android.test", version = "unspecified" }
 
 [bundles]
 googleSignIn = ["androidx-credentials", "androidx-credentials-play-services-auth", "googleid"]
@@ -248,3 +247,4 @@ naver-map = ["naver-map-compose", "naver-map-location", "naver-map-sdk"]
 firebase = ["firebase-analytics-sdk", "firebase-crashlytics-sdk"]
 play-app-update = ["play-core", "play-core-ktx"]
 non-android-test = ["junit", "kotlin-test", "kotlin-test-junit", "mockk", "coroutine-test"]
+android-test = ["androidx-junit", "androidx-espresso-core", "androidx-ui-test-junit4"]
