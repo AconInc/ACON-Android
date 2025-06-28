@@ -17,7 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.acon.acon.core.designsystem.component.loading.SkeletonItem
-import com.acon.core.ui.compose.getScreenHeight
+import com.acon.acon.core.ui.compose.getScreenHeight
 
 @Composable
 internal fun SpotDetailLoadingView(

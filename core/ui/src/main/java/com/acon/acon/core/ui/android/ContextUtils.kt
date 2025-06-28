@@ -1,4 +1,4 @@
-package com.acon.core.ui.android
+package com.acon.acon.core.ui.android
 
 import android.app.Activity
 import android.content.Context

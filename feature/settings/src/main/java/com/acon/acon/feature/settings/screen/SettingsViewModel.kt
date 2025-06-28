@@ -2,7 +2,7 @@ package com.acon.acon.feature.settings.screen
 
 import com.acon.acon.domain.repository.UserRepository
 import com.acon.core.type.UserType
-import com.acon.core.ui.base.BaseContainerHost
+import com.acon.acon.core.ui.base.BaseContainerHost
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import org.orbitmvi.orbit.annotation.OrbitExperimental

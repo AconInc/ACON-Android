@@ -1,4 +1,4 @@
-package com.acon.core.ui.permission
+package com.acon.acon.core.ui.permission
 
 import android.Manifest
 import android.content.Context

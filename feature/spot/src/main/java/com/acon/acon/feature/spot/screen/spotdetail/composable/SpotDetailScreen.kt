@@ -59,11 +59,11 @@ import com.acon.acon.feature.spot.screen.spotlist.composable.SpotDetailLoadingVi
 import com.acon.core.analytics.amplitude.AconAmplitude
 import com.acon.core.analytics.constants.EventNames
 import com.acon.core.analytics.constants.PropertyKeys
-import com.acon.core.ui.compose.LocalDeepLinkHandler
-import com.acon.core.ui.compose.LocalOnRetry
-import com.acon.core.ui.compose.LocalRequestSignIn
-import com.acon.core.ui.compose.LocalUserType
-import com.acon.core.ui.compose.getTextSizeDp
+import com.acon.acon.core.ui.compose.LocalDeepLinkHandler
+import com.acon.acon.core.ui.compose.LocalOnRetry
+import com.acon.acon.core.ui.compose.LocalRequestSignIn
+import com.acon.acon.core.ui.compose.LocalUserType
+import com.acon.acon.core.ui.compose.getTextSizeDp
 import dev.chrisbanes.haze.hazeSource
 import okhttp3.internal.immutableListOf
 

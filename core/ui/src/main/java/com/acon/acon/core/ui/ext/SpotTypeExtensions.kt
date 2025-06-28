@@ -1,4 +1,4 @@
-package com.acon.core.ui.ext
+package com.acon.acon.core.ui.ext
 
 import com.acon.core.type.SpotType
 import com.acon.acon.core.designsystem.R

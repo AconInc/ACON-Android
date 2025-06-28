@@ -10,7 +10,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.toRoute
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.core.ui.android.showToast
+import com.acon.acon.core.ui.android.showToast
 import com.acon.core.navigation.route.SettingsRoute
 import com.acon.core.navigation.route.AreaVerificationRoute
 import com.acon.acon.feature.areaverification.composable.AreaVerificationScreenContainer

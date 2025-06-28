@@ -39,8 +39,8 @@ import com.acon.core.model.spot.SpotNavigationParameter
 import com.acon.core.navigation.LocalNavController
 import com.acon.core.navigation.route.SignInRoute
 import com.acon.core.navigation.route.SpotRoute
-import com.acon.core.ui.compose.LocalDeepLinkHandler
-import com.acon.core.ui.compose.LocalSnackbarHostState
+import com.acon.acon.core.ui.compose.LocalDeepLinkHandler
+import com.acon.acon.core.ui.compose.LocalSnackbarHostState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.take

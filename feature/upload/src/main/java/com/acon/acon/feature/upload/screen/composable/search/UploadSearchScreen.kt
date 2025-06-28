@@ -48,7 +48,7 @@ import com.acon.acon.core.designsystem.effect.defaultHazeEffect
 import com.acon.acon.core.designsystem.effect.rememberHazeState
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.core.ui.android.showToast
+import com.acon.acon.core.ui.android.showToast
 import com.acon.core.model.upload.UploadSpotSuggestion
 import com.acon.core.model.upload.SearchedSpot
 import com.acon.acon.feature.upload.mock.uploadSearchUiStateMock
@@ -56,7 +56,7 @@ import com.acon.acon.feature.upload.screen.UploadSearchUiState
 import com.acon.core.analytics.amplitude.AconAmplitude
 import com.acon.core.analytics.constants.EventNames
 import com.acon.core.analytics.constants.PropertyKeys
-import com.acon.core.ui.ext.getNameResId
+import com.acon.acon.core.ui.ext.getNameResId
 import dev.chrisbanes.haze.hazeSource
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList

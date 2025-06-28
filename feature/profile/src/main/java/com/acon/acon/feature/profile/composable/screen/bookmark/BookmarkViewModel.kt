@@ -2,7 +2,7 @@ package com.acon.acon.feature.profile.composable.screen.bookmark
 
 import com.acon.core.model.profile.SavedSpot
 import com.acon.acon.domain.repository.SpotRepository
-import com.acon.core.ui.base.BaseContainerHost
+import com.acon.acon.core.ui.base.BaseContainerHost
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import org.orbitmvi.orbit.annotation.OrbitExperimental

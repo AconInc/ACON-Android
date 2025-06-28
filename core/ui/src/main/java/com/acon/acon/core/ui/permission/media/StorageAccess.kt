@@ -1,4 +1,4 @@
-package com.acon.core.ui.permission.media
+package com.acon.acon.core.ui.permission.media
 
 import android.Manifest.permission.READ_MEDIA_IMAGES
 import android.Manifest.permission.READ_MEDIA_VIDEO

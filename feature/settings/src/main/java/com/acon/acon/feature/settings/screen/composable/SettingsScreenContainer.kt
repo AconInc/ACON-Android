@@ -10,7 +10,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.acon.acon.core.common.UrlConstants
 import com.acon.acon.core.designsystem.R
-import com.acon.core.ui.android.showToast
+import com.acon.acon.core.ui.android.showToast
 import com.acon.acon.feature.settings.screen.SettingsSideEffect
 import com.acon.acon.feature.settings.screen.SettingsViewModel
 import org.orbitmvi.orbit.compose.collectAsState

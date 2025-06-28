@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.button.v2.AconFilledButton
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.core.ui.compose.getScreenHeight
+import com.acon.acon.core.ui.compose.getScreenHeight
 
 @Composable
 internal fun AreaVerificationScreen(

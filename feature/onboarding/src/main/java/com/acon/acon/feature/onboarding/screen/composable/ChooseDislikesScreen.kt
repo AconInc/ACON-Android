@@ -33,7 +33,7 @@ import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.feature.onboarding.screen.ChooseDislikesUiState
 import com.acon.core.navigation.LocalNavController
 import com.acon.core.type.FoodType
-import com.acon.core.ui.ext.getNameResId
+import com.acon.acon.core.ui.ext.getNameResId
 
 @Composable
 internal fun ChooseDislikesScreen(

@@ -14,7 +14,7 @@ import com.acon.core.navigation.route.SpotRoute
 import com.acon.core.analytics.amplitude.AconAmplitude
 import com.acon.core.analytics.constants.EventNames
 import com.acon.core.analytics.constants.PropertyKeys
-import com.acon.core.ui.base.BaseContainerHost
+import com.acon.acon.core.ui.base.BaseContainerHost
 import com.acon.core.navigation.type.spotNavigationParameterNavType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async

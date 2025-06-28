@@ -50,11 +50,11 @@ import com.acon.core.type.TransportMode
 import com.acon.core.type.UserType
 import com.acon.acon.feature.spot.screen.spotlist.SpotListUiStateV2
 import com.acon.core.ads_api.LocalSpotListAdProvider
-import com.acon.core.ui.compose.LocalRequestSignIn
-import com.acon.core.ui.compose.toDp
-import com.acon.core.ui.android.KakaoNavigationAppHandler
-import com.acon.core.ui.android.NaverNavigationAppHandler
-import com.acon.core.ui.android.NavigationAppHandler
+import com.acon.acon.core.ui.compose.LocalRequestSignIn
+import com.acon.acon.core.ui.compose.toDp
+import com.acon.acon.core.ui.android.KakaoNavigationAppHandler
+import com.acon.acon.core.ui.android.NaverNavigationAppHandler
+import com.acon.acon.core.ui.android.NavigationAppHandler
 import dev.chrisbanes.haze.hazeSource
 import kotlinx.collections.immutable.toImmutableList
 import kotlin.math.absoluteValue

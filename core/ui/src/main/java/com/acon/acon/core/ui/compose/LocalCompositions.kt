@@ -1,4 +1,4 @@
-package com.acon.core.ui.compose
+package com.acon.acon.core.ui.compose
 
 import android.location.Location
 import androidx.compose.material3.SnackbarHostState

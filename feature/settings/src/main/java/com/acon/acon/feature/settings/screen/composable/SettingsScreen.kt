@@ -32,7 +32,7 @@ import com.acon.acon.feature.settings.type.SettingsType
 import com.acon.core.analytics.amplitude.AconAmplitude
 import com.acon.core.analytics.constants.EventNames
 import com.acon.core.analytics.constants.PropertyKeys
-import com.acon.core.ui.compose.getScreenWidth
+import com.acon.acon.core.ui.compose.getScreenWidth
 import dev.chrisbanes.haze.hazeSource
 
 @Composable

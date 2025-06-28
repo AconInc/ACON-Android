@@ -44,9 +44,9 @@ import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.core.model.profile.ProfileInfo
 import com.acon.core.type.UserType
 import com.acon.acon.feature.profile.composable.screen.profile.ProfileUiState
-import com.acon.core.ui.compose.LocalRequestSignIn
-import com.acon.core.ui.compose.LocalUserType
-import com.acon.core.ui.compose.getScreenHeight
+import com.acon.acon.core.ui.compose.LocalRequestSignIn
+import com.acon.acon.core.ui.compose.LocalUserType
+import com.acon.acon.core.ui.compose.getScreenHeight
 import dev.chrisbanes.haze.hazeSource
 
 @SuppressLint("ConfigurationScreenWidthHeight")
