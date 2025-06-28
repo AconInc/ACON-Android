@@ -1,4 +1,4 @@
-package com.acon.feature.ads_impl
+package com.acon.acon.provider.ads_impl
 
 import android.annotation.SuppressLint
 import android.view.Gravity
@@ -39,6 +39,7 @@ import com.acon.acon.core.designsystem.component.button.v2.AconFilledButton
 import com.acon.acon.core.designsystem.effect.imageGradientLayer
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.core.ads_api.AdProvider
+import com.acon.feature.ads_impl.BuildConfig
 import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdLoader
 import com.google.android.gms.ads.AdRequest
