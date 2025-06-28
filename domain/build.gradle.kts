@@ -8,5 +8,5 @@ dependencies {
     implementation(libs.javax.inject)
     implementation(libs.kotlinx.coroutines.core)
 
-    implementation(libs.bundles.non.android.test)
+    testImplementation(libs.bundles.non.android.test)
 }

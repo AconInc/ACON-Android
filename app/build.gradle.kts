@@ -1,3 +1,5 @@
+import utils.androidTestImplementation
+
 /** See AndroidApplicationConventionPlugin.kt */
 
 plugins {
@@ -61,6 +63,6 @@ dependencies {
 
     implementation(libs.androidx.core.splashscreen)
 
-    implementation(libs.bundles.non.android.test)
-    implementation(libs.bundles.android.test)
+    testImplementation(libs.bundles.non.android.test)
+    androidTestImplementation(libs.bundles.android.test)
 }
