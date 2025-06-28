@@ -60,4 +60,7 @@ dependencies {
     implementation(libs.play.services.location)
 
     implementation(libs.androidx.core.splashscreen)
+
+    implementation(libs.bundles.non.android.test)
+    implementation(libs.bundles.android.test)
 }
