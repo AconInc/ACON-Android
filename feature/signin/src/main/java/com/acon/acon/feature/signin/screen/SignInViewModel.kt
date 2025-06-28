@@ -1,8 +1,8 @@
 package com.acon.acon.feature.signin.screen
 
-import com.acon.acon.domain.repository.UserRepository
 import com.acon.acon.core.model.type.UserType
 import com.acon.acon.core.ui.base.BaseContainerHost
+import com.acon.acon.domain.repository.ProfileRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import org.orbitmvi.orbit.Container
@@ -11,19 +11,19 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SignInViewModel @Inject constructor(
-    private val userRepository: UserRepository
+    private val profileRepository: ProfileRepository
 ) : BaseContainerHost<SignInUiState, SignInSideEffect>() {
 
     override val container: Container<SignInUiState, SignInSideEffect> =
         container(initialState = SignInUiState.SignIn())
 
     fun signIn() = intent {
-        if (userType.value == com.acon.acon.core.model.type.UserType.GUEST) {
+        if (userType.value == UserType.GUEST) {
             reduce {
                 SignInUiState.SignIn(showSignInInfo = true)
             }
         } else {
-            userRepository.fetchVerifiedAreaList().onSuccess { areas ->
+            profileRepository.fetchVerifiedAreaList().onSuccess { areas ->
                 if (areas.isEmpty())
                     postSideEffect(SignInSideEffect.NavigateToAreaVerification)
                 else
@@ -31,7 +31,7 @@ class SignInViewModel @Inject constructor(
             }
         }
         userType.collectLatest {
-            if (it == com.acon.acon.core.model.type.UserType.GUEST) {
+            if (it == UserType.GUEST) {
                 reduce {
                     SignInUiState.SignIn(showSignInInfo = true)
                 }

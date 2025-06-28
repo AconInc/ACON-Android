@@ -6,10 +6,9 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.location.LocationManager
 import androidx.core.app.ActivityCompat
-import com.acon.acon.domain.error.area.ReplaceVerifiedArea
-import com.acon.acon.core.model.model.area.Area
-import com.acon.acon.domain.repository.UserRepository
 import com.acon.acon.core.ui.base.BaseContainerHost
+import com.acon.acon.domain.error.area.ReplaceVerifiedArea
+import com.acon.acon.domain.repository.ProfileRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.orbitmvi.orbit.viewmodel.container
 import timber.log.Timber
@@ -18,7 +17,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AreaVerificationViewModel @Inject constructor(
     private val application: Application,
-    private val userRepository: UserRepository,
+    private val profileRepository: ProfileRepository
 ) : BaseContainerHost<AreaVerificationUiState, AreaVerificationSideEffect>() {
 
     override val container = container<AreaVerificationUiState, AreaVerificationSideEffect>(
@@ -63,7 +62,7 @@ class AreaVerificationViewModel @Inject constructor(
     }
 
     fun editVerifiedArea(previousVerifiedAreaId: Long, latitude: Double, longitude: Double) = intent {
-        userRepository.replaceVerifiedArea(
+        profileRepository.replaceVerifiedArea(
             previousVerifiedAreaId = previousVerifiedAreaId,
             latitude = latitude,
             longitude = longitude
@@ -111,7 +110,7 @@ class AreaVerificationViewModel @Inject constructor(
     }
 
     fun verifyArea(latitude: Double, longitude: Double) = intent {
-        userRepository.verifyArea(latitude, longitude)
+        profileRepository.verifyArea(latitude, longitude)
             .onSuccess {
                 reduce {
                     state.copy(

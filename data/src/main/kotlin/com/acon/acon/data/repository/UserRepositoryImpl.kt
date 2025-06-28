@@ -1,5 +1,8 @@
 package com.acon.acon.data.repository
 
+import com.acon.acon.core.model.model.user.VerificationStatus
+import com.acon.acon.core.model.type.SocialType
+import com.acon.acon.core.model.type.UserType
 import com.acon.acon.data.SessionManager
 import com.acon.acon.data.datasource.local.TokenLocalDataSource
 import com.acon.acon.data.datasource.remote.UserRemoteDataSource
@@ -7,15 +10,9 @@ import com.acon.acon.data.dto.request.DeleteAccountRequest
 import com.acon.acon.data.dto.request.SignInRequest
 import com.acon.acon.data.dto.request.SignOutRequest
 import com.acon.acon.data.error.runCatchingWith
-import com.acon.acon.domain.error.area.DeleteVerifiedAreaError
-import com.acon.acon.domain.error.area.ReplaceVerifiedArea
 import com.acon.acon.domain.error.user.PostLogoutError
 import com.acon.acon.domain.error.user.PostSignInError
-import com.acon.acon.core.model.model.area.Area
-import com.acon.acon.core.model.model.user.VerificationStatus
 import com.acon.acon.domain.repository.UserRepository
-import com.acon.acon.core.model.type.SocialType
-import com.acon.acon.core.model.type.UserType
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -25,14 +22,14 @@ class UserRepositoryImpl @Inject constructor(
     private val sessionManager: SessionManager
 ) : UserRepository {
 
-    override fun getUserType(): Flow<com.acon.acon.core.model.type.UserType> {
+    override fun getUserType(): Flow<UserType> {
         return sessionManager.getUserType()
     }
 
     override suspend fun signIn(
-        socialType: com.acon.acon.core.model.type.SocialType,
+        socialType: SocialType,
         idToken: String
-    ): Result<com.acon.acon.core.model.model.user.VerificationStatus> {
+    ): Result<VerificationStatus> {
         return runCatchingWith(*PostSignInError.createErrorInstances()) {
             val signInResponse = userRemoteDataSource.signIn(
                 SignInRequest(
@@ -70,45 +67,6 @@ class UserRepositoryImpl @Inject constructor(
             )
         }.onSuccess {
             sessionManager.clearSession()
-        }
-    }
-
-    override suspend fun verifyArea(
-        latitude: Double,
-        longitude: Double
-    ): Result<Unit> = runCatchingWith() {
-        // TODO - 동네인증 API Error 처리 안됨
-        userRemoteDataSource.verifyArea(
-            latitude = latitude,
-            longitude = longitude
-        )
-    }
-
-    override suspend fun fetchVerifiedAreaList(): Result<List<com.acon.acon.core.model.model.area.Area>> {
-        // TODO - 인증 지역 조회 API Error 처리 안됨
-        return runCatchingWith() {
-            userRemoteDataSource.fetchVerifiedAreaList().verifiedAreaList
-                .map { it.toVerifiedArea() }
-        }
-    }
-
-    override suspend fun replaceVerifiedArea(
-        previousVerifiedAreaId: Long,
-        latitude: Double,
-        longitude: Double
-    ): Result<Unit> {
-        return runCatchingWith(*ReplaceVerifiedArea.createErrorInstances()) {
-            userRemoteDataSource.replaceVerifiedArea(
-                previousVerifiedAreaId = previousVerifiedAreaId,
-                latitude = latitude,
-                longitude = longitude
-            )
-        }
-    }
-
-    override suspend fun deleteVerifiedArea(verifiedAreaId: Long): Result<Unit> {
-        return runCatchingWith(*DeleteVerifiedAreaError.createErrorInstances()) {
-            userRemoteDataSource.deleteVerifiedArea(verifiedAreaId)
         }
     }
 }
