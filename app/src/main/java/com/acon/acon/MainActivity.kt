@@ -50,8 +50,8 @@ import com.acon.acon.domain.repository.UserRepository
 import com.acon.acon.core.navigation.route.AreaVerificationRoute
 import com.acon.acon.core.navigation.route.SpotRoute
 import com.acon.acon.navigation.AconNavigation
-import com.acon.core.ads_api.AdProvider
-import com.acon.core.ads_api.LocalSpotListAdProvider
+import com.acon.acon.core.ads_api.AdProvider
+import com.acon.acon.core.ads_api.LocalSpotListAdProvider
 import com.acon.acon.core.analytics.amplitude.AconAmplitude
 import com.acon.acon.core.analytics.constants.EventNames
 import com.acon.acon.provider.ads_impl.SpotListAdProvider

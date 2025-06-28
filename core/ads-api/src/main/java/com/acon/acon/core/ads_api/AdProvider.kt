@@ -1,4 +1,4 @@
-package com.acon.core.ads_api
+package com.acon.acon.core.ads_api
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.staticCompositionLocalOf

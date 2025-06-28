@@ -45,11 +45,8 @@ import com.acon.acon.core.designsystem.effect.effect.shadowLayerBackground
 import com.acon.acon.core.designsystem.effect.effect.getOverlayColor
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.core.model.model.spot.Spot
-import com.acon.acon.core.model.type.TransportMode
-import com.acon.acon.core.model.type.UserType
 import com.acon.acon.feature.spot.screen.spotlist.SpotListUiStateV2
-import com.acon.core.ads_api.LocalSpotListAdProvider
+import com.acon.acon.core.ads_api.LocalSpotListAdProvider
 import com.acon.acon.core.ui.compose.LocalRequestSignIn
 import com.acon.acon.core.ui.compose.toDp
 import com.acon.acon.core.ui.android.KakaoNavigationAppHandler
