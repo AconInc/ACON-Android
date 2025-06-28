@@ -32,14 +32,11 @@ import com.acon.acon.core.designsystem.component.button.v2.AconFilledTextButton
 import com.acon.acon.core.designsystem.component.button.v2.AconOutlinedTextButton
 import com.acon.acon.core.designsystem.component.chip.AconChip
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.core.model.type.CafeFilterType
-import com.acon.acon.core.model.type.FilterType
-import com.acon.acon.core.model.type.RestaurantFilterType
 import com.acon.acon.feature.spot.getNameResId
 import com.acon.acon.feature.spot.screen.spotlist.FilterDetailKey
-import com.acon.core.analytics.amplitude.AconAmplitude
-import com.acon.core.analytics.constants.EventNames
-import com.acon.core.analytics.constants.PropertyKeys
+import com.acon.acon.core.analytics.amplitude.AconAmplitude
+import com.acon.acon.core.analytics.constants.EventNames
+import com.acon.acon.core.analytics.constants.PropertyKeys
 import kotlinx.collections.immutable.ImmutableSet
 import kotlinx.collections.immutable.toImmutableSet
 import java.time.LocalTime

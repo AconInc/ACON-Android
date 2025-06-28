@@ -1,8 +1,8 @@
-package com.acon.core.analytics.amplitude
+package com.acon.acon.core.analytics.amplitude
 
 import android.content.Context
 import com.acon.core.analytics.BuildConfig
-import com.acon.core.analytics.EventTracker
+import com.acon.acon.core.analytics.EventTracker
 import com.amplitude.android.Amplitude
 import com.amplitude.android.Configuration
 import com.amplitude.android.events.Identify
@@ -18,7 +18,7 @@ object AconAmplitude: EventTracker() {
      * @param userId 사용자 ID
      */
     override fun setUserId(userId: String) {
-        if (::amplitude.isInitialized) {
+        if (AconAmplitude::amplitude.isInitialized) {
             amplitude.setUserId(userId)
         }
     }
@@ -27,7 +27,7 @@ object AconAmplitude: EventTracker() {
      * 사용자 ID 초기화
      */
     override fun clearUserId() {
-        if (::amplitude.isInitialized) {
+        if (AconAmplitude::amplitude.isInitialized) {
             amplitude.setUserId(null)
         }
     }
@@ -40,13 +40,13 @@ object AconAmplitude: EventTracker() {
      * @sample com.acon.core.analytics.sample.sampleAmplitudeTrack
      */
     override fun trackEvent(eventName: String, properties: Map<String, Any>) {
-        if (::amplitude.isInitialized) {
+        if (AconAmplitude::amplitude.isInitialized) {
             amplitude.track(eventName, properties)
         }
     }
 
     fun trackEvent(eventName: String, property: Pair<String, Any>) {
-        if (::amplitude.isInitialized) {
+        if (AconAmplitude::amplitude.isInitialized) {
             trackEvent(eventName, mapOf(property))
         }
     }
@@ -58,7 +58,7 @@ object AconAmplitude: EventTracker() {
      * @sample com.acon.core.analytics.sample.sampleAmplitudeProperties
      */
     override fun setUserProperties(properties: Map<String, String>) {
-        if (::amplitude.isInitialized) {
+        if (AconAmplitude::amplitude.isInitialized) {
             properties.forEach { (key, value) ->
                 amplitude.identify(Identify().set(key, value))
             }
@@ -68,7 +68,7 @@ object AconAmplitude: EventTracker() {
     override fun initialize(
         context: Context,
     ) {
-        if (!::amplitude.isInitialized) {
+        if (!AconAmplitude::amplitude.isInitialized) {
             amplitude = Amplitude(
                 Configuration(
                     apiKey = apiKey,

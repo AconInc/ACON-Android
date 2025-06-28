@@ -29,9 +29,9 @@ import com.acon.acon.feature.settings.component.SettingSectionItem
 import com.acon.acon.feature.settings.component.SettingSectionVersionItem
 import com.acon.acon.feature.settings.screen.SettingsUiState
 import com.acon.acon.feature.settings.type.SettingsType
-import com.acon.core.analytics.amplitude.AconAmplitude
-import com.acon.core.analytics.constants.EventNames
-import com.acon.core.analytics.constants.PropertyKeys
+import com.acon.acon.core.analytics.amplitude.AconAmplitude
+import com.acon.acon.core.analytics.constants.EventNames
+import com.acon.acon.core.analytics.constants.PropertyKeys
 import com.acon.acon.core.ui.compose.getScreenWidth
 import dev.chrisbanes.haze.hazeSource
 

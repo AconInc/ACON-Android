@@ -57,9 +57,9 @@ import com.acon.acon.feature.withdraw.component.DeleteAccountBottomSheet
 import com.acon.acon.feature.withdraw.component.DeleteAccountTextField
 import com.acon.acon.feature.withdraw.screen.DeleteAccountUiState
 import com.acon.acon.feature.withdraw.type.DeleteReasonType
-import com.acon.core.analytics.amplitude.AconAmplitude
-import com.acon.core.analytics.constants.EventNames
-import com.acon.core.analytics.constants.PropertyKeys
+import com.acon.acon.core.analytics.amplitude.AconAmplitude
+import com.acon.acon.core.analytics.constants.EventNames
+import com.acon.acon.core.analytics.constants.PropertyKeys
 import dev.chrisbanes.haze.hazeSource
 
 @Composable

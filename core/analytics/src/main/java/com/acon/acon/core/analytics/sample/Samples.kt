@@ -1,6 +1,6 @@
-package com.acon.core.analytics.sample
+package com.acon.acon.core.analytics.sample
 
-import com.acon.core.analytics.amplitude.AconAmplitude
+import com.acon.acon.core.analytics.amplitude.AconAmplitude
 
 internal fun sampleAmplitudeTrack() {
     AconAmplitude.trackEvent(eventName = "onboarding", properties = mapOf("complete_favorite_food_rank?" to true))

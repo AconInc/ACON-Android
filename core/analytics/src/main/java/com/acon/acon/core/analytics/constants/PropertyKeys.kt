@@ -1,4 +1,4 @@
-package com.acon.core.analytics.constants
+package com.acon.acon.core.analytics.constants
 
 data object PropertyKeys {
 

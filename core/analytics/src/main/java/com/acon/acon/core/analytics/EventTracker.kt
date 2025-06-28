@@ -1,6 +1,7 @@
-package com.acon.core.analytics
+package com.acon.acon.core.analytics
 
 import android.content.Context
+import com.acon.core.analytics.BuildConfig
 
 abstract class EventTracker {
 

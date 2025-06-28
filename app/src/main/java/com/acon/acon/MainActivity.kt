@@ -52,8 +52,8 @@ import com.acon.acon.core.navigation.route.SpotRoute
 import com.acon.acon.navigation.AconNavigation
 import com.acon.core.ads_api.AdProvider
 import com.acon.core.ads_api.LocalSpotListAdProvider
-import com.acon.core.analytics.amplitude.AconAmplitude
-import com.acon.core.analytics.constants.EventNames
+import com.acon.acon.core.analytics.amplitude.AconAmplitude
+import com.acon.acon.core.analytics.constants.EventNames
 import com.acon.acon.provider.ads_impl.SpotListAdProvider
 import com.acon.acon.core.common.utils.firstNotNull
 import com.acon.acon.core.navigation.LocalNavController
