@@ -11,7 +11,7 @@ import com.acon.acon.data.dto.request.DeleteAccountRequest
 import com.acon.acon.data.dto.request.SignInRequest
 import com.acon.acon.data.dto.request.SignOutRequest
 import com.acon.acon.data.error.runCatchingWith
-import com.acon.acon.domain.error.user.PostLogoutError
+import com.acon.acon.domain.error.user.PostSignOutError
 import com.acon.acon.domain.error.user.PostSignInError
 import com.acon.acon.domain.repository.UserRepository
 import kotlinx.coroutines.CoroutineScope
@@ -67,7 +67,7 @@ class UserRepositoryImpl @Inject constructor(
 
     override suspend fun signOut(): Result<Unit> {
         val refreshToken = tokenLocalDataSource.getRefreshToken() ?: ""
-        return runCatchingWith(*PostLogoutError.createErrorInstances()) {
+        return runCatchingWith(*PostSignOutError.createErrorInstances()) {
             userRemoteDataSource.signOut(
                 SignOutRequest(refreshToken = refreshToken)
             )
