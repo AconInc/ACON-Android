@@ -1,13 +1,13 @@
-package com.acon.acon
+package com.acon.acon.data.authenticator
 
 import android.content.Context
-import com.acon.acon.authentication.AuthAuthenticator
-import com.acon.acon.data.SessionManager
+import com.acon.acon.data.authentication.AuthAuthenticator
+import com.acon.acon.core.launcher.AppLauncher
 import com.acon.acon.data.api.remote.ReissueTokenApi
 import com.acon.acon.data.datasource.local.TokenLocalDataSource
 import com.acon.acon.data.dto.request.RefreshRequest
 import com.acon.acon.data.dto.response.RefreshResponse
-import com.acon.acon.navigator.AppNavigator
+import com.acon.acon.domain.repository.UserRepository
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -16,7 +16,6 @@ import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit4.MockKRule
 import io.mockk.mockk
 import io.mockk.verify
-import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import okhttp3.Request
 import okhttp3.Response
@@ -38,13 +37,13 @@ class AuthAuthenticatorTest {
     lateinit var tokenLocalDataSource: TokenLocalDataSource
 
     @RelaxedMockK
-    lateinit var sessionManager: SessionManager
+    lateinit var userRepository: UserRepository
 
     @RelaxedMockK
     lateinit var reissueTokenApi: ReissueTokenApi
 
     @RelaxedMockK
-    lateinit var navigator: AppNavigator
+    lateinit var launcher: AppLauncher
 
     @InjectMockKs
     lateinit var authAuthenticator: AuthAuthenticator
@@ -72,7 +71,7 @@ class AuthAuthenticatorTest {
         authAuthenticator.authenticate(route, mockResponse)
 
         // Then
-        verify(exactly = 1) { navigator.restartApp(mockContext) }
+        verify(exactly = 1) { launcher.restartApp(mockContext) }
     }
 
     @Test
@@ -115,7 +114,7 @@ class AuthAuthenticatorTest {
         authAuthenticator.authenticate(route, mockResponse)
 
         // Then
-        coVerify(exactly = 0) { navigator.restartApp(any()) }
+        coVerify(exactly = 0) { launcher.restartApp(any()) }
     }
 
     @Test
@@ -128,7 +127,7 @@ class AuthAuthenticatorTest {
         authAuthenticator.authenticate(route, mockResponse)
 
         // Then
-        coVerify(exactly = 1) { navigator.restartApp(mockContext) }
+        coVerify(exactly = 1) { launcher.restartApp(mockContext) }
     }
 
     @Test
@@ -159,7 +158,7 @@ class AuthAuthenticatorTest {
 
         // Then
         assertNull(newRequest)
-        coVerify { sessionManager.clearSession() }
+        coVerify { userRepository.clearSession() }
     }
 
     @Test
@@ -173,7 +172,7 @@ class AuthAuthenticatorTest {
 
         // Then
         assertNull(newRequest)
-        coVerify { sessionManager.clearSession() }
+        coVerify { userRepository.clearSession() }
     }
 
 
@@ -188,7 +187,7 @@ class AuthAuthenticatorTest {
 
         // Then
         assertNull(newRequest)
-        coVerify { sessionManager.clearSession() }
+        coVerify { userRepository.clearSession() }
     }
 
     private suspend fun givenLocalRefreshTokenRequest(): RefreshRequest {
