@@ -17,10 +17,8 @@ import com.acon.acon.domain.repository.UserRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.emitAll
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class UserRepositoryImpl @Inject constructor(
@@ -30,19 +28,17 @@ class UserRepositoryImpl @Inject constructor(
 ) : UserRepository {
 
     private val _userType = MutableStateFlow(UserType.GUEST)
-    private val userType = flow {
-        val accessToken = tokenLocalDataSource.getAccessToken()
-        if (accessToken.isNullOrEmpty())
-            _userType.emit(UserType.GUEST)
-        else
-            _userType.emit(UserType.USER)
+    private val userType = _userType.asStateFlow()
 
-        emitAll(_userType)
-    }.stateIn(
-        scope = scope,
-        started = SharingStarted.Lazily,
-        initialValue = UserType.GUEST
-    )
+    init {
+        scope.launch {
+            val accessToken = tokenLocalDataSource.getAccessToken()
+            if (accessToken.isNullOrEmpty())
+                _userType.emit(UserType.GUEST)
+            else
+                _userType.emit(UserType.USER)
+        }
+    }
 
     override fun getUserType(): Flow<UserType> {
         return userType
@@ -59,6 +55,8 @@ class UserRepositoryImpl @Inject constructor(
                     idToken = idToken
                 )
             )
+
+            _userType.value = UserType.USER
 
             tokenLocalDataSource.saveAccessToken(signInResponse.accessToken.orEmpty())
             tokenLocalDataSource.saveRefreshToken(signInResponse.refreshToken.orEmpty())
@@ -94,6 +92,7 @@ class UserRepositoryImpl @Inject constructor(
 
     override suspend fun clearSession() = runCatchingWith {
         tokenLocalDataSource.removeAllTokens()
+        _userType.value = UserType.GUEST
         AconAmplitude.clearUserId()
     }
 }
