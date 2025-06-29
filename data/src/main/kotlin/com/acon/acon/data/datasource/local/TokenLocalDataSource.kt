@@ -26,7 +26,7 @@ class TokenLocalDataSource @Inject constructor(
         EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
     )
 
-    suspend fun saveAccessToken(
+    internal suspend fun saveAccessToken(
         accessToken: String,
     ) = withContext(dispatchersIO) {
         with(sharedPreferences.edit()) {
@@ -35,7 +35,7 @@ class TokenLocalDataSource @Inject constructor(
         }
     }
 
-    suspend fun saveRefreshToken(
+    internal suspend fun saveRefreshToken(
         refreshToken: String,
     ) = withContext(dispatchersIO) {
         with(sharedPreferences.edit()) {
@@ -44,15 +44,15 @@ class TokenLocalDataSource @Inject constructor(
         }
     }
 
-    suspend fun getAccessToken(): String? = withContext(dispatchersIO) {
+    internal suspend fun getAccessToken(): String? = withContext(dispatchersIO) {
         sharedPreferences.getString(SHARED_PREF_KEY, null)
     }
 
-    suspend fun getRefreshToken(): String? = withContext(dispatchersIO) {
+    internal suspend fun getRefreshToken(): String? = withContext(dispatchersIO) {
         sharedPreferences.getString(SHARED_PREF_REFRESH_KEY, null)
     }
 
-    suspend fun removeAllTokens() = withContext(dispatchersIO) {
+    internal suspend fun removeAllTokens() = withContext(dispatchersIO) {
         with(sharedPreferences.edit()) {
             remove(SHARED_PREF_KEY)
             remove(SHARED_PREF_REFRESH_KEY)
