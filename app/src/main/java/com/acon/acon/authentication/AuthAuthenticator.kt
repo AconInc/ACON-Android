@@ -10,6 +10,7 @@ import com.acon.acon.data.dto.request.DeleteAccountRequest
 import com.acon.acon.data.dto.request.SignOutRequest
 import com.acon.acon.data.dto.request.RefreshRequest
 import com.acon.acon.data.api.remote.ReissueTokenApi
+import com.acon.acon.navigator.AppNavigator
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -30,7 +31,8 @@ class AuthAuthenticator @Inject constructor(
     private val context: Context,
     private val tokenLocalDataSource: TokenLocalDataSource,
     private val reissueTokenApi: ReissueTokenApi,
-    private val sessionManager: SessionManager
+    private val sessionManager: SessionManager,
+    private val navigator: AppNavigator
 ) : Authenticator {
 
     private val mutex = Mutex()
@@ -153,10 +155,7 @@ class AuthAuthenticator @Inject constructor(
 
 
     private fun startNewTask() {
-        val intent = Intent(context, MainActivity::class.java).apply {
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-        }
-        context.startActivity(intent)
+        navigator.restartApp(context)
     }
 
     companion object {

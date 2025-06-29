@@ -5,6 +5,9 @@ import com.acon.acon.authentication.AuthAuthenticator
 import com.acon.acon.data.SessionManager
 import com.acon.acon.data.api.remote.ReissueTokenApi
 import com.acon.acon.data.datasource.local.TokenLocalDataSource
+import com.acon.acon.navigator.AppNavigator
+import com.acon.acon.navigator.AppNavigatorImpl
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -19,10 +22,20 @@ object AuthenticatorModule {
 
     @Provides
     @Singleton
-    fun bindsAuthAuthenticator(
+    fun providesAuthAuthenticator(
         @ApplicationContext context: Context,
         tokenLocalDataSource: TokenLocalDataSource,
         reissueTokenApi: ReissueTokenApi,
-        sessionManager: SessionManager
-    ): Authenticator = AuthAuthenticator(context, tokenLocalDataSource, reissueTokenApi, sessionManager)
+        sessionManager: SessionManager,
+        navigator: AppNavigator
+    ): Authenticator = AuthAuthenticator(context, tokenLocalDataSource, reissueTokenApi, sessionManager, navigator)
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
+abstract class NavigatorModule {
+
+    @Binds
+    @Singleton
+    abstract fun bindsAppNavigator(impl: AppNavigatorImpl): AppNavigator
 }
