@@ -70,11 +70,6 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
                     implementation(catalog.findBundle("android-defaults").get())
                     implementation(catalog.findBundle("play-app-update").get())
                     implementation(catalog.findLibrary("timber").get())
-
-                    testImplementation(catalog.findLibrary("junit").get())
-                    androidTestImplementation(catalog.findLibrary("androidx-junit").get())
-                    androidTestImplementation(catalog.findLibrary("androidx-espresso-core").get())
-                    androidTestImplementation(catalog.findLibrary("androidx-ui-test-junit4").get())
                 }
             }
         }

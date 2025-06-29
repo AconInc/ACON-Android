@@ -73,8 +73,9 @@ accompanistPermissions = "0.37.0"
 paletteVersion = "1.0.0"
 
 # Test
-junit = "4.13.2"
-junitVersion = "1.2.1"
+junit4 = "4.13.2"
+junit5 = "5.10.2"
+junitAndroid = "1.2.1"
 mockk = "1.13.10"
 turbine = "1.2.1"
 
@@ -118,7 +119,11 @@ google-services-ads = { module = "com.google.android.gms:play-services-ads", ver
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }
 
 # Testing
-junit = { group = "junit", name = "junit", version.ref = "junit" }
+junit4 = { group = "junit", name = "junit", version.ref = "junit4" }
+junit5-api = { group = "org.junit.jupiter", name = "junit-jupiter-api", version.ref = "junit5" }
+junit5-params = { group = "org.junit.jupiter", name = "junit-jupiter-params", version.ref = "junit5" }
+junit5-runtime-engine = { group = "org.junit.jupiter", name = "junit-jupiter-engine", version.ref = "junit5" }
+junit5-runtime-vintage-engine = { group = "org.junit.vintage", name = "junit-vintage-engine", version.ref = "junit5" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
 coroutine-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutine" }
@@ -126,7 +131,7 @@ mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine"}
 
 # Android Testing
-androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
+androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitAndroid" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4", version.ref = "junitComposeVersion" }
 
@@ -248,5 +253,6 @@ coil = ["coil-compose", "coil-network-okhttp"]
 naver-map = ["naver-map-compose", "naver-map-location", "naver-map-sdk"]
 firebase = ["firebase-analytics-sdk", "firebase-crashlytics-sdk"]
 play-app-update = ["play-core", "play-core-ktx"]
-non-android-test = ["junit", "kotlin-test", "kotlin-test-junit", "mockk", "coroutine-test", "turbine"]
+non-android-test = ["junit4", "kotlin-test", "mockk", "coroutine-test", "turbine", "junit5-api", "junit5-params"]
+junit5-runtime = ["junit5-runtime-engine", "junit5-runtime-vintage-engine"]
 android-test = ["androidx-junit", "androidx-espresso-core", "androidx-ui-test-junit4"]

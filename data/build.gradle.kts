@@ -43,5 +43,10 @@ dependencies {
     implementation(libs.preferences.datastore)
     
     testImplementation(libs.bundles.non.android.test)
+    testRuntimeOnly(libs.bundles.junit5.runtime)
     androidTestImplementation(libs.bundles.android.test)
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
 }
