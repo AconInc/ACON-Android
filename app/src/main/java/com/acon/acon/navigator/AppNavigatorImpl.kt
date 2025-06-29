@@ -3,6 +3,7 @@ package com.acon.acon.navigator
 import android.content.Context
 import android.content.Intent
 import com.acon.acon.MainActivity
+import com.acon.acon.core.navigation.navigator.AppNavigator
 import javax.inject.Inject
 
 class AppNavigatorImpl @Inject constructor(): AppNavigator {

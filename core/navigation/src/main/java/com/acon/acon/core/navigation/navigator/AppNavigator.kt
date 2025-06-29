@@ -1,4 +1,4 @@
-package com.acon.acon.navigator
+package com.acon.acon.core.navigation.navigator
 
 import android.content.Context
 
