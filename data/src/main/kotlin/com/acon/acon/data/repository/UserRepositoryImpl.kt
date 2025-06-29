@@ -45,7 +45,7 @@ class UserRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun logout(): Result<Unit> {
+    override suspend fun signOut(): Result<Unit> {
         val refreshToken = tokenLocalDataSource.getRefreshToken() ?: ""
         return runCatchingWith(*PostLogoutError.createErrorInstances()) {
             userRemoteDataSource.signOut(
