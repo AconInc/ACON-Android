@@ -52,20 +52,6 @@ class TokenLocalDataSource @Inject constructor(
         sharedPreferences.getString(SHARED_PREF_REFRESH_KEY, null)
     }
 
-    suspend fun removeAccessToken() = withContext(dispatchersIO) {
-        with(sharedPreferences.edit()) {
-            remove(SHARED_PREF_KEY)
-            apply()
-        }
-    }
-
-    suspend fun removeRefreshToken() = withContext(dispatchersIO) {
-        with(sharedPreferences.edit()) {
-            remove(SHARED_PREF_REFRESH_KEY)
-            apply()
-        }
-    }
-
     suspend fun removeAllTokens() = withContext(dispatchersIO) {
         with(sharedPreferences.edit()) {
             remove(SHARED_PREF_KEY)
