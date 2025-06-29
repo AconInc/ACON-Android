@@ -1,14 +1,14 @@
-package com.acon.acon.authentication
+package com.acon.acon.data.authentication
 
 import android.content.Context
+import com.acon.acon.core.launcher.AppLauncher
 import com.acon.acon.data.BuildConfig
+import com.acon.acon.data.api.remote.ReissueTokenApi
 import com.acon.acon.data.datasource.local.TokenLocalDataSource
 import com.acon.acon.data.dto.request.DeleteAccountRequest
-import com.acon.acon.data.dto.request.SignOutRequest
 import com.acon.acon.data.dto.request.RefreshRequest
-import com.acon.acon.data.api.remote.ReissueTokenApi
+import com.acon.acon.data.dto.request.SignOutRequest
 import com.acon.acon.domain.repository.UserRepository
-import com.acon.acon.core.navigation.navigator.AppNavigator
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -30,7 +30,7 @@ class AuthAuthenticator @Inject constructor(
     private val tokenLocalDataSource: TokenLocalDataSource,
     private val userRepository: UserRepository,
     private val reissueTokenApi: ReissueTokenApi,
-    private val navigator: AppNavigator
+    private val appLauncher: AppLauncher
 ) : Authenticator {
 
     private val mutex = Mutex()
@@ -130,7 +130,7 @@ class AuthAuthenticator @Inject constructor(
                     if(BuildConfig.DEBUG) {
                         Timber.tag(TAG).e("토큰 재발급 실패. 토큰 제거 후 로그인 화면으로 이동")
                     }
-                    sessionManager.clearSession()
+                    userRepository.clearSession()
                     startNewTask()
                     return@withLock null
                 }
@@ -153,7 +153,7 @@ class AuthAuthenticator @Inject constructor(
 
 
     private fun startNewTask() {
-        navigator.restartApp(context)
+        appLauncher.restartApp(context)
     }
 
     companion object {

@@ -9,6 +9,6 @@ interface UserRepository {
     suspend fun signIn(socialType: SocialType, idToken: String): Result<VerificationStatus>
     suspend fun signOut(): Result<Unit>
     suspend fun deleteAccount(reason: String): Result<Unit>
-    suspend fun clearSession()
+    suspend fun clearSession(): Result<Unit>
     fun getUserType(): Flow<UserType>
 }

@@ -92,8 +92,8 @@ class UserRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun clearSession() {
-        AconAmplitude.clearUserId()
+    override suspend fun clearSession() = runCatchingWith {
         tokenLocalDataSource.removeAllTokens()
+        AconAmplitude.clearUserId()
     }
 }

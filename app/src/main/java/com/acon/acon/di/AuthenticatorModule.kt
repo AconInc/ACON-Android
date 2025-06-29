@@ -1,12 +1,12 @@
 package com.acon.acon.di
 
 import android.content.Context
-import com.acon.acon.authentication.AuthAuthenticator
-import com.acon.acon.data.SessionManager
+import com.acon.acon.data.authentication.AuthAuthenticator
+import com.acon.acon.core.launcher.AppLauncher
 import com.acon.acon.data.api.remote.ReissueTokenApi
 import com.acon.acon.data.datasource.local.TokenLocalDataSource
-import com.acon.acon.navigator.AppNavigator
-import com.acon.acon.navigator.AppNavigatorImpl
+import com.acon.acon.domain.repository.UserRepository
+import com.acon.acon.launcher.AppLauncherImpl
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -25,17 +25,17 @@ object AuthenticatorModule {
     fun providesAuthAuthenticator(
         @ApplicationContext context: Context,
         tokenLocalDataSource: TokenLocalDataSource,
+        userRepository: UserRepository,
         reissueTokenApi: ReissueTokenApi,
-        sessionManager: SessionManager,
-        navigator: AppNavigator
-    ): Authenticator = AuthAuthenticator(context, tokenLocalDataSource, reissueTokenApi, sessionManager, navigator)
+        appLauncher: AppLauncher
+    ): Authenticator = AuthAuthenticator(context, tokenLocalDataSource, userRepository, reissueTokenApi, appLauncher)
 }
 
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class NavigatorModule {
+abstract class LauncherModule {
 
     @Binds
     @Singleton
-    abstract fun bindsAppNavigator(impl: AppNavigatorImpl): AppNavigator
+    abstract fun bindsAppLauncher(impl: AppLauncherImpl): AppLauncher
 }
