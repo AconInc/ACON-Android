@@ -39,20 +39,20 @@ import com.acon.acon.core.designsystem.effect.LocalHazeState
 import com.acon.acon.core.designsystem.effect.defaultHazeEffect
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.domain.model.spot.v2.Spot
-import com.acon.acon.domain.type.CafeFilterType
-import com.acon.acon.domain.type.RestaurantFilterType
-import com.acon.acon.domain.type.SpotType
-import com.acon.acon.domain.type.UserType
+import com.acon.acon.core.model.model.spot.Spot
+import com.acon.acon.core.model.type.CafeFilterType
+import com.acon.acon.core.model.type.RestaurantFilterType
+import com.acon.acon.core.model.type.SpotType
+import com.acon.acon.core.model.type.UserType
 import com.acon.acon.feature.spot.mock.spotListUiStateRestaurantMock
 import com.acon.acon.feature.spot.screen.component.SpotTypeToggle
 import com.acon.acon.feature.spot.screen.spotlist.FilterDetailKey
 import com.acon.acon.feature.spot.screen.spotlist.SpotListUiStateV2
-import com.acon.feature.common.compose.LocalOnRetry
-import com.acon.feature.common.compose.LocalRequestSignIn
-import com.acon.feature.common.compose.LocalUserType
-import com.acon.feature.common.compose.getScreenHeight
-import com.acon.feature.common.intent.NavigationAppHandler
+import com.acon.acon.core.ui.compose.LocalOnRetry
+import com.acon.acon.core.ui.compose.LocalRequestSignIn
+import com.acon.acon.core.ui.compose.LocalUserType
+import com.acon.acon.core.ui.compose.getScreenHeight
+import com.acon.acon.core.ui.android.NavigationAppHandler
 import dev.chrisbanes.haze.hazeSource
 import kotlinx.collections.immutable.toImmutableSet
 import kotlinx.coroutines.launch
@@ -61,15 +61,15 @@ import kotlinx.coroutines.launch
 internal fun SpotListScreen(
     state: SpotListUiStateV2,
     modifier: Modifier = Modifier,
-    onSpotTypeChanged: (SpotType) -> Unit = {},
-    onSpotClick: (Spot, rank: Int) -> Unit = { _, _ -> },
-    onTryFindWay: (Spot) -> Unit = {},
+    onSpotTypeChanged: (com.acon.acon.core.model.type.SpotType) -> Unit = {},
+    onSpotClick: (com.acon.acon.core.model.model.spot.Spot, rank: Int) -> Unit = { _, _ -> },
+    onTryFindWay: (com.acon.acon.core.model.model.spot.Spot) -> Unit = {},
     onNavigationAppChoose: (NavigationAppHandler) -> Unit = {},
     onChooseNavigationAppModalDismiss: () -> Unit = {},
     onFilterButtonClick: () -> Unit = {},
     onFilterModalDismissRequest: () -> Unit = {},
-    onRestaurantFilterSaved: (Map<FilterDetailKey, Set<RestaurantFilterType>>) -> Unit = {},
-    onCafeFilterSaved: (Map<FilterDetailKey, Set<CafeFilterType>>) -> Unit = {},
+    onRestaurantFilterSaved: (Map<FilterDetailKey, Set<com.acon.acon.core.model.type.RestaurantFilterType>>) -> Unit = {},
+    onCafeFilterSaved: (Map<FilterDetailKey, Set<com.acon.acon.core.model.type.CafeFilterType>>) -> Unit = {},
     onNavigateToUploadScreen: () -> Unit = {},
     onNavigateToProfileScreen: () -> Unit = {},
 ) {
@@ -106,7 +106,7 @@ internal fun SpotListScreen(
             SpotTypeToggle(
                 selectedType = state.selectedSpotType,
                 onSwitched = {
-                    if (userType == UserType.GUEST)
+                    if (userType == com.acon.acon.core.model.type.UserType.GUEST)
                         onSignInRequired("click_toggle_guest?")
                     else
                         onSpotTypeChanged(it)
@@ -122,7 +122,7 @@ internal fun SpotListScreen(
                     .align(Alignment.CenterEnd)
                     .padding(end = 16.dp)
                     .noRippleClickable {
-                        if (userType == UserType.GUEST)
+                        if (userType == com.acon.acon.core.model.type.UserType.GUEST)
                             onSignInRequired("")
                         else
                             onFilterButtonClick()
@@ -156,7 +156,7 @@ internal fun SpotListScreen(
                 is SpotListUiStateV2.Success -> {
                     Box(Modifier.fillMaxSize()) {
                         when (state.selectedSpotType) {
-                            SpotType.RESTAURANT -> {
+                            com.acon.acon.core.model.type.SpotType.RESTAURANT -> {
                                 pagerState = rememberPagerState {
                                     val size = state.spotList.size
                                     when {
@@ -187,7 +187,7 @@ internal fun SpotListScreen(
                                 )
                             }
 
-                            SpotType.CAFE -> {
+                            com.acon.acon.core.model.type.SpotType.CAFE -> {
                                 pagerState = rememberPagerState {
                                     val size = state.spotList.size
                                     when {
@@ -271,7 +271,7 @@ internal fun SpotListScreen(
                         }
                     }
                     BottomNavType.UPLOAD -> {
-                        if (userType == UserType.GUEST) {
+                        if (userType == com.acon.acon.core.model.type.UserType.GUEST) {
                             onSignInRequired("click_upload_guest?")
                         } else {
                             onNavigateToUploadScreen()
@@ -307,7 +307,7 @@ private fun SpotListScreenV2Preview() {
 @Preview
 private fun SpotListScreenV2LoadingPreview() {
     SpotListScreen(
-        state = SpotListUiStateV2.Loading(SpotType.RESTAURANT),
+        state = SpotListUiStateV2.Loading(com.acon.acon.core.model.type.SpotType.RESTAURANT),
         modifier = Modifier
             .fillMaxWidth()
             .background(AconTheme.color.Gray900)

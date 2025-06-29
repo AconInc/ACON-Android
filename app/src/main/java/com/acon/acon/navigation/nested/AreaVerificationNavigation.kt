@@ -10,12 +10,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.toRoute
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.core.utils.feature.toast.showToast
-import com.acon.acon.feature.SettingsRoute
-import com.acon.acon.feature.areaverification.AreaVerificationRoute
+import com.acon.acon.core.ui.android.showToast
+import com.acon.acon.core.navigation.route.SettingsRoute
+import com.acon.acon.core.navigation.route.AreaVerificationRoute
 import com.acon.acon.feature.areaverification.composable.AreaVerificationScreenContainer
 import com.acon.acon.feature.areaverification.composable.PreferenceMapScreen
-import com.acon.acon.feature.onboarding.OnboardingRoute
+import com.acon.acon.core.navigation.route.OnboardingRoute
 
 fun NavGraphBuilder.areaVerificationNavigation(
     navController: NavHostController

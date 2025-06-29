@@ -42,10 +42,10 @@ import com.acon.acon.core.designsystem.component.dialog.v2.AconTwoActionDialog
 import com.acon.acon.core.designsystem.component.topbar.AconTopBar
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.core.utils.feature.permission.media.CheckAndRequestMediaPermission
+import com.acon.acon.core.ui.permission.media.CheckAndRequestMediaPermission
 import com.acon.acon.feature.profile.composable.screen.MediaPermissionBottomSheet
 import com.acon.acon.feature.profile.composable.screen.galleryGrid.GalleryGridUiState
-import com.acon.feature.common.compose.getScreenWidth
+import com.acon.acon.core.ui.compose.getScreenWidth
 import kotlin.math.roundToInt
 
 @Composable

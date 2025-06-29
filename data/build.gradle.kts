@@ -24,7 +24,6 @@ android {
 dependencies {
 
     implementation(projects.domain)
-    implementation(projects.core.utils.feature)
     implementation(projects.core.analytics)
 
     implementation(platform(libs.okhttp.bom))

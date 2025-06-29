@@ -21,6 +21,10 @@ gradlePlugin {
             id = "com.acon.android.application"
             implementationClass = "AndroidApplicationConventionPlugin"
         }
+        register("androidFeature") {
+            id = "com.acon.android.feature"
+            implementationClass = "AndroidFeatureConventionPlugin"
+        }
         register("androidApplicationCompose") {
             id = "com.acon.android.application.compose"
             implementationClass = "AndroidApplicationComposeConventionPlugin"

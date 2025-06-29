@@ -5,8 +5,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.acon.acon.core.utils.feature.toast.showToast
-import com.acon.acon.domain.model.spot.SimpleSpot
+import com.acon.acon.core.ui.android.showToast
+import com.acon.acon.core.model.model.spot.SimpleSpot
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.feature.upload.screen.UploadReviewSideEffect
 import com.acon.acon.feature.upload.screen.UploadReviewViewModel
@@ -16,7 +16,7 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 @Composable
 fun UploadReviewScreenContainer(
     onNavigateBack: () -> Unit,
-    onComplete: (SimpleSpot) -> Unit,
+    onComplete: (com.acon.acon.core.model.model.spot.SimpleSpot) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: UploadReviewViewModel = hiltViewModel()
 ) {

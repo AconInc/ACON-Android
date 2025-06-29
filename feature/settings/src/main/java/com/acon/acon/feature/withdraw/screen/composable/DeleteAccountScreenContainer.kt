@@ -5,7 +5,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.acon.acon.core.utils.feature.toast.showToast
+import com.acon.acon.core.ui.android.showToast
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.feature.withdraw.screen.DeleteAccountSideEffect
 import com.acon.acon.feature.withdraw.screen.DeleteAccountViewModel

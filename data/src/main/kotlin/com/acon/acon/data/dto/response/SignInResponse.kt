@@ -1,6 +1,6 @@
 package com.acon.acon.data.dto.response
 
-import com.acon.acon.domain.model.user.VerificationStatus
+import com.acon.acon.core.model.model.user.VerificationStatus
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -11,7 +11,7 @@ data class SignInResponse(
     @SerialName("refreshToken") val refreshToken: String?,
     @SerialName("hasVerifiedArea") val hasVerifiedArea: Boolean
 ) {
-    fun toVerificationStatus() = VerificationStatus(
+    fun toVerificationStatus() = com.acon.acon.core.model.model.user.VerificationStatus(
         externalUUID = externalUUID,
         hasVerifiedArea = hasVerifiedArea
     )

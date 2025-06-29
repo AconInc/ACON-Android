@@ -9,12 +9,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import com.acon.acon.BuildConfig
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.feature.SettingsRoute
-import com.acon.acon.feature.areaverification.AreaVerificationRoute
-import com.acon.acon.feature.onboarding.OnboardingRoute
-import com.acon.acon.feature.profile.composable.ProfileRoute
+import com.acon.acon.core.navigation.route.SettingsRoute
+import com.acon.acon.core.navigation.route.AreaVerificationRoute
+import com.acon.acon.core.navigation.route.OnboardingRoute
+import com.acon.acon.core.navigation.route.ProfileRoute
 import com.acon.acon.feature.settings.screen.composable.SettingsScreenContainer
-import com.acon.acon.feature.signin.screen.SignInRoute
+import com.acon.acon.core.navigation.route.SignInRoute
 import com.acon.acon.feature.verification.screen.composable.LocalVerificationScreenContainer
 import com.acon.acon.feature.withdraw.screen.composable.DeleteAccountScreenContainer
 

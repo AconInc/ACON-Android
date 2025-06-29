@@ -36,16 +36,15 @@ android {
 dependencies {
 
     implementation(projects.core.designsystem)
-    implementation(projects.core.utils.feature)
     implementation(projects.core.map)
     implementation(projects.core.adsApi)
     implementation(projects.core.analytics)
+    implementation(projects.core.navigation)
+    implementation(projects.core.ui)
 
     implementation(projects.domain)
     implementation(projects.data)
 
-    implementation(projects.feature.common)
-    implementation(projects.feature.adsImpl)
     implementation(projects.feature.signin)
     implementation(projects.feature.spot)
     implementation(projects.feature.onboarding)
@@ -53,6 +52,8 @@ dependencies {
     implementation(projects.feature.upload)
     implementation(projects.feature.settings)
     implementation(projects.feature.profile)
+
+    implementation(projects.provider.adsImpl)
 
     implementation(libs.branch.io)
     implementation(libs.google.services.ads)

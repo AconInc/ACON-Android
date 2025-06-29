@@ -1,8 +1,8 @@
 package com.acon.acon.feature.signin.screen
 
 import com.acon.acon.domain.repository.UserRepository
-import com.acon.acon.domain.type.UserType
-import com.acon.feature.common.base.BaseContainerHost
+import com.acon.acon.core.model.type.UserType
+import com.acon.acon.core.ui.base.BaseContainerHost
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import org.orbitmvi.orbit.Container
@@ -18,7 +18,7 @@ class SignInViewModel @Inject constructor(
         container(initialState = SignInUiState.SignIn())
 
     fun signIn() = intent {
-        if (userType.value == UserType.GUEST) {
+        if (userType.value == com.acon.acon.core.model.type.UserType.GUEST) {
             reduce {
                 SignInUiState.SignIn(showSignInInfo = true)
             }
@@ -31,7 +31,7 @@ class SignInViewModel @Inject constructor(
             }
         }
         userType.collectLatest {
-            if (it == UserType.GUEST) {
+            if (it == com.acon.acon.core.model.type.UserType.GUEST) {
                 reduce {
                     SignInUiState.SignIn(showSignInInfo = true)
                 }

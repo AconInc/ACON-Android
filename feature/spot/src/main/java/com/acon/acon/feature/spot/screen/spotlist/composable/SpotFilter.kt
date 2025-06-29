@@ -14,7 +14,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.mutableStateSetOf
@@ -33,14 +32,11 @@ import com.acon.acon.core.designsystem.component.button.v2.AconFilledTextButton
 import com.acon.acon.core.designsystem.component.button.v2.AconOutlinedTextButton
 import com.acon.acon.core.designsystem.component.chip.AconChip
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.domain.type.CafeFilterType
-import com.acon.acon.domain.type.FilterType
-import com.acon.acon.domain.type.RestaurantFilterType
 import com.acon.acon.feature.spot.getNameResId
 import com.acon.acon.feature.spot.screen.spotlist.FilterDetailKey
-import com.acon.core.analytics.amplitude.AconAmplitude
-import com.acon.core.analytics.constants.EventNames
-import com.acon.core.analytics.constants.PropertyKeys
+import com.acon.acon.core.analytics.amplitude.AconAmplitude
+import com.acon.acon.core.analytics.constants.EventNames
+import com.acon.acon.core.analytics.constants.PropertyKeys
 import kotlinx.collections.immutable.ImmutableSet
 import kotlinx.collections.immutable.toImmutableSet
 import java.time.LocalTime
@@ -52,7 +48,7 @@ private inline fun <reified T> EachFilterSpace(
     crossinline onFilterItemClick: (T) -> Unit,
     selectedItems: ImmutableSet<T>,
     modifier: Modifier = Modifier,
-) where T : Enum<T>, T : FilterType {
+) where T : Enum<T>, T : com.acon.acon.core.model.type.FilterType {
 
     Column(
         modifier = modifier
@@ -70,7 +66,7 @@ private inline fun <reified T> EachFilterSpace(
         ) {
             enumValues<T>().forEach {
                 AconChip(
-                    title = stringResource((it as FilterType).getNameResId()),
+                    title = stringResource((it as com.acon.acon.core.model.type.FilterType).getNameResId()),
                     isSelected = selectedItems.contains(it),
                     onClick = { onFilterItemClick(it) }
                 )
@@ -82,8 +78,8 @@ private inline fun <reified T> EachFilterSpace(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun RestaurantFilterBottomSheet(
-    selectedItems: ImmutableSet<RestaurantFilterType>,
-    onComplete: (Map<FilterDetailKey, Set<RestaurantFilterType>>) -> Unit,
+    selectedItems: ImmutableSet<com.acon.acon.core.model.type.RestaurantFilterType>,
+    onComplete: (Map<FilterDetailKey, Set<com.acon.acon.core.model.type.RestaurantFilterType>>) -> Unit,
     onReset: () -> Unit,
     onDismissRequest: () -> Unit,
 ) {
@@ -91,18 +87,18 @@ internal fun RestaurantFilterBottomSheet(
         mutableStateOf(false)
     }
     val selectedRestaurantTypes = remember {
-        mutableStateSetOf<RestaurantFilterType.RestaurantType>(
-            *selectedItems.filterIsInstance<RestaurantFilterType.RestaurantType>().toTypedArray()
+        mutableStateSetOf<com.acon.acon.core.model.type.RestaurantFilterType.RestaurantType>(
+            *selectedItems.filterIsInstance<com.acon.acon.core.model.type.RestaurantFilterType.RestaurantType>().toTypedArray()
         )
     }
     val selectedRestaurantOperationTypes = remember {
-        mutableStateSetOf<RestaurantFilterType.RestaurantOperationType>(
-            *selectedItems.filterIsInstance<RestaurantFilterType.RestaurantOperationType>().toTypedArray()
+        mutableStateSetOf<com.acon.acon.core.model.type.RestaurantFilterType.RestaurantOperationType>(
+            *selectedItems.filterIsInstance<com.acon.acon.core.model.type.RestaurantFilterType.RestaurantOperationType>().toTypedArray()
         )
     }
     val selectedRestaurantPriceTypes = remember {
-        mutableStateSetOf<RestaurantFilterType.RestaurantPriceType>(
-            *selectedItems.filterIsInstance<RestaurantFilterType.RestaurantPriceType>().toTypedArray()
+        mutableStateSetOf<com.acon.acon.core.model.type.RestaurantFilterType.RestaurantPriceType>(
+            *selectedItems.filterIsInstance<com.acon.acon.core.model.type.RestaurantFilterType.RestaurantPriceType>().toTypedArray()
         )
     }
 
@@ -125,7 +121,7 @@ internal fun RestaurantFilterBottomSheet(
                     .align(Alignment.CenterHorizontally)
             )
 
-            EachFilterSpace<RestaurantFilterType.RestaurantType>(
+            EachFilterSpace<com.acon.acon.core.model.type.RestaurantFilterType.RestaurantType>(
                 title = stringResource(R.string.type),
                 onFilterItemClick = {
                     if (selectedRestaurantTypes.contains(it)) {
@@ -140,7 +136,7 @@ internal fun RestaurantFilterBottomSheet(
             )
             Spacer(modifier = Modifier.height(40.dp))
 
-            EachFilterSpace<RestaurantFilterType.RestaurantOperationType>(
+            EachFilterSpace<com.acon.acon.core.model.type.RestaurantFilterType.RestaurantOperationType>(
                 title = stringResource(R.string.operation_time),
                 onFilterItemClick = {
                     if (selectedRestaurantOperationTypes.contains(it)) {
@@ -155,7 +151,7 @@ internal fun RestaurantFilterBottomSheet(
             )
             Spacer(modifier = Modifier.height(40.dp))
 
-            EachFilterSpace<RestaurantFilterType.RestaurantPriceType>(
+            EachFilterSpace<com.acon.acon.core.model.type.RestaurantFilterType.RestaurantPriceType>(
                 title = stringResource(R.string.price),
                 onFilterItemClick = {
                     if (selectedRestaurantPriceTypes.contains(it)) {
@@ -220,9 +216,9 @@ internal fun RestaurantFilterBottomSheet(
                         }
                         onComplete(
                             mapOf(
-                                RestaurantFilterType.RestaurantType::class to (selectedRestaurantTypes.toSet() as Set<RestaurantFilterType>),
-                                RestaurantFilterType.RestaurantOperationType::class to (selectedRestaurantOperationTypes.toSet() as Set<RestaurantFilterType>),
-                                RestaurantFilterType.RestaurantPriceType::class to (selectedRestaurantPriceTypes.toSet() as Set<RestaurantFilterType>)
+                                com.acon.acon.core.model.type.RestaurantFilterType.RestaurantType::class to (selectedRestaurantTypes.toSet() as Set<com.acon.acon.core.model.type.RestaurantFilterType>),
+                                com.acon.acon.core.model.type.RestaurantFilterType.RestaurantOperationType::class to (selectedRestaurantOperationTypes.toSet() as Set<com.acon.acon.core.model.type.RestaurantFilterType>),
+                                com.acon.acon.core.model.type.RestaurantFilterType.RestaurantPriceType::class to (selectedRestaurantPriceTypes.toSet() as Set<com.acon.acon.core.model.type.RestaurantFilterType>)
                             )
                         )
                     },
@@ -241,8 +237,8 @@ internal fun RestaurantFilterBottomSheet(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun CafeFilterBottomSheet(
-    selectedItems: ImmutableSet<CafeFilterType>,
-    onComplete: (Map<FilterDetailKey, Set<CafeFilterType>>) -> Unit,
+    selectedItems: ImmutableSet<com.acon.acon.core.model.type.CafeFilterType>,
+    onComplete: (Map<FilterDetailKey, Set<com.acon.acon.core.model.type.CafeFilterType>>) -> Unit,
     onReset: () -> Unit,
     onDismissRequest: () -> Unit,
 ) {
@@ -250,13 +246,13 @@ internal fun CafeFilterBottomSheet(
         mutableStateOf(false)
     }
     val selectedCafeTypes = remember {
-        mutableStateSetOf<CafeFilterType.CafeType>(
-            *selectedItems.filterIsInstance<CafeFilterType.CafeType>().toTypedArray()
+        mutableStateSetOf<com.acon.acon.core.model.type.CafeFilterType.CafeType>(
+            *selectedItems.filterIsInstance<com.acon.acon.core.model.type.CafeFilterType.CafeType>().toTypedArray()
         )
     }
     val selectedCafeOperationTypes = remember {
-        mutableStateSetOf<CafeFilterType.CafeOperationType>(
-            *selectedItems.filterIsInstance<CafeFilterType.CafeOperationType>().toTypedArray()
+        mutableStateSetOf<com.acon.acon.core.model.type.CafeFilterType.CafeOperationType>(
+            *selectedItems.filterIsInstance<com.acon.acon.core.model.type.CafeFilterType.CafeOperationType>().toTypedArray()
         )
     }
 
@@ -279,7 +275,7 @@ internal fun CafeFilterBottomSheet(
                     .align(Alignment.CenterHorizontally)
             )
 
-            EachFilterSpace<CafeFilterType.CafeType>(
+            EachFilterSpace<com.acon.acon.core.model.type.CafeFilterType.CafeType>(
                 title = stringResource(R.string.type),
                 onFilterItemClick = {
                     if (selectedCafeTypes.contains(it)) {
@@ -294,7 +290,7 @@ internal fun CafeFilterBottomSheet(
             )
             Spacer(modifier = Modifier.height(40.dp))
 
-            EachFilterSpace<CafeFilterType.CafeOperationType>(
+            EachFilterSpace<com.acon.acon.core.model.type.CafeFilterType.CafeOperationType>(
                 title = stringResource(R.string.operation_time),
                 onFilterItemClick = {
                     if (selectedCafeOperationTypes.contains(it)) {
@@ -348,8 +344,8 @@ internal fun CafeFilterBottomSheet(
                         }
                         onComplete(
                             mapOf(
-                                CafeFilterType.CafeType::class to (selectedCafeTypes.toSet() as Set<CafeFilterType>),
-                                CafeFilterType.CafeOperationType::class to (selectedCafeOperationTypes.toSet() as Set<CafeFilterType>)
+                                com.acon.acon.core.model.type.CafeFilterType.CafeType::class to (selectedCafeTypes.toSet() as Set<com.acon.acon.core.model.type.CafeFilterType>),
+                                com.acon.acon.core.model.type.CafeFilterType.CafeOperationType::class to (selectedCafeOperationTypes.toSet() as Set<com.acon.acon.core.model.type.CafeFilterType>)
                             )
                         )
                     },

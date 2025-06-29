@@ -8,9 +8,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.acon.acon.core.utils.feature.permission.checkLocationPermission
-import com.acon.acon.core.utils.feature.toast.showToast
-import com.acon.feature.common.compose.LocalRequestLocationPermission
+import com.acon.acon.core.ui.permission.checkLocationPermission
+import com.acon.acon.core.ui.android.showToast
+import com.acon.acon.core.ui.compose.LocalRequestLocationPermission
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
@@ -40,7 +40,7 @@ fun AreaVerificationScreenContainer(
         modifier = modifier
     )
 
-    viewModel.emitLiveLocation()
+    viewModel.useLiveLocation()
     viewModel.collectSideEffect {
         when (it) {
             is AreaVerificationSideEffect.NavigateToAppLocationSettings -> {

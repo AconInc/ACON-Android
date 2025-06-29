@@ -1,6 +1,6 @@
 package com.acon.acon.data.dto.response.upload
 
-import com.acon.acon.domain.model.upload.UploadSpotSuggestion
+import com.acon.acon.core.model.model.upload.UploadSpotSuggestion
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -14,7 +14,7 @@ data class UploadSpotSuggestionResponse(
     @SerialName("spotId") val spotId: Long,
     @SerialName("name") val spotName: String
 ) {
-    fun toSuggestion() = UploadSpotSuggestion(
+    fun toSuggestion() = com.acon.acon.core.model.model.upload.UploadSpotSuggestion(
         spotId = spotId,
         name = spotName
     )

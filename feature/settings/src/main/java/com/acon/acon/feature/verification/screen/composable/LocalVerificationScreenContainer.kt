@@ -7,10 +7,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.acon.acon.core.designsystem.R
-import com.acon.acon.core.utils.feature.toast.showToast
+import com.acon.acon.core.ui.android.showToast
 import com.acon.acon.feature.verification.screen.LocalVerificationSideEffect
 import com.acon.acon.feature.verification.screen.LocalVerificationViewModel
-import com.acon.feature.common.compose.LocalOnRetry
+import com.acon.acon.core.ui.compose.LocalOnRetry
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 

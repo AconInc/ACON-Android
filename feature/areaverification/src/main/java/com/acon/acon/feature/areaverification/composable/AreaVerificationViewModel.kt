@@ -7,11 +7,9 @@ import android.content.pm.PackageManager
 import android.location.LocationManager
 import androidx.core.app.ActivityCompat
 import com.acon.acon.domain.error.area.ReplaceVerifiedArea
-import com.acon.acon.domain.model.area.Area
+import com.acon.acon.core.model.model.area.Area
 import com.acon.acon.domain.repository.UserRepository
-import com.acon.acon.feature.areaverification.amplitude.amplitudeClickNext
-import com.acon.acon.feature.areaverification.amplitude.amplitudeCompleteArea
-import com.acon.feature.common.base.BaseContainerHost
+import com.acon.acon.core.ui.base.BaseContainerHost
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.orbitmvi.orbit.viewmodel.container
 import timber.log.Timber
@@ -53,7 +51,6 @@ class AreaVerificationViewModel @Inject constructor(
                 state.longitude
             )
         )
-        amplitudeClickNext()
     }
 
     fun onDeviceGPSSettingClick(packageName: String) = intent {
@@ -121,7 +118,6 @@ class AreaVerificationViewModel @Inject constructor(
                         isVerifySuccess = true
                     )
                 }
-                amplitudeCompleteArea()
             }
             .onFailure {
                 postSideEffect(AreaVerificationSideEffect.ShowErrorToast("지역인증에 실패했습니다. 다시 시도해주세요."))
@@ -140,7 +136,7 @@ data class AreaVerificationUiState(
     val latitude: Double = 0.0,
     val longitude: Double = 0.0,
     val isVerifySuccess: Boolean = false,
-    val verifiedAreaList: List<Area> = emptyList(),
+    val verifiedAreaList: List<com.acon.acon.core.model.model.area.Area> = emptyList(),
 )
 
 sealed interface AreaVerificationSideEffect {

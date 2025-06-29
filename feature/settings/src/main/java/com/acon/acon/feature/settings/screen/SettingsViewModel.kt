@@ -1,8 +1,8 @@
 package com.acon.acon.feature.settings.screen
 
-import com.acon.feature.common.base.BaseContainerHost
 import com.acon.acon.domain.repository.UserRepository
-import com.acon.acon.domain.type.UserType
+import com.acon.acon.core.model.type.UserType
+import com.acon.acon.core.ui.base.BaseContainerHost
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import org.orbitmvi.orbit.annotation.OrbitExperimental
@@ -19,9 +19,9 @@ class SettingsViewModel @Inject constructor(
         container<SettingsUiState, SettingsSideEffect>(SettingsUiState.Guest) {
             userRepository.getUserType().collectLatest { userType ->
                 when (userType) {
-                    UserType.GUEST -> reduce { SettingsUiState.Guest }
-                    UserType.USER -> reduce { SettingsUiState.User() }
-                    UserType.ADMIN -> reduce { SettingsUiState.User() }
+                    com.acon.acon.core.model.type.UserType.GUEST -> reduce { SettingsUiState.Guest }
+                    com.acon.acon.core.model.type.UserType.USER -> reduce { SettingsUiState.User() }
+                    com.acon.acon.core.model.type.UserType.ADMIN -> reduce { SettingsUiState.User() }
                 }
             }
         }
@@ -61,7 +61,6 @@ class SettingsViewModel @Inject constructor(
 
     fun onRetryOnBoarding() = intent {
         postSideEffect(SettingsSideEffect.NavigateToOnboarding)
-        amplitudeRetryOnboarding()
     }
 
     fun onNavigateToLocalVerification() = intent {

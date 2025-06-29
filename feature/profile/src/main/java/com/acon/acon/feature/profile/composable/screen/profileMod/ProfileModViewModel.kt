@@ -2,13 +2,12 @@ package com.acon.acon.feature.profile.composable.screen.profileMod
 
 import android.app.Application
 import android.net.Uri
-import android.util.Log
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.acon.acon.domain.error.profile.ValidateNicknameError
 import com.acon.acon.domain.repository.ProfileRepository
-import com.acon.acon.domain.type.UpdateProfileType
+import com.acon.acon.core.model.type.UpdateProfileType
 import com.acon.acon.feature.profile.composable.type.BirthdayValidationStatus
 import com.acon.acon.feature.profile.composable.type.FocusType
 import com.acon.acon.feature.profile.composable.type.NicknameErrorType
@@ -399,11 +398,11 @@ class ProfileModViewModel @Inject constructor(
         intent {
             profileRepository.updateProfile(fileName, nickname, birthday, uri)
                 .onSuccess {
-                    profileRepository.updateProfileType(UpdateProfileType.SUCCESS)
+                    profileRepository.updateProfileType(com.acon.acon.core.model.type.UpdateProfileType.SUCCESS)
                     postSideEffect(ProfileModSideEffect.NavigateToProfile)
                 }
                 .onFailure {
-                    profileRepository.updateProfileType(UpdateProfileType.FAILURE)
+                    profileRepository.updateProfileType(com.acon.acon.core.model.type.UpdateProfileType.FAILURE)
                     postSideEffect(ProfileModSideEffect.NavigateToProfile)
                 }
         }
