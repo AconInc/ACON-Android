@@ -76,6 +76,7 @@ paletteVersion = "1.0.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 mockk = "1.13.10"
+turbine = "1.2.1"
 
 # Android Test
 junitComposeVersion = "1.8.2"
@@ -122,6 +123,7 @@ kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotl
 kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
 coroutine-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutine" }
 mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
+turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine"}
 
 # Android Testing
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
@@ -246,5 +248,5 @@ coil = ["coil-compose", "coil-network-okhttp"]
 naver-map = ["naver-map-compose", "naver-map-location", "naver-map-sdk"]
 firebase = ["firebase-analytics-sdk", "firebase-crashlytics-sdk"]
 play-app-update = ["play-core", "play-core-ktx"]
-non-android-test = ["junit", "kotlin-test", "kotlin-test-junit", "mockk", "coroutine-test"]
+non-android-test = ["junit", "kotlin-test", "kotlin-test-junit", "mockk", "coroutine-test", "turbine"]
 android-test = ["androidx-junit", "androidx-espresso-core", "androidx-ui-test-junit4"]
