@@ -1,3 +1,4 @@
+import utils.androidTestImplementation
 import java.util.Properties
 
 plugins {
@@ -40,4 +41,7 @@ dependencies {
     implementation(libs.bundles.googleSignIn)
 
     implementation(libs.preferences.datastore)
+    
+    testImplementation(libs.bundles.non.android.test)
+    androidTestImplementation(libs.bundles.android.test)
 }
