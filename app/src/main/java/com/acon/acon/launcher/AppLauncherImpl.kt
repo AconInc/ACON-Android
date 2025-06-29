@@ -1,12 +1,12 @@
-package com.acon.acon.navigator
+package com.acon.acon.launcher
 
 import android.content.Context
 import android.content.Intent
 import com.acon.acon.MainActivity
-import com.acon.acon.core.navigation.navigator.AppNavigator
+import com.acon.acon.core.launcher.AppLauncher
 import javax.inject.Inject
 
-class AppNavigatorImpl @Inject constructor(): AppNavigator {
+class AppLauncherImpl @Inject constructor(): AppLauncher {
 
     override fun restartApp(context: Context) {
         val intent = Intent(context, MainActivity::class.java).apply {
