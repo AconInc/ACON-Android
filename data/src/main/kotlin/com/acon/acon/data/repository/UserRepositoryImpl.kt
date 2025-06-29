@@ -1,9 +1,10 @@
 package com.acon.acon.data.repository
 
+import com.acon.acon.core.analytics.amplitude.AconAmplitude
+import com.acon.acon.core.common.IODispatcher
 import com.acon.acon.core.model.model.user.VerificationStatus
 import com.acon.acon.core.model.type.SocialType
 import com.acon.acon.core.model.type.UserType
-import com.acon.acon.data.SessionManager
 import com.acon.acon.data.datasource.local.TokenLocalDataSource
 import com.acon.acon.data.datasource.remote.UserRemoteDataSource
 import com.acon.acon.data.dto.request.DeleteAccountRequest
@@ -13,17 +14,38 @@ import com.acon.acon.data.error.runCatchingWith
 import com.acon.acon.domain.error.user.PostLogoutError
 import com.acon.acon.domain.error.user.PostSignInError
 import com.acon.acon.domain.repository.UserRepository
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 class UserRepositoryImpl @Inject constructor(
     private val userRemoteDataSource: UserRemoteDataSource,
     private val tokenLocalDataSource: TokenLocalDataSource,
-    private val sessionManager: SessionManager
+    @IODispatcher scope: CoroutineScope
 ) : UserRepository {
 
+    private val _userType = MutableStateFlow(UserType.GUEST)
+    private val userType = flow {
+        val accessToken = tokenLocalDataSource.getAccessToken()
+        if (accessToken.isNullOrEmpty())
+            _userType.emit(UserType.GUEST)
+        else
+            _userType.emit(UserType.USER)
+
+        emitAll(_userType)
+    }.stateIn(
+        scope = scope,
+        started = SharingStarted.Lazily,
+        initialValue = UserType.GUEST
+    )
+
     override fun getUserType(): Flow<UserType> {
-        return sessionManager.getUserType()
+        return userType
     }
 
     override suspend fun signIn(
@@ -38,7 +60,7 @@ class UserRepositoryImpl @Inject constructor(
                 )
             )
 
-            sessionManager.saveAccessToken(signInResponse.accessToken.orEmpty())
+            tokenLocalDataSource.saveAccessToken(signInResponse.accessToken.orEmpty())
             tokenLocalDataSource.saveRefreshToken(signInResponse.refreshToken.orEmpty())
 
             signInResponse.toVerificationStatus()
@@ -52,7 +74,7 @@ class UserRepositoryImpl @Inject constructor(
                 SignOutRequest(refreshToken = refreshToken)
             )
         }.onSuccess {
-            sessionManager.clearSession()
+            clearSession()
         }
     }
 
@@ -66,7 +88,12 @@ class UserRepositoryImpl @Inject constructor(
                 )
             )
         }.onSuccess {
-            sessionManager.clearSession()
+            clearSession()
         }
+    }
+
+    override suspend fun clearSession() {
+        AconAmplitude.clearUserId()
+        tokenLocalDataSource.removeAllTokens()
     }
 }
