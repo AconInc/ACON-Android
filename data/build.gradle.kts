@@ -25,6 +25,7 @@ dependencies {
 
     implementation(projects.domain)
     implementation(projects.core.analytics)
+    implementation(projects.core.launcher)
 
     implementation(platform(libs.okhttp.bom))
     implementation(libs.okhttp)
