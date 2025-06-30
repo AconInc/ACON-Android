@@ -1,5 +1,10 @@
 package com.acon.acon.data.repository
 
+import com.acon.acon.core.model.model.profile.SavedSpot
+import com.acon.acon.core.model.model.spot.Condition
+import com.acon.acon.core.model.model.spot.MenuBoardList
+import com.acon.acon.core.model.model.spot.SpotDetail
+import com.acon.acon.core.model.model.spot.SpotList
 import com.acon.acon.data.cache.ProfileInfoCache
 import com.acon.acon.data.datasource.remote.SpotRemoteDataSource
 import com.acon.acon.data.dto.request.AddBookmarkRequest
@@ -8,7 +13,6 @@ import com.acon.acon.data.dto.request.FilterListRequest
 import com.acon.acon.data.dto.request.RecentNavigationLocationRequest
 import com.acon.acon.data.dto.request.SpotListRequest
 import com.acon.acon.data.error.runCatchingWith
-import com.acon.acon.domain.error.area.GetLegalDongError
 import com.acon.acon.domain.error.spot.AddBookmarkError
 import com.acon.acon.domain.error.spot.DeleteBookmarkError
 import com.acon.acon.domain.error.spot.FetchMenuBoardsError
@@ -17,12 +21,6 @@ import com.acon.acon.domain.error.spot.FetchSpotListError
 import com.acon.acon.domain.error.spot.GetSpotDetailInfoError
 import com.acon.acon.domain.repository.ProfileRepository
 import com.acon.acon.domain.repository.SpotRepository
-import com.acon.acon.core.model.model.area.LegalArea
-import com.acon.acon.core.model.model.profile.SavedSpot
-import com.acon.acon.core.model.model.spot.Condition
-import com.acon.acon.core.model.model.spot.MenuBoardList
-import com.acon.acon.core.model.model.spot.SpotDetail
-import com.acon.acon.core.model.model.spot.SpotList
 import javax.inject.Inject
 
 class SpotRepositoryImpl @Inject constructor(
@@ -71,12 +69,6 @@ class SpotRepositoryImpl @Inject constructor(
     ): Result<SpotDetail> {
         return runCatchingWith(GetSpotDetailInfoError()) {
             spotRemoteDataSource.fetchSpotDetail(spotId, isDeepLink).toSpotDetail()
-        }
-    }
-
-    override suspend fun getLegalDong(latitude: Double, longitude: Double): Result<LegalArea> {
-        return runCatchingWith(GetLegalDongError()) {
-            spotRemoteDataSource.getLegalDong(latitude, longitude).toLegalArea()
         }
     }
 
