@@ -5,6 +5,7 @@ import com.acon.acon.data.cache.ProfileInfoCache
 import com.acon.acon.data.createErrorStream
 import com.acon.acon.data.createFakeRemoteError
 import com.acon.acon.data.datasource.remote.ProfileRemoteDataSource
+import com.acon.acon.domain.error.area.DeleteVerifiedAreaError
 import com.acon.acon.domain.error.area.ReplaceVerifiedArea
 import com.acon.acon.domain.error.profile.SaveSpotError
 import com.acon.acon.domain.error.profile.ValidateNicknameError
@@ -51,6 +52,13 @@ class ProfileRepositoryImplTest {
             40055 to ReplaceVerifiedArea.PeriodRestrictedDeleteError::class,
             40056 to ReplaceVerifiedArea.MultiLocationReplaceError::class,
             40404 to ReplaceVerifiedArea.VerifiedAreaNotFound::class
+        )
+        @JvmStatic
+        fun deleteVerifiedAreaErrorScenarios() = createErrorStream(
+            40054 to DeleteVerifiedAreaError.InvalidVerifiedArea::class,
+            40032 to DeleteVerifiedAreaError.VerifiedAreaLimitViolation::class,
+            40055 to DeleteVerifiedAreaError.PeriodRestrictedDeleteError::class,
+            40404 to DeleteVerifiedAreaError.VerifiedAreaNotFound::class
         )
     }
 
@@ -111,6 +119,23 @@ class ProfileRepositoryImplTest {
 
         // When
         val result = profileRepositoryImpl.replaceVerifiedArea(0, .0, .0)
+
+        // Then
+        assertValidErrorMapping(result, expectedErrorClass)
+    }
+
+    @ParameterizedTest
+    @MethodSource("deleteVerifiedAreaErrorScenarios")
+    fun `인증 지역 삭제 API 실패 시 에러 객체를 반환한다`(
+        errorCode: Int,
+        expectedErrorClass: KClass<ReplaceVerifiedArea>
+    ) = runTest {
+        // Given
+        val fakeRemoteError = createFakeRemoteError(errorCode)
+        coEvery { profileRemoteDataSource.deleteVerifiedArea(any()) } throws fakeRemoteError
+
+        // When
+        val result = profileRepositoryImpl.deleteVerifiedArea(0)
 
         // Then
         assertValidErrorMapping(result, expectedErrorClass)
