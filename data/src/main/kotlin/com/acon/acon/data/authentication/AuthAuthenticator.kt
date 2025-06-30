@@ -3,6 +3,7 @@ package com.acon.acon.data.authentication
 import android.content.Context
 import com.acon.acon.core.launcher.AppLauncher
 import com.acon.acon.data.BuildConfig
+import com.acon.acon.data.SessionHandler
 import com.acon.acon.data.api.remote.ReissueTokenApi
 import com.acon.acon.data.datasource.local.TokenLocalDataSource
 import com.acon.acon.data.dto.request.DeleteAccountRequest
@@ -28,7 +29,7 @@ import javax.inject.Inject
 class AuthAuthenticator @Inject constructor(
     private val context: Context,
     private val tokenLocalDataSource: TokenLocalDataSource,
-    private val userRepository: UserRepository,
+    private val sessionHandler: SessionHandler,
     private val reissueTokenApi: ReissueTokenApi,
     private val appLauncher: AppLauncher
 ) : Authenticator {
@@ -45,7 +46,7 @@ class AuthAuthenticator @Inject constructor(
 
             if (currentRefreshToken.isEmpty()) {
                 Timber.tag(TAG).e("저장된 Refresh Token이 없음. 토큰 제거 후 로그인 화면으로 이동")
-                userRepository.clearSession()
+                sessionHandler.clearSession()
                 startNewTask()
                 return@withLock null
             }
@@ -61,7 +62,7 @@ class AuthAuthenticator @Inject constructor(
                     val tokenResponse = result.getOrNull()
 
                     if (tokenResponse == null) {
-                        userRepository.clearSession()
+                        sessionHandler.clearSession()
                         startNewTask()
                         return@withLock null
                     }
@@ -71,7 +72,7 @@ class AuthAuthenticator @Inject constructor(
                         if(BuildConfig.DEBUG) {
                             Timber.tag(TAG).e("토큰이 비어 있음. 토큰 제거 후 로그인 화면으로 이동")
                         }
-                        userRepository.clearSession()
+                        sessionHandler.clearSession()
                         startNewTask()
                         return@withLock null
                     }
@@ -130,7 +131,7 @@ class AuthAuthenticator @Inject constructor(
                     if(BuildConfig.DEBUG) {
                         Timber.tag(TAG).e("토큰 재발급 실패. 토큰 제거 후 로그인 화면으로 이동")
                     }
-                    userRepository.clearSession()
+                    sessionHandler.clearSession()
                     startNewTask()
                     return@withLock null
                 }

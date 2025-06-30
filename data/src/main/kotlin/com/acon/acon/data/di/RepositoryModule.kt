@@ -1,5 +1,7 @@
 package com.acon.acon.data.di
 
+import com.acon.acon.data.SessionHandler
+import com.acon.acon.data.SessionHandlerImpl
 import com.acon.acon.data.repository.AconAppRepositoryImpl
 import com.acon.acon.data.repository.MapRepositoryImpl
 import com.acon.acon.data.repository.OnboardingRepositoryImpl
@@ -29,6 +31,12 @@ internal abstract class RepositoryModule {
     abstract fun bindsUserRepository(
         impl: UserRepositoryImpl
     ): UserRepository
+
+    @Singleton
+    @Binds
+    abstract fun bindsSessionHandler(
+        impl: SessionHandlerImpl
+    ): SessionHandler
 
     @Singleton
     @Binds

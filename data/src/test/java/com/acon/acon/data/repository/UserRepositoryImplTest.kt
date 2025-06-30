@@ -3,6 +3,7 @@ package com.acon.acon.data.repository
 import app.cash.turbine.test
 import com.acon.acon.core.analytics.amplitude.AconAmplitude
 import com.acon.acon.core.model.type.UserType
+import com.acon.acon.data.SessionHandler
 import com.acon.acon.data.datasource.local.TokenLocalDataSource
 import com.acon.acon.data.datasource.remote.UserRemoteDataSource
 import com.acon.acon.data.dto.response.SignInResponse
@@ -39,13 +40,16 @@ import kotlin.reflect.KClass
 import kotlin.test.assertTrue
 
 @ExtendWith(MockKExtension::class)
-class UserRepositoryImpTest {
+class UserRepositoryImplTest {
 
     @RelaxedMockK
     lateinit var userRemoteDataSource: UserRemoteDataSource
 
     @RelaxedMockK
     lateinit var tokenLocalDataSource: TokenLocalDataSource
+
+    @RelaxedMockK
+    lateinit var sessionHandler: SessionHandler
 
     private lateinit var testScope: TestScope
 
@@ -68,7 +72,7 @@ class UserRepositoryImpTest {
     @BeforeEach
     fun setUp() {
         testScope = TestScope()
-        userRepository = UserRepositoryImpl(userRemoteDataSource, tokenLocalDataSource, testScope)
+        userRepository = UserRepositoryImpl(userRemoteDataSource, tokenLocalDataSource, sessionHandler)
     }
 
     @AfterEach
@@ -144,7 +148,7 @@ class UserRepositoryImpTest {
     @Test
     fun `로컬에 액세스 토큰 존재 시, 앱의 유저 상태를 USER로 설정한다`() = runTest {
         // Given
-        userRepository = UserRepositoryImpl(userRemoteDataSource, tokenLocalDataSource, this)
+        userRepository = UserRepositoryImpl(userRemoteDataSource, tokenLocalDataSource, sessionHandler)
         coEvery { tokenLocalDataSource.getAccessToken() } returns "Dummy Access Token"
 
         // When
@@ -159,7 +163,7 @@ class UserRepositoryImpTest {
     @Test
     fun `로컬에 액세스 토큰 없을 시, 앱의 유저 상태를 USER로 설정한다`() = runTest {
         // Given
-        userRepository = UserRepositoryImpl(userRemoteDataSource, tokenLocalDataSource, this)
+        userRepository = UserRepositoryImpl(userRemoteDataSource, tokenLocalDataSource, sessionHandler)
         coEvery { tokenLocalDataSource.getAccessToken() } returns null
 
         // When

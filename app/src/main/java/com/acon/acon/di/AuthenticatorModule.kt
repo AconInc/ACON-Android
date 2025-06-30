@@ -3,6 +3,7 @@ package com.acon.acon.di
 import android.content.Context
 import com.acon.acon.data.authentication.AuthAuthenticator
 import com.acon.acon.core.launcher.AppLauncher
+import com.acon.acon.data.SessionHandler
 import com.acon.acon.data.api.remote.ReissueTokenApi
 import com.acon.acon.data.datasource.local.TokenLocalDataSource
 import com.acon.acon.domain.repository.UserRepository
@@ -25,10 +26,10 @@ object AuthenticatorModule {
     fun providesAuthAuthenticator(
         @ApplicationContext context: Context,
         tokenLocalDataSource: TokenLocalDataSource,
-        userRepository: UserRepository,
+        sessionHandler: SessionHandler,
         reissueTokenApi: ReissueTokenApi,
         appLauncher: AppLauncher
-    ): Authenticator = AuthAuthenticator(context, tokenLocalDataSource, userRepository, reissueTokenApi, appLauncher)
+    ): Authenticator = AuthAuthenticator(context, tokenLocalDataSource, sessionHandler, reissueTokenApi, appLauncher)
 }
 
 @Module

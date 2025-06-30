@@ -1,13 +1,13 @@
 package com.acon.acon.data.authenticator
 
 import android.content.Context
-import com.acon.acon.data.authentication.AuthAuthenticator
 import com.acon.acon.core.launcher.AppLauncher
+import com.acon.acon.data.SessionHandler
 import com.acon.acon.data.api.remote.ReissueTokenApi
+import com.acon.acon.data.authentication.AuthAuthenticator
 import com.acon.acon.data.datasource.local.TokenLocalDataSource
 import com.acon.acon.data.dto.request.RefreshRequest
 import com.acon.acon.data.dto.response.RefreshResponse
-import com.acon.acon.domain.repository.UserRepository
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -37,7 +37,7 @@ class AuthAuthenticatorTest {
     lateinit var tokenLocalDataSource: TokenLocalDataSource
 
     @RelaxedMockK
-    lateinit var userRepository: UserRepository
+    lateinit var sessionHandler: SessionHandler
 
     @RelaxedMockK
     lateinit var reissueTokenApi: ReissueTokenApi
@@ -158,7 +158,7 @@ class AuthAuthenticatorTest {
 
         // Then
         assertNull(newRequest)
-        coVerify { userRepository.clearSession() }
+        coVerify { sessionHandler.clearSession() }
     }
 
     @Test
@@ -172,7 +172,7 @@ class AuthAuthenticatorTest {
 
         // Then
         assertNull(newRequest)
-        coVerify { userRepository.clearSession() }
+        coVerify { sessionHandler.clearSession() }
     }
 
 
@@ -187,7 +187,7 @@ class AuthAuthenticatorTest {
 
         // Then
         assertNull(newRequest)
-        coVerify { userRepository.clearSession() }
+        coVerify { sessionHandler.clearSession() }
     }
 
     private suspend fun givenLocalRefreshTokenRequest(): RefreshRequest {
