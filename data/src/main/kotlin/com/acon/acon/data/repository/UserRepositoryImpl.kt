@@ -2,8 +2,7 @@ package com.acon.acon.data.repository
 
 import com.acon.acon.core.model.model.user.VerificationStatus
 import com.acon.acon.core.model.type.SocialType
-import com.acon.acon.core.model.type.UserType
-import com.acon.acon.data.SessionHandler
+import com.acon.acon.data.session.SessionHandler
 import com.acon.acon.data.datasource.local.TokenLocalDataSource
 import com.acon.acon.data.datasource.remote.UserRemoteDataSource
 import com.acon.acon.data.dto.request.DeleteAccountRequest
@@ -13,7 +12,6 @@ import com.acon.acon.data.error.runCatchingWith
 import com.acon.acon.domain.error.user.PostSignOutError
 import com.acon.acon.domain.error.user.PostSignInError
 import com.acon.acon.domain.repository.UserRepository
-import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class UserRepositoryImpl @Inject constructor(

@@ -3,10 +3,9 @@ package com.acon.acon.di
 import android.content.Context
 import com.acon.acon.data.authentication.AuthAuthenticator
 import com.acon.acon.core.launcher.AppLauncher
-import com.acon.acon.data.SessionHandler
+import com.acon.acon.data.session.SessionHandler
 import com.acon.acon.data.api.remote.ReissueTokenApi
 import com.acon.acon.data.datasource.local.TokenLocalDataSource
-import com.acon.acon.domain.repository.UserRepository
 import com.acon.acon.launcher.AppLauncherImpl
 import dagger.Binds
 import dagger.Module

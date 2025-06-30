@@ -1,7 +1,7 @@
 package com.acon.acon.data.di
 
-import com.acon.acon.data.SessionHandler
-import com.acon.acon.data.SessionHandlerImpl
+import com.acon.acon.data.session.SessionHandler
+import com.acon.acon.data.session.SessionHandlerImpl
 import com.acon.acon.data.repository.AconAppRepositoryImpl
 import com.acon.acon.data.repository.MapRepositoryImpl
 import com.acon.acon.data.repository.OnboardingRepositoryImpl

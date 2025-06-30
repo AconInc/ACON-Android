@@ -1,4 +1,4 @@
-package com.acon.acon.data
+package com.acon.acon.data.session
 
 import com.acon.acon.core.analytics.amplitude.AconAmplitude
 import com.acon.acon.core.common.IODispatcher

@@ -3,13 +3,12 @@ package com.acon.acon.data.authentication
 import android.content.Context
 import com.acon.acon.core.launcher.AppLauncher
 import com.acon.acon.data.BuildConfig
-import com.acon.acon.data.SessionHandler
+import com.acon.acon.data.session.SessionHandler
 import com.acon.acon.data.api.remote.ReissueTokenApi
 import com.acon.acon.data.datasource.local.TokenLocalDataSource
 import com.acon.acon.data.dto.request.DeleteAccountRequest
 import com.acon.acon.data.dto.request.RefreshRequest
 import com.acon.acon.data.dto.request.SignOutRequest
-import com.acon.acon.domain.repository.UserRepository
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock

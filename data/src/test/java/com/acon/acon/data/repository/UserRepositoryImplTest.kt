@@ -1,6 +1,6 @@
 package com.acon.acon.data.repository
 
-import com.acon.acon.data.SessionHandler
+import com.acon.acon.data.session.SessionHandler
 import com.acon.acon.data.datasource.local.TokenLocalDataSource
 import com.acon.acon.data.datasource.remote.UserRemoteDataSource
 import com.acon.acon.data.dto.response.SignInResponse

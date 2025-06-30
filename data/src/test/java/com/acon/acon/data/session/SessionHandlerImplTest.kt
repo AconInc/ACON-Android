@@ -3,8 +3,6 @@ package com.acon.acon.data.session
 import app.cash.turbine.test
 import com.acon.acon.core.analytics.amplitude.AconAmplitude
 import com.acon.acon.core.model.type.UserType
-import com.acon.acon.data.SessionHandler
-import com.acon.acon.data.SessionHandlerImpl
 import com.acon.acon.data.datasource.local.TokenLocalDataSource
 import io.mockk.coEvery
 import io.mockk.coVerify
