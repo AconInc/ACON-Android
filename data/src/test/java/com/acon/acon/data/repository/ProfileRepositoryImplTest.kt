@@ -5,6 +5,7 @@ import com.acon.acon.data.cache.ProfileInfoCache
 import com.acon.acon.data.createErrorStream
 import com.acon.acon.data.createFakeRemoteError
 import com.acon.acon.data.datasource.remote.ProfileRemoteDataSource
+import com.acon.acon.domain.error.profile.SaveSpotError
 import com.acon.acon.domain.error.profile.ValidateNicknameError
 import io.mockk.coEvery
 import io.mockk.impl.annotations.RelaxedMockK
@@ -38,6 +39,10 @@ class ProfileRepositoryImplTest {
             40051 to ValidateNicknameError.UnsatisfiedCondition::class,
             40901 to ValidateNicknameError.AlreadyUsedNickname::class
         )
+        @JvmStatic
+        fun saveSpotErrorScenarios() = createErrorStream(
+            40403 to SaveSpotError.NotExistSpot::class
+        )
     }
 
     @BeforeEach
@@ -63,6 +68,23 @@ class ProfileRepositoryImplTest {
 
         // When
         val result = profileRepositoryImpl.validateNickname("")
+
+        // Then
+        assertValidErrorMapping(result, expectedErrorClass)
+    }
+
+    @ParameterizedTest
+    @MethodSource("saveSpotErrorScenarios")
+    fun `장소 저장 API 실패 시 에러 객체를 반환한다`(
+        errorCode: Int,
+        expectedErrorClass: KClass<SaveSpotError>
+    ) = runTest {
+        // Given
+        val fakeRemoteError = createFakeRemoteError(errorCode)
+        coEvery { profileRemoteDataSource.saveSpot(any()) } throws fakeRemoteError
+
+        // When
+        val result = profileRepositoryImpl.saveSpot(0)
 
         // Then
         assertValidErrorMapping(result, expectedErrorClass)
