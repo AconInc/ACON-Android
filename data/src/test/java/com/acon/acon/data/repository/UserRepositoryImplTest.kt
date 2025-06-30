@@ -1,29 +1,20 @@
 package com.acon.acon.data.repository
 
-import app.cash.turbine.test
-import com.acon.acon.core.analytics.amplitude.AconAmplitude
-import com.acon.acon.core.model.type.UserType
 import com.acon.acon.data.SessionHandler
 import com.acon.acon.data.datasource.local.TokenLocalDataSource
 import com.acon.acon.data.datasource.remote.UserRemoteDataSource
 import com.acon.acon.data.dto.response.SignInResponse
 import com.acon.acon.data.error.RemoteError
-import com.acon.acon.domain.error.user.PostSignOutError
 import com.acon.acon.domain.error.user.PostSignInError
+import com.acon.acon.domain.error.user.PostSignOutError
 import com.acon.acon.domain.repository.UserRepository
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
-import io.mockk.mockkObject
-import io.mockk.unmockkObject
-import io.mockk.verify
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.TestScope
-import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertInstanceOf
@@ -33,10 +24,9 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
-import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
 import java.util.stream.Stream
 import kotlin.reflect.KClass
+import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 @ExtendWith(MockKExtension::class)
@@ -81,7 +71,16 @@ class UserRepositoryImplTest {
     }
 
     @Test
-    fun `로그인 API 성공 시, 응답받은 액세스와 리프레시 토큰을 로컬에 저장한다`() = runTest {
+    fun `유저 상태는 SessionHandler로 부터 넘겨 받는다`() {
+        // When
+        userRepository.getUserType()
+
+        // Then
+        coVerify(exactly = 1) { sessionHandler.getUserType() }
+    }
+
+    @Test
+    fun `로그인 API 성공 시, 로그인 세션 정보를 반영한다`() = runTest {
         // Given
         val signInResponse = SignInResponse(
             externalUUID = "Dummy UUID",
@@ -97,32 +96,7 @@ class UserRepositoryImplTest {
         // Then
         assertNotNull(signInResponse.accessToken)
         assertNotNull(signInResponse.refreshToken)
-        coVerify(exactly = 1) { tokenLocalDataSource.saveAccessToken(signInResponse.accessToken!!) }
-        coVerify(exactly = 1) { tokenLocalDataSource.saveRefreshToken(signInResponse.refreshToken!!) }
-    }
-
-    @Test
-    fun `로그인 API 성공 시, 앱의 유저 상태를 USER로 설정한다`() = runTest {
-        // Given
-        val signInResponse = SignInResponse(
-            externalUUID = "Dummy UUID",
-            accessToken = "New Access Token",
-            refreshToken = "New Refresh Token",
-            hasVerifiedArea = true
-        )
-        coEvery { userRemoteDataSource.signIn(any()) } returns signInResponse
-        coEvery { tokenLocalDataSource.getAccessToken() } returns null
-
-        // When & Then
-        userRepository.getUserType().test {
-            assertEquals(UserType.GUEST, awaitItem(), "초기 상태는 GUEST여야 합니다.")
-
-            userRepository.signIn(mockk(), "Dummy Token")
-
-            assertEquals(UserType.USER, awaitItem())
-
-            cancelAndIgnoreRemainingEvents()
-        }
+        coVerify(exactly = 1) { sessionHandler.completeSignIn(signInResponse.accessToken!!, signInResponse.refreshToken!!) }
     }
 
     @ParameterizedTest
@@ -142,36 +116,6 @@ class UserRepositoryImplTest {
         assertTrue(result.isFailure)
         val exception = result.exceptionOrNull()
         assertInstanceOf(expectedErrorClass.java, exception, "에러 코드와 예외 클래스가 올바르게 매핑되지 않음")
-    }
-
-    @OptIn(ExperimentalCoroutinesApi::class)
-    @Test
-    fun `로컬에 액세스 토큰 존재 시, 앱의 유저 상태를 USER로 설정한다`() = runTest {
-        // Given
-        userRepository = UserRepositoryImpl(userRemoteDataSource, tokenLocalDataSource, sessionHandler)
-        coEvery { tokenLocalDataSource.getAccessToken() } returns "Dummy Access Token"
-
-        // When
-        advanceUntilIdle()
-
-        // Then
-        val finalUserType = userRepository.getUserType().first()
-        assertEquals(UserType.USER, finalUserType)
-    }
-
-    @OptIn(ExperimentalCoroutinesApi::class)
-    @Test
-    fun `로컬에 액세스 토큰 없을 시, 앱의 유저 상태를 USER로 설정한다`() = runTest {
-        // Given
-        userRepository = UserRepositoryImpl(userRemoteDataSource, tokenLocalDataSource, sessionHandler)
-        coEvery { tokenLocalDataSource.getAccessToken() } returns null
-
-        // When
-        advanceUntilIdle()
-
-        // Then
-        val finalUserType = userRepository.getUserType().first()
-        assertEquals(UserType.GUEST, finalUserType)
     }
 
     @Test
@@ -229,7 +173,6 @@ class UserRepositoryImplTest {
         coVerify(exactly = 1) { userRepository.clearSession() }
     }
 
-
     @Test
     fun `회원탈퇴 실패 시 세션을 초기화하지 않는다`() = runTest {
         // Given
@@ -242,50 +185,4 @@ class UserRepositoryImplTest {
         coVerify(exactly = 0) { userRepository.clearSession() }
     }
 
-    @Test
-    fun `세션 초기화 함수는 로컬에 저장된 토큰을 제거한다`() = runTest {
-        // When
-        userRepository.clearSession()
-
-        // Then
-        coVerify(exactly = 1) { tokenLocalDataSource.removeAllTokens() }
-    }
-
-    @Test
-    fun `세션 초기화 함수는 앱의 유저 상태를 GUEST로 설정한다`() = runTest {
-        // Given
-        val signInResponse = SignInResponse(
-            externalUUID = "Dummy UUID",
-            accessToken = "New Access Token",
-            refreshToken = "New Refresh Token",
-            hasVerifiedArea = true
-        )
-        coEvery { userRemoteDataSource.signIn(any()) } returns signInResponse
-
-        userRepository.signIn(mockk(), "Dummy Token")
-
-        // When & Then
-        userRepository.getUserType().test {
-            assertEquals(UserType.USER, awaitItem(), "테스트 시작 전 상태는 USER여야 합니다.")
-
-            userRepository.clearSession()
-
-            assertEquals(UserType.GUEST, awaitItem())
-
-            cancelAndIgnoreRemainingEvents()
-        }
-    }
-
-    @Test
-    fun `세션 초기화 함수는 Amplitude 유저 ID를 초기화한다`() = runTest {
-        // Given
-        mockkObject(AconAmplitude)
-        // When
-        userRepository.clearSession()
-
-        // Then
-        verify(exactly = 1) { AconAmplitude.clearUserId() }
-
-        unmockkObject(AconAmplitude)
-    }
 }
