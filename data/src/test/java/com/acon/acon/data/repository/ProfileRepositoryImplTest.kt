@@ -5,6 +5,7 @@ import com.acon.acon.data.cache.ProfileInfoCache
 import com.acon.acon.data.createErrorStream
 import com.acon.acon.data.createFakeRemoteError
 import com.acon.acon.data.datasource.remote.ProfileRemoteDataSource
+import com.acon.acon.domain.error.area.ReplaceVerifiedArea
 import com.acon.acon.domain.error.profile.SaveSpotError
 import com.acon.acon.domain.error.profile.ValidateNicknameError
 import io.mockk.coEvery
@@ -42,6 +43,14 @@ class ProfileRepositoryImplTest {
         @JvmStatic
         fun saveSpotErrorScenarios() = createErrorStream(
             40403 to SaveSpotError.NotExistSpot::class
+        )
+        @JvmStatic
+        fun replaceVerifiedAreaErrorScenarios() = createErrorStream(
+            40012 to ReplaceVerifiedArea.OutOfServiceAreaError::class,
+            40054 to ReplaceVerifiedArea.InvalidVerifiedArea::class,
+            40055 to ReplaceVerifiedArea.PeriodRestrictedDeleteError::class,
+            40056 to ReplaceVerifiedArea.MultiLocationReplaceError::class,
+            40404 to ReplaceVerifiedArea.VerifiedAreaNotFound::class
         )
     }
 
@@ -85,6 +94,23 @@ class ProfileRepositoryImplTest {
 
         // When
         val result = profileRepositoryImpl.saveSpot(0)
+
+        // Then
+        assertValidErrorMapping(result, expectedErrorClass)
+    }
+
+    @ParameterizedTest
+    @MethodSource("replaceVerifiedAreaErrorScenarios")
+    fun `인증 지역 변경 API 실패 시 에러 객체를 반환한다`(
+        errorCode: Int,
+        expectedErrorClass: KClass<ReplaceVerifiedArea>
+    ) = runTest {
+        // Given
+        val fakeRemoteError = createFakeRemoteError(errorCode)
+        coEvery { profileRemoteDataSource.replaceVerifiedArea(any(), any(), any()) } throws fakeRemoteError
+
+        // When
+        val result = profileRepositoryImpl.replaceVerifiedArea(0, .0, .0)
 
         // Then
         assertValidErrorMapping(result, expectedErrorClass)
