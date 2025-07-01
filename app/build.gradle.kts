@@ -61,6 +61,7 @@ dependencies {
     implementation(libs.branch.io)
     implementation(libs.google.services.ads)
     implementation(libs.play.services.location)
+    implementation(libs.startup)
 
     implementation(libs.androidx.core.splashscreen)
 

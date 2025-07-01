@@ -83,6 +83,8 @@ turbine = "1.2.1"
 junitComposeVersion = "1.8.2"
 espressoCore = "3.5.0"
 
+# App Startup
+startup = "1.2.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -206,6 +208,9 @@ palette = { module = "androidx.palette:palette", version.ref = "paletteVersion" 
 
 # branch-io
 branch-io = { module = "io.branch.sdk.android:library", version.ref = "branchIo" }
+
+# App Startup
+startup = { module = "androidx.startup:startup-runtime", version.ref = "startup" }
 
 # Gradle
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
