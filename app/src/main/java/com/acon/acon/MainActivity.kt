@@ -35,7 +35,12 @@ import androidx.core.view.WindowCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.rememberNavController
+import com.acon.acon.core.ads_api.AdProvider
+import com.acon.acon.core.ads_api.LocalSpotListAdProvider
+import com.acon.acon.core.analytics.amplitude.AconAmplitude
+import com.acon.acon.core.analytics.constants.EventNames
 import com.acon.acon.core.common.DeepLinkHandler
+import com.acon.acon.core.common.utils.firstNotNull
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.bottomsheet.SignInBottomSheet
 import com.acon.acon.core.designsystem.component.dialog.AconPermissionDialog
@@ -44,26 +49,21 @@ import com.acon.acon.core.designsystem.component.dialog.v2.AconTwoActionDialog
 import com.acon.acon.core.designsystem.effect.LocalHazeState
 import com.acon.acon.core.designsystem.effect.rememberHazeState
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.domain.repository.AconAppRepository
-import com.acon.acon.domain.repository.SocialRepository
-import com.acon.acon.domain.repository.UserRepository
+import com.acon.acon.core.navigation.LocalNavController
 import com.acon.acon.core.navigation.route.AreaVerificationRoute
 import com.acon.acon.core.navigation.route.SpotRoute
-import com.acon.acon.navigation.AconNavigation
-import com.acon.acon.core.ads_api.AdProvider
-import com.acon.acon.core.ads_api.LocalSpotListAdProvider
-import com.acon.acon.core.analytics.amplitude.AconAmplitude
-import com.acon.acon.core.analytics.constants.EventNames
-import com.acon.acon.provider.ads_impl.SpotListAdProvider
-import com.acon.acon.core.common.utils.firstNotNull
-import com.acon.acon.core.navigation.LocalNavController
+import com.acon.acon.core.ui.android.launchPlayStore
 import com.acon.acon.core.ui.compose.LocalDeepLinkHandler
 import com.acon.acon.core.ui.compose.LocalLocation
 import com.acon.acon.core.ui.compose.LocalRequestLocationPermission
 import com.acon.acon.core.ui.compose.LocalRequestSignIn
 import com.acon.acon.core.ui.compose.LocalSnackbarHostState
 import com.acon.acon.core.ui.compose.LocalUserType
-import com.acon.acon.core.ui.android.launchPlayStore
+import com.acon.acon.domain.repository.AconAppRepository
+import com.acon.acon.domain.repository.SocialRepository
+import com.acon.acon.domain.repository.UserRepository
+import com.acon.acon.navigation.AconNavigation
+import com.acon.acon.provider.ads_impl.SpotListAdProvider
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -273,10 +273,6 @@ class MainActivity : ComponentActivity() {
                 deepLinkHandler.handleDeepLink(metadata)
             }
         }.withData(intent?.data).init()
-
-        if (BuildConfig.DEBUG) {
-            Timber.plant(Timber.DebugTree())
-        }
 
         val windowInsetsController = WindowCompat.getInsetsController(window, window.decorView)
         windowInsetsController.isAppearanceLightStatusBars = false
