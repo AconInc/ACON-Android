@@ -59,14 +59,15 @@ class AppUpdateHandlerImpl(
             } catch (e: Exception) {
                 null
             }
-            currentAppVersion?.let { v ->
-                aconAppRepository.shouldUpdateApp(v).getOrElse { false }
-            }
+            if (currentAppVersion == null)
+                return@async false
+
+            aconAppRepository.shouldUpdateApp(currentAppVersion).getOrElse { false }
         }
 
         appUpdateInfo.firstNotNull().let { updateInfo ->
             if (updateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE) {
-                if (shouldUpdateAppDeferred.await() == true) { // 강제 업데이트 (스토어 이동)
+                if (shouldUpdateAppDeferred.await()) { // 강제 업데이트 (스토어 이동)
                     return UpdateState.FORCE
                 } else if (updateInfo.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE)) { // 선택적 업데이트 (인앱)
                     return UpdateState.OPTIONAL
