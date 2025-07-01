@@ -37,7 +37,7 @@ object AconAmplitude: EventTracker() {
      * @param eventName 이벤트 이름
      * @param properties 이벤트 속성
      *
-     * @sample com.acon.core.analytics.sample.sampleAmplitudeTrack
+     * @sample com.acon.acon.core.analytics.sample.sampleAmplitudeTrack
      */
     override fun trackEvent(eventName: String, properties: Map<String, Any>) {
         if (AconAmplitude::amplitude.isInitialized) {
@@ -45,7 +45,7 @@ object AconAmplitude: EventTracker() {
         }
     }
 
-    fun trackEvent(eventName: String, property: Pair<String, Any>) {
+    override fun trackEvent(eventName: String, property: Pair<String, Any>) {
         if (AconAmplitude::amplitude.isInitialized) {
             trackEvent(eventName, mapOf(property))
         }
@@ -55,7 +55,7 @@ object AconAmplitude: EventTracker() {
      * Amplitude에 사용자 속성을 전송
      * @param properties 사용자 속성
      *
-     * @sample com.acon.core.analytics.sample.sampleAmplitudeProperties
+     * @sample com.acon.acon.core.analytics.sample.sampleAmplitudeProperties
      */
     override fun setUserProperties(properties: Map<String, String>) {
         if (AconAmplitude::amplitude.isInitialized) {

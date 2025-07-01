@@ -1,6 +1,7 @@
 package com.acon.acon.data.repository
 
 import com.acon.acon.core.common.IODispatcher
+import com.acon.acon.core.model.model.area.Area
 import com.acon.acon.data.cache.ProfileInfoCache
 import com.acon.acon.data.datasource.remote.ProfileRemoteDataSource
 import com.acon.acon.data.dto.request.SaveSpotRequest
@@ -12,6 +13,8 @@ import com.acon.acon.core.model.model.profile.ProfileInfo
 import com.acon.acon.core.model.model.profile.SavedSpot
 import com.acon.acon.domain.repository.ProfileRepository
 import com.acon.acon.core.model.type.UpdateProfileType
+import com.acon.acon.domain.error.area.DeleteVerifiedAreaError
+import com.acon.acon.domain.error.area.ReplaceVerifiedArea
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,11 +30,11 @@ class ProfileRepositoryImpl @Inject constructor(
     private val profileInfoCache: ProfileInfoCache
 ) : ProfileRepository {
 
-    override fun fetchProfile(): Flow<Result<com.acon.acon.core.model.model.profile.ProfileInfo>> {
+    override fun fetchProfile(): Flow<Result<ProfileInfo>> {
         return profileInfoCache.data
     }
 
-    override suspend fun getPreSignedUrl(): Result<com.acon.acon.core.model.model.profile.PreSignedUrl> {
+    override suspend fun getPreSignedUrl(): Result<PreSignedUrl> {
         return runCatchingWith() {
             profileRemoteDataSource.getPreSignedUrl().toPreSignedUrl()
         }
@@ -47,7 +50,7 @@ class ProfileRepositoryImpl @Inject constructor(
         return runCatchingWith() {
             profileRemoteDataSource.updateProfile(fileName, nickname, birthday)
             profileInfoCache.updateData(
-                com.acon.acon.core.model.model.profile.ProfileInfo(
+                ProfileInfo(
                     nickname = nickname,
                     birthDate = birthday,
                     image = uri,
@@ -57,28 +60,28 @@ class ProfileRepositoryImpl @Inject constructor(
         }
     }
 
-    private val _updateProfileType = MutableStateFlow(com.acon.acon.core.model.type.UpdateProfileType.IDLE)
+    private val _updateProfileType = MutableStateFlow(UpdateProfileType.IDLE)
     private val updateProfileType = flow {
         emitAll(_updateProfileType)
     }.stateIn(
         scope = scope,
         started = SharingStarted.Lazily,
-        initialValue = com.acon.acon.core.model.type.UpdateProfileType.IDLE
+        initialValue = UpdateProfileType.IDLE
     )
 
-    override fun updateProfileType(type: com.acon.acon.core.model.type.UpdateProfileType) {
+    override fun updateProfileType(type: UpdateProfileType) {
         _updateProfileType.value = type
     }
 
-    override fun getProfileType(): Flow<com.acon.acon.core.model.type.UpdateProfileType> {
+    override fun getProfileType(): Flow<UpdateProfileType> {
         return updateProfileType
     }
 
     override suspend fun resetProfileType() {
-        _updateProfileType.emit(com.acon.acon.core.model.type.UpdateProfileType.IDLE)
+        _updateProfileType.emit(UpdateProfileType.IDLE)
     }
 
-    override suspend fun fetchSavedSpots(): Result<List<com.acon.acon.core.model.model.profile.SavedSpot>> {
+    override suspend fun fetchSavedSpots(): Result<List<SavedSpot>> {
         return runCatchingWith() {
             profileRemoteDataSource.fetchSavedSpots().savedSpotResponseList?.map {
                 it.toSavedSpot()
@@ -89,6 +92,45 @@ class ProfileRepositoryImpl @Inject constructor(
     override suspend fun saveSpot(spotId: Long): Result<Unit> {
         return runCatchingWith(*SaveSpotError.createErrorInstances()) {
             profileRemoteDataSource.saveSpot(SaveSpotRequest(spotId))
+        }
+    }
+
+    override suspend fun verifyArea(
+        latitude: Double,
+        longitude: Double
+    ): Result<Unit> = runCatchingWith() {
+        // TODO - 동네인증 API Error 처리 안됨
+        profileRemoteDataSource.verifyArea(
+            latitude = latitude,
+            longitude = longitude
+        )
+    }
+
+    override suspend fun fetchVerifiedAreaList(): Result<List<Area>> {
+        // TODO - 인증 지역 조회 API Error 처리 안됨
+        return runCatchingWith() {
+            profileRemoteDataSource.fetchVerifiedAreaList().verifiedAreaList
+                .map { it.toVerifiedArea() }
+        }
+    }
+
+    override suspend fun replaceVerifiedArea(
+        previousVerifiedAreaId: Long,
+        latitude: Double,
+        longitude: Double
+    ): Result<Unit> {
+        return runCatchingWith(*ReplaceVerifiedArea.createErrorInstances()) {
+            profileRemoteDataSource.replaceVerifiedArea(
+                previousVerifiedAreaId = previousVerifiedAreaId,
+                latitude = latitude,
+                longitude = longitude
+            )
+        }
+    }
+
+    override suspend fun deleteVerifiedArea(verifiedAreaId: Long): Result<Unit> {
+        return runCatchingWith(*DeleteVerifiedAreaError.createErrorInstances()) {
+            profileRemoteDataSource.deleteVerifiedArea(verifiedAreaId)
         }
     }
 }

@@ -19,10 +19,6 @@ credentials = "1.3.0"
 googleid = "1.1.1"
 kotlin = "2.0.21"
 coreKtx = "1.16.0"
-junit = "4.13.2"
-junitVersion = "1.2.1"
-junitComposeVersion = "1.8.2"
-espressoCore = "3.5.0"
 lifecycleRuntimeKtx = "2.8.7"
 composeBom = "2025.05.01"
 appcompat = "1.7.0"
@@ -76,6 +72,18 @@ accompanistPermissions = "0.37.0"
 
 paletteVersion = "1.0.0"
 
+# Test
+junit4 = "4.13.2"
+junit5 = "5.10.2"
+junitAndroid = "1.2.1"
+mockk = "1.13.10"
+turbine = "1.2.1"
+
+# Android Test
+junitComposeVersion = "1.8.2"
+espressoCore = "3.5.0"
+
+
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
@@ -111,8 +119,19 @@ google-services-ads = { module = "com.google.android.gms:play-services-ads", ver
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }
 
 # Testing
-junit = { group = "junit", name = "junit", version.ref = "junit" }
-androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
+junit4 = { group = "junit", name = "junit", version.ref = "junit4" }
+junit5-api = { group = "org.junit.jupiter", name = "junit-jupiter-api", version.ref = "junit5" }
+junit5-params = { group = "org.junit.jupiter", name = "junit-jupiter-params", version.ref = "junit5" }
+junit5-runtime-engine = { group = "org.junit.jupiter", name = "junit-jupiter-engine", version.ref = "junit5" }
+junit5-runtime-vintage-engine = { group = "org.junit.vintage", name = "junit-vintage-engine", version.ref = "junit5" }
+kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
+kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
+coroutine-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutine" }
+mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
+turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine"}
+
+# Android Testing
+androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitAndroid" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4", version.ref = "junitComposeVersion" }
 
@@ -234,3 +253,6 @@ coil = ["coil-compose", "coil-network-okhttp"]
 naver-map = ["naver-map-compose", "naver-map-location", "naver-map-sdk"]
 firebase = ["firebase-analytics-sdk", "firebase-crashlytics-sdk"]
 play-app-update = ["play-core", "play-core-ktx"]
+non-android-test = ["junit4", "kotlin-test", "mockk", "coroutine-test", "turbine", "junit5-api", "junit5-params"]
+junit5-runtime = ["junit5-runtime-engine", "junit5-runtime-vintage-engine"]
+android-test = ["androidx-junit", "androidx-espresso-core", "androidx-ui-test-junit4"]

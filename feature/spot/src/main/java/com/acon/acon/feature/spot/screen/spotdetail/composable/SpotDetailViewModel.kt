@@ -4,14 +4,14 @@ import android.location.Location
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
-import com.acon.acon.domain.repository.SpotRepository
-import com.acon.acon.domain.repository.UserRepository
-import com.acon.acon.core.navigation.route.SpotRoute
 import com.acon.acon.core.analytics.amplitude.AconAmplitude
 import com.acon.acon.core.analytics.constants.EventNames
 import com.acon.acon.core.analytics.constants.PropertyKeys
-import com.acon.acon.core.ui.base.BaseContainerHost
+import com.acon.acon.core.navigation.route.SpotRoute
 import com.acon.acon.core.navigation.type.spotNavigationParameterNavType
+import com.acon.acon.core.ui.base.BaseContainerHost
+import com.acon.acon.domain.repository.ProfileRepository
+import com.acon.acon.domain.repository.SpotRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
@@ -23,8 +23,8 @@ import javax.inject.Inject
 @OptIn(OrbitExperimental::class)
 @HiltViewModel
 class SpotDetailViewModel @Inject constructor(
-    private val userRepository: UserRepository,
     private val spotRepository: SpotRepository,
+    private val profileRepository: ProfileRepository,
     savedStateHandle: SavedStateHandle
 ) : BaseContainerHost<SpotDetailUiState, SpotDetailSideEffect>() {
 
@@ -83,7 +83,7 @@ class SpotDetailViewModel @Inject constructor(
         // GUEST 인 경우 빈 리스트
         val verifiedAreaListDeferred = viewModelScope.async {
             if (userType.value != com.acon.acon.core.model.type.UserType.GUEST) {
-                userRepository.fetchVerifiedAreaList()
+                profileRepository.fetchVerifiedAreaList()
             } else {
                 Result.success(emptyList())
             }

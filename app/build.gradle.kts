@@ -1,3 +1,5 @@
+import utils.androidTestImplementation
+
 /** See AndroidApplicationConventionPlugin.kt */
 
 plugins {
@@ -41,6 +43,7 @@ dependencies {
     implementation(projects.core.analytics)
     implementation(projects.core.navigation)
     implementation(projects.core.ui)
+    implementation(projects.core.launcher)
 
     implementation(projects.domain)
     implementation(projects.data)
@@ -60,4 +63,7 @@ dependencies {
     implementation(libs.play.services.location)
 
     implementation(libs.androidx.core.splashscreen)
+
+    testImplementation(libs.bundles.non.android.test)
+    androidTestImplementation(libs.bundles.android.test)
 }

@@ -1,7 +1,6 @@
 package com.acon.acon.feature.settings.screen
 
 import com.acon.acon.domain.repository.UserRepository
-import com.acon.acon.core.model.type.UserType
 import com.acon.acon.core.ui.base.BaseContainerHost
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -28,7 +27,7 @@ class SettingsViewModel @Inject constructor(
 
     fun onSignOut() = intent {
         onLogoutDialogShowStateChange(false)
-        userRepository.logout()
+        userRepository.signOut()
             .onSuccess {
                 postSideEffect(SettingsSideEffect.NavigateToSignIn)
             }

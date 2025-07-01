@@ -1,15 +1,20 @@
 package com.acon.acon.data.api.remote
 
+import com.acon.acon.data.dto.request.AreaVerificationRequest
+import com.acon.acon.data.dto.request.ReplaceVerifiedAreaRequest
 import com.acon.acon.data.dto.request.SaveSpotRequest
 import com.acon.acon.data.dto.request.UpdateProfileRequest
+import com.acon.acon.data.dto.response.area.VerifiedAreaListResponse
 import com.acon.acon.data.dto.response.profile.PreSignedUrlResponse
 import com.acon.acon.data.dto.response.profile.ProfileResponse
 import com.acon.acon.data.dto.response.profile.SavedSpotsResponse
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.PATCH
 import retrofit2.http.POST
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface ProfileApi {
@@ -35,5 +40,23 @@ interface ProfileApi {
     @POST("/api/v1/saved-spots")
     suspend fun saveSpot(
         @Body saveSpotRequest: SaveSpotRequest
+    )
+
+    @POST("/api/v1/verified-areas")
+    suspend fun verifyArea(
+        @Body request: AreaVerificationRequest
+    )
+
+    @GET("/api/v1/verified-areas")
+    suspend fun fetchVerifiedAreaList() : VerifiedAreaListResponse
+
+    @POST("/api/v1/verified-areas/replacement")
+    suspend fun replaceVerifiedArea(
+        @Body request: ReplaceVerifiedAreaRequest
+    )
+
+    @DELETE("/api/v1/verified-areas/{verifiedAreaId}")
+    suspend fun deleteVerifiedArea(
+        @Path("verifiedAreaId") verifiedAreaId: Long
     )
 }

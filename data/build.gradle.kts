@@ -1,3 +1,4 @@
+import utils.androidTestImplementation
 import java.util.Properties
 
 plugins {
@@ -25,6 +26,7 @@ dependencies {
 
     implementation(projects.domain)
     implementation(projects.core.analytics)
+    implementation(projects.core.launcher)
 
     implementation(platform(libs.okhttp.bom))
     implementation(libs.okhttp)
@@ -39,4 +41,12 @@ dependencies {
     implementation(libs.bundles.googleSignIn)
 
     implementation(libs.preferences.datastore)
+    
+    testImplementation(libs.bundles.non.android.test)
+    testRuntimeOnly(libs.bundles.junit5.runtime)
+    androidTestImplementation(libs.bundles.android.test)
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
 }

@@ -1,10 +1,13 @@
 package com.acon.acon.di
 
 import android.content.Context
-import com.acon.acon.authentication.AuthAuthenticator
-import com.acon.acon.data.SessionManager
+import com.acon.acon.data.authentication.AuthAuthenticator
+import com.acon.acon.core.launcher.AppLauncher
+import com.acon.acon.data.session.SessionHandler
 import com.acon.acon.data.api.remote.ReissueTokenApi
 import com.acon.acon.data.datasource.local.TokenLocalDataSource
+import com.acon.acon.launcher.AppLauncherImpl
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -19,10 +22,20 @@ object AuthenticatorModule {
 
     @Provides
     @Singleton
-    fun bindsAuthAuthenticator(
+    fun providesAuthAuthenticator(
         @ApplicationContext context: Context,
         tokenLocalDataSource: TokenLocalDataSource,
+        sessionHandler: SessionHandler,
         reissueTokenApi: ReissueTokenApi,
-        sessionManager: SessionManager
-    ): Authenticator = AuthAuthenticator(context, tokenLocalDataSource, reissueTokenApi, sessionManager)
+        appLauncher: AppLauncher
+    ): Authenticator = AuthAuthenticator(context, tokenLocalDataSource, sessionHandler, reissueTokenApi, appLauncher)
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
+abstract class LauncherModule {
+
+    @Binds
+    @Singleton
+    abstract fun bindsAppLauncher(impl: AppLauncherImpl): AppLauncher
 }

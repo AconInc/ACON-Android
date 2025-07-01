@@ -20,5 +20,6 @@ abstract class EventTracker {
     abstract fun setUserId(userId: String)
     abstract fun clearUserId()
     abstract fun trackEvent(eventName: String, properties: Map<String, Any>)
+    abstract fun trackEvent(eventName: String, property: Pair<String, Any>)
     abstract fun setUserProperties(properties: Map<String, String> = emptyMap())
 }
