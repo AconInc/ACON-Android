@@ -134,16 +134,6 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-    private val appUpdateHandler: AppUpdateHandler = AppUpdateHandlerImpl(
-        appUpdateManager = appUpdateManager.apply {
-            registerListener(appInstallStateListener)
-        },
-        aconAppRepository = aconAppRepository,
-        appUpdateActivityResultLauncher = appUpdateActivityResultLauncher,
-        application = this.application,
-        scope = lifecycleScope
-    )
-
     private val appInstallStateListener by lazy {
         object: InstallStateUpdatedListener {
             override fun onStateUpdate(state: InstallState) {
@@ -167,6 +157,16 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
+    private val appUpdateHandler: AppUpdateHandler = AppUpdateHandlerImpl(
+        appUpdateManager = appUpdateManager.apply {
+            registerListener(appInstallStateListener)
+        },
+        aconAppRepository = aconAppRepository,
+        appUpdateActivityResultLauncher = appUpdateActivityResultLauncher,
+        application = this.application,
+        scope = lifecycleScope
+    )
 
     private val _isLocationPermissionGranted = MutableStateFlow(false)
     private val isLocationPermissionGranted = flow {
