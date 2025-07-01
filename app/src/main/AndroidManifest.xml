@@ -89,6 +89,9 @@
             <meta-data
                 android:name="com.acon.acon.startup.TimberInitializer"
                 android:value="androidx.startup" />
+            <meta-data
+                android:name="com.acon.acon.startup.MobileAdsInitializer"
+                android:value="androidx.startup" />
         </provider>
     </application>
 
