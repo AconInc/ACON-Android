@@ -77,6 +77,16 @@
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="${admobAppUnitId}" />
+        
+        <provider
+            android:authorities="${applicationId}.androidx-startup"
+            android:name="androidx.startup.InitializationProvider"
+            android:exported="false"
+            tools:node="merge">
+            <meta-data
+                android:name="com.acon.acon.startup.AconAmplitudeInitializer"
+                android:value="androidx.startup" />
+        </provider>
     </application>
 
     <queries>
