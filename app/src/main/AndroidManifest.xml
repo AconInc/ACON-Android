@@ -92,6 +92,9 @@
             <meta-data
                 android:name="com.acon.acon.startup.MobileAdsInitializer"
                 android:value="androidx.startup" />
+            <meta-data
+                android:name="com.acon.acon.startup.BranchInitializer"
+                android:value="androidx.startup" />
         </provider>
     </application>
 
