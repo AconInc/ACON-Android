@@ -17,7 +17,7 @@ class UploadRepositoryImpl @Inject constructor(
     override suspend fun getSuggestions(
         latitude: Double,
         longitude: Double
-    ): Result<List<com.acon.acon.core.model.model.upload.UploadSpotSuggestion>> = runCatchingWith(*GetSuggestionsError.createErrorInstances()) {
+    ): Result<List<UploadSpotSuggestion>> = runCatchingWith(GetSuggestionsError()) {
         uploadRemoteDataSource.getSuggestions(latitude, longitude).suggestionList.map { it.toSuggestion() }
     }
 
@@ -25,7 +25,7 @@ class UploadRepositoryImpl @Inject constructor(
         spotId: Long,
         latitude: Double,
         longitude: Double
-    ): Result<Boolean> = runCatchingWith(*GetVerifySpotLocationError.createErrorInstances()) {
+    ): Result<Boolean> = runCatchingWith(GetVerifySpotLocationError()) {
         uploadRemoteDataSource.verifyLocation(
             spotId = spotId,
             latitude = latitude,
@@ -36,14 +36,14 @@ class UploadRepositoryImpl @Inject constructor(
     override suspend fun submitReview(
         spotId: Long,
         acornCount: Int
-    ): Result<Unit> = runCatchingWith(*UploadReviewError.createErrorInstances()) {
+    ): Result<Unit> = runCatchingWith(UploadReviewError()) {
         uploadRemoteDataSource.submitReview(
             spotId = spotId,
             acornCount = acornCount
         )
     }
 
-    override suspend fun getSearchedSpots(query: String): Result<List<com.acon.acon.core.model.model.upload.SearchedSpot>> {
+    override suspend fun getSearchedSpots(query: String): Result<List<SearchedSpot>> {
         return runCatchingWith {
             uploadRemoteDataSource.getSearchedSpots(query).searchedSpots.map { it.toSearchedSpot() }
         }

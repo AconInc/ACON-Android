@@ -11,7 +11,7 @@ class AconAppRepositoryImpl @Inject constructor(
 ) : AconAppRepository {
 
     override suspend fun shouldUpdateApp(currentVersion: String): Result<Boolean> {
-        return runCatchingWith(*FetchShouldUpdateError.createErrorInstances()) {
+        return runCatchingWith(FetchShouldUpdateError()) {
             aconAppRemoteDataSource.fetchShouldUpdateApp(currentVersion).shouldUpdate ?: false
         }
     }
