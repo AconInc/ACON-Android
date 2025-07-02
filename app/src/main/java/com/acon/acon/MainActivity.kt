@@ -40,6 +40,7 @@ import com.acon.acon.core.ads_api.LocalSpotListAdProvider
 import com.acon.acon.core.analytics.amplitude.AconAmplitude
 import com.acon.acon.core.analytics.constants.EventNames
 import com.acon.acon.core.common.DeepLinkHandler
+import com.acon.acon.core.common.utils.firstNotNull
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.bottomsheet.SignInBottomSheet
 import com.acon.acon.core.designsystem.component.dialog.AconPermissionDialog
@@ -279,10 +280,6 @@ class MainActivity : ComponentActivity() {
                 deepLinkHandler.handleDeepLink(metadata)
             }
         }.withData(intent?.data).init()
-
-        if (BuildConfig.DEBUG) {
-            Timber.plant(Timber.DebugTree())
-        }
 
         val windowInsetsController = WindowCompat.getInsetsController(window, window.decorView)
         windowInsetsController.isAppearanceLightStatusBars = false
