@@ -24,7 +24,7 @@ abstract class BaseContainerHost<STATE : Any, SIDE_EFFECT : Any>() :
 
     private val currentLocation = MutableStateFlow<Location?>(null)
 
-    private val _userType = MutableStateFlow(com.acon.acon.core.model.type.UserType.GUEST)
+    private val _userType = MutableStateFlow(UserType.GUEST)
     protected val userType = _userType.asStateFlow()
 
     @Composable

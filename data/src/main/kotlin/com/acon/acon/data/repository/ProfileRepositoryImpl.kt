@@ -41,7 +41,7 @@ class ProfileRepositoryImpl @Inject constructor(
     }
 
     override suspend fun validateNickname(nickname: String): Result<Unit> {
-        return runCatchingWith(*ValidateNicknameError.createErrorInstances()) {
+        return runCatchingWith(ValidateNicknameError()) {
             profileRemoteDataSource.validateNickname(nickname)
         }
     }
@@ -90,7 +90,7 @@ class ProfileRepositoryImpl @Inject constructor(
     }
 
     override suspend fun saveSpot(spotId: Long): Result<Unit> {
-        return runCatchingWith(*SaveSpotError.createErrorInstances()) {
+        return runCatchingWith(SaveSpotError()) {
             profileRemoteDataSource.saveSpot(SaveSpotRequest(spotId))
         }
     }
@@ -119,7 +119,7 @@ class ProfileRepositoryImpl @Inject constructor(
         latitude: Double,
         longitude: Double
     ): Result<Unit> {
-        return runCatchingWith(*ReplaceVerifiedArea.createErrorInstances()) {
+        return runCatchingWith(ReplaceVerifiedArea()) {
             profileRemoteDataSource.replaceVerifiedArea(
                 previousVerifiedAreaId = previousVerifiedAreaId,
                 latitude = latitude,
@@ -129,7 +129,7 @@ class ProfileRepositoryImpl @Inject constructor(
     }
 
     override suspend fun deleteVerifiedArea(verifiedAreaId: Long): Result<Unit> {
-        return runCatchingWith(*DeleteVerifiedAreaError.createErrorInstances()) {
+        return runCatchingWith(DeleteVerifiedAreaError()) {
             profileRemoteDataSource.deleteVerifiedArea(verifiedAreaId)
         }
     }

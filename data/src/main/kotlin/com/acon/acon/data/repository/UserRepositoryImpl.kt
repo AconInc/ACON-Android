@@ -26,7 +26,7 @@ class UserRepositoryImpl @Inject constructor(
         socialType: SocialType,
         idToken: String
     ): Result<VerificationStatus> {
-        return runCatchingWith(*PostSignInError.createErrorInstances()) {
+        return runCatchingWith(PostSignInError()) {
             val signInResponse = userRemoteDataSource.signIn(
                 SignInRequest(
                     socialType = socialType,
@@ -42,7 +42,7 @@ class UserRepositoryImpl @Inject constructor(
 
     override suspend fun signOut(): Result<Unit> {
         val refreshToken = tokenLocalDataSource.getRefreshToken() ?: ""
-        return runCatchingWith(*PostSignOutError.createErrorInstances()) {
+        return runCatchingWith(PostSignOutError()) {
             userRemoteDataSource.signOut(
                 SignOutRequest(refreshToken = refreshToken)
             )

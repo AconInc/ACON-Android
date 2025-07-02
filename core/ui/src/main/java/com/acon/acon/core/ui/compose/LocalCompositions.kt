@@ -20,7 +20,7 @@ val LocalSnackbarHostState = staticCompositionLocalOf {
 }
 
 val LocalUserType = compositionLocalOf {
-    com.acon.acon.core.model.type.UserType.GUEST
+    UserType.GUEST
 }
 
 val LocalRequestSignIn = staticCompositionLocalOf<(propertyKey: String) -> Unit> { // TODO: core navigation 모듈 통합

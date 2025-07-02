@@ -3,7 +3,6 @@ package com.acon.acon.data.api.remote
 import com.acon.acon.data.dto.request.RecentNavigationLocationRequest
 import com.acon.acon.data.dto.response.MenuBoardListResponse
 import com.acon.acon.data.dto.response.SpotDetailResponse
-import com.acon.acon.data.dto.response.area.LegalAreaResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -16,12 +15,6 @@ interface SpotNoAuthApi {
     suspend fun fetchRecentNavigationLocation(
         @Body request: RecentNavigationLocationRequest
     )
-
-    @GET("api/v1/area")
-    suspend fun getLegalDong(
-        @Query("latitude") latitude: Double,
-        @Query("longitude") longitude: Double
-    ) : LegalAreaResponse
 
     @GET("/api/v1/spots/{spotId}")
     suspend fun fetchSpotDetail(

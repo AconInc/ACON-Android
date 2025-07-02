@@ -1,9 +1,8 @@
 package com.acon.acon.domain.error.profile
 
-import com.acon.acon.domain.error.ErrorFactory
 import com.acon.acon.domain.error.RootError
 
-sealed class ValidateNicknameError : RootError() {
+open class ValidateNicknameError : RootError() {
 
     class UnsatisfiedCondition : ValidateNicknameError() {
         override val code: Int = 40051
@@ -12,12 +11,10 @@ sealed class ValidateNicknameError : RootError() {
         override val code: Int = 40901
     }
 
-    companion object : ErrorFactory {
-        override fun createErrorInstances(): Array<RootError> {
-            return arrayOf(
-                UnsatisfiedCondition(),
-                AlreadyUsedNickname()
-            )
-        }
+    final override fun createErrorInstances(): Array<RootError> {
+        return arrayOf(
+            UnsatisfiedCondition(),
+            AlreadyUsedNickname()
+        )
     }
 }
