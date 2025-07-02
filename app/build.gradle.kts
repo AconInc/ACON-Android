@@ -65,5 +65,10 @@ dependencies {
     implementation(libs.androidx.core.splashscreen)
 
     testImplementation(libs.bundles.non.android.test)
+    testRuntimeOnly(libs.bundles.junit5.runtime)
     androidTestImplementation(libs.bundles.android.test)
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
 }
