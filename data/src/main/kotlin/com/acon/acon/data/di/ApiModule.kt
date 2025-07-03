@@ -7,7 +7,6 @@ import com.acon.acon.data.api.remote.AconAppApi
 import com.acon.acon.data.api.remote.MapApi
 import com.acon.acon.data.api.remote.OnboardingApi
 import com.acon.acon.data.api.remote.ProfileApi
-import com.acon.acon.data.api.remote.ReissueTokenApi
 import com.acon.acon.data.api.remote.SpotAuthApi
 import com.acon.acon.data.api.remote.SpotNoAuthApi
 import com.acon.acon.data.api.remote.UploadApi
@@ -30,12 +29,6 @@ internal object ApiModule {
     ): UserApi {
         return retrofit.create(UserApi::class.java)
     }
-
-    @Provides
-    @Singleton
-    fun provideReissueTokenApi(
-       @NoAuth retrofit: Retrofit
-    ) : ReissueTokenApi = retrofit.create(ReissueTokenApi::class.java)
 
     @Singleton
     @Provides
