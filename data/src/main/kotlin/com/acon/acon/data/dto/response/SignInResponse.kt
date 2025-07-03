@@ -11,7 +11,7 @@ data class SignInResponse(
     @SerialName("refreshToken") val refreshToken: String?,
     @SerialName("hasVerifiedArea") val hasVerifiedArea: Boolean
 ) {
-    fun toVerificationStatus() = com.acon.acon.core.model.model.user.VerificationStatus(
+    fun toVerificationStatus() = VerificationStatus(
         externalUUID = externalUUID,
         hasVerifiedArea = hasVerifiedArea
     )
