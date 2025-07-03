@@ -3,15 +3,14 @@ package com.acon.acon.data.authentication
 import android.content.Context
 import com.acon.acon.core.launcher.AppLauncher
 import com.acon.acon.data.api.remote.UserApi
-import com.acon.acon.data.session.SessionHandler
 import com.acon.acon.data.datasource.local.TokenLocalDataSource
 import com.acon.acon.data.dto.request.DeleteAccountRequest
 import com.acon.acon.data.dto.request.ReissueRequest
 import com.acon.acon.data.dto.request.SignOutRequest
 import com.acon.acon.data.error.runCatchingWith
+import com.acon.acon.data.session.SessionHandler
 import com.acon.acon.domain.error.user.ReissueError
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.encodeToString
@@ -104,9 +103,5 @@ class AuthAuthenticator @Inject constructor(
     private suspend fun startNewTask() {
         sessionHandler.clearSession()
         appLauncher.restartApp(context)
-    }
-
-    companion object {
-        const val TAG = "AuthAuthenticator"
     }
 }
