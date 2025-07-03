@@ -2,14 +2,16 @@ package com.acon.acon.data.authentication
 
 import android.content.Context
 import com.acon.acon.core.launcher.AppLauncher
-import com.acon.acon.data.BuildConfig
+import com.acon.acon.data.api.remote.UserApi
 import com.acon.acon.data.session.SessionHandler
-import com.acon.acon.data.api.remote.ReissueTokenApi
 import com.acon.acon.data.datasource.local.TokenLocalDataSource
 import com.acon.acon.data.dto.request.DeleteAccountRequest
-import com.acon.acon.data.dto.request.RefreshRequest
+import com.acon.acon.data.dto.request.ReissueRequest
 import com.acon.acon.data.dto.request.SignOutRequest
+import com.acon.acon.data.error.runCatchingWith
+import com.acon.acon.domain.error.user.ReissueError
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.encodeToString
@@ -22,137 +24,85 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import okhttp3.Route
 import okio.Buffer
-import timber.log.Timber
 import javax.inject.Inject
 
 class AuthAuthenticator @Inject constructor(
     private val context: Context,
     private val tokenLocalDataSource: TokenLocalDataSource,
     private val sessionHandler: SessionHandler,
-    private val reissueTokenApi: ReissueTokenApi,
+    private val userApi: UserApi,
     private val appLauncher: AppLauncher
 ) : Authenticator {
 
     private val mutex = Mutex()
 
     override fun authenticate(route: Route?, response: Response): Request? = runBlocking {
-        if(BuildConfig.DEBUG) {
-            Timber.tag(TAG).d("[authenticate] 호출됨. 요청 URL: ${response.request.url}")
-        }
 
         mutex.withLock {
-            val currentRefreshToken = tokenLocalDataSource.getRefreshToken() ?: ""
+            val currentRefreshToken = tokenLocalDataSource.getRefreshToken()
 
-            if (currentRefreshToken.isEmpty()) {
-                Timber.tag(TAG).e("저장된 Refresh Token이 없음. 토큰 제거 후 로그인 화면으로 이동")
-                sessionHandler.clearSession()
+            if (currentRefreshToken.isNullOrEmpty()) {
                 startNewTask()
                 return@withLock null
             }
 
-            val result = runCatching {
-                reissueTokenApi.postRefresh(RefreshRequest(currentRefreshToken))
-            }
-
-            when {
-                result.isSuccess -> {
-                    if(BuildConfig.DEBUG) {
-                        Timber.tag(TAG).d("토큰 재발급 요청 성공") }
-                    val tokenResponse = result.getOrNull()
-
-                    if (tokenResponse == null) {
-                        sessionHandler.clearSession()
-                        startNewTask()
-                        return@withLock null
-                    }
-
-                    val tokenBody = tokenResponse.toRefreshToken()
-                    if (tokenBody.accessToken.isNullOrEmpty() || tokenBody.refreshToken.isNullOrEmpty()) {
-                        if(BuildConfig.DEBUG) {
-                            Timber.tag(TAG).e("토큰이 비어 있음. 토큰 제거 후 로그인 화면으로 이동")
-                        }
-                        sessionHandler.clearSession()
-                        startNewTask()
-                        return@withLock null
-                    }
-
-                    tokenBody.accessToken?.let { tokenLocalDataSource.saveAccessToken(it) }
-                    tokenBody.refreshToken?.let { tokenLocalDataSource.saveRefreshToken(it) }
-
-                    if(BuildConfig.DEBUG) {
-                        Timber.tag(TAG).d("[authenticate] 새 액세스 토큰으로 요청 재시도")
-                        Timber.tag(TAG)
-                            .d("재실행 요청 정보: ${response.request.method} ${response.request.url}")
-                    }
-
-                    return@withLock when {
-                        response.request.url.toString().contains("auth/logout") -> {
-                            val updatedRefreshToken = tokenLocalDataSource.getRefreshToken() ?: ""
-
-                            val signOutRequestJson = Json.encodeToString(SignOutRequest(updatedRefreshToken))
-                            val requestBody: RequestBody = signOutRequestJson.toRequestBody("application/json".toMediaTypeOrNull())
-
-                            response.request.newBuilder()
-                                .removeHeader("Authorization")
-                                .header("Authorization", "Bearer ${tokenBody.accessToken}")
-                                .method(response.request.method, requestBody)
-                                .build()
-                        }
-
-                        response.request.url.toString().contains("members/withdrawal") -> {
-                            val updatedRefreshToken = tokenLocalDataSource.getRefreshToken() ?: ""
-
-                            val originalRequestBody = response.request.body
-                            val reason = extractReasonFromRequestBody(originalRequestBody)
-
-                            val updatedRequest = DeleteAccountRequest(reason, updatedRefreshToken)
-
-                            val requestBody: RequestBody = Json.encodeToString(updatedRequest)
-                                .toRequestBody("application/json".toMediaTypeOrNull())
-
-                            response.request.newBuilder()
-                                .removeHeader("Authorization")
-                                .header("Authorization", "Bearer ${tokenBody.accessToken}")
-                                .method(response.request.method, requestBody)
-                                .build()
-                        }
-
-                        else -> {
-                            response.request.newBuilder()
-                                .removeHeader("Authorization")
-                                .header("Authorization", "Bearer ${tokenBody.accessToken}")
-                                .build()
-                        }
-                    }
-                }
-
-                else -> {
-                    if(BuildConfig.DEBUG) {
-                        Timber.tag(TAG).e("토큰 재발급 실패. 토큰 제거 후 로그인 화면으로 이동")
-                    }
-                    sessionHandler.clearSession()
+            runCatchingWith(ReissueError()) {
+                userApi.reissueToken(ReissueRequest(currentRefreshToken))
+            }.onSuccess { tokenResponse ->
+                if (tokenResponse.accessToken == null) {
                     startNewTask()
                     return@withLock null
                 }
+
+                val newAccessToken = tokenResponse.accessToken
+                val newRefreshToken = tokenResponse.refreshToken
+
+                tokenLocalDataSource.saveAccessToken(newAccessToken)
+
+                val newRequestBuilder = response.request.newBuilder()
+                    .removeHeader("Authorization")
+                    .header("Authorization", "Bearer $newAccessToken")
+
+                newRefreshToken?.also {
+                    tokenLocalDataSource.saveRefreshToken(it)
+
+                    if (response.request.url.toString().contains("auth/logout")) {
+                        val signOutRequestJson = Json.encodeToString(SignOutRequest(newRefreshToken))
+                        val newRequestBody = signOutRequestJson.toRequestBody("application/json".toMediaTypeOrNull())
+                        newRequestBuilder.apply { method(response.request.method, newRequestBody) }
+                    }
+                    else if(response.request.url.toString().contains("members/withdrawal")) {
+                        val reason = extractReasonFromRequestBody(response.request.body)
+
+                        val deleteAccountRequestJson = Json.encodeToString(DeleteAccountRequest(reason, newRefreshToken))
+                        val newRequestBody = deleteAccountRequestJson.toRequestBody("application/json".toMediaTypeOrNull())
+                        newRequestBuilder.apply { method(response.request.method, newRequestBody) }
+                    }
+                }
+
+                return@withLock newRequestBuilder.build()
             }
+
+            startNewTask()
+            return@withLock null
         }
     }
 
-    private fun extractReasonFromRequestBody(originalRequestBody: RequestBody?): String {
+    private fun extractReasonFromRequestBody(requestBody: RequestBody?): String {
         return try {
             val buffer = Buffer()
-            originalRequestBody?.writeTo(buffer)
+            requestBody?.writeTo(buffer)
             val requestBodyString = buffer.readUtf8()
 
-            val jsonObject = Json.decodeFromString<Map<String, String>>(requestBodyString)
-            jsonObject["reason"] ?: "No reason"
+            val deleteAccountRequest = Json.decodeFromString<DeleteAccountRequest>(requestBodyString)
+            deleteAccountRequest.reason
         } catch (e: Exception) {
-            "No reason"
+            ""
         }
     }
 
-
-    private fun startNewTask() {
+    private suspend fun startNewTask() {
+        sessionHandler.clearSession()
         appLauncher.restartApp(context)
     }
 
