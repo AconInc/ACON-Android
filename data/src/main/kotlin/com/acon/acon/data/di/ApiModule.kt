@@ -10,7 +10,8 @@ import com.acon.acon.data.api.remote.ProfileApi
 import com.acon.acon.data.api.remote.SpotAuthApi
 import com.acon.acon.data.api.remote.SpotNoAuthApi
 import com.acon.acon.data.api.remote.UploadApi
-import com.acon.acon.data.api.remote.UserApi
+import com.acon.acon.data.api.remote.UserAuthApi
+import com.acon.acon.data.api.remote.UserNoAuthApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -26,8 +27,16 @@ internal object ApiModule {
     @Provides
     fun providesUserApi(
         @Auth retrofit: Retrofit
-    ): UserApi {
-        return retrofit.create(UserApi::class.java)
+    ): UserAuthApi {
+        return retrofit.create(UserAuthApi::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun providesUserNoAuthApi(
+        @NoAuth retrofit: Retrofit
+    ): UserNoAuthApi {
+        return retrofit.create(UserNoAuthApi::class.java)
     }
 
     @Singleton

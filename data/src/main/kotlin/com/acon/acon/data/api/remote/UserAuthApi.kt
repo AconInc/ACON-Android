@@ -9,12 +9,7 @@ import com.acon.acon.data.dto.response.SignInResponse
 import retrofit2.http.Body
 import retrofit2.http.POST
 
-interface UserApi {
-
-    @POST("/api/v1/auth/login")
-    suspend fun postSignIn(
-        @Body body: SignInRequest
-    ) : SignInResponse
+interface UserAuthApi {
 
     @POST("/api/v1/auth/logout")
     suspend fun postLogout(
@@ -25,6 +20,14 @@ interface UserApi {
     suspend fun postDeleteAccount(
         @Body body: DeleteAccountRequest
     )
+}
+
+interface UserNoAuthApi {
+
+    @POST("/api/v1/auth/login")
+    suspend fun postSignIn(
+        @Body body: SignInRequest
+    ) : SignInResponse
 
     @POST("/api/v1/auth/reissue")
     suspend fun reissueToken(

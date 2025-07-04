@@ -2,7 +2,7 @@ package com.acon.acon.di
 
 import android.content.Context
 import com.acon.acon.core.launcher.AppLauncher
-import com.acon.acon.data.api.remote.UserApi
+import com.acon.acon.data.api.remote.UserNoAuthApi
 import com.acon.acon.data.authentication.AuthAuthenticator
 import com.acon.acon.data.datasource.local.TokenLocalDataSource
 import com.acon.acon.data.session.SessionHandler
@@ -26,9 +26,9 @@ object AuthenticatorModule {
         @ApplicationContext context: Context,
         tokenLocalDataSource: TokenLocalDataSource,
         sessionHandler: SessionHandler,
-        userApi: UserApi,
+        userNoAuthApi: UserNoAuthApi,
         appLauncher: AppLauncher
-    ): Authenticator = AuthAuthenticator(context, tokenLocalDataSource, sessionHandler, userApi, appLauncher)
+    ): Authenticator = AuthAuthenticator(context, tokenLocalDataSource, sessionHandler, userNoAuthApi, appLauncher)
 }
 
 @Module

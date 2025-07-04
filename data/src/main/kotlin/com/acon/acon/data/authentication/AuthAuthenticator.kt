@@ -2,7 +2,7 @@ package com.acon.acon.data.authentication
 
 import android.content.Context
 import com.acon.acon.core.launcher.AppLauncher
-import com.acon.acon.data.api.remote.UserApi
+import com.acon.acon.data.api.remote.UserNoAuthApi
 import com.acon.acon.data.datasource.local.TokenLocalDataSource
 import com.acon.acon.data.dto.request.DeleteAccountRequest
 import com.acon.acon.data.dto.request.ReissueRequest
@@ -29,7 +29,7 @@ class AuthAuthenticator @Inject constructor(
     private val context: Context,
     private val tokenLocalDataSource: TokenLocalDataSource,
     private val sessionHandler: SessionHandler,
-    private val userApi: UserApi,
+    private val userNoAuthApi: UserNoAuthApi,
     private val appLauncher: AppLauncher
 ) : Authenticator {
 
@@ -46,7 +46,7 @@ class AuthAuthenticator @Inject constructor(
             }
 
             runCatchingWith(ReissueError()) {
-                userApi.reissueToken(ReissueRequest(currentRefreshToken))
+                userNoAuthApi.reissueToken(ReissueRequest(currentRefreshToken))
             }.onSuccess { tokenResponse ->
                 if (tokenResponse.accessToken == null) {
                     startNewTask()
