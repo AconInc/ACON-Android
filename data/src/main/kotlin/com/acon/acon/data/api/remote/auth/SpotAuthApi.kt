@@ -1,4 +1,4 @@
-package com.acon.acon.data.api.remote
+package com.acon.acon.data.api.remote.auth
 
 import com.acon.acon.data.dto.request.AddBookmarkRequest
 import com.acon.acon.data.dto.request.SpotListRequest

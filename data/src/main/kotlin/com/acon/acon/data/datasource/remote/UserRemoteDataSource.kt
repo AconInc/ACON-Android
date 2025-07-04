@@ -1,7 +1,7 @@
 package com.acon.acon.data.datasource.remote
 
-import com.acon.acon.data.api.remote.UserAuthApi
-import com.acon.acon.data.api.remote.UserNoAuthApi
+import com.acon.acon.data.api.remote.auth.UserAuthApi
+import com.acon.acon.data.api.remote.noauth.UserNoAuthApi
 import com.acon.acon.data.dto.request.DeleteAccountRequest
 import com.acon.acon.data.dto.request.SignInRequest
 import com.acon.acon.data.dto.request.SignOutRequest

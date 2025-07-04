@@ -1,4 +1,4 @@
-package com.acon.acon.data.api.remote
+package com.acon.acon.data.api.remote.noauth
 
 import com.acon.acon.data.dto.request.RecentNavigationLocationRequest
 import com.acon.acon.data.dto.response.MenuBoardListResponse

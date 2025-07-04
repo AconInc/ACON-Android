@@ -2,7 +2,7 @@ package com.acon.acon.data.authenticator
 
 import android.content.Context
 import com.acon.acon.core.launcher.AppLauncher
-import com.acon.acon.data.api.remote.UserNoAuthApi
+import com.acon.acon.data.api.remote.noauth.UserNoAuthApi
 import com.acon.acon.data.assertValidErrorMapping
 import com.acon.acon.data.authentication.AuthAuthenticator
 import com.acon.acon.data.createFakeRemoteError

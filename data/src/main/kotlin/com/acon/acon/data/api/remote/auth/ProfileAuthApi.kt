@@ -1,4 +1,4 @@
-package com.acon.acon.data.api.remote
+package com.acon.acon.data.api.remote.auth
 
 import com.acon.acon.data.dto.request.AreaVerificationRequest
 import com.acon.acon.data.dto.request.ReplaceVerifiedAreaRequest
@@ -17,7 +17,7 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
 
-interface ProfileApi {
+interface ProfileAuthApi {
     @GET("/api/v1/members/me")
     suspend fun fetchProfile(): ProfileResponse
 

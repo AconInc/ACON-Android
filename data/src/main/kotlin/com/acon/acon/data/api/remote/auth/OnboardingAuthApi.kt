@@ -1,10 +1,10 @@
-package com.acon.acon.data.api.remote
+package com.acon.acon.data.api.remote.auth
 
 import com.acon.acon.data.dto.request.OnboardingRequest
 import retrofit2.http.Body
 import retrofit2.http.PUT
 
-interface OnboardingApi {
+interface OnboardingAuthApi {
 
     @PUT("/api/v1/preference")
     suspend fun submitOnboardingResult(

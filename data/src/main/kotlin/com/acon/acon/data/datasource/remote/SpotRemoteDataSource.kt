@@ -1,7 +1,7 @@
 package com.acon.acon.data.datasource.remote
 
-import com.acon.acon.data.api.remote.SpotAuthApi
-import com.acon.acon.data.api.remote.SpotNoAuthApi
+import com.acon.acon.data.api.remote.auth.SpotAuthApi
+import com.acon.acon.data.api.remote.noauth.SpotNoAuthApi
 import com.acon.acon.data.dto.request.AddBookmarkRequest
 import com.acon.acon.data.dto.request.RecentNavigationLocationRequest
 import com.acon.acon.data.dto.request.SpotListRequest

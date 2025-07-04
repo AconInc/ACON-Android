@@ -1,4 +1,4 @@
-package com.acon.acon.data.api.remote
+package com.acon.acon.data.api.remote.auth
 
 import com.acon.acon.data.dto.request.ReviewRequest
 import com.acon.acon.data.dto.response.upload.UploadSpotSuggestionsResponse
@@ -9,7 +9,7 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Query
 
-interface UploadApi {
+interface UploadAuthApi {
 
     @GET("/api/v1/search-suggestions")
     suspend fun getSuggestions(
