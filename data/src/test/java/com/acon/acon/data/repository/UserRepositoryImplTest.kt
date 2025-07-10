@@ -184,5 +184,4 @@ class UserRepositoryImplTest {
         // Then
         coVerify(exactly = 0) { userRepository.clearSession() }
     }
-
 }

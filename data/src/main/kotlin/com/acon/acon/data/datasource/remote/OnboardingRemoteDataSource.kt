@@ -1,14 +1,14 @@
 package com.acon.acon.data.datasource.remote
 
 import com.acon.acon.data.dto.request.OnboardingRequest
-import com.acon.acon.data.api.remote.OnboardingApi
+import com.acon.acon.data.api.remote.auth.OnboardingAuthApi
 import javax.inject.Inject
 
 class OnboardingRemoteDataSource @Inject constructor(
-    private val onboardingApi: OnboardingApi
+    private val onboardingAuthApi: OnboardingAuthApi
 ) {
 
     suspend fun submitOnboardingResult(request: OnboardingRequest) {
-        return onboardingApi.submitOnboardingResult(request)
+        return onboardingAuthApi.submitOnboardingResult(request)
     }
 }

@@ -2,27 +2,40 @@ package com.acon.acon.data.authenticator
 
 import android.content.Context
 import com.acon.acon.core.launcher.AppLauncher
-import com.acon.acon.data.session.SessionHandler
-import com.acon.acon.data.api.remote.ReissueTokenApi
+import com.acon.acon.data.api.remote.noauth.UserNoAuthApi
+import com.acon.acon.data.assertValidErrorMapping
 import com.acon.acon.data.authentication.AuthAuthenticator
+import com.acon.acon.data.createFakeRemoteError
 import com.acon.acon.data.datasource.local.TokenLocalDataSource
-import com.acon.acon.data.dto.request.RefreshRequest
-import com.acon.acon.data.dto.response.RefreshResponse
+import com.acon.acon.data.dto.request.DeleteAccountRequest
+import com.acon.acon.data.dto.request.ReissueRequest
+import com.acon.acon.data.dto.request.SignOutRequest
+import com.acon.acon.data.dto.response.TokenResponse
+import com.acon.acon.data.error.runCatchingWith
+import com.acon.acon.data.session.SessionHandler
+import com.acon.acon.domain.error.user.ReissueError
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
+import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit4.MockKRule
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.test.runTest
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import okhttp3.Request
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import okhttp3.Route
 import org.junit.Rule
 import org.junit.Test
+import java.io.IOException
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 
 class AuthAuthenticatorTest {
@@ -39,8 +52,8 @@ class AuthAuthenticatorTest {
     @RelaxedMockK
     lateinit var sessionHandler: SessionHandler
 
-    @RelaxedMockK
-    lateinit var reissueTokenApi: ReissueTokenApi
+    @MockK
+    lateinit var userNoAuthApi: UserNoAuthApi
 
     @RelaxedMockK
     lateinit var launcher: AppLauncher
@@ -83,14 +96,14 @@ class AuthAuthenticatorTest {
         authAuthenticator.authenticate(route, mockResponse)
 
         // Then
-        coVerify(exactly = 1) { reissueTokenApi.postRefresh(localRefreshTokenRequest) }
+        coVerify(exactly = 1) { userNoAuthApi.reissueToken(localRefreshTokenRequest) }
     }
 
     @Test
     fun `로컬에 저장된 리프레시 토큰으로 새 토큰 갱신에 성공했을 경우, 토큰을 로컬에 저장한다`() = runTest {
         // Given
         val localRefreshTokenRequest = givenLocalRefreshTokenRequest()
-        coEvery { reissueTokenApi.postRefresh(localRefreshTokenRequest) } returns RefreshResponse(
+        coEvery { userNoAuthApi.reissueToken(localRefreshTokenRequest) } returns TokenResponse(
             accessToken = "New Access Token", refreshToken = "New Refresh Token"
         )
 
@@ -106,7 +119,7 @@ class AuthAuthenticatorTest {
     fun `로컬에 저장된 리프레시 토큰으로 새 토큰 갱신에 성공했을 경우, 앱을 재시작 해선 안된다`() = runTest {
         // Given
         val localRefreshTokenRequest = givenLocalRefreshTokenRequest()
-        coEvery { reissueTokenApi.postRefresh(localRefreshTokenRequest) } returns RefreshResponse(
+        coEvery { userNoAuthApi.reissueToken(localRefreshTokenRequest) } returns TokenResponse(
             accessToken = "New Access Token", refreshToken = "New Refresh Token"
         )
 
@@ -121,7 +134,7 @@ class AuthAuthenticatorTest {
     fun `로컬에 저장된 리프레시 토큰으로 새 토큰 갱신에 실패했을 경우, 앱을 재시작 한다`() = runTest {
         // Given
         val localRefreshTokenRequest = givenLocalRefreshTokenRequest()
-        coEvery { reissueTokenApi.postRefresh(localRefreshTokenRequest) } throws Exception()
+        coEvery { userNoAuthApi.reissueToken(localRefreshTokenRequest) } throws Exception()
 
         // When
         authAuthenticator.authenticate(route, mockResponse)
@@ -137,7 +150,7 @@ class AuthAuthenticatorTest {
         every { mockResponse.request } returns realRequest
 
         val localRefreshTokenRequest = givenLocalRefreshTokenRequest()
-        coEvery { reissueTokenApi.postRefresh(localRefreshTokenRequest) } returns RefreshResponse(
+        coEvery { userNoAuthApi.reissueToken(localRefreshTokenRequest) } returns TokenResponse(
             accessToken = "New Access Token", refreshToken = "New Refresh Token"
         )
 
@@ -165,7 +178,7 @@ class AuthAuthenticatorTest {
     fun `토큰 갱신 API가 실패하면 유저정보 Session을 초기화한다`() = runTest {
         // Given
         val localRefreshTokenRequest = givenLocalRefreshTokenRequest()
-        coEvery { reissueTokenApi.postRefresh(localRefreshTokenRequest) } throws Exception()
+        coEvery { userNoAuthApi.reissueToken(localRefreshTokenRequest) } throws Exception()
 
         // When
         val newRequest = authAuthenticator.authenticate(route, mockResponse)
@@ -180,7 +193,7 @@ class AuthAuthenticatorTest {
     fun `토큰 갱신 API의 응답 값이 유효하지 않으면 유저정보 Session을 초기화한다`() = runTest {
         // Given
         val localRefreshTokenRequest = givenLocalRefreshTokenRequest()
-        coEvery { reissueTokenApi.postRefresh(localRefreshTokenRequest) } returns RefreshResponse(null, null)
+        coEvery { userNoAuthApi.reissueToken(localRefreshTokenRequest) } returns TokenResponse(null, null)
 
         // When
         val newRequest = authAuthenticator.authenticate(route, mockResponse)
@@ -190,9 +203,87 @@ class AuthAuthenticatorTest {
         coVerify { sessionHandler.clearSession() }
     }
 
-    private suspend fun givenLocalRefreshTokenRequest(): RefreshRequest {
+    @Test
+    fun `저장된 리프레시 토큰이 유효하지 않으면 해당하는 실패 에러 객체를 반환한다`() = runTest {
+        // Given
+        coEvery { tokenLocalDataSource.getRefreshToken() } returns "Fake Invalid Refresh Token"
+        coEvery { userNoAuthApi.reissueToken(any()) } throws createFakeRemoteError(40088)
+
+        // When
+        authAuthenticator.authenticate(route, mockResponse)
+        val result = runCatchingWith(ReissueError()) { userNoAuthApi.reissueToken(mockk()) }
+
+        // Then
+        assertValidErrorMapping(result, ReissueError.InvalidRefreshToken::class)
+    }
+
+    @Test
+    fun `로그아웃 API에서 발생한 Authentication일 경우, 요청 Body를 새 리프레시 토큰으로 교체한다`() = runTest {
+        // Given
+        coEvery { tokenLocalDataSource.getRefreshToken() } returns "Dummy Old Refresh Token"
+        coEvery { userNoAuthApi.reissueToken(any()) } returns TokenResponse("New Access Token", "New Refresh Token")
+        val mockRequest = Request.Builder()
+            .url("https://acon.com/api/auth/logout")
+            .header("Authorization", "Bearer Dummy-expired_access_token")
+            .method("POST", mockk())
+            .build()
+        every { mockResponse.request } returns mockRequest
+
+        // When
+        val newRequest = authAuthenticator.authenticate(route, mockResponse)
+        val newRefreshToken = userNoAuthApi.reissueToken(mockk()).refreshToken!!
+
+        val expectedBody = Json.encodeToString(SignOutRequest(newRefreshToken))
+        val actualBody = newRequest?.body.asString()
+
+        // Then
+        assertNotNull(actualBody)
+        assertEquals(actualBody, expectedBody)
+    }
+
+    @Test
+    fun `회원탈퇴 API에서 발생한 Authentication일 경우, 요청 Body를 새 리프레시 토큰으로 교체한다`() = runTest {
+        // Given
+        val dummyOldRefreshToken = "Dummy Old Refresh Token"
+        coEvery { tokenLocalDataSource.getRefreshToken() } returns dummyOldRefreshToken
+
+        val fakeReason = "그냥 탈퇴함"
+        val fakeBody = Json.encodeToString(DeleteAccountRequest(fakeReason, dummyOldRefreshToken)).toRequestBody()
+
+        coEvery { userNoAuthApi.reissueToken(any()) } returns TokenResponse("New Access Token", "New Refresh Token")
+        val mockRequest = Request.Builder()
+            .url("https://acon.com/api/members/withdrawal")
+            .header("Authorization", "Bearer Dummy-expired_access_token")
+            .method("POST", fakeBody)
+            .build()
+        every { mockResponse.request } returns mockRequest
+
+        // When
+        val newRequest = authAuthenticator.authenticate(route, mockResponse)
+        val newRefreshToken = userNoAuthApi.reissueToken(mockk()).refreshToken!!
+
+        val expectedBody = Json.encodeToString(DeleteAccountRequest(fakeReason, newRefreshToken))
+        val actualBody = newRequest?.body.asString()
+
+        // Then
+        assertNotNull(actualBody)
+        assertEquals(actualBody, expectedBody)
+    }
+
+    private suspend fun givenLocalRefreshTokenRequest(): ReissueRequest {
         coEvery { tokenLocalDataSource.getRefreshToken() } returns "Local Refresh Token"
-        val localRefreshToken = tokenLocalDataSource.getRefreshToken()
-        return RefreshRequest(localRefreshToken)
+        val localRefreshToken = tokenLocalDataSource.getRefreshToken()!!
+        return ReissueRequest(localRefreshToken)
+    }
+
+    private fun RequestBody?.asString(): String? {
+        if (this == null) return null
+        return try {
+            val buffer = okio.Buffer()
+            this.writeTo(buffer)
+            buffer.readUtf8()
+        } catch (e: IOException) {
+            null
+        }
     }
 }
