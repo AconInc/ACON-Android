@@ -186,10 +186,6 @@ class ProfileModViewModel @Inject constructor(
         }
     }
 
-    fun navigateToCustomGallery() = intent {
-        postSideEffect(ProfileModSideEffect.NavigateToCustomGallery)
-    }
-
     fun navigateToBack() = intent {
         postSideEffect(ProfileModSideEffect.NavigateBack)
     }
@@ -206,47 +202,6 @@ class ProfileModViewModel @Inject constructor(
         runOn<ProfileModState.Success> {
             reduce {
                 state.copy(showExitDialog = false)
-            }
-        }
-    }
-
-    fun onRequestPhotoPermission() = intent {
-        runOn<ProfileModState.Success> {
-            reduce {
-                state.copy(requestPhotoPermission = true)
-            }
-        }
-    }
-
-    fun onPhotoPermissionDenied() = intent {
-        runOn<ProfileModState.Success> {
-            reduce {
-                state.copy(requestPhotoPermission = false)
-            }
-        }
-    }
-
-    fun onRequestPermissionDialog() = intent {
-        runOn<ProfileModState.Success> {
-            reduce {
-                state.copy(showPermissionDialog = true)
-            }
-        }
-    }
-
-    fun onDisMissPermissionDialog() = intent {
-        runOn<ProfileModState.Success> {
-            reduce {
-                state.copy(showPermissionDialog = false)
-            }
-        }
-    }
-
-    fun onPermissionSettingClick(packageName: String) = intent {
-        runOn<ProfileModState.Success> {
-            postSideEffect(ProfileModSideEffect.NavigateToSettings(packageName))
-            reduce {
-                state.copy(showPermissionDialog = false)
             }
         }
     }
@@ -459,8 +414,6 @@ sealed interface ProfileModState {
 
 sealed interface ProfileModSideEffect {
     data object NavigateBack : ProfileModSideEffect
-    data class NavigateToSettings(val packageName: String) : ProfileModSideEffect
-    data object NavigateToCustomGallery : ProfileModSideEffect
     data class UpdateProfileImage(val imageUri: String?) : ProfileModSideEffect
     data object NavigateToProfile : ProfileModSideEffect
 }
