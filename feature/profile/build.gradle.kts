@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.acon.android.library)
     alias(libs.plugins.acon.android.feature)
@@ -8,8 +10,16 @@ plugins {
     alias(libs.plugins.acon.android.library.coil)
 }
 
+val localProperties = Properties().apply {
+    load(project.rootProject.file("local.properties").inputStream())
+}
+
 android {
     namespace = "com.acon.acon.feature.profile"
+
+    defaultConfig {
+        buildConfigField("String", "BUCKET_URL", "\"${localProperties["BUCKET_URL"]}\"")
+    }
 }
 
 dependencies {
