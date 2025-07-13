@@ -24,8 +24,7 @@ fun GallerySelectBottomSheet(
     isDefault: Boolean,
     modifier : Modifier = Modifier,
     onDismiss: () -> Unit = {},
-    onGallerySelect: () -> Unit = {},
-    onDefaultImageSelect: () -> Unit = {}
+    onGallerySelect: () -> Unit = {}
 ){
     val padding = if(!isDefault) 75.dp else 115.dp
     AconBottomSheet(
@@ -61,7 +60,6 @@ fun GallerySelectBottomSheet(
                     modifier = Modifier
                         .fillMaxWidth()
                         .noRippleClickable {
-                            onDefaultImageSelect()
                             onDismiss()
                         },
                     verticalAlignment = Alignment.CenterVertically,

@@ -141,8 +141,7 @@ internal fun ProfileModScreen(
                         photoPickerLauncher.launch(
                             PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
                         )
-                    },
-                    onDefaultImageSelect = { onUpdateProfileImage("basic_profile_image") },
+                    }
                 )
             }
 
