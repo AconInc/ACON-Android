@@ -1,6 +1,9 @@
 package com.acon.acon.feature.profile.composable.screen.profileMod.composable
 
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -30,7 +33,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -45,7 +47,8 @@ import com.acon.acon.core.designsystem.component.topbar.AconTopBar
 import com.acon.acon.core.designsystem.effect.LocalHazeState
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.core.ui.permission.media.CheckAndRequestMediaPermission
+import com.acon.acon.core.ui.compose.getScreenHeight
+import com.acon.acon.core.ui.compose.getScreenWidth
 import com.acon.acon.feature.profile.composable.component.GallerySelectBottomSheet
 import com.acon.acon.feature.profile.composable.component.NicknameValidMessageRow
 import com.acon.acon.feature.profile.composable.component.ProfilePhotoBox
@@ -58,8 +61,6 @@ import com.acon.acon.feature.profile.composable.type.NicknameValidationStatus
 import com.acon.acon.feature.profile.composable.type.contentDescriptionResId
 import com.acon.acon.feature.profile.composable.type.validMessageResId
 import com.acon.acon.feature.profile.composable.utils.BirthdayTransformation
-import com.acon.acon.core.ui.compose.getScreenHeight
-import com.acon.acon.core.ui.compose.getScreenWidth
 import dev.chrisbanes.haze.hazeSource
 
 @Composable
@@ -67,23 +68,16 @@ internal fun ProfileModScreen(
     modifier: Modifier = Modifier,
     state: ProfileModState,
     navigateToBack: () -> Unit,
-    navigateToCustomGallery: () -> Unit,
     onNicknameChanged: (String) -> Unit = {},
     onBirthdayChanged: (String) -> Unit = {},
     onFocusChanged: (Boolean, FocusType) -> Unit = { _, _ -> },
     onRequestExitDialog: () -> Unit,
     onDisMissExitDialog: () -> Unit,
-    onRequestPhotoPermission: () -> Unit,
-    onPhotoPermissionDenied: () -> Unit,
-    onRequestPermissionDialog: () -> Unit,
-    onDisMissPermissionDialog: () -> Unit,
-    moveToSettings: (String) -> Unit,
     onRequestProfileEditModal: () -> Unit,
     onDisMissProfileEditModal: () -> Unit,
     onUpdateProfileImage: (String) -> Unit,
     onClickSaveButton: () -> Unit = {},
 ) {
-    val context = LocalContext.current
     val screenWidthDp = getScreenWidth()
     val screenHeightDp = getScreenHeight()
     val dialogWidth = (screenWidthDp * (260f / 360f))
@@ -93,6 +87,15 @@ internal fun ProfileModScreen(
 
     val nickNameFocusRequester = remember { FocusRequester() }
     val birthDayFocusRequester = remember { FocusRequester() }
+
+    val photoPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia()
+    ) { uri ->
+        uri?.let {
+            onUpdateProfileImage(uri.toString())
+            onDisMissProfileEditModal()
+        }
+    }
 
     when (state) {
         ProfileModState.LoadFailed -> {}
@@ -121,46 +124,6 @@ internal fun ProfileModScreen(
                 mutableStateOf(TextFieldValue(state.fetchedBirthday))
             }
 
-
-            if (state.requestPhotoPermission) {
-                CheckAndRequestMediaPermission(
-                    onPermissionGranted = {
-                        onPhotoPermissionDenied()
-                        onRequestProfileEditModal()
-                    },
-                    onPermissionDenied = {
-                        onRequestPermissionDialog()
-                    }
-                )
-            }
-
-            if (state.showPermissionDialog) {
-                AconTwoActionDialog(
-                    title = stringResource(R.string.photo_permission_title),
-                    action1 = stringResource(R.string.photo_permission_alert_left_btn),
-                    action2 = stringResource(R.string.photo_permission_alert_right_btn),
-                    onDismissRequest = { onDisMissPermissionDialog() },
-                    onAction1 = {
-                        onPhotoPermissionDenied()
-                        onDisMissPermissionDialog()
-                    },
-                    onAction2 = {
-                        onPhotoPermissionDenied()
-                        moveToSettings(context.packageName)
-                    },
-                    content = {
-                        Text(
-                            text = stringResource(R.string.photo_permission_content),
-                            color = AconTheme.color.Gray200,
-                            style = AconTheme.typography.Body1,
-                            maxLines = 1,
-                            modifier = Modifier.padding(bottom = 20.dp)
-                        )
-                    },
-                    modifier = Modifier.width(dialogWidth)
-                )
-            }
-
             if (state.showPhotoEditModal) {
                 GallerySelectBottomSheet(
                     isDefault = when {
@@ -173,7 +136,12 @@ internal fun ProfileModScreen(
                         }
                     },
                     onDismiss = { onDisMissProfileEditModal() },
-                    onGallerySelect = { navigateToCustomGallery() },
+                    onGallerySelect = {
+                        onDisMissProfileEditModal()
+                        photoPickerLauncher.launch(
+                            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                        )
+                    },
                     onDefaultImageSelect = { onUpdateProfileImage("basic_profile_image") },
                 )
             }
@@ -250,7 +218,7 @@ internal fun ProfileModScreen(
                                 modifier = Modifier
                                     .size(profileImageHeight)
                                     .aspectRatio(1f)
-                                    .noRippleClickable { onRequestPhotoPermission() },
+                                    .noRippleClickable { onRequestProfileEditModal() },
                                 contentAlignment = Alignment.Center
                             ) {
                                 ProfilePhotoBox(
@@ -465,17 +433,11 @@ private fun ProfileModScreenPreview() {
             modifier = Modifier,
             state = ProfileModState.Success(),
             navigateToBack = {},
-            navigateToCustomGallery = {},
             onNicknameChanged = {},
             onBirthdayChanged = {},
             onFocusChanged = { _, _ -> },
             onRequestExitDialog = {},
             onDisMissExitDialog = {},
-            onRequestPhotoPermission = {},
-            onPhotoPermissionDenied = {},
-            onRequestPermissionDialog = {},
-            onDisMissPermissionDialog = {},
-            moveToSettings = {},
             onRequestProfileEditModal = {},
             onDisMissProfileEditModal = {},
             onUpdateProfileImage = {},

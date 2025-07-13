@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.acon.acon.feature.profile.composable.screen.profileMod.ProfileModSideEffect
 import com.acon.acon.feature.profile.composable.screen.profileMod.ProfileModViewModel
@@ -20,7 +19,6 @@ fun ProfileModScreenContainer(
     onClickComplete: () -> Unit = {}
 ) {
     val state by viewModel.collectAsState()
-    val context = LocalContext.current
 
     LaunchedEffect(selectedPhotoId) {
         if (selectedPhotoId?.isNotEmpty() == true) {
