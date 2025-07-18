@@ -13,15 +13,11 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
-import androidx.navigation.toRoute
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.domain.model.spot.SpotNavigationParameter
 import com.acon.acon.feature.SettingsRoute
 import com.acon.acon.feature.profile.composable.ProfileRoute
 import com.acon.acon.feature.profile.composable.screen.bookmark.composable.BookmarkScreenContainer
-import com.acon.acon.feature.profile.composable.screen.galleryGrid.composable.GalleryGridContainer
-import com.acon.acon.feature.profile.composable.screen.galleryList.composable.GalleryListContainer
-import com.acon.acon.feature.profile.composable.screen.photoCrop.composable.PhotoCropContainer
 import com.acon.acon.feature.profile.composable.screen.profile.composable.ProfileScreenContainer
 import com.acon.acon.feature.profile.composable.screen.profileMod.composable.ProfileModScreenContainer
 import com.acon.acon.feature.spot.SpotRoute
@@ -88,9 +84,6 @@ internal fun NavGraphBuilder.profileNavigation(
                 onClickComplete = {
                     navController.popBackStack()
                 },
-                onNavigateToCustomGallery = {
-                    navController.navigate(ProfileRoute.GalleryList)
-                }
             )
         }
 
@@ -107,54 +100,6 @@ internal fun NavGraphBuilder.profileNavigation(
                         )
                     )
                 },
-            )
-        }
-
-        composable<ProfileRoute.GalleryList> {
-            GalleryListContainer(
-                modifier = Modifier.fillMaxSize(),
-                onAlbumSelected = { albumId, albumName ->
-                    navController.navigate(ProfileRoute.GalleryGrid(albumId, albumName))
-                },
-                onBackClicked = {
-                    navController.popBackStack()
-                }
-            )
-        }
-
-        composable<ProfileRoute.GalleryGrid> {
-            GalleryGridContainer(
-                modifier = Modifier.fillMaxSize(),
-                onBackClicked = {
-                    navController.navigate(ProfileRoute.GalleryList) {
-                        popUpTo(ProfileRoute.GalleryList) {
-                            inclusive = true
-                        }
-                        launchSingleTop = true
-                        restoreState = false
-                    }
-                },
-                onNavigateToPhotoCrop = { photoId ->
-                    navController.navigate(ProfileRoute.PhotoCrop(photoId))
-                }
-            )
-        }
-
-        composable<ProfileRoute.PhotoCrop> { backStackEntry ->
-            val route = backStackEntry.toRoute<ProfileRoute.PhotoCrop>()
-
-            PhotoCropContainer(
-                modifier = Modifier.fillMaxSize(),
-                photoId = route.photoId,
-                onCloseClicked = {
-                    navController.popBackStack()
-                },
-                onCompleteSelected = { photoId: String ->
-                    navController.getBackStackEntry(ProfileRoute.ProfileMod(null))
-                        .savedStateHandle["selectedPhotoId"] = photoId
-
-                    navController.popBackStack(ProfileRoute.ProfileMod(null), false)
-                }
             )
         }
     }
