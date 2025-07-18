@@ -7,7 +7,8 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.acon.acon.domain.error.profile.ValidateNicknameError
 import com.acon.acon.domain.repository.ProfileRepository
-import com.acon.acon.core.model.type.UpdateProfileType
+import com.acon.acon.domain.type.UpdateProfileType
+import com.acon.acon.feature.profile.BuildConfig
 import com.acon.acon.feature.profile.composable.type.BirthdayValidationStatus
 import com.acon.acon.feature.profile.composable.type.FocusType
 import com.acon.acon.feature.profile.composable.type.NicknameErrorType
@@ -186,10 +187,6 @@ class ProfileModViewModel @Inject constructor(
         }
     }
 
-    fun navigateToCustomGallery() = intent {
-        postSideEffect(ProfileModSideEffect.NavigateToCustomGallery)
-    }
-
     fun navigateToBack() = intent {
         postSideEffect(ProfileModSideEffect.NavigateBack)
     }
@@ -206,47 +203,6 @@ class ProfileModViewModel @Inject constructor(
         runOn<ProfileModState.Success> {
             reduce {
                 state.copy(showExitDialog = false)
-            }
-        }
-    }
-
-    fun onRequestPhotoPermission() = intent {
-        runOn<ProfileModState.Success> {
-            reduce {
-                state.copy(requestPhotoPermission = true)
-            }
-        }
-    }
-
-    fun onPhotoPermissionDenied() = intent {
-        runOn<ProfileModState.Success> {
-            reduce {
-                state.copy(requestPhotoPermission = false)
-            }
-        }
-    }
-
-    fun onRequestPermissionDialog() = intent {
-        runOn<ProfileModState.Success> {
-            reduce {
-                state.copy(showPermissionDialog = true)
-            }
-        }
-    }
-
-    fun onDisMissPermissionDialog() = intent {
-        runOn<ProfileModState.Success> {
-            reduce {
-                state.copy(showPermissionDialog = false)
-            }
-        }
-    }
-
-    fun onPermissionSettingClick(packageName: String) = intent {
-        runOn<ProfileModState.Success> {
-            postSideEffect(ProfileModSideEffect.NavigateToSettings(packageName))
-            reduce {
-                state.copy(showPermissionDialog = false)
             }
         }
     }
@@ -277,12 +233,14 @@ class ProfileModViewModel @Inject constructor(
 
     fun getPreSignedUrl() = intent {
         runOn<ProfileModState.Success> {
+            Timber.tag(TAG).d("getPreSignedUrl() 호출됨")
             val nickname = state.nickname
             val isBirthdayValid = state.birthdayValidationStatus == BirthdayValidationStatus.Valid
             val birthday = if (isBirthdayValid) state.birthday else null
 
             when {
                 state.selectedPhotoUri.isEmpty() -> {
+                    Timber.tag(TAG).d("selectedPhotoUri가 비어 있음 → 기존 이미지로 updateProfile 호출")
                     updateProfile(
                         fileName = state.fetchedPhotoUri,
                         nickname = nickname,
@@ -292,6 +250,7 @@ class ProfileModViewModel @Inject constructor(
                 }
 
                 state.selectedPhotoUri == "basic_profile_image" -> {
+                    Timber.tag(TAG).d("selectedPhotoUri가 basic_profile_image → 기본 이미지로 updateProfile 호출")
                     updateProfile(
                         fileName = state.uploadFileName,
                         nickname = nickname,
@@ -301,6 +260,7 @@ class ProfileModViewModel @Inject constructor(
                 }
 
                 else -> {
+                    Timber.tag(TAG).d("selectedPhotoUri가 커스텀 이미지 → presigned URL 요청")
                     profileRepository.getPreSignedUrl()
                         .onSuccess { result ->
                             reduce { state.copy(uploadFileName = result.fileName) }
@@ -312,7 +272,7 @@ class ProfileModViewModel @Inject constructor(
                             )
                         }
                         .onFailure {
-                            // 실패 처리
+                            Timber.tag(TAG).e(it, "presigned URL 획득 실패")
                         }
                 }
             }
@@ -328,7 +288,6 @@ class ProfileModViewModel @Inject constructor(
         runOn<ProfileModState.Success> {
             val context = getApplication<Application>().applicationContext
             val client = OkHttpClient()
-            Timber.tag(TAG).d("imageUri: $imageUri")
 
             try {
                 val byteArray: ByteArray
@@ -337,25 +296,26 @@ class ProfileModViewModel @Inject constructor(
                 if (state.selectedPhotoUri.startsWith("content://")) {
                     val inputStream = context.contentResolver.openInputStream(imageUri)
                     byteArray = inputStream?.readBytes()
-                        ?: throw IllegalArgumentException("Failed to read image")
+                        ?: throw IllegalArgumentException("이미지 읽기 실패")
                     mimeType = context.contentResolver.getType(imageUri) ?: "image/jpeg"
 
-                } else if (state.selectedPhotoUri.startsWith("http://") ||
-                    state.selectedPhotoUri.startsWith("https://")
-                ) {
+                } else if (state.selectedPhotoUri.startsWith("http://") || state.selectedPhotoUri.startsWith("https://")) {
+                    Timber.tag(TAG).d("원격 URL에서 이미지 가져오기 시작")
                     val getRequest = Request.Builder().url(imageUri.toString()).build()
                     val getResponse = client.newCall(getRequest).execute()
 
                     if (!getResponse.isSuccessful) {
-                        throw IllegalArgumentException("Failed to fetch remote image")
+                        Timber.tag(TAG).e("원격 이미지 가져오기 실패, code: %d", getResponse.code)
+                        throw IllegalArgumentException("원격 이미지 가져오기 실패")
                     }
 
                     byteArray = getResponse.body?.bytes()
-                        ?: throw IllegalArgumentException("Failed to read remote image")
+                        ?: throw IllegalArgumentException("원격 이미지 읽기 실패")
                     mimeType = getResponse.header("Content-Type") ?: "image/jpeg"
 
                 } else {
-                    throw IllegalArgumentException("Unsupported URI scheme")
+                    Timber.tag(TAG).e("지원하지 않는 URI scheme: %s", state.selectedPhotoUri)
+                    throw IllegalArgumentException("지원하지 않는 URI scheme")
                 }
 
                 val fileBody =
@@ -368,28 +328,30 @@ class ProfileModViewModel @Inject constructor(
                     .build()
 
                 val response = client.newCall(request).execute()
+                val bucketImageUri = "${BuildConfig.BUCKET_URL}${state.uploadFileName}"
 
                 if (response.isSuccessful) {
+                    Timber.tag(TAG).d("이미지 업로드 성공")
                     if (state.birthdayValidationStatus == BirthdayValidationStatus.Valid) {
                         updateProfile(
                             fileName = state.uploadFileName,
                             nickname = nickname,
                             birthday = birthday,
-                            uri = imageUri.toString()
+                            uri = bucketImageUri
                         )
                     } else {
                         updateProfile(
                             fileName = state.uploadFileName,
                             nickname = nickname,
                             birthday = null,
-                            uri = imageUri.toString()
+                            uri = bucketImageUri
                         )
                     }
                 } else {
-                    // PUT 실패 시 에러 처리
+                    Timber.tag(TAG).e("이미지 업로드 실패, code: %d", response.code)
                 }
             } catch (e: Exception) {
-                Timber.tag(TAG).e(e, "이미지 업로드 과정에서 예외 발생: ${e.message}")
+                Timber.tag(TAG).e(e, "이미지 업로드 과정에서 예외 발생: %s", e.message)
             }
         }
     }
@@ -432,8 +394,6 @@ sealed interface ProfileModState {
 
         val isEdited: Boolean = false,
         val showExitDialog: Boolean = false,
-        val requestPhotoPermission: Boolean = false,
-        val showPermissionDialog: Boolean = false,
         val showPhotoEditModal: Boolean = false,
     ) : ProfileModState {
         val isEditButtonEnabled: Boolean
@@ -459,8 +419,6 @@ sealed interface ProfileModState {
 
 sealed interface ProfileModSideEffect {
     data object NavigateBack : ProfileModSideEffect
-    data class NavigateToSettings(val packageName: String) : ProfileModSideEffect
-    data object NavigateToCustomGallery : ProfileModSideEffect
     data class UpdateProfileImage(val imageUri: String?) : ProfileModSideEffect
     data object NavigateToProfile : ProfileModSideEffect
 }
