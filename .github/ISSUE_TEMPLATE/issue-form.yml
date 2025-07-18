@@ -1,4 +1,5 @@
 name: '이슈 생성'
+description: '새 이슈를 생성합니다'
 title: '이슈 제목'
 body:
   - type: input
