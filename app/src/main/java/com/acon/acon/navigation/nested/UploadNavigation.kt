@@ -16,10 +16,10 @@ import com.acon.acon.core.designsystem.animation.topDownExitTransition
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.core.navigation.route.SpotRoute
 import com.acon.acon.core.navigation.route.UploadRoute
+import com.acon.acon.core.navigation.type.simpleSpotNavType
 import com.acon.acon.feature.upload.screen.composable.complete.UploadCompleteScreenContainer
 import com.acon.acon.feature.upload.screen.composable.review.UploadReviewScreenContainer
 import com.acon.acon.feature.upload.screen.composable.search.UploadSearchScreenContainer
-import com.acon.acon.core.navigation.type.simpleSpotNavType
 
 internal fun NavGraphBuilder.uploadNavigation(
     navController: NavHostController
@@ -38,7 +38,6 @@ internal fun NavGraphBuilder.uploadNavigation(
                 topDownExitTransition()
             }
         ) {
-
             UploadSearchScreenContainer(
                 onNavigateBack = navController::popBackStack,
                 onNavigateToReview = { spot ->
