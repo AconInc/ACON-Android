@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.acon.android.library.hilt)
     alias(libs.plugins.acon.android.library.orbit)
     alias(libs.plugins.acon.android.library.haze)
+    alias(libs.plugins.acon.android.library.coil)
 }
 
 android {
