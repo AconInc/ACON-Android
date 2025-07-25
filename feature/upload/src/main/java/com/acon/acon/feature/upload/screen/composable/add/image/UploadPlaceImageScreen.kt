@@ -39,6 +39,8 @@ import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.core.ui.compose.getScreenHeight
 import com.acon.acon.core.ui.compose.getScreenWidth
 
+private const val maxImageCount = 10
+
 @Composable
 internal fun UploadPlaceImageScreen(
 
@@ -50,7 +52,6 @@ internal fun UploadPlaceImageScreen(
     val screenHeightDp = getScreenHeight()
     val imageBoxHeight = screenHeightDp * 0.4f
 
-    val maxImageCount = 10
     val galleryLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickMultipleVisualMedia()
     ) { uris ->
