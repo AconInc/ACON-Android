@@ -1,8 +1,8 @@
 package com.acon.acon.feature.upload.screen
 
+import android.net.Uri
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.viewModelScope
-import com.acon.acon.core.model.model.spot.SimpleSpot
 import com.acon.acon.core.model.type.CafeOptionType
 import com.acon.acon.core.model.type.PriceOptionType
 import com.acon.acon.core.model.type.RestaurantFilterType
@@ -21,10 +21,10 @@ import javax.inject.Inject
 @OptIn(OrbitExperimental::class, FlowPreview::class)@HiltViewModel
 class UploadPlaceViewModel @Inject constructor(
 
-) : BaseContainerHost<UploadPlaceUiState, UploadPlaceReviewSideEffect>() {
+) : BaseContainerHost<UploadPlaceUiState, UploadPlaceSideEffect>() {
 
     override val container =
-        container<UploadPlaceUiState, UploadPlaceReviewSideEffect>(UploadPlaceUiState()) {
+        container<UploadPlaceUiState, UploadPlaceSideEffect>(UploadPlaceUiState()) {
             viewModelScope.launch {
                 queryFlow
                     .debounce(100)
@@ -52,7 +52,6 @@ class UploadPlaceViewModel @Inject constructor(
     fun onSearchQueryChanged(query: String) = intent {
         queryFlow.value = query
     }
-
 
     fun onPreviousBtnDisabled() = intent {
         reduce { state.copy(isPreviousBtnEnabled = false)}
@@ -91,6 +90,38 @@ class UploadPlaceViewModel @Inject constructor(
         }
     }
 
+    fun onAddImageUris(uris: List<Uri>) = intent {
+        reduce {
+            val currentUris = state.selectedImageUris ?: emptyList()
+            val canAddCount = state.maxImageCount - currentUris.size
+
+            if (canAddCount <= 0) {
+                state
+            } else {
+                val toAdd = uris.take(canAddCount)
+                state.copy(selectedImageUris = currentUris.plus(toAdd))
+            }
+        }
+    }
+
+    fun onRemoveImageUri(uri: Uri, currentPageIndex: Int) = intent {
+        val currentUris = state.selectedImageUris?.toMutableList()
+        val removedSuccessfully = currentUris?.remove(uri)
+
+        if (removedSuccessfully == true) {
+            reduce {
+                state.copy(selectedImageUris = currentUris)
+            }
+
+            val targetPageIndex = if (currentUris.isEmpty()) {
+                0
+            } else {
+                currentPageIndex.coerceAtMost(currentUris.size - 1)
+            }
+            postSideEffect(UploadPlaceSideEffect.ImageRemoved(removedPage = targetPageIndex))
+        }
+    }
+
     fun showExitUploadPlaceDialog() = intent {
         reduce {
             state.copy(showExitUploadPlaceDialog = true)
@@ -119,10 +150,12 @@ data class UploadPlaceUiState(
     val selectedCafeOption: CafeOptionType? = null,
     val selectedOptionList: List<RestaurantFilterType.RestaurantType> = emptyList(),
     val selectedRestaurantTypes: List<RestaurantFilterType.RestaurantType> = emptyList(),
-    val recommendMenu: String? = ""
+    val recommendMenu: String? = "",
+    val selectedImageUris: List<Uri>? = emptyList(),
+    val maxImageCount: Int = 10
 )
 
-sealed interface UploadPlaceReviewSideEffect {
-    data object NavigateBack : UploadPlaceReviewSideEffect
-    data class NavigateToComplete(val spot: SimpleSpot) : UploadPlaceReviewSideEffect
+sealed interface UploadPlaceSideEffect {
+    data object NavigateBack : UploadPlaceSideEffect
+    data class ImageRemoved(val removedPage: Int) : UploadPlaceSideEffect
 }

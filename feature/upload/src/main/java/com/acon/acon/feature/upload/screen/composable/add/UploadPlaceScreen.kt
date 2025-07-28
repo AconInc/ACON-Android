@@ -95,7 +95,14 @@ fun UploadPlaceScreen(
                 onUpdateNextPageBtnEnabled = viewModel::updateNextBtnEnabled
             )
         },
-        { UploadPlaceImageScreen() },
+        {
+            UploadPlaceImageScreen(
+                state = state,
+                onAddSpotImageUri = viewModel::onAddImageUris,
+                onRemoveSpotImageUri = viewModel::onRemoveImageUri,
+                onUpdateNextPageBtnEnabled = viewModel::updateNextBtnEnabled
+            )
+        },
         { UploadPlaceCompleteScreen() }
     )
 

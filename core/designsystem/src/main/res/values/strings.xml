@@ -204,6 +204,7 @@
     <string name="upload_place_exit">등록을 취소하시겠습니까?</string>
     <string name="upload_place_topbar">장소 등록</string>
     <string name="required_field">필수 입력</string>
+    <string name="optional_field">선택 입력</string>
     <string name="upload_place_search_title">등록하고 싶은 장소를\n검색해 주세요</string>
     <string name="upload_place_search_placeholder">장소 찾기</string>
     <string name="upload_place_select_place_title">이곳은 식당인가요?\n카페인가요?</string>
