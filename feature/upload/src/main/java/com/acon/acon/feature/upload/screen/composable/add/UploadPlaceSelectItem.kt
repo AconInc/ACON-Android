@@ -1,5 +1,6 @@
 package com.acon.acon.feature.upload.screen.composable.add
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -10,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -30,33 +30,29 @@ import com.acon.acon.core.designsystem.theme.AconTheme
 internal fun UploadPlaceSelectItem(
     title: String,
     modifier: Modifier = Modifier,
-    selectedBackgroundColor: Color = AconTheme.color.GlassWhiteSelected,
-    unSelectedBackgroundColor: Color = AconTheme.color.GlassWhiteDefault,
+    selectedBackgroundColor: Color = AconTheme.color.GraySelected,
+    unSelectedBackgroundColor: Color = AconTheme.color.GrayDefault,
+    border: BorderStroke = BorderStroke(
+        width = 1.dp,
+        color = AconTheme.color.GrayBorderSelected
+    ),
     shape: Shape = RoundedCornerShape(10.dp),
     isSelected: Boolean = false,
+    backgroundColor: Color = if(isSelected) { selectedBackgroundColor } else { unSelectedBackgroundColor },
     onClickUploadPlaceSelectItem: () -> Unit = {}
 ) {
-    val backgroundColor = remember(isSelected) {
-        if (isSelected) { selectedBackgroundColor }
-        else { unSelectedBackgroundColor }
-    }
-
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .clip(shape = shape)
-            .background(backgroundColor)
             .then(
                 if (isSelected) {
-                    Modifier.border(
-                        width = 1.dp,
-                        color = backgroundColor,
-                        shape = shape
-                    )
+                    Modifier.border(border = border, shape = shape)
                 } else {
                     Modifier
                 }
             )
+            .clip(shape = shape)
+            .background(backgroundColor)
             .noRippleClickable {
                 onClickUploadPlaceSelectItem()
             }
