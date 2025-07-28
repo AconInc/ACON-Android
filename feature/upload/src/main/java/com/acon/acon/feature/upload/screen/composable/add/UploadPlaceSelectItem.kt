@@ -23,6 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.acon.acon.core.designsystem.R
+import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
 
 @Composable
@@ -32,7 +33,8 @@ internal fun UploadPlaceSelectItem(
     selectedBackgroundColor: Color = AconTheme.color.GlassWhiteSelected,
     unSelectedBackgroundColor: Color = AconTheme.color.GlassWhiteDefault,
     shape: Shape = RoundedCornerShape(10.dp),
-    isSelected: Boolean = false
+    isSelected: Boolean = false,
+    onClickUploadPlaceSelectItem: () -> Unit = {}
 ) {
     val backgroundColor = remember(isSelected) {
         if (isSelected) { selectedBackgroundColor }
@@ -55,6 +57,9 @@ internal fun UploadPlaceSelectItem(
                     Modifier
                 }
             )
+            .noRippleClickable {
+                onClickUploadPlaceSelectItem()
+            }
             .padding(vertical = 12.dp, horizontal = 14.dp)
             .padding(start = 6.dp),
         verticalAlignment = Alignment.CenterVertically
