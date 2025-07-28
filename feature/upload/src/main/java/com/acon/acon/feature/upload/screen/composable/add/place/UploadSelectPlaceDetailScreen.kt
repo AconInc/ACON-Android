@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -51,13 +53,18 @@ internal fun UploadSelectPlaceDetailScreen(
         )
     }
 
-    LaunchedEffect(state.selectedSpotType, state.selectedRestaurantTypes, state.selectedCafeOption) {
-        val isEnabled = when (state.selectedSpotType) {
-            SpotType.RESTAURANT -> state.selectedRestaurantTypes.isNotEmpty()
-            SpotType.CAFE -> state.selectedCafeOption != null
-            else -> false
+    val isNextPageBtnEnabled by remember(state) {
+        derivedStateOf {
+            when (state.selectedSpotType) {
+                SpotType.RESTAURANT -> state.selectedRestaurantTypes.isNotEmpty()
+                SpotType.CAFE -> state.selectedCafeOption != null
+                else -> false
+            }
         }
-        onUpdateNextPageBtnEnabled(isEnabled)
+    }
+
+    LaunchedEffect(isNextPageBtnEnabled) {
+        onUpdateNextPageBtnEnabled(isNextPageBtnEnabled)
     }
 
     Column(
