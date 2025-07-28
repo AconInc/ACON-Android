@@ -88,7 +88,13 @@ fun UploadPlaceScreen(
                 onUpdateNextPageBtnEnabled = viewModel::updateNextBtnEnabled
             )
         },
-        { UploadSelectPriceScreen() },
+        {
+            UploadSelectPriceScreen(
+                state = state,
+                onUpdatePriceOptionType = viewModel::updatePriceOptionType,
+                onUpdateNextPageBtnEnabled = viewModel::updateNextBtnEnabled
+            )
+        },
         { UploadPlaceImageScreen() },
         { UploadPlaceCompleteScreen() }
     )

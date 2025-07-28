@@ -74,6 +74,10 @@ class UploadPlaceViewModel @Inject constructor(
         reduce { state.copy(selectedCafeOption = cafeOption) }
     }
 
+    fun updatePriceOptionType(priceOption: PriceOptionType) = intent {
+        reduce { state.copy(selectedPriceOption = priceOption) }
+    }
+
     fun updateRestaurantType(type: RestaurantFilterType.RestaurantType) = intent {
         reduce {
             val currentSelectedTypes = state.selectedRestaurantTypes.toMutableList()
@@ -111,7 +115,7 @@ data class UploadPlaceUiState(
     val selectedSpotName: String = "",
     val selectedSpotAddress: String = "",
     val selectedSpotType: SpotType? = null,
-    val selectedCategory: PriceOptionType? = null,
+    val selectedPriceOption: PriceOptionType? = null,
     val selectedCafeOption: CafeOptionType? = null,
     val selectedOptionList: List<RestaurantFilterType.RestaurantType> = emptyList(),
     val selectedRestaurantTypes: List<RestaurantFilterType.RestaurantType> = emptyList(),
