@@ -1,28 +1,27 @@
 package com.acon.acon.feature.upload.screen.composable.add
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -34,61 +33,84 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.button.v2.AconFilledTextButton
+import com.acon.acon.core.designsystem.component.dialog.v2.AconTwoActionDialog
 import com.acon.acon.core.designsystem.component.topbar.AconTopBar
 import com.acon.acon.core.designsystem.effect.LocalHazeState
 import com.acon.acon.core.designsystem.effect.defaultHazeEffect
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.core.ui.compose.getScreenWidth
+import com.acon.acon.feature.upload.screen.UploadPlaceViewModel
 import com.acon.acon.feature.upload.screen.composable.add.image.UploadPlaceImageScreen
 import com.acon.acon.feature.upload.screen.composable.add.place.UploadSelectPlaceDetailScreen
 import com.acon.acon.feature.upload.screen.composable.add.place.UploadSelectPlaceScreen
 import com.acon.acon.feature.upload.screen.composable.add.price.UploadSelectPriceScreen
 import com.acon.acon.feature.upload.screen.composable.add.search.UploadPlaceSearchScreen
 import dev.chrisbanes.haze.hazeSource
+import org.orbitmvi.orbit.compose.collectAsState
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun UploadPlaceScreen(
-
+    onNavigateBack: () -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: UploadPlaceViewModel = hiltViewModel()
 ) {
+    val state by viewModel.collectAsState()
+
     val screenWidthDp = getScreenWidth()
     val dialogWidth = (screenWidthDp * (260f / 360f))
 
     var currentStep by remember { mutableIntStateOf(0) }
     val steps = listOf<@Composable () -> Unit>(
         { UploadPlaceSearchScreen() },
-        { UploadSelectPlaceScreen() },
-        { UploadSelectPlaceDetailScreen() },
+        {
+            UploadSelectPlaceScreen(
+                state = state,
+                onSelectSpotType = viewModel::updateSpotType,
+                onUpdateNextPageBtnEnabled = viewModel::updateNextBtnEnabled
+            )
+        },
+        { UploadSelectPlaceDetailScreen(
+            state = state,
+            onUpdateCafeOptionType = viewModel::updateCafeOptionType,
+            onUpdateRestaurantType = viewModel::updateRestaurantType,
+            onUpdateNextPageBtnEnabled = viewModel::updateNextBtnEnabled
+        ) },
         // TODO - 메뉴 입력 화면 추가
         { UploadSelectPriceScreen() },
         { UploadPlaceImageScreen() },
         { UploadPlaceCompleteScreen() }
     )
 
-    // 등록 취소 다이얼로그
-//    AconTwoActionDialog(
-//        title = stringResource(R.string.upload_place_exit),
-//        action1 = stringResource(R.string.cancel),
-//        action2 = stringResource(R.string.exit),
-//        onDismissRequest = {
-//            //
-//        },
-//        onAction1 = {
-//            // 취소 (다이얼로그 닫기)
-//        },
-//        onAction2 = {
-//            // 나가기 (페이지 나가기)
-//        },
-//        modifier = Modifier.width(dialogWidth)
-//    )
+    LaunchedEffect(currentStep) {
+        if (currentStep == 0) {
+            viewModel.onPreviousBtnDisabled()
+            viewModel.updateNextBtnEnabled(true) // TODO - 임시조건 (검색 구현 후 삭제)
+        } else {
+            viewModel.onPreviousBtnEnabled()
+        }
+    }
+
+    if(state.showExitUploadPlaceDialog) {
+        AconTwoActionDialog(
+            title = stringResource(R.string.upload_place_exit),
+            action1 = stringResource(R.string.cancel),
+            action2 = stringResource(R.string.exit),
+            onDismissRequest = {},
+            onAction1 = {
+                viewModel.dismissExitUploadPlaceDialog()
+            },
+            onAction2 = {
+                onNavigateBack()
+            },
+            modifier = Modifier.width(dialogWidth)
+        )
+    }
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .navigationBarsPadding()
-            .background(AconTheme.color.Gray900)
+        modifier = modifier
     ) {
         Box(
             modifier = Modifier
@@ -104,7 +126,7 @@ fun UploadPlaceScreen(
                 leadingIcon = {
                     IconButton(
                         onClick = {
-                            // TODO - 나가기 누르면 다이얼로그 표시 (등록 취소)
+                            viewModel.showExitUploadPlaceDialog()
                         }
                     ) {
                         Icon(
@@ -182,7 +204,7 @@ fun UploadPlaceScreen(
                             width = 1.dp,
                             color = AconTheme.color.GlassWhiteDefault
                         ),
-                        enabled = true,
+                        enabled = state.isPreviousBtnEnabled,
                         onClick = {
                             // TODO - 이전
                             if (currentStep > 0) currentStep--
@@ -203,7 +225,7 @@ fun UploadPlaceScreen(
                             disabledContainerColor = AconTheme.color.GlassWhiteDefault,
                             disabledContentColor = AconTheme.color.Gray500
                         ),
-                        enabled = true,
+                        enabled = state.isNextBtnEnabled,
                         onClick = {
                             // TODO - 다음
                             if (currentStep < steps.lastIndex) currentStep++
@@ -221,6 +243,8 @@ fun UploadPlaceScreen(
 @Composable
 private fun UploadPlaceScreenPreview() {
     AconTheme {
-        UploadPlaceScreen()
+        UploadPlaceScreen(
+            onNavigateBack = {}
+        )
     }
 }
