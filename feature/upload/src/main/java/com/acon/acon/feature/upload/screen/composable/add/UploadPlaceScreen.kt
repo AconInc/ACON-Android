@@ -48,6 +48,7 @@ import com.acon.acon.feature.upload.screen.composable.add.place.UploadSelectPlac
 import com.acon.acon.feature.upload.screen.composable.add.place.UploadSelectPlaceScreen
 import com.acon.acon.feature.upload.screen.composable.add.price.UploadSelectPriceScreen
 import com.acon.acon.feature.upload.screen.composable.add.search.UploadPlaceSearchScreen
+import com.acon.acon.feature.upload.screen.composable.menu.UploadPlaceEnterMenuScreen
 import dev.chrisbanes.haze.hazeSource
 import org.orbitmvi.orbit.compose.collectAsState
 
@@ -78,7 +79,7 @@ fun UploadPlaceScreen(
             onUpdateRestaurantType = viewModel::updateRestaurantType,
             onUpdateNextPageBtnEnabled = viewModel::updateNextBtnEnabled
         ) },
-        // TODO - 메뉴 입력 화면 추가
+        { UploadPlaceEnterMenuScreen() },
         { UploadSelectPriceScreen() },
         { UploadPlaceImageScreen() },
         { UploadPlaceCompleteScreen() }

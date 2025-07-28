@@ -1,4 +1,4 @@
-package com.acon.acon.feature.upload.screen.composable.add.search
+package com.acon.acon.feature.upload.screen.composable.menu
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -29,12 +29,9 @@ import com.acon.acon.core.designsystem.component.textfield.v2.AconSearchTextFiel
 import com.acon.acon.core.designsystem.theme.AconTheme
 
 @Composable
-internal fun UploadPlaceSearchScreen(
+internal fun UploadPlaceEnterMenuScreen(
 
 ) {
-    //TODO - 아래 offsetY 관련 코드는 모두 임시용 - 추후 애니메이션, 글래스모피즘 적용
-    var offsetY by remember { mutableIntStateOf(0) }
-    var isTextFieldFocused by remember { mutableStateOf(false) } // TODO - 임시 변수
 
     var query by rememberSaveable(stateSaver = TextFieldValue.Saver) { mutableStateOf(TextFieldValue("")) }
     var isSelection by remember { mutableStateOf(false) }
@@ -44,53 +41,38 @@ internal fun UploadPlaceSearchScreen(
             .fillMaxSize()
             .background(AconTheme.color.Gray900)
             .padding(horizontal = 16.dp)
-            .offset {
-                IntOffset(x = 0, y = if (isTextFieldFocused) -offsetY else 0)
-            }
     ) {
-        Column(
-            modifier = Modifier
-                .onGloballyPositioned { coordinates ->
-                    offsetY = coordinates.size.height
-                }
-        ) {
-            Text(
-                text = stringResource(R.string.required_field),
-                style = AconTheme.typography.Body1,
-                color = AconTheme.color.Danger,
-                modifier = Modifier.padding(top = 40.dp)
-            )
+        Text(
+            text = stringResource(R.string.required_field),
+            style = AconTheme.typography.Body1,
+            color = AconTheme.color.Danger,
+            modifier = Modifier.padding(top = 40.dp)
+        )
 
-            Spacer(Modifier.height(4.dp))
-            Text(
-                text = stringResource(R.string.upload_place_search_title),
-                style = AconTheme.typography.Headline3,
-                color = AconTheme.color.White
-            )
+        Text(
+            text = stringResource(R.string.upload_place_enter_menu_title),
+            style = AconTheme.typography.Headline3,
+            color = AconTheme.color.White,
+            modifier = Modifier.padding(top = 4.dp, start = 2.dp)
+        )
 
-            Spacer(Modifier.height(20.dp))
-        }
-
+        Spacer(Modifier.height(20.dp))
         AconSearchTextField(
             value = query,
             onValueChange = {
                 query = it
                 isSelection = false
             },
-            placeholder = stringResource(R.string.upload_place_search_placeholder),
-            modifier = Modifier
-                .fillMaxWidth()
-                .onFocusChanged { focusState ->
-                    isTextFieldFocused = focusState.isFocused
-                }
+            placeholder = stringResource(R.string.upload_place_enter_menu_placeholder),
+            modifier = Modifier.fillMaxWidth()
         )
     }
 }
 
 @Preview
 @Composable
-private fun UploadPlaceSearchScreenPreview() {
+private fun UploadPlaceEnterMenuScreenPreview() {
     AconTheme {
-        UploadPlaceSearchScreen()
+        UploadPlaceEnterMenuScreen()
     }
 }

@@ -223,6 +223,8 @@
     <string name="upload_place_image_title">식당 사진을 등록할 수 있어요</string>
     <string name="upload_place_complete_title">새로운 장소를 등록했어요</string>
     <string name="upload_place_complete_sub_title">등록한 장소는 검토 후 반영돼요</string>
+    <string name="upload_place_enter_menu_title">추천해주고 싶은\n메뉴를 알려주세요</string>
+    <string name="upload_place_enter_menu_placeholder">메뉴를 입력해주세요</string>
 
     <!-- Onboarding -->
     <string name="request_dislike_food_title">싫어하는 음식을\n알려줄 수 있나요?</string>
