@@ -188,7 +188,7 @@
     <string name="no_search_result">앗… 검색 결과가 없어요</string>
     <string name="request_new_spot_description1">현재 장소를 바로 등록할 수 있어요</string>
     <string name="request_new_spot_description2">더욱 더 정확하게 추천이 가능해요</string>
-    <string name="go_to_register_spot">5초만에 등록하러 가기</string>
+    <string name="go_to_register_spot">장소 직접 등록하기</string>
     <string name="introduce_drop_acorn">도토리를 떨어트려 리뷰를 남겨 볼까요?</string>
     <string name="introduce_click_acorn">도토리를 선택해보세요</string>
     <string name="complete_drop_acorn">도토리로 리뷰 남기기</string>
@@ -210,10 +210,12 @@
     <string name="upload_place_select_place_sub_title">브런치는 카페로 분류해요!</string>
     <string name="upload_place_select_cafe_title">여긴 어떤 카페인가요?</string>
     <string name="upload_place_select_cafe_sub_title">중복선택이 가능해요</string>
+    <string name="upload_place_select_cafe_option1">네, 작업하기 좋아요</string>
+    <string name="upload_place_select_cafe_option2">아니요, 그저 그래요</string>
     <string name="upload_place_select_cafe_option_1">작업하기 좋아요</string>
     <string name="upload_place_select_cafe_option_2">프랜차이즈 예요</string>
     <string name="upload_place_select_restaurant_title">여긴 어떤 식당인가요??</string>
-    <string name="upload_place_select_restaurant_cafe">여긴 어떤 카페인가요??</string>
+    <string name="upload_place_select_restaurant_cafe">작업하기 좋은 카페인가요??</string>
     <string name="upload_place_select_price_title">가성비는 어떤 편인가요?</string>
     <string name="upload_place_select_price_option_1">가성비 최고예요</string>
     <string name="upload_place_select_price_option_2">보통이에요</string>
