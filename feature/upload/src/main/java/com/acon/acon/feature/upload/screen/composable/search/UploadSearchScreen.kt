@@ -39,7 +39,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
-import com.acon.acon.core.common.UrlConstants
+import com.acon.acon.core.analytics.amplitude.AconAmplitude
+import com.acon.acon.core.analytics.constants.EventNames
+import com.acon.acon.core.analytics.constants.PropertyKeys
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.chip.AconChip
 import com.acon.acon.core.designsystem.component.dialog.v2.AconDefaultDialog
@@ -48,13 +50,9 @@ import com.acon.acon.core.designsystem.effect.defaultHazeEffect
 import com.acon.acon.core.designsystem.effect.rememberHazeState
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.core.ui.android.showToast
+import com.acon.acon.core.ui.ext.getNameResId
 import com.acon.acon.feature.upload.mock.uploadSearchUiStateMock
 import com.acon.acon.feature.upload.screen.UploadSearchUiState
-import com.acon.acon.core.analytics.amplitude.AconAmplitude
-import com.acon.acon.core.analytics.constants.EventNames
-import com.acon.acon.core.analytics.constants.PropertyKeys
-import com.acon.acon.core.ui.ext.getNameResId
 import dev.chrisbanes.haze.hazeSource
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
@@ -66,6 +64,7 @@ internal fun UploadSearchScreen(
     onSearchedSpotClick: (com.acon.acon.core.model.model.upload.SearchedSpot, onSuccess: () -> Unit) -> Unit,
     onSuggestionSpotClick: (com.acon.acon.core.model.model.upload.UploadSpotSuggestion, onSuccess: () -> Unit) -> Unit,
     onVerifyLocationDialogAction: () -> Unit,
+    onUploadPlaceClick: () -> Unit,
     onBackAction: () -> Unit,
     onNextAction: () -> Unit,
     modifier: Modifier = Modifier,
@@ -180,6 +179,7 @@ internal fun UploadSearchScreen(
                                         query = TextFieldValue(text = it.name, selection = TextRange(it.name.length))
                                     }
                                 },
+                                onUploadPlaceClick = { onUploadPlaceClick() },
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(top = 10.dp)
@@ -208,6 +208,7 @@ internal fun UploadSearchScreen(
 private fun SearchedSpots(
     searchedSpots: ImmutableList<com.acon.acon.core.model.model.upload.SearchedSpot>,
     onItemClick: (com.acon.acon.core.model.model.upload.SearchedSpot) -> Unit,
+    onUploadPlaceClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val uriHandler = LocalUriHandler.current
@@ -254,11 +255,7 @@ private fun SearchedSpots(
                                     eventName = EventNames.UPLOAD,
                                     property = PropertyKeys.CLICK_REGISTER_FORM to true
                                 )
-                                try {
-                                    uriHandler.openUri(UrlConstants.REQUEST_NEW_SPOT_UPLOAD)
-                                } catch (e: Exception) {
-                                    context.showToast("웹사이트 접속에 실패했어요")
-                                }
+                                onUploadPlaceClick()
                             }
                     )
                 }
@@ -318,6 +315,7 @@ private fun UploadSearchScreenPreview() {
     UploadSearchScreen(
         state = uploadSearchUiStateMock,
         onSearchQueryChanged = { _, _ -> },
+        onUploadPlaceClick = {},
         onBackAction = {},
         onNextAction = {},
         onSearchedSpotClick = {_, _ ->},
