@@ -73,13 +73,21 @@ fun UploadPlaceScreen(
                 onUpdateNextPageBtnEnabled = viewModel::updateNextBtnEnabled
             )
         },
-        { UploadSelectPlaceDetailScreen(
-            state = state,
-            onUpdateCafeOptionType = viewModel::updateCafeOptionType,
-            onUpdateRestaurantType = viewModel::updateRestaurantType,
-            onUpdateNextPageBtnEnabled = viewModel::updateNextBtnEnabled
-        ) },
-        { UploadPlaceEnterMenuScreen() },
+        {
+            UploadSelectPlaceDetailScreen(
+                state = state,
+                onUpdateCafeOptionType = viewModel::updateCafeOptionType,
+                onUpdateRestaurantType = viewModel::updateRestaurantType,
+                onUpdateNextPageBtnEnabled = viewModel::updateNextBtnEnabled
+            )
+        },
+        {
+            UploadPlaceEnterMenuScreen(
+                state = state,
+                onSearchQueryChanged = viewModel::onSearchQueryChanged,
+                onUpdateNextPageBtnEnabled = viewModel::updateNextBtnEnabled
+            )
+        },
         { UploadSelectPriceScreen() },
         { UploadPlaceImageScreen() },
         { UploadPlaceCompleteScreen() }
