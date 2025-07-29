@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -21,7 +22,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,26 +34,32 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.acon.acon.core.designsystem.R
+import com.acon.acon.core.designsystem.component.dialog.v2.AconTwoActionDialog
 import com.acon.acon.core.designsystem.effect.imageGradientBottomLayer
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.core.ui.compose.getScreenHeight
+import com.acon.acon.core.ui.compose.getScreenWidth
 import com.acon.acon.feature.upload.screen.UploadPlaceUiState
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.distinctUntilChanged
 
 private const val maxImageCount = 10
 
 @Composable
 internal fun UploadPlaceImageScreen(
     state: UploadPlaceUiState,
+    onRequestRemoveUploadPlaceImageDialog: (uri: Uri) -> Unit,
+    onDismissRemoveUploadPlaceImageDialog: () -> Unit,
     onAddSpotImageUri:(uris: List<Uri>) -> Unit,
-    onRemoveSpotImageUri:(uri: Uri, currentPageIndex: Int) -> Unit,
+    onRemoveSpotImageUri:(uri: Uri) -> Unit,
     onUpdateNextPageBtnEnabled: (Boolean) -> Unit
 ) {
     val selectedUris = state.selectedImageUris ?: emptyList()
 
     val screenHeightDp = getScreenHeight()
+    val screenWidthDp = getScreenWidth()
     val imageBoxHeight = screenHeightDp * 0.4f
+    val dialogWidth = (screenWidthDp * (260f / 360f))
 
     val galleryLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickMultipleVisualMedia()
@@ -74,30 +80,42 @@ internal fun UploadPlaceImageScreen(
         }
     )
 
-    val coroutineScope = rememberCoroutineScope()
     LaunchedEffect(Unit) {
-        snapshotFlow {
-            Pair(selectedUris.size, pagerState.currentPage)
-        }.collect { (size, currentPage) ->
-            val targetPage = currentPage.coerceAtMost(
-                maximumValue = size.coerceAtLeast(minimumValue = 0) - 1
-            )
+        snapshotFlow { selectedUris.size }
+            .distinctUntilChanged()
+            .collect { size ->
+                val currentPage = pagerState.currentPage
+                val targetPage = if (size == 0) {
+                    0
+                } else {
+                    currentPage.coerceAtMost(size - 1)
+                }
 
-            if (size > 0 && currentPage != targetPage) {
-                coroutineScope.launch {
+                if (currentPage != targetPage) {
                     pagerState.animateScrollToPage(targetPage)
                 }
             }
-            else if (size == 0 && currentPage != 0) {
-                coroutineScope.launch {
-                    pagerState.animateScrollToPage(0)
-                }
-            }
-        }
     }
 
     LaunchedEffect(Unit) {
         onUpdateNextPageBtnEnabled(true)
+    }
+
+    if(state.showRemoveUploadPlaceImageDialog) {
+        AconTwoActionDialog(
+            title = stringResource(R.string.remove_upload_place_image_title),
+            action1 = stringResource(R.string.cancel),
+            action2 = stringResource(R.string.remove),
+            onDismissRequest = {},
+            onAction1 = {
+                onDismissRemoveUploadPlaceImageDialog()
+            },
+            onAction2 = {
+                state.selectedUriToRemove?.let { onRemoveSpotImageUri(it) }
+                onDismissRemoveUploadPlaceImageDialog()
+            },
+            modifier = Modifier.width(dialogWidth)
+        )
     }
 
     Column(
@@ -175,7 +193,7 @@ internal fun UploadPlaceImageScreen(
                                 .align(Alignment.BottomEnd)
                                 .padding(end = 16.dp, bottom = 16.dp)
                                 .noRippleClickable {
-                                    onRemoveSpotImageUri(selectedUris[page], pagerState.currentPage)
+                                    onRequestRemoveUploadPlaceImageDialog(selectedUris[page])
                                 }
                         )
 
@@ -218,8 +236,10 @@ private fun UploadPlaceImageScreenPreview() {
     AconTheme {
         UploadPlaceImageScreen(
             state = UploadPlaceUiState(),
+            onRequestRemoveUploadPlaceImageDialog = {},
+            onDismissRemoveUploadPlaceImageDialog = {},
             onAddSpotImageUri = {},
-            onRemoveSpotImageUri = { _, _ -> },
+            onRemoveSpotImageUri = {},
             onUpdateNextPageBtnEnabled = {}
         )
     }

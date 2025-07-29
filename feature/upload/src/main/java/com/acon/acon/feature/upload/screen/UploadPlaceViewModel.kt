@@ -105,7 +105,7 @@ class UploadPlaceViewModel @Inject constructor(
         }
     }
 
-    fun onRemoveImageUri(uri: Uri, currentPageIndex: Int) = intent {
+    fun onRemoveImageUri(uri: Uri) = intent {
         val currentUris = state.selectedImageUris?.toMutableList()
         val removedSuccessfully = currentUris?.remove(uri)
 
@@ -113,13 +113,24 @@ class UploadPlaceViewModel @Inject constructor(
             reduce {
                 state.copy(selectedImageUris = currentUris)
             }
+        }
+    }
 
-            val targetPageIndex = if (currentUris.isEmpty()) {
-                0
-            } else {
-                currentPageIndex.coerceAtMost(currentUris.size - 1)
-            }
-            postSideEffect(UploadPlaceSideEffect.ImageRemoved(removedPage = targetPageIndex))
+    fun onRequestRemoveUploadPlaceImageDialog(uri: Uri) = intent {
+        reduce {
+            state.copy(
+                showRemoveUploadPlaceImageDialog = true,
+                selectedUriToRemove = uri
+            )
+        }
+    }
+
+    fun onDismissRemoveUploadPlaceImageDialog() = intent {
+        reduce {
+            state.copy(
+                showRemoveUploadPlaceImageDialog = false,
+                selectedUriToRemove = null
+            )
         }
     }
 
@@ -144,6 +155,8 @@ data class UploadPlaceUiState(
     val isPreviousBtnEnabled: Boolean = false,
     val isNextBtnEnabled: Boolean = false,
     val showExitUploadPlaceDialog: Boolean = false,
+    val showRemoveUploadPlaceImageDialog: Boolean = false,
+    val selectedUriToRemove: Uri? = null,
     val selectedSpotName: String = "",
     val selectedSpotAddress: String = "",
     val selectedSpotType: SpotType? = null,
@@ -158,5 +171,4 @@ data class UploadPlaceUiState(
 
 sealed interface UploadPlaceSideEffect {
     data object NavigateBack : UploadPlaceSideEffect
-    data class ImageRemoved(val removedPage: Int) : UploadPlaceSideEffect
 }

@@ -98,6 +98,8 @@ fun UploadPlaceScreen(
         {
             UploadPlaceImageScreen(
                 state = state,
+                onRequestRemoveUploadPlaceImageDialog = viewModel::onRequestRemoveUploadPlaceImageDialog,
+                onDismissRemoveUploadPlaceImageDialog = viewModel::onDismissRemoveUploadPlaceImageDialog,
                 onAddSpotImageUri = viewModel::onAddImageUris,
                 onRemoveSpotImageUri = viewModel::onRemoveImageUri,
                 onUpdateNextPageBtnEnabled = viewModel::updateNextBtnEnabled

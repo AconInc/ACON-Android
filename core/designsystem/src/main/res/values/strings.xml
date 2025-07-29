@@ -8,6 +8,7 @@
     <string name="done">완료</string>
     <string name="exit">나가기</string>
     <string name="save">저장</string>
+    <string name="remove">삭제</string>
     <string name="select">선택</string>
     <string name="submit">제출하기</string>
     <string name="continue_writing">계속 작성</string>
@@ -92,6 +93,7 @@
     <string name="location_unsupported_area_content">문제가 발생했습니다.\n나중에 다시 시도해주세요.</string>
     <string name="location_permission_denied_title">\'Acon\'에 대한 위치접근\n권한이 없습니다.</string>
     <string name="location_permission_denied_content">설정에서 위치접근 권한을 허용해주세요.</string>
+    <string name="remove_upload_place_image_title">사진을 삭제 하시겠습니까?</string>
 
     <!-- SignIn -->
     <string name="signin_logo_title_content_description">acon 로고 이미지</string>
