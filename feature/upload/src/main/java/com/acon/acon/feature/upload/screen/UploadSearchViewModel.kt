@@ -148,6 +148,10 @@ class UploadSearchViewModel @Inject constructor(
         }
     }
 
+    fun moveToUploadPlace() = intent {
+        postSideEffect(UploadSearchSideEffect.NavigatePlace)
+    }
+
     fun onBackAction() = intent {
         postSideEffect(UploadSearchSideEffect.NavigateBack)
     }
@@ -179,5 +183,6 @@ sealed interface UploadSearchUiState {
 
 sealed interface UploadSearchSideEffect {
     data class NavigateToReviewScreen(val spot: com.acon.acon.core.model.model.spot.SimpleSpot) : UploadSearchSideEffect
+    data object NavigatePlace : UploadSearchSideEffect
     data object NavigateBack : UploadSearchSideEffect
 }

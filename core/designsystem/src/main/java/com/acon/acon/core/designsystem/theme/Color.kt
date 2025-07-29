@@ -67,6 +67,9 @@ internal val AconColors = AconColor(
     PrimaryDefault = Color(0xFFFF4A02),
     PrimaryDark = Color(0xFFDE3F00),
 
+    GrayDefault = Color(0xFF414141),
+    GraySelected = Color(0xFF595959),
+    GrayBorderSelected = Color(0xFF8B8B8B),
     Gray4545 = Color(0xFF454545),
 
     Gray900 = Color(0xFF111111),
@@ -153,6 +156,9 @@ data class AconColor(
     val PrimaryDefault: Color,
     val PrimaryDark: Color,
 
+    val GrayDefault: Color,
+    val GraySelected: Color,
+    val GrayBorderSelected: Color,
     val Gray4545: Color,
 
     val Gray900: Color,

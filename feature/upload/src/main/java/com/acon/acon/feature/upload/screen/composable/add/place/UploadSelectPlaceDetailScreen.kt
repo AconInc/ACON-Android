@@ -11,37 +11,50 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.theme.AconTheme
+import com.acon.acon.core.model.type.CafeOptionType
+import com.acon.acon.core.model.type.RestaurantFilterType
+import com.acon.acon.core.model.type.SpotType
+import com.acon.acon.feature.upload.screen.UploadPlaceUiState
 import com.acon.acon.feature.upload.screen.composable.add.UploadPlaceSelectItem
-import com.acon.acon.feature.upload.screen.composable.type.UploadPlaceType
+import com.acon.acon.feature.upload.screen.composable.type.getNameResId
 import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 internal fun UploadSelectPlaceDetailScreen(
-
+    state: UploadPlaceUiState,
+    onUpdateCafeOptionType: (CafeOptionType) -> Unit,
+    onUpdateRestaurantType: (RestaurantFilterType.RestaurantType) -> Unit,
+    onUpdateNextPageBtnEnabled: (Boolean) -> Unit
 ) {
-    // TODO - 임시변수
-    // TODO - UploadPlaceType -> 카페 / 식당 선택
-    val uploadPlaceType: UploadPlaceType = UploadPlaceType.CAFE
+    val allRestaurantTypes = remember {
+        persistentListOf(*RestaurantFilterType.RestaurantType.entries.toTypedArray())
+    }
 
-    val placeTitleList = persistentListOf(
-        R.string.korean,
-        R.string.chinese,
-        R.string.japanese,
-        R.string.asian,
-        R.string.western,
-        R.string.fusion,
-        R.string.drink_bar,
-        R.string.korean_street,
-        R.string.buffet,
-        R.string.reason_other
-    )
+    val isNextPageBtnEnabled by remember(state) {
+        derivedStateOf {
+            when (state.selectedSpotType) {
+                SpotType.RESTAURANT -> state.selectedRestaurantTypes.isNotEmpty()
+                SpotType.CAFE -> state.selectedCafeOption != null
+                else -> false
+            }
+        }
+    }
+
+    LaunchedEffect(isNextPageBtnEnabled) {
+        onUpdateNextPageBtnEnabled(isNextPageBtnEnabled)
+    }
 
     Column(
         modifier = Modifier
@@ -49,8 +62,8 @@ internal fun UploadSelectPlaceDetailScreen(
             .background(AconTheme.color.Gray900)
             .padding(horizontal = 16.dp)
     ) {
-        when (uploadPlaceType) {
-            UploadPlaceType.RESTAURANT -> {
+        when (state.selectedSpotType) {
+            SpotType.RESTAURANT  -> {
                 Text(
                     text = stringResource(R.string.required_field),
                     style = AconTheme.typography.Body1,
@@ -65,6 +78,14 @@ internal fun UploadSelectPlaceDetailScreen(
                     color = AconTheme.color.White
                 )
 
+                Spacer(Modifier.height(10.dp))
+                Text(
+                    text = stringResource(R.string.upload_place_select_cafe_sub_title),
+                    style = AconTheme.typography.Title5,
+                    color = AconTheme.color.Gray500,
+                    fontWeight = FontWeight.Normal
+                )
+
                 Spacer(Modifier.height(32.dp))
                 Column(
                     modifier = Modifier
@@ -72,15 +93,19 @@ internal fun UploadSelectPlaceDetailScreen(
                         .padding(horizontal = 4.dp),
                     verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    placeTitleList.chunked(2).fastForEach { pair ->
+                    allRestaurantTypes.chunked(2).fastForEach { pair ->
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
-                            pair.forEach { stringResId ->
+                            pair.forEach { restaurantType ->
                                 UploadPlaceSelectItem(
-                                    title = stringResource(id = stringResId),
-                                    modifier = Modifier.weight(1f)
+                                    title = stringResource(id = restaurantType.getNameResId()),
+                                    modifier = Modifier.weight(1f),
+                                    isSelected = state.selectedRestaurantTypes.contains(restaurantType),
+                                    onClickUploadPlaceSelectItem = {
+                                        onUpdateRestaurantType(restaurantType)
+                                    }
                                 )
                             }
                         }
@@ -88,7 +113,7 @@ internal fun UploadSelectPlaceDetailScreen(
                 }
             }
 
-            UploadPlaceType.CAFE -> {
+            SpotType.CAFE -> {
                 Text(
                     text = stringResource(R.string.required_field),
                     style = AconTheme.typography.Body1,
@@ -103,7 +128,7 @@ internal fun UploadSelectPlaceDetailScreen(
                     color = AconTheme.color.White
                 )
 
-                Spacer(Modifier.height(66.dp))
+                Spacer(Modifier.height(100.dp))
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -111,14 +136,23 @@ internal fun UploadSelectPlaceDetailScreen(
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     UploadPlaceSelectItem(
-                        title = stringResource(R.string.upload_place_select_cafe_option_1),
-                        isSelected = true
+                        title = stringResource(CafeOptionType.GOOD_FOR_WORK.getNameResId()),
+                        isSelected = state.selectedCafeOption == CafeOptionType.GOOD_FOR_WORK,
+                        onClickUploadPlaceSelectItem = {
+                            onUpdateCafeOptionType(CafeOptionType.GOOD_FOR_WORK)
+                        }
                     )
                     UploadPlaceSelectItem(
-                        title = stringResource(R.string.upload_place_select_cafe_option_2)
+                        title = stringResource(CafeOptionType.NOT_GOOD_FOR_WORK.getNameResId()),
+                        isSelected = state.selectedCafeOption == CafeOptionType.NOT_GOOD_FOR_WORK,
+                        onClickUploadPlaceSelectItem = {
+                            onUpdateCafeOptionType(CafeOptionType.NOT_GOOD_FOR_WORK)
+                        }
                     )
                 }
             }
+
+            null -> {}
         }
     }
 }
@@ -127,6 +161,11 @@ internal fun UploadSelectPlaceDetailScreen(
 @Composable
 private fun UploadSelectPlaceDetailScreenPreview() {
     AconTheme {
-        UploadSelectPlaceDetailScreen()
+        UploadSelectPlaceDetailScreen(
+            state = UploadPlaceUiState(),
+            onUpdateCafeOptionType = {},
+            onUpdateRestaurantType = {},
+            onUpdateNextPageBtnEnabled = {}
+        )
     }
 }

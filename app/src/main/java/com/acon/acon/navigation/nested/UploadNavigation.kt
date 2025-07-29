@@ -17,6 +17,7 @@ import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.core.navigation.route.SpotRoute
 import com.acon.acon.core.navigation.route.UploadRoute
 import com.acon.acon.core.navigation.type.simpleSpotNavType
+import com.acon.acon.feature.upload.screen.composable.add.UploadPlaceScreen
 import com.acon.acon.feature.upload.screen.composable.complete.UploadCompleteScreenContainer
 import com.acon.acon.feature.upload.screen.composable.review.UploadReviewScreenContainer
 import com.acon.acon.feature.upload.screen.composable.search.UploadSearchScreenContainer
@@ -42,6 +43,9 @@ internal fun NavGraphBuilder.uploadNavigation(
                 onNavigateBack = navController::popBackStack,
                 onNavigateToReview = { spot ->
                     navController.navigate(UploadRoute.Review(spot))
+                },
+                onNavigateToPlace = {
+                    navController.navigate(UploadRoute.Place)
                 },
                 modifier = Modifier
                     .background(AconTheme.color.Gray900)
@@ -84,6 +88,20 @@ internal fun NavGraphBuilder.uploadNavigation(
                         }
                     }
                 },
+                modifier = Modifier
+                    .background(AconTheme.color.Gray900)
+                    .systemBarsPadding()
+                    .fillMaxSize()
+            )
+        }
+
+        composable<UploadRoute.Place>(
+            exitTransition = {
+                ExitTransition.None
+            }
+        ) {
+            UploadPlaceScreen(
+                onNavigateBack = navController::popBackStack,
                 modifier = Modifier
                     .background(AconTheme.color.Gray900)
                     .systemBarsPadding()

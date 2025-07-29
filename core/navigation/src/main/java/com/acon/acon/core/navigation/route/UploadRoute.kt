@@ -12,6 +12,9 @@ sealed interface UploadRoute {
     data object Search : UploadRoute
 
     @Serializable
+    data object Place : UploadRoute
+
+    @Serializable
     data class Review(
         val spot: com.acon.acon.core.model.model.spot.SimpleSpot
     ) : UploadRoute

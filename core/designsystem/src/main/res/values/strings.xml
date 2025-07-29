@@ -8,6 +8,7 @@
     <string name="done">완료</string>
     <string name="exit">나가기</string>
     <string name="save">저장</string>
+    <string name="remove">삭제</string>
     <string name="select">선택</string>
     <string name="submit">제출하기</string>
     <string name="continue_writing">계속 작성</string>
@@ -92,6 +93,7 @@
     <string name="location_unsupported_area_content">문제가 발생했습니다.\n나중에 다시 시도해주세요.</string>
     <string name="location_permission_denied_title">\'Acon\'에 대한 위치접근\n권한이 없습니다.</string>
     <string name="location_permission_denied_content">설정에서 위치접근 권한을 허용해주세요.</string>
+    <string name="remove_upload_place_image_title">사진을 삭제 하시겠습니까?</string>
 
     <!-- SignIn -->
     <string name="signin_logo_title_content_description">acon 로고 이미지</string>
@@ -188,7 +190,7 @@
     <string name="no_search_result">앗… 검색 결과가 없어요</string>
     <string name="request_new_spot_description1">현재 장소를 바로 등록할 수 있어요</string>
     <string name="request_new_spot_description2">더욱 더 정확하게 추천이 가능해요</string>
-    <string name="go_to_register_spot">5초만에 등록하러 가기</string>
+    <string name="go_to_register_spot">장소 직접 등록하기</string>
     <string name="introduce_drop_acorn">도토리를 떨어트려 리뷰를 남겨 볼까요?</string>
     <string name="introduce_click_acorn">도토리를 선택해보세요</string>
     <string name="complete_drop_acorn">도토리로 리뷰 남기기</string>
@@ -204,16 +206,19 @@
     <string name="upload_place_exit">등록을 취소하시겠습니까?</string>
     <string name="upload_place_topbar">장소 등록</string>
     <string name="required_field">필수 입력</string>
+    <string name="optional_field">선택 입력</string>
     <string name="upload_place_search_title">등록하고 싶은 장소를\n검색해 주세요</string>
     <string name="upload_place_search_placeholder">장소 찾기</string>
     <string name="upload_place_select_place_title">이곳은 식당인가요?\n카페인가요?</string>
     <string name="upload_place_select_place_sub_title">브런치는 카페로 분류해요!</string>
     <string name="upload_place_select_cafe_title">여긴 어떤 카페인가요?</string>
     <string name="upload_place_select_cafe_sub_title">중복선택이 가능해요</string>
+    <string name="upload_place_select_cafe_option1">네, 작업하기 좋아요</string>
+    <string name="upload_place_select_cafe_option2">아니요, 그저 그래요</string>
     <string name="upload_place_select_cafe_option_1">작업하기 좋아요</string>
     <string name="upload_place_select_cafe_option_2">프랜차이즈 예요</string>
     <string name="upload_place_select_restaurant_title">여긴 어떤 식당인가요??</string>
-    <string name="upload_place_select_restaurant_cafe">여긴 어떤 카페인가요??</string>
+    <string name="upload_place_select_restaurant_cafe">작업하기 좋은 카페인가요??</string>
     <string name="upload_place_select_price_title">가성비는 어떤 편인가요?</string>
     <string name="upload_place_select_price_option_1">가성비 최고예요</string>
     <string name="upload_place_select_price_option_2">보통이에요</string>
@@ -221,7 +226,7 @@
     <string name="upload_place_image_title">식당 사진을 등록할 수 있어요</string>
     <string name="upload_place_complete_title">새로운 장소를 등록했어요</string>
     <string name="upload_place_complete_sub_title">등록한 장소는 검토 후 반영돼요</string>
-    <string name="upload_place_enter_menu_title">추천해주고 싶은\n메뉴를 알려주세요</string>
+    <string name="upload_place_enter_menu_title">추천하는\n메뉴를 알려주세요</string>
     <string name="upload_place_enter_menu_placeholder">메뉴를 입력해주세요</string>
 
     <!-- Onboarding -->
