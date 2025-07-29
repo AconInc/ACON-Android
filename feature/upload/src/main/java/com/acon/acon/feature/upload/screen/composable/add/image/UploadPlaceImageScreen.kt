@@ -22,6 +22,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -74,19 +75,23 @@ internal fun UploadPlaceImageScreen(
     )
 
     val coroutineScope = rememberCoroutineScope()
-    LaunchedEffect(selectedUris.size, pagerState.currentPage) {
-        val targetPage = pagerState.currentPage.coerceAtMost(
-            maximumValue = selectedUris.size.coerceAtLeast(minimumValue = 0) - 1
-        )
-        if (selectedUris.isNotEmpty() && pagerState.currentPage != targetPage) {
-            coroutineScope.launch {
-                pagerState.animateScrollToPage(targetPage)
-            }
-        }
+    LaunchedEffect(Unit) {
+        snapshotFlow {
+            Pair(selectedUris.size, pagerState.currentPage)
+        }.collect { (size, currentPage) ->
+            val targetPage = currentPage.coerceAtMost(
+                maximumValue = size.coerceAtLeast(minimumValue = 0) - 1
+            )
 
-        if (selectedUris.isEmpty() && pagerState.currentPage != 0) {
-            coroutineScope.launch {
-                pagerState.animateScrollToPage(0)
+            if (size > 0 && currentPage != targetPage) {
+                coroutineScope.launch {
+                    pagerState.animateScrollToPage(targetPage)
+                }
+            }
+            else if (size == 0 && currentPage != 0) {
+                coroutineScope.launch {
+                    pagerState.animateScrollToPage(0)
+                }
             }
         }
     }
