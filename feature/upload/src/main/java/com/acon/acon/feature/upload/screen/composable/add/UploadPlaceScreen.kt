@@ -31,6 +31,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.button.v2.AconFilledTextButton
@@ -47,7 +48,6 @@ import com.acon.acon.feature.upload.screen.composable.add.place.UploadSelectPlac
 import com.acon.acon.feature.upload.screen.composable.add.price.UploadSelectPriceScreen
 import com.acon.acon.feature.upload.screen.composable.add.search.UploadPlaceSearchScreen
 import com.acon.acon.feature.upload.screen.composable.menu.UploadPlaceEnterMenuScreen
-import dev.chrisbanes.haze.hazeSource
 import org.orbitmvi.orbit.compose.collectAsState
 
 private const val maxStepIndex = 6
@@ -99,6 +99,7 @@ fun UploadPlaceScreen(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
+                .zIndex(1f)
                 .defaultHazeEffect(
                     hazeState = LocalHazeState.current,
                     tintColor = AconTheme.color.GlassGray900,
@@ -141,7 +142,6 @@ fun UploadPlaceScreen(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .hazeSource(LocalHazeState.current)
             ) {
                 AnimatedContent(
                     targetState = currentStep,

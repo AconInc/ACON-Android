@@ -26,7 +26,9 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.textfield.v2.AconSearchTextField
+import com.acon.acon.core.designsystem.effect.LocalHazeState
 import com.acon.acon.core.designsystem.theme.AconTheme
+import dev.chrisbanes.haze.hazeSource
 
 @Composable
 internal fun UploadPlaceSearchScreen(
@@ -50,6 +52,7 @@ internal fun UploadPlaceSearchScreen(
     ) {
         Column(
             modifier = Modifier
+                .hazeSource(LocalHazeState.current)
                 .onGloballyPositioned { coordinates ->
                     offsetY = coordinates.size.height
                 }
