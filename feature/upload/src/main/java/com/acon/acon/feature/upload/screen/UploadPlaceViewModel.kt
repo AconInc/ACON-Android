@@ -134,6 +134,22 @@ class UploadPlaceViewModel @Inject constructor(
         }
     }
 
+    fun goToNextStep(lastStepIndex: Int) = intent {
+        if (state.currentStep < lastStepIndex) {
+            reduce {
+                state.copy(currentStep = state.currentStep + 1)
+            }
+        }
+    }
+
+    fun goToPreviousStep() = intent {
+        if (state.currentStep > 0) {
+            reduce {
+                state.copy(currentStep = state.currentStep - 1)
+            }
+        }
+    }
+
     fun showExitUploadPlaceDialog() = intent {
         reduce {
             state.copy(showExitUploadPlaceDialog = true)
@@ -166,7 +182,8 @@ data class UploadPlaceUiState(
     val selectedRestaurantTypes: List<RestaurantFilterType.RestaurantType> = emptyList(),
     val recommendMenu: String? = "",
     val selectedImageUris: List<Uri>? = emptyList(),
-    val maxImageCount: Int = 10
+    val maxImageCount: Int = 10,
+    val currentStep: Int = 0
 )
 
 sealed interface UploadPlaceSideEffect {

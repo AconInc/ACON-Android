@@ -23,9 +23,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
@@ -63,7 +61,7 @@ fun UploadPlaceScreen(
     val screenWidthDp = getScreenWidth()
     val dialogWidth = (screenWidthDp * (260f / 360f))
 
-    var currentStep by remember { mutableIntStateOf(0) }
+    val currentStep = state.currentStep
     val steps = listOf<@Composable () -> Unit>(
         { UploadPlaceSearchScreen() },
         {
@@ -108,13 +106,16 @@ fun UploadPlaceScreen(
         { UploadPlaceCompleteScreen() }
     )
 
-    LaunchedEffect(currentStep) {
-        if (currentStep == 0) {
-            viewModel.onPreviousBtnDisabled()
-            viewModel.updateNextBtnEnabled(true) // TODO - 임시조건 (검색 구현 후 삭제)
-        } else {
-            viewModel.onPreviousBtnEnabled()
-        }
+    LaunchedEffect(Unit) {
+        snapshotFlow { state.currentStep }
+            .collect { currentStep ->
+                if (currentStep == 0) {
+                    viewModel.onPreviousBtnDisabled()
+                    viewModel.updateNextBtnEnabled(true) // TODO - 임시조건 (검색 구현 후 삭제)
+                } else {
+                    viewModel.onPreviousBtnEnabled()
+                }
+            }
     }
 
     if(state.showExitUploadPlaceDialog) {
@@ -230,8 +231,7 @@ fun UploadPlaceScreen(
                         ),
                         enabled = state.isPreviousBtnEnabled,
                         onClick = {
-                            // TODO - 이전
-                            if (currentStep > 0) currentStep--
+                            viewModel.goToPreviousStep()
                         },
                         modifier = Modifier
                             .weight(3f)
@@ -251,8 +251,7 @@ fun UploadPlaceScreen(
                         ),
                         enabled = state.isNextBtnEnabled,
                         onClick = {
-                            // TODO - 다음
-                            if (currentStep < steps.lastIndex) currentStep++
+                            viewModel.goToNextStep(steps.lastIndex)
                         },
                         modifier = Modifier
                             .weight(5f)
