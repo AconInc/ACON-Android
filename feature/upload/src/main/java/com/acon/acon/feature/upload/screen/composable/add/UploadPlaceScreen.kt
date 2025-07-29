@@ -50,10 +50,12 @@ import com.acon.acon.feature.upload.screen.composable.menu.UploadPlaceEnterMenuS
 import dev.chrisbanes.haze.hazeSource
 import org.orbitmvi.orbit.compose.collectAsState
 
+private const val maxStepIndex = 6
+
 @Composable
 fun UploadPlaceScreen(
-    onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier,
+    onNavigateBack: () -> Unit = {},
     viewModel: UploadPlaceViewModel = hiltViewModel()
 ) {
     val state by viewModel.collectAsState()
@@ -62,49 +64,6 @@ fun UploadPlaceScreen(
     val dialogWidth = (screenWidthDp * (260f / 360f))
 
     val currentStep = state.currentStep
-    val steps = listOf<@Composable () -> Unit>(
-        { UploadPlaceSearchScreen() },
-        {
-            UploadSelectPlaceScreen(
-                state = state,
-                onSelectSpotType = viewModel::updateSpotType,
-                onUpdateNextPageBtnEnabled = viewModel::updateNextBtnEnabled
-            )
-        },
-        {
-            UploadSelectPlaceDetailScreen(
-                state = state,
-                onUpdateCafeOptionType = viewModel::updateCafeOptionType,
-                onUpdateRestaurantType = viewModel::updateRestaurantType,
-                onUpdateNextPageBtnEnabled = viewModel::updateNextBtnEnabled
-            )
-        },
-        {
-            UploadPlaceEnterMenuScreen(
-                state = state,
-                onSearchQueryChanged = viewModel::onSearchQueryChanged,
-                onUpdateNextPageBtnEnabled = viewModel::updateNextBtnEnabled
-            )
-        },
-        {
-            UploadSelectPriceScreen(
-                state = state,
-                onUpdatePriceOptionType = viewModel::updatePriceOptionType,
-                onUpdateNextPageBtnEnabled = viewModel::updateNextBtnEnabled
-            )
-        },
-        {
-            UploadPlaceImageScreen(
-                state = state,
-                onRequestRemoveUploadPlaceImageDialog = viewModel::onRequestRemoveUploadPlaceImageDialog,
-                onDismissRemoveUploadPlaceImageDialog = viewModel::onDismissRemoveUploadPlaceImageDialog,
-                onAddSpotImageUri = viewModel::onAddImageUris,
-                onRemoveSpotImageUri = viewModel::onRemoveImageUri,
-                onUpdateNextPageBtnEnabled = viewModel::updateNextBtnEnabled
-            )
-        },
-        { UploadPlaceCompleteScreen() }
-    )
 
     LaunchedEffect(Unit) {
         snapshotFlow { state.currentStep }
@@ -125,7 +84,7 @@ fun UploadPlaceScreen(
             action2 = stringResource(R.string.exit),
             onDismissRequest = {},
             onAction1 = {
-                viewModel.dismissExitUploadPlaceDialog()
+                viewModel.onDismissExitUploadPlaceDialog()
             },
             onAction2 = {
                 onNavigateBack()
@@ -151,7 +110,7 @@ fun UploadPlaceScreen(
                 leadingIcon = {
                     IconButton(
                         onClick = {
-                            viewModel.showExitUploadPlaceDialog()
+                            viewModel.onRequestExitUploadPlaceDialog()
                         }
                     ) {
                         Icon(
@@ -196,12 +155,44 @@ fun UploadPlaceScreen(
                     label = stringResource(R.string.upload_process_step_transition),
                     contentKey = { it }
                 ) { step ->
-                    steps.getOrNull(step)?.invoke()
+                    when(step) {
+                        0 -> UploadPlaceSearchScreen()
+                        1 -> UploadSelectPlaceScreen(
+                            state = state,
+                            onSelectSpotType = viewModel::updateSpotType,
+                            onUpdateNextPageBtnEnabled = viewModel::updateNextBtnEnabled
+                        )
+                        2 -> UploadSelectPlaceDetailScreen(
+                            state = state,
+                            onUpdateCafeOptionType = viewModel::updateCafeOptionType,
+                            onUpdateRestaurantType = viewModel::updateRestaurantType,
+                            onUpdateNextPageBtnEnabled = viewModel::updateNextBtnEnabled
+                        )
+                        3 -> UploadPlaceEnterMenuScreen(
+                            state = state,
+                            onSearchQueryChanged = viewModel::onSearchQueryChanged,
+                            onUpdateNextPageBtnEnabled = viewModel::updateNextBtnEnabled
+                        )
+                        4 -> UploadSelectPriceScreen(
+                            state = state,
+                            onUpdatePriceOptionType = viewModel::updatePriceOptionType,
+                            onUpdateNextPageBtnEnabled = viewModel::updateNextBtnEnabled
+                        )
+                        5 -> UploadPlaceImageScreen(
+                            state = state,
+                            onRequestRemoveUploadPlaceImageDialog = viewModel::onRequestRemoveUploadPlaceImageDialog,
+                            onDismissRemoveUploadPlaceImageDialog = viewModel::onDismissRemoveUploadPlaceImageDialog,
+                            onAddSpotImageUri = viewModel::onAddImageUris,
+                            onRemoveSpotImageUri = viewModel::onRemoveImageUri,
+                            onUpdateNextPageBtnEnabled = viewModel::updateNextBtnEnabled
+                        )
+                        6 -> UploadPlaceCompleteScreen()
+                    }
                 }
             }
         }
 
-        if (currentStep != steps.lastIndex) {
+        if (currentStep != maxStepIndex) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -251,7 +242,7 @@ fun UploadPlaceScreen(
                         ),
                         enabled = state.isNextBtnEnabled,
                         onClick = {
-                            viewModel.goToNextStep(steps.lastIndex)
+                            viewModel.goToNextStep(maxStepIndex)
                         },
                         modifier = Modifier
                             .weight(5f)

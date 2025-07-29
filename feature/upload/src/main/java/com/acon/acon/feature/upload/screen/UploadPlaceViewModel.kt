@@ -62,6 +62,10 @@ class UploadPlaceViewModel @Inject constructor(
         reduce { state.copy(isPreviousBtnEnabled = true)}
     }
 
+    fun onUpdateNextBtnEnabled() = intent {
+        reduce { state.copy(isNextBtnEnabled = true)}
+    }
+
     fun updateNextBtnEnabled(isEnabled: Boolean) = intent {
         reduce { state.copy(isNextBtnEnabled = isEnabled)}
     }
@@ -150,13 +154,13 @@ class UploadPlaceViewModel @Inject constructor(
         }
     }
 
-    fun showExitUploadPlaceDialog() = intent {
+    fun onRequestExitUploadPlaceDialog() = intent {
         reduce {
             state.copy(showExitUploadPlaceDialog = true)
         }
     }
 
-    fun dismissExitUploadPlaceDialog() = intent {
+    fun onDismissExitUploadPlaceDialog() = intent {
         reduce {
             state.copy(showExitUploadPlaceDialog = false)
         }
