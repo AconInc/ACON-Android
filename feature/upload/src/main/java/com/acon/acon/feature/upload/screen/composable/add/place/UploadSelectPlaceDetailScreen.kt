@@ -39,18 +39,7 @@ internal fun UploadSelectPlaceDetailScreen(
     onUpdateNextPageBtnEnabled: (Boolean) -> Unit
 ) {
     val allRestaurantTypes = remember {
-        persistentListOf(
-            RestaurantFilterType.RestaurantType.KOREAN,
-            RestaurantFilterType.RestaurantType.CHINESE,
-            RestaurantFilterType.RestaurantType.JAPANESE,
-            RestaurantFilterType.RestaurantType.ASIAN,
-            RestaurantFilterType.RestaurantType.WESTERN,
-            RestaurantFilterType.RestaurantType.FUSION,
-            RestaurantFilterType.RestaurantType.DRINKING_PLACE,
-            RestaurantFilterType.RestaurantType.BUNSIK,
-            RestaurantFilterType.RestaurantType.BUFFET,
-            RestaurantFilterType.RestaurantType.EXCLUDE_FRANCHISE,
-        )
+        persistentListOf(*RestaurantFilterType.RestaurantType.entries.toTypedArray())
     }
 
     val isNextPageBtnEnabled by remember(state) {
