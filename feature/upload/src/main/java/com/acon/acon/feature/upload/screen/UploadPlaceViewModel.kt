@@ -18,7 +18,8 @@ import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.viewmodel.container
 import javax.inject.Inject
 
-@OptIn(OrbitExperimental::class, FlowPreview::class)@HiltViewModel
+@OptIn(OrbitExperimental::class, FlowPreview::class)
+@HiltViewModel
 class UploadPlaceViewModel @Inject constructor(
 
 ) : BaseContainerHost<UploadPlaceUiState, UploadPlaceSideEffect>() {
