@@ -104,6 +104,8 @@
     <string name="sign_in_failed_toast">로그인에 실패했습니다.</string>
 
     <!-- AreaVerification -->
+    <string name="alert_about_skip_area_verification">현재 내 지역에 안 계시면 건너뛰기를 해주세요 </string>
+    <string name="skip_area_verification">건너뛰기</string>
     <string name="area_verification_settings">settings</string>
     <string name="area_verification_topbar">지역인증</string>
     <string name="area_verification_main_title">믿을 수 있는 리뷰를 위해\n지역인증이 필요해요</string>

@@ -18,6 +18,7 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 fun AreaVerificationScreenContainer(
     route: String,
     onNextScreen: (Double, Double) -> Unit,
+    onNavigateToOnboarding: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: AreaVerificationViewModel = hiltViewModel()
 ) {
@@ -37,7 +38,8 @@ fun AreaVerificationScreenContainer(
                 onRequestLocationPermission()
             }
         },
-        modifier = modifier
+        modifier = modifier,
+        onSkip = viewModel::onSkipButtonClick
     )
 
     viewModel.useLiveLocation()
@@ -64,6 +66,8 @@ fun AreaVerificationScreenContainer(
             is AreaVerificationSideEffect.ShowErrorToast -> {
                 context.showToast(it.errorMessage)
             }
+
+            is AreaVerificationSideEffect.NavigateToOnboarding -> onNavigateToOnboarding()
         }
     }
 }

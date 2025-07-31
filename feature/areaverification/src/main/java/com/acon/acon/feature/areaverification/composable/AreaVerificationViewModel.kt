@@ -52,6 +52,10 @@ class AreaVerificationViewModel @Inject constructor(
         )
     }
 
+    fun onSkipButtonClick() = intent {
+        postSideEffect(AreaVerificationSideEffect.NavigateToOnboarding)
+    }
+
     fun onDeviceGPSSettingClick(packageName: String) = intent {
         postSideEffect(
             AreaVerificationSideEffect.NavigateToSystemLocationSettings(packageName)
@@ -154,4 +158,6 @@ sealed interface AreaVerificationSideEffect {
     ) : AreaVerificationSideEffect
 
     data class ShowErrorToast(val errorMessage: String) : AreaVerificationSideEffect
+
+    data object NavigateToOnboarding : AreaVerificationSideEffect
 }
