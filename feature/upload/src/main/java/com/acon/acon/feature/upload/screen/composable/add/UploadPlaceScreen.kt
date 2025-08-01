@@ -70,7 +70,6 @@ fun UploadPlaceScreen(
             .collect { currentStep ->
                 if (currentStep == 0) {
                     viewModel.onPreviousBtnDisabled()
-                    viewModel.updateNextBtnEnabled(true) // TODO - 임시조건 (검색 구현 후 삭제)
                 } else {
                     viewModel.onPreviousBtnEnabled()
                 }
@@ -156,7 +155,11 @@ fun UploadPlaceScreen(
                     contentKey = { it }
                 ) { step ->
                     when(step) {
-                        0 -> UploadPlaceSearchScreen()
+                        0 -> UploadPlaceSearchScreen(
+                            state = state,
+                            onSearchedSpotClick = viewModel::onSearchSpotByMapClicked,
+                            onSearchQueryOrSelectionChanged = viewModel::onSearchQueryOrSelectionChanged
+                        )
                         1 -> UploadSelectPlaceScreen(
                             state = state,
                             onSelectSpotType = viewModel::updateSpotType,
