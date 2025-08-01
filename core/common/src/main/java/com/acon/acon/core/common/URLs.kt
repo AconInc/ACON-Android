@@ -8,4 +8,5 @@ object UrlConstants {
     const val ERROR_REPORT = "https://walla.my/survey/ekYLYwpJv2d0Eznnijla"
     const val NAVER_MAP = "market://details?id=com.nhn.android.nmap"
     const val NAVER_OPEN_API = "https://naveropenapi.apigw.ntruss.com/"
+    const val NAVER_DEVELOPERS_OPEN_API = "https://openapi.naver.com"
 }
