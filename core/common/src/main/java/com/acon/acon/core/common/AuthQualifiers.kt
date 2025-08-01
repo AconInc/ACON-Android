@@ -16,9 +16,16 @@ annotation class Naver
 
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
+annotation class NaverDevelopers
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
 annotation class TokenInterceptor
 
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
 annotation class NaverAuthInterceptor
 
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class NaverDevelopersAuthInterceptor
