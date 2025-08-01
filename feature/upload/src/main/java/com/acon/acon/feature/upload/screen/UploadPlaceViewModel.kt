@@ -3,25 +3,26 @@ package com.acon.acon.feature.upload.screen
 import android.net.Uri
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.viewModelScope
+import com.acon.acon.core.model.model.upload.SearchedSpotByMap
 import com.acon.acon.core.model.type.CafeOptionType
 import com.acon.acon.core.model.type.PriceOptionType
 import com.acon.acon.core.model.type.RestaurantFilterType
 import com.acon.acon.core.model.type.SpotType
 import com.acon.acon.core.ui.base.BaseContainerHost
+import com.acon.acon.domain.repository.MapSearchRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
-import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.viewmodel.container
 import javax.inject.Inject
 
-@OptIn(OrbitExperimental::class, FlowPreview::class)
+@OptIn(FlowPreview::class)
 @HiltViewModel
 class UploadPlaceViewModel @Inject constructor(
-
+    private val mapSearchRepository: MapSearchRepository
 ) : BaseContainerHost<UploadPlaceUiState, UploadPlaceSideEffect>() {
 
     override val container =
@@ -46,6 +47,31 @@ class UploadPlaceViewModel @Inject constructor(
                         }
                     }
             }
+
+            viewModelScope.launch {
+                queryFlow
+                    .debounce(100)
+                    .distinctUntilChanged()
+                    .collect { query ->
+                        if (query.isBlank()) {
+                            reduce {
+                                state.copy(
+                                    searchedSpotsByMap = emptyList(),
+                                    showSearchedSpotsByMap = false,
+                                    isNextBtnEnabled = false
+                                )
+                            }
+                        } else {
+                            mapSearchRepository.fetchMapSearch(query).onSuccess {
+                                reduce {
+                                    state.copy(
+                                        searchedSpotsByMap = it
+                                    )
+                                }
+                            }.onFailure {  }
+                        }
+                    }
+            }
         }
 
     private val queryFlow = MutableStateFlow("")
@@ -54,16 +80,38 @@ class UploadPlaceViewModel @Inject constructor(
         queryFlow.value = query
     }
 
+    fun onSearchQueryOrSelectionChanged(query: String, isSelection: Boolean) = intent {
+        reduce {
+            if (isSelection)
+                state.copy(
+                    showSearchedSpotsByMap = false
+                )
+            else
+                state.copy(
+                    selectedSpotByMap = null,
+                    showSearchedSpotsByMap = query.isNotBlank()
+                )
+        }
+        queryFlow.value = query
+    }
+
+    fun onSearchSpotByMapClicked(searchedSpotByMap: SearchedSpotByMap, onSuccess: () -> Unit) = intent {
+        onSuccess()
+        reduce {
+            state.copy(
+                selectedSpotByMap = searchedSpotByMap,
+                showSearchedSpotsByMap = false,
+                isNextBtnEnabled = true
+            )
+        }
+    }
+
     fun onPreviousBtnDisabled() = intent {
         reduce { state.copy(isPreviousBtnEnabled = false)}
     }
 
     fun onPreviousBtnEnabled() = intent {
         reduce { state.copy(isPreviousBtnEnabled = true)}
-    }
-
-    fun onUpdateNextBtnEnabled() = intent {
-        reduce { state.copy(isNextBtnEnabled = true)}
     }
 
     fun updateNextBtnEnabled(isEnabled: Boolean) = intent {
@@ -167,18 +215,16 @@ class UploadPlaceViewModel @Inject constructor(
     }
 }
 
-// featureList - 장소 특징 목록
-//val selectedSpotType: SpotType
-//val selectedRestaurantFilters: Map<FilterDetailKey, Set<RestaurantFilterType>>
 @Immutable
 data class UploadPlaceUiState(
     val isPreviousBtnEnabled: Boolean = false,
     val isNextBtnEnabled: Boolean = false,
     val showExitUploadPlaceDialog: Boolean = false,
     val showRemoveUploadPlaceImageDialog: Boolean = false,
+    val selectedSpotByMap: SearchedSpotByMap? = null,
+    val searchedSpotsByMap: List<SearchedSpotByMap> = listOf(),
+    val showSearchedSpotsByMap: Boolean = false,
     val selectedUriToRemove: Uri? = null,
-    val selectedSpotName: String = "",
-    val selectedSpotAddress: String = "",
     val selectedSpotType: SpotType? = null,
     val selectedPriceOption: PriceOptionType? = null,
     val selectedCafeOption: CafeOptionType? = null,
@@ -190,6 +236,4 @@ data class UploadPlaceUiState(
     val currentStep: Int = 0
 )
 
-sealed interface UploadPlaceSideEffect {
-    data object NavigateBack : UploadPlaceSideEffect
-}
+sealed interface UploadPlaceSideEffect
