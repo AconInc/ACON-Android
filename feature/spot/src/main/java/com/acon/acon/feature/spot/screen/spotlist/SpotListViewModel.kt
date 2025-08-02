@@ -19,6 +19,7 @@ import com.acon.acon.core.model.type.SpotType
 import com.acon.acon.core.model.type.TagType
 import com.acon.acon.core.model.type.TransportMode
 import com.acon.acon.core.model.type.UserActionType
+import com.acon.acon.core.model.type.UserType
 import com.acon.acon.core.ui.android.NavigationAppHandler
 import com.acon.acon.core.ui.android.isInKorea
 import com.acon.acon.core.ui.base.BaseContainerHost
@@ -74,7 +75,7 @@ class SpotListViewModel @Inject constructor(
                 initialLocation = location
                 if (location.isInKorea(context)) {
                     var showAreaVerificationModal = false
-                    if (isCooldownExpiredUseCase(UserActionType.SKIP_AREA_VERIFICATION, 24 * 60 * 60))
+                    if (isCooldownExpiredUseCase(UserActionType.SKIP_AREA_VERIFICATION, 24 * 60 * 60) && userType.value != UserType.GUEST)
                         showAreaVerificationModal =
                             profileRepository.fetchVerifiedAreaList().takeIf { it.isSuccess }?.getOrNull()?.isEmpty() == true
                     fetchSpotList(location,
