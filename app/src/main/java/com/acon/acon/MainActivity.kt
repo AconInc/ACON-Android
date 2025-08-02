@@ -360,7 +360,6 @@ class MainActivity : ComponentActivity() {
                                                     eventName = EventNames.GUEST,
                                                     property = appState.propertyKey to true
                                                 )
-                                                Timber.d("dddd  " + appState.propertyKey)
                                             }
                                             AconAmplitude.setUserId(it.externalUUID)
                                         }.onFailure {
