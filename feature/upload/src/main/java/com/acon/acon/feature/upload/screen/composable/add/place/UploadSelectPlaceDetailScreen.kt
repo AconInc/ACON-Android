@@ -128,7 +128,7 @@ internal fun UploadSelectPlaceDetailScreen(
                     color = AconTheme.color.White
                 )
 
-                Spacer(Modifier.height(100.dp))
+                Spacer(Modifier.height(32.dp))
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()

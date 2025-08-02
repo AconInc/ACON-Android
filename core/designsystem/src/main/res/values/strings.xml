@@ -11,6 +11,8 @@
     <string name="remove">삭제</string>
     <string name="select">선택</string>
     <string name="submit">제출하기</string>
+    <string name="end">끝내기</string>
+    <string name="report">제보하기</string>
     <string name="continue_writing">계속 작성</string>
     <string name="next">다음</string>
     <string name="previous">이전</string>
@@ -215,10 +217,8 @@
     <string name="upload_place_select_cafe_sub_title">중복선택이 가능해요</string>
     <string name="upload_place_select_cafe_option1">네, 작업하기 좋아요</string>
     <string name="upload_place_select_cafe_option2">아니요, 그저 그래요</string>
-    <string name="upload_place_select_cafe_option_1">작업하기 좋아요</string>
-    <string name="upload_place_select_cafe_option_2">프랜차이즈 예요</string>
     <string name="upload_place_select_restaurant_title">여긴 어떤 식당인가요??</string>
-    <string name="upload_place_select_restaurant_cafe">작업하기 좋은 카페인가요??</string>
+    <string name="upload_place_select_restaurant_cafe">작업하기 좋은 카페인가요?</string>
     <string name="upload_place_select_price_title">가성비는 어떤 편인가요?</string>
     <string name="upload_place_select_price_option_1">가성비 최고예요</string>
     <string name="upload_place_select_price_option_2">보통이에요</string>
@@ -230,6 +230,8 @@
     <string name="upload_place_enter_menu_placeholder">메뉴를 입력해주세요</string>
     <string name="upload_place_no_search_result">검색결과가 없습니다.</string>
     <string name="upload_place_no_search_try_again">확인 후 다시 입력해주세요.</string>
+    <string name="upload_place_limit_dialog_title">장소 등록 마감</string>
+    <string name="upload_place_limit_dialog_content">오늘 너무 많은 장소가 등록돼서\n새로운 장소 등록이 불가능해요.\nAcon Instargram을 통해 제보할 수 있어요.</string>
 
     <!-- Onboarding -->
     <string name="request_dislike_food_title">싫어하는 음식을\n알려줄 수 있나요?</string>
