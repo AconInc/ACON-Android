@@ -11,5 +11,7 @@ data class MapSearchResponse(
 @Serializable
 data class MapSearchPlaceResponse(
     @SerialName("title") val title: String,
-    @SerialName("address") val address: String
+    @SerialName("category") val category: String,
+    @SerialName("address") val address: String,
+    @SerialName("roadAddress") val roadAddress: String
 )

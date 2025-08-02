@@ -5,6 +5,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -237,7 +238,7 @@ private fun SearchedSpots(
 
             items(
                 items = searchedSpotsByMap,
-                key = {  it.address + it.title },
+                key = { it.id },
             ) {
                 SearchedSpotItem(
                     modifier = Modifier
@@ -258,18 +259,28 @@ private fun SearchedSpotItem(
     searchedSpotByMap: SearchedSpotByMap,
     modifier: Modifier = Modifier
 ) {
-    Column(
-        modifier = modifier
+    Row(
+        modifier = modifier,
     ) {
-        Text(
-            text = searchedSpotByMap.title,
-            style = AconTheme.typography.Title4,
-            color = AconTheme.color.White
-        )
+        Column(
+            modifier = Modifier.weight(1f)
+        ) {
+            Text(
+                text = searchedSpotByMap.title,
+                style = AconTheme.typography.Title4,
+                color = AconTheme.color.White
+            )
 
-        Spacer(Modifier.height(4.dp))
+            Spacer(Modifier.height(4.dp))
+            Text(
+                text = searchedSpotByMap.roadAddress.takeIf { it.isNotEmpty() } ?: searchedSpotByMap.address,
+                style = AconTheme.typography.Body1,
+                color = AconTheme.color.Gray500
+            )
+        }
+
         Text(
-            text = searchedSpotByMap.address,
+            text = searchedSpotByMap.category,
             style = AconTheme.typography.Body1,
             color = AconTheme.color.Gray500
         )
