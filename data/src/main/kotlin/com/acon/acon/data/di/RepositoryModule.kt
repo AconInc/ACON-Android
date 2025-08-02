@@ -7,6 +7,7 @@ import com.acon.acon.data.repository.MapRepositoryImpl
 import com.acon.acon.data.repository.OnboardingRepositoryImpl
 import com.acon.acon.data.repository.ProfileRepositoryImpl
 import com.acon.acon.data.repository.SpotRepositoryImpl
+import com.acon.acon.data.repository.TimeRepositoryImpl
 import com.acon.acon.data.repository.UploadRepositoryImpl
 import com.acon.acon.data.repository.UserRepositoryImpl
 import com.acon.acon.domain.repository.AconAppRepository
@@ -14,6 +15,7 @@ import com.acon.acon.domain.repository.MapRepository
 import com.acon.acon.domain.repository.OnboardingRepository
 import com.acon.acon.domain.repository.ProfileRepository
 import com.acon.acon.domain.repository.SpotRepository
+import com.acon.acon.domain.repository.TimeRepository
 import com.acon.acon.domain.repository.UploadRepository
 import com.acon.acon.domain.repository.UserRepository
 import dagger.Binds
@@ -73,4 +75,10 @@ internal abstract class RepositoryModule {
     abstract fun bindsAconAppRepository(
         impl: AconAppRepositoryImpl
     ): AconAppRepository
+
+    @Singleton
+    @Binds
+    abstract fun bindsTimeRepository(
+        impl: TimeRepositoryImpl
+    ): TimeRepository
 }
