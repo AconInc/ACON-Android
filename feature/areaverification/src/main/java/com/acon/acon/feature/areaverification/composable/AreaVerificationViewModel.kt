@@ -6,9 +6,11 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.location.LocationManager
 import androidx.core.app.ActivityCompat
+import com.acon.acon.core.model.type.UserActionType
 import com.acon.acon.core.ui.base.BaseContainerHost
 import com.acon.acon.domain.error.area.ReplaceVerifiedArea
 import com.acon.acon.domain.repository.ProfileRepository
+import com.acon.acon.domain.repository.TimeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.orbitmvi.orbit.viewmodel.container
 import timber.log.Timber
@@ -17,7 +19,8 @@ import javax.inject.Inject
 @HiltViewModel
 class AreaVerificationViewModel @Inject constructor(
     private val application: Application,
-    private val profileRepository: ProfileRepository
+    private val profileRepository: ProfileRepository,
+    private val timeRepository: TimeRepository
 ) : BaseContainerHost<AreaVerificationUiState, AreaVerificationSideEffect>() {
 
     override val container = container<AreaVerificationUiState, AreaVerificationSideEffect>(
@@ -54,6 +57,7 @@ class AreaVerificationViewModel @Inject constructor(
 
     fun onSkipButtonClick() = intent {
         postSideEffect(AreaVerificationSideEffect.NavigateToOnboarding)
+        timeRepository.saveUserActionTime(UserActionType.SKIP_AREA_VERIFICATION, System.currentTimeMillis())
     }
 
     fun onDeviceGPSSettingClick(packageName: String) = intent {
