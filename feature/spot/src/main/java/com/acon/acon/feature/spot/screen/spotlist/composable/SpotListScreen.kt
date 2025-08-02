@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.bottombar.AconBottomBar
 import com.acon.acon.core.designsystem.component.bottombar.BottomNavType
+import com.acon.acon.core.designsystem.component.bottomsheet.AreaVerificationBottomSheet
 import com.acon.acon.core.designsystem.component.error.NetworkErrorView
 import com.acon.acon.core.designsystem.component.popup.AconTextPopup
 import com.acon.acon.core.designsystem.effect.LocalHazeState
@@ -61,17 +62,19 @@ import kotlinx.coroutines.launch
 internal fun SpotListScreen(
     state: SpotListUiStateV2,
     modifier: Modifier = Modifier,
-    onSpotTypeChanged: (com.acon.acon.core.model.type.SpotType) -> Unit = {},
-    onSpotClick: (com.acon.acon.core.model.model.spot.Spot, rank: Int) -> Unit = { _, _ -> },
-    onTryFindWay: (com.acon.acon.core.model.model.spot.Spot) -> Unit = {},
+    onSpotTypeChanged: (SpotType) -> Unit = {},
+    onSpotClick: (Spot, rank: Int) -> Unit = { _, _ -> },
+    onTryFindWay: (Spot) -> Unit = {},
     onNavigationAppChoose: (NavigationAppHandler) -> Unit = {},
     onChooseNavigationAppModalDismiss: () -> Unit = {},
     onFilterButtonClick: () -> Unit = {},
     onFilterModalDismissRequest: () -> Unit = {},
-    onRestaurantFilterSaved: (Map<FilterDetailKey, Set<com.acon.acon.core.model.type.RestaurantFilterType>>) -> Unit = {},
-    onCafeFilterSaved: (Map<FilterDetailKey, Set<com.acon.acon.core.model.type.CafeFilterType>>) -> Unit = {},
+    onRestaurantFilterSaved: (Map<FilterDetailKey, Set<RestaurantFilterType>>) -> Unit = {},
+    onCafeFilterSaved: (Map<FilterDetailKey, Set<CafeFilterType>>) -> Unit = {},
     onNavigateToUploadScreen: () -> Unit = {},
     onNavigateToProfileScreen: () -> Unit = {},
+    onDismissAreaVerificationModalRequest: () -> Unit = {},
+    onNavigateToAreaVerificationScreen: () -> Unit = {}
 ) {
     val screenHeightDp = getScreenHeight()
     val screenHeightPx = with(LocalDensity.current) {
@@ -87,6 +90,16 @@ internal fun SpotListScreen(
 
     val userType = LocalUserType.current
     val onSignInRequired = LocalRequestSignIn.current
+
+    if (state.showAreaVerificationModal) {
+        AreaVerificationBottomSheet(
+            onDismissRequest = onDismissAreaVerificationModalRequest,
+            onNavigateToAreaVerification = {
+                onDismissAreaVerificationModalRequest()
+                onNavigateToAreaVerificationScreen()
+            }
+        )
+    }
 
     Column(
         modifier = modifier
@@ -106,7 +119,7 @@ internal fun SpotListScreen(
             SpotTypeToggle(
                 selectedType = state.selectedSpotType,
                 onSwitched = {
-                    if (userType == com.acon.acon.core.model.type.UserType.GUEST)
+                    if (userType == UserType.GUEST)
                         onSignInRequired("click_toggle_guest?")
                     else
                         onSpotTypeChanged(it)
@@ -156,7 +169,7 @@ internal fun SpotListScreen(
                 is SpotListUiStateV2.Success -> {
                     Box(Modifier.fillMaxSize()) {
                         when (state.selectedSpotType) {
-                            com.acon.acon.core.model.type.SpotType.RESTAURANT -> {
+                            SpotType.RESTAURANT -> {
                                 pagerState = rememberPagerState {
                                     val size = state.spotList.size
                                     when {
@@ -187,7 +200,7 @@ internal fun SpotListScreen(
                                 )
                             }
 
-                            com.acon.acon.core.model.type.SpotType.CAFE -> {
+                            SpotType.CAFE -> {
                                 pagerState = rememberPagerState {
                                     val size = state.spotList.size
                                     when {

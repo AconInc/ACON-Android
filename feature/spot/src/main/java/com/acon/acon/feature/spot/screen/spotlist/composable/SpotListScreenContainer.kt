@@ -18,6 +18,7 @@ import com.acon.acon.core.ui.compose.LocalDeepLinkHandler
 import com.acon.acon.core.ui.compose.LocalOnRetry
 import com.acon.acon.core.ui.compose.LocalRequestSignIn
 import com.acon.acon.core.ui.compose.LocalUserType
+import com.acon.acon.feature.spot.screen.spotlist.SpotListUiStateV2
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.filter
 import org.orbitmvi.orbit.compose.collectAsState
@@ -27,9 +28,10 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 fun SpotListScreenContainer(
     onNavigateToUploadScreen: () -> Unit,
     onNavigateToProfileScreen: () -> Unit,
-    onNavigateToSpotDetailScreen: (com.acon.acon.core.model.model.spot.Spot, com.acon.acon.core.model.type.TransportMode) -> Unit,
+    onNavigateToSpotDetailScreen: (Spot, TransportMode) -> Unit,
+    onNavigateToAreaVerificationScreen: (latitude: Double, longitude: Double) -> Unit,
     modifier: Modifier = Modifier,
-    onNavigateToDeeplinkSpotDetailScreen: (spotNav: com.acon.acon.core.model.model.spot.SpotNavigationParameter) -> Unit = {},
+    onNavigateToDeeplinkSpotDetailScreen: (spotNav: SpotNavigationParameter) -> Unit = {},
     viewModel: SpotListViewModel = hiltViewModel()
 ) {
     val state by viewModel.collectAsState()
@@ -45,7 +47,7 @@ fun SpotListScreenContainer(
             .collect { spotId ->
                 delay(400)
                 onNavigateToDeeplinkSpotDetailScreen(
-                    com.acon.acon.core.model.model.spot.SpotNavigationParameter(
+                    SpotNavigationParameter(
                         spotId = spotId,
                         tags = emptyList(),
                         transportMode = null,
@@ -62,7 +64,7 @@ fun SpotListScreenContainer(
             state = state,
             onSpotTypeChanged = viewModel::onSpotTypeClicked,
             onSpotClick = { spot, rank ->
-                if (userType == com.acon.acon.core.model.type.UserType.GUEST)
+                if (userType == UserType.GUEST)
                     onSignInRequired("click_detail_guest?")
                 else
                     viewModel.onSpotClicked(spot, rank)
@@ -76,7 +78,13 @@ fun SpotListScreenContainer(
             onCafeFilterSaved = viewModel::onCafeFilterSaved,
             modifier = modifier.fillMaxSize(),
             onNavigateToUploadScreen = onNavigateToUploadScreen,
-            onNavigateToProfileScreen = onNavigateToProfileScreen
+            onNavigateToProfileScreen = onNavigateToProfileScreen,
+            onDismissAreaVerificationModalRequest = viewModel::onDismissAreaVerificationModal,
+            onNavigateToAreaVerificationScreen = {
+                val lat = (state as? SpotListUiStateV2.Success)?.currentLocation?.latitude ?: 0.0
+                val lon = (state as? SpotListUiStateV2.Success)?.currentLocation?.longitude ?: 0.0
+                onNavigateToAreaVerificationScreen(lat, lon)
+            }
         )
     }
 
