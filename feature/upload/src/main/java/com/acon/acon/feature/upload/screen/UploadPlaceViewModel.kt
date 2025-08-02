@@ -68,7 +68,15 @@ class UploadPlaceViewModel @Inject constructor(
                                         searchedSpotsByMap = it
                                     )
                                 }
-                            }.onFailure {  }
+                            }.onFailure {
+                                if (it.message?.contains("HTTP 429") == true) {
+                                    reduce {
+                                        state.copy(
+                                            showUploadPlaceLimitDialog = true
+                                        )
+                                    }
+                                }
+                            }
                         }
                     }
             }
@@ -213,6 +221,14 @@ class UploadPlaceViewModel @Inject constructor(
             state.copy(showExitUploadPlaceDialog = false)
         }
     }
+
+    fun onNavigateToBack() = intent {
+        postSideEffect(UploadPlaceSideEffect.OnNavigateToBack)
+    }
+
+    fun onClickReportPlace() = intent {
+        postSideEffect(UploadPlaceSideEffect.OnMoveToReportPlace)
+    }
 }
 
 @Immutable
@@ -221,6 +237,7 @@ data class UploadPlaceUiState(
     val isNextBtnEnabled: Boolean = false,
     val showExitUploadPlaceDialog: Boolean = false,
     val showRemoveUploadPlaceImageDialog: Boolean = false,
+    val showUploadPlaceLimitDialog: Boolean = false,
     val selectedSpotByMap: SearchedSpotByMap? = null,
     val searchedSpotsByMap: List<SearchedSpotByMap> = listOf(),
     val showSearchedSpotsByMap: Boolean = false,
@@ -236,4 +253,7 @@ data class UploadPlaceUiState(
     val currentStep: Int = 0
 )
 
-sealed interface UploadPlaceSideEffect
+sealed interface UploadPlaceSideEffect {
+    data object OnNavigateToBack : UploadPlaceSideEffect
+    data object OnMoveToReportPlace : UploadPlaceSideEffect
+}

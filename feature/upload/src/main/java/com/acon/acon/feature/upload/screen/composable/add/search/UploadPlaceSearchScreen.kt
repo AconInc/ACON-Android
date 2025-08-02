@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -39,15 +40,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.acon.acon.core.designsystem.R
+import com.acon.acon.core.designsystem.component.dialog.v2.AconTwoActionDialog
 import com.acon.acon.core.designsystem.component.textfield.v2.AconSearchTextField
 import com.acon.acon.core.designsystem.effect.LocalHazeState
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.core.model.model.upload.SearchedSpotByMap
+import com.acon.acon.core.ui.compose.getScreenWidth
 import com.acon.acon.feature.upload.screen.UploadPlaceUiState
 import dev.chrisbanes.haze.hazeSource
 import kotlinx.collections.immutable.ImmutableList
@@ -56,9 +60,14 @@ import kotlinx.collections.immutable.toImmutableList
 @Composable
 internal fun UploadPlaceSearchScreen(
     state: UploadPlaceUiState,
+    onBackAction: () -> Unit,
+    onClickReportPlace: () -> Unit,
     onSearchedSpotClick: (SearchedSpotByMap, onSuccess: () -> Unit) -> Unit,
     onSearchQueryOrSelectionChanged: (String, Boolean) -> Unit
 ) {
+    val screenWidthDp = getScreenWidth()
+    val dialogWidth = (screenWidthDp * (260f / 360f))
+
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -84,6 +93,30 @@ internal fun UploadPlaceSearchScreen(
             keyboardController?.hide()
             focusManager.clearFocus()
             isTextFieldFocused = false
+        }
+    }
+
+    if(state.showUploadPlaceLimitDialog) {
+        AconTwoActionDialog(
+            title = stringResource(R.string.upload_place_limit_dialog_title),
+            action1 = stringResource(R.string.end),
+            action2 = stringResource(R.string.report),
+            onDismissRequest = {},
+            onAction1 = {
+                onBackAction()
+            },
+            onAction2 = {
+                onClickReportPlace()
+            },
+            modifier = Modifier.width(dialogWidth)
+        ) {
+            Text(
+                text = stringResource(R.string.upload_place_limit_dialog_content),
+                color = AconTheme.color.Gray200,
+                style = AconTheme.typography.Body1,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(bottom = 22.dp)
+            )
         }
     }
 
@@ -249,6 +282,8 @@ private fun UploadPlaceSearchScreenPreview() {
     AconTheme {
         UploadPlaceSearchScreen(
             state = UploadPlaceUiState(),
+            onBackAction = { },
+            onClickReportPlace = {},
             onSearchedSpotClick = { _, _ -> },
             onSearchQueryOrSelectionChanged = { _, _ -> }
         )

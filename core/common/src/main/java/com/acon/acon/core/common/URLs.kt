@@ -9,4 +9,5 @@ object UrlConstants {
     const val NAVER_MAP = "market://details?id=com.nhn.android.nmap"
     const val NAVER_OPEN_API = "https://naveropenapi.apigw.ntruss.com/"
     const val NAVER_DEVELOPERS_OPEN_API = "https://openapi.naver.com"
+    const val ACON_INSTARGRAM = "https://www.instagram.com/acon.drop?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="
 }
