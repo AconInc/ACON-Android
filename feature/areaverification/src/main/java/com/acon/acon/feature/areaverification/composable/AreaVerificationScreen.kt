@@ -54,7 +54,7 @@ internal fun AreaVerificationScreen(
         initialValue = 1f,
         targetValue = 0f,
         animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 300, easing = LinearEasing),
+            animation = tween(durationMillis = 400, easing = LinearEasing),
             repeatMode = RepeatMode.Reverse
         ), label = "alpha"
     )
@@ -111,11 +111,6 @@ internal fun AreaVerificationScreen(
             )
 
             Spacer(Modifier.weight(1f))
-            Text(
-                text = stringResource(R.string.area_verification_one_second_verify),
-                color = AconTheme.color.Gray500,
-                style = AconTheme.typography.Body1,
-            )
 
             AconFilledButton(
                 onClick = { onNextButtonClick() },
