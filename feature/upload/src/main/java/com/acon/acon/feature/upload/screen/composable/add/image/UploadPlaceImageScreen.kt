@@ -5,6 +5,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -17,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -35,12 +37,14 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.dialog.v2.AconTwoActionDialog
-import com.acon.acon.core.designsystem.effect.imageGradientBottomLayer
+import com.acon.acon.core.designsystem.effect.LocalHazeState
+import com.acon.acon.core.designsystem.effect.defaultHazeEffect
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.core.ui.compose.getScreenHeight
 import com.acon.acon.core.ui.compose.getScreenWidth
 import com.acon.acon.feature.upload.screen.UploadPlaceUiState
+import dev.chrisbanes.haze.hazeSource
 import kotlinx.coroutines.flow.distinctUntilChanged
 
 private const val maxImageCount = 10
@@ -181,27 +185,38 @@ internal fun UploadPlaceImageScreen(
                         AsyncImage(
                             model = selectedUris[page],
                             contentDescription = stringResource(R.string.content_description_select_upload_place_image),
-                            modifier = Modifier.fillMaxSize(),
+                            modifier = Modifier.fillMaxSize()
+                                .hazeSource(LocalHazeState.current)
+                            ,
                             contentScale = ContentScale.Crop
-                        )
-
-                        Icon(
-                            imageVector = ImageVector.vectorResource(R.drawable.ic_delete),
-                            contentDescription = stringResource(R.string.content_description_delete_uploaded_place_image),
-                            tint = AconTheme.color.Action,
-                            modifier = Modifier
-                                .align(Alignment.BottomEnd)
-                                .padding(end = 16.dp, bottom = 16.dp)
-                                .noRippleClickable {
-                                    onRequestRemoveUploadPlaceImageDialog(selectedUris[page])
-                                }
                         )
 
                         Box(
                             modifier = Modifier
-                                .fillMaxSize()
-                                .imageGradientBottomLayer()
-                        )
+                                .align(Alignment.BottomEnd)
+                                .padding(end = 16.dp, bottom = 16.dp)
+                                .clip(CircleShape)
+                                .border(
+                                    width = 1.dp,
+                                    color = AconTheme.color.GlassWhiteSelected,
+                                    shape = CircleShape
+                                )
+                                .defaultHazeEffect(
+                                    hazeState = LocalHazeState.current,
+                                    tintColor = AconTheme.color.GlassWhiteLight
+                                )
+                        ) {
+                            Icon(
+                                imageVector = ImageVector.vectorResource(R.drawable.ic_delete),
+                                contentDescription = stringResource(R.string.content_description_delete_uploaded_place_image),
+                                tint = AconTheme.color.Action,
+                                modifier = Modifier
+                                    .padding(10.dp)
+                                    .noRippleClickable {
+                                        onRequestRemoveUploadPlaceImageDialog(selectedUris[page])
+                                    }
+                            )
+                        }
                     }
                 } else {
                     Box(
