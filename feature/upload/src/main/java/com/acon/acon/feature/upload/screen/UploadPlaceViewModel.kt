@@ -104,8 +104,8 @@ class UploadPlaceViewModel @Inject constructor(
         searchPlaceQueryFlow.value = query
     }
 
-    fun onSearchSpotByMapClicked(searchedSpotByMap: SearchedSpotByMap, onSuccess: () -> Unit) = intent {
-        onSuccess()
+    fun onSearchSpotByMapClicked(searchedSpotByMap: SearchedSpotByMap, onUpdateTextField: () -> Unit) = intent {
+        onUpdateTextField()
         reduce {
             state.copy(
                 selectedSpotByMap = searchedSpotByMap,

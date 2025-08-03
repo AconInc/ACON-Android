@@ -69,7 +69,7 @@ internal fun UploadPlaceSearchScreen(
     onBackAction: () -> Unit,
     onClickReportPlace: () -> Unit,
     onHideSearchedPlaceList: () -> Unit,
-    onSearchedSpotClick: (SearchedSpotByMap, onSuccess: () -> Unit) -> Unit,
+    onSearchedSpotClick: (SearchedSpotByMap, onUpdateTextField: () -> Unit) -> Unit,
     onSearchQueryOrSelectionChanged: (String, Boolean) -> Unit
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
