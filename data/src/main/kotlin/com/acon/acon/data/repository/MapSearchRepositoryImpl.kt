@@ -18,6 +18,11 @@ class MapSearchRepositoryImpl @Inject constructor(
                 }
 
                 foodCategory?.let {
+//                    Log.e("로그", "foodCategory : ${place.title}")
+//                    Log.e("로그", "foodCategory : ${it}")
+//                    Log.e("로그", "foodCategory : ${place.address}")
+//                    Log.e("로그", "foodCategory : ${place.roadAddress}")
+
                     SearchedSpotByMap(
                         title = place.title
                             .replace("<b>", "")
@@ -34,8 +39,8 @@ class MapSearchRepositoryImpl @Inject constructor(
 
     companion object {
         private val FOOD_CATEGORIES = listOf(
-            "베트남음식", "태국음식", "인도음식",
-            "한식", "중식", "일식", "양식", "분식", "술집"
+            "베트남음식", "태국음식", "인도음식", "한식", "중식", "일식", "양식", "분식",
+            "술집", "카페", "음식점"
         )
     }
 }

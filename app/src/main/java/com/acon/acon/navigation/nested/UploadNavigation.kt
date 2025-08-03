@@ -102,7 +102,13 @@ internal fun NavGraphBuilder.uploadNavigation(
             }
         ) {
             UploadPlaceScreen(
-                onNavigateBack = navController::popBackStack,
+                onNavigateHome = {
+                    navController.navigate(SpotRoute.Graph) {
+                        popUpTo(UploadRoute.Search) {
+                            inclusive = true
+                        }
+                    }
+                },
                 modifier = Modifier
                     .background(AconTheme.color.Gray900)
                     .fillMaxSize()

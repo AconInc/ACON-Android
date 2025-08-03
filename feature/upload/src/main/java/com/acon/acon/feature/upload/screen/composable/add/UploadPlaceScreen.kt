@@ -2,6 +2,7 @@ package com.acon.acon.feature.upload.screen.composable.add
 
 import android.content.Intent
 import android.net.Uri
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.slideInVertically
@@ -61,7 +62,7 @@ private const val maxStepIndex = 6
 @Composable
 fun UploadPlaceScreen(
     modifier: Modifier = Modifier,
-    onNavigateBack: () -> Unit = {},
+    onNavigateHome: () -> Unit = {},
     viewModel: UploadPlaceViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
@@ -72,13 +73,17 @@ fun UploadPlaceScreen(
 
     val currentStep = state.currentStep
 
+    BackHandler {
+        viewModel.onRequestExitUploadPlaceDialog()
+    }
+
     viewModel.collectSideEffect {
         when(it) {
             UploadPlaceSideEffect.OnMoveToReportPlace -> {
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse(UrlConstants.ACON_INSTARGRAM))
                 context.startActivity(intent)
             }
-            UploadPlaceSideEffect.OnNavigateToBack -> onNavigateBack()
+            UploadPlaceSideEffect.OnNavigateToBack -> onNavigateHome()
         }
     }
 
@@ -104,7 +109,7 @@ fun UploadPlaceScreen(
                 viewModel.onDismissExitUploadPlaceDialog()
             },
             onAction2 = {
-                onNavigateBack()
+                viewModel.onNavigateToBack()
             },
             modifier = Modifier.width(dialogWidth)
         )
@@ -283,7 +288,7 @@ fun UploadPlaceScreen(
 private fun UploadPlaceScreenPreview() {
     AconTheme {
         UploadPlaceScreen(
-            onNavigateBack = {}
+            onNavigateHome = {}
         )
     }
 }
