@@ -87,6 +87,7 @@ fun UploadPlaceScreen(
             .collect { currentStep ->
                 if (currentStep == 0) {
                     viewModel.onPreviousBtnDisabled()
+                    viewModel.updateNextBtnEnabled(state.selectedSpotByMap?.title?.isNotEmpty() == true)
                 } else {
                     viewModel.onPreviousBtnEnabled()
                 }
@@ -177,6 +178,7 @@ fun UploadPlaceScreen(
                             state = state,
                             onBackAction = viewModel::onNavigateToBack,
                             onClickReportPlace = viewModel::onClickReportPlace,
+                            onHideSearchedPlaceList = viewModel::onHideSearchedPlaceList,
                             onSearchedSpotClick = viewModel::onSearchSpotByMapClicked,
                             onSearchQueryOrSelectionChanged = viewModel::onSearchQueryOrSelectionChanged
                         )

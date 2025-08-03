@@ -3,6 +3,7 @@ package com.acon.acon.feature.upload.screen.composable.add.search
 import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -32,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -45,6 +47,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.repeatOnLifecycle
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.dialog.v2.AconTwoActionDialog
 import com.acon.acon.core.designsystem.component.textfield.v2.AconSearchTextField
@@ -63,23 +68,25 @@ internal fun UploadPlaceSearchScreen(
     state: UploadPlaceUiState,
     onBackAction: () -> Unit,
     onClickReportPlace: () -> Unit,
+    onHideSearchedPlaceList: () -> Unit,
     onSearchedSpotClick: (SearchedSpotByMap, onSuccess: () -> Unit) -> Unit,
     onSearchQueryOrSelectionChanged: (String, Boolean) -> Unit
 ) {
+    val lifecycleOwner = LocalLifecycleOwner.current
+
     val screenWidthDp = getScreenWidth()
     val dialogWidth = (screenWidthDp * (260f / 360f))
 
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
 
-    var offsetY by remember { mutableIntStateOf(0) }
-    var isTextFieldFocused by remember { mutableStateOf(false) }
-
-    var query by rememberSaveable(stateSaver = TextFieldValue.Saver) { mutableStateOf(TextFieldValue("")) }
+    var query by rememberSaveable(stateSaver = TextFieldValue.Saver) { mutableStateOf(TextFieldValue(state.selectedSpotByMap?.title ?: "")) }
     var isSelection by remember { mutableStateOf(false) }
 
+    var offsetY by remember { mutableIntStateOf(0) }
+    var showOffset by remember { mutableStateOf(false) }
     val offsetYAnimated by animateIntAsState(
-        targetValue = if (isTextFieldFocused) -offsetY else 0,
+        targetValue = if (showOffset) -offsetY else 0,
         animationSpec = tween(durationMillis = 300)
     )
 
@@ -89,11 +96,11 @@ internal fun UploadPlaceSearchScreen(
         }
     }
 
-    LaunchedEffect(state.showSearchedSpotsByMap) {
-        if(!state.showSearchedSpotsByMap) {
-            keyboardController?.hide()
-            focusManager.clearFocus()
-            isTextFieldFocused = false
+    LaunchedEffect(lifecycleOwner, Unit) {
+        lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+            if (state.selectedSpotByMap?.title?.isNotEmpty() == true) {
+                onHideSearchedPlaceList()
+            }
         }
     }
 
@@ -128,6 +135,13 @@ internal fun UploadPlaceSearchScreen(
             .padding(horizontal = 16.dp)
             .offset {
                 IntOffset(x = 0, y = offsetYAnimated)
+            }
+            .pointerInput(Unit) {
+                detectTapGestures(onTap = {
+                    keyboardController?.hide()
+                    focusManager.clearFocus()
+                    showOffset = false
+                })
             }
     ) {
         Column(
@@ -170,13 +184,15 @@ internal fun UploadPlaceSearchScreen(
                     onDone = {
                         keyboardController?.hide()
                         focusManager.clearFocus()
-                        isTextFieldFocused = false
+                        showOffset = false
                     }
                 ),
                 modifier = Modifier
                     .fillMaxWidth()
                     .onFocusChanged { focusState ->
-                        isTextFieldFocused = focusState.isFocused
+                        if (focusState.isFocused) {
+                            showOffset = true
+                        }
                     }
             )
             Box {
@@ -184,12 +200,15 @@ internal fun UploadPlaceSearchScreen(
                     SearchedSpots(
                         searchedSpotsByMap = state.searchedSpotsByMap.toImmutableList(),
                         onItemClick = {
+                            keyboardController?.hide()
+                            focusManager.clearFocus()
                             onSearchedSpotClick(it) {
                                 isSelection = true
                                 query = TextFieldValue(
                                     text = it.title,
                                     selection = TextRange(it.title.length)
                                 )
+                                showOffset = false
                             }
                         },
                         modifier = Modifier
@@ -295,6 +314,7 @@ private fun UploadPlaceSearchScreenPreview() {
             state = UploadPlaceUiState(),
             onBackAction = { },
             onClickReportPlace = {},
+            onHideSearchedPlaceList = {},
             onSearchedSpotClick = { _, _ -> },
             onSearchQueryOrSelectionChanged = { _, _ -> }
         )

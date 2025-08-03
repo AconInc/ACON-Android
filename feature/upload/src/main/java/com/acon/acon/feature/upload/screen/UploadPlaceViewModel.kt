@@ -49,7 +49,7 @@ class UploadPlaceViewModel @Inject constructor(
             }
 
             viewModelScope.launch {
-                queryFlow
+                searchPlaceQueryFlow
                     .debounce(100)
                     .distinctUntilChanged()
                     .collect { query ->
@@ -83,6 +83,7 @@ class UploadPlaceViewModel @Inject constructor(
         }
 
     private val queryFlow = MutableStateFlow("")
+    private val searchPlaceQueryFlow = MutableStateFlow("")
 
     fun onSearchQueryChanged(query: String) = intent {
         queryFlow.value = query
@@ -96,11 +97,11 @@ class UploadPlaceViewModel @Inject constructor(
                 )
             else
                 state.copy(
-                    selectedSpotByMap = null,
+                    selectedSpotByMap = state.selectedSpotByMap?.takeIf { it.title == query },
                     showSearchedSpotsByMap = query.isNotBlank()
                 )
         }
-        queryFlow.value = query
+        searchPlaceQueryFlow.value = query
     }
 
     fun onSearchSpotByMapClicked(searchedSpotByMap: SearchedSpotByMap, onSuccess: () -> Unit) = intent {
@@ -219,6 +220,14 @@ class UploadPlaceViewModel @Inject constructor(
     fun onDismissExitUploadPlaceDialog() = intent {
         reduce {
             state.copy(showExitUploadPlaceDialog = false)
+        }
+    }
+
+    fun onHideSearchedPlaceList() = intent {
+        reduce {
+            state.copy(
+                showSearchedSpotsByMap = false
+            )
         }
     }
 
