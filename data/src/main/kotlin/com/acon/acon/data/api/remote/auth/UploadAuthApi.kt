@@ -2,6 +2,7 @@ package com.acon.acon.data.api.remote.auth
 
 import com.acon.acon.data.dto.request.ReviewRequest
 import com.acon.acon.data.dto.request.ReviewRequestV2
+import com.acon.acon.data.dto.request.SubmitUploadPlaceRequest
 import com.acon.acon.data.dto.response.profile.PreSignedUrlResponse
 import com.acon.acon.data.dto.response.upload.SearchedSpotsResponse
 import com.acon.acon.data.dto.response.upload.UploadSpotSuggestionsResponse
@@ -43,5 +44,5 @@ interface UploadAuthApi {
     suspend fun getUploadPlacePreSignedUrl() : PreSignedUrlResponse
 
     @GET("/api/v1/spots/apply")
-    suspend fun submitUploadPlace()
+    suspend fun submitUploadPlace(@Body request: SubmitUploadPlaceRequest)
 }

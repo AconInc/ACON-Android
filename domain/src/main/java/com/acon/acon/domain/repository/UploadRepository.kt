@@ -1,8 +1,10 @@
 package com.acon.acon.domain.repository
 
 import com.acon.acon.core.model.model.profile.PreSignedUrl
+import com.acon.acon.core.model.model.upload.Feature
 import com.acon.acon.core.model.model.upload.SearchedSpot
 import com.acon.acon.core.model.model.upload.UploadSpotSuggestion
+import com.acon.acon.core.model.type.SpotType
 
 interface UploadRepository {
     suspend fun getSuggestions(latitude: Double, longitude: Double): Result<List<UploadSpotSuggestion>>
@@ -30,4 +32,14 @@ interface UploadRepository {
     ): Result<List<SearchedSpot>>
 
     suspend fun getUploadPlacePreSignedUrl(): Result<PreSignedUrl>
+
+
+    suspend fun submitUploadPlace(
+        spotName: String,
+        address: String,
+        spotType: SpotType,
+        featureList: List<Feature>,
+        recommendedMenu: String,
+        imageList: List<String>?
+    ): Result<Unit>
 }
