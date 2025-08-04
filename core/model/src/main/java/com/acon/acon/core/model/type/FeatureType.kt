@@ -35,7 +35,8 @@ sealed interface CafeFeatureType : FeatureType {
 }
 
 sealed interface PriceFeatureType: FeatureType {
-    enum class PriceOptionType {
+
+    enum class PriceOptionType: FeatureType {
         VALUE_FOR_MONEY,
         AVERAGE_VALUE,
         LOW_VALUE
