@@ -13,25 +13,26 @@ class MapSearchRepositoryImpl @Inject constructor(
     override suspend fun fetchMapSearch(query: String): Result<List<SearchedSpotByMap>> {
         return runCatchingWith {
             mapSearchRemoteDataSource.fetchMapSearch(query).placeList.mapNotNull { place ->
-                val foodCategory = FOOD_CATEGORIES.findLast { category ->
+                val hasAnyFoodCategory = FOOD_CATEGORIES.any { category ->
                     place.category.contains(category, ignoreCase = true)
                 }
 
-                foodCategory?.let {
-//                    Log.e("로그", "foodCategory : ${place.title}")
-//                    Log.e("로그", "foodCategory : ${it}")
-//                    Log.e("로그", "foodCategory : ${place.address}")
-//                    Log.e("로그", "foodCategory : ${place.roadAddress}")
+                if (hasAnyFoodCategory) {
+                    val selectedCategory = FOOD_CATEGORIES.findLast { category ->
+                        place.category.contains(category, ignoreCase = true)
+                    }
 
                     SearchedSpotByMap(
                         title = place.title
                             .replace("<b>", "")
                             .replace("</b>", "")
                             .replace("\\/", "/"),
-                        category = it,
+                        category = selectedCategory ?: "",
                         address = place.address,
                         roadAddress = place.roadAddress
                     )
+                } else {
+                    null
                 }
             }
         }
@@ -39,7 +40,7 @@ class MapSearchRepositoryImpl @Inject constructor(
 
     companion object {
         private val FOOD_CATEGORIES = listOf(
-            "베트남음식", "태국음식", "인도음식", "한식", "중식", "일식", "양식", "분식",
+            "이탈리아음식", "베트남음식", "태국음식", "인도음식", "한식", "중식", "일식", "양식", "분식",
             "술집", "카페", "음식점"
         )
     }
