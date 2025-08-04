@@ -1,0 +1,43 @@
+package com.acon.acon.core.model.type
+
+interface FeatureType {
+    fun getName(): String {
+        return if (this is Enum<*>) {
+            this.name
+        } else {
+            throw IllegalArgumentException("OptionType must be Enum")
+        }
+    }
+}
+
+sealed interface RestaurantFeatureType : FeatureType {
+
+    enum class RestaurantType: FeatureType {
+        KOREAN,
+        CHINESE,
+        JAPANESE,
+        WESTERN,
+        ASIAN,
+        FUSION,
+        BUNSIK,
+        BUFFET,
+        DRINKING_PLACE,
+        EXCLUDE_FRANCHISE;
+    }
+}
+
+sealed interface CafeFeatureType : FeatureType {
+
+    enum class CafeType: FeatureType {
+        GOOD_FOR_WORK,
+        NOT_GOOD_FOR_WORK;
+    }
+}
+
+sealed interface PriceFeatureType: FeatureType {
+    enum class PriceOptionType {
+        VALUE_FOR_MONEY,
+        AVERAGE_VALUE,
+        LOW_VALUE
+    }
+}

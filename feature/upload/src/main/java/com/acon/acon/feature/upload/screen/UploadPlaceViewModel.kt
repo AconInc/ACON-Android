@@ -4,8 +4,9 @@ import android.net.Uri
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.viewModelScope
 import com.acon.acon.core.model.model.upload.SearchedSpotByMap
-import com.acon.acon.core.model.type.CafeOptionType
-import com.acon.acon.core.model.type.PriceOptionType
+import com.acon.acon.core.model.type.CafeFeatureType
+import com.acon.acon.core.model.type.PriceFeatureType
+import com.acon.acon.core.model.type.RestaurantFeatureType
 import com.acon.acon.core.model.type.RestaurantFilterType
 import com.acon.acon.core.model.type.SpotType
 import com.acon.acon.core.ui.base.BaseContainerHost
@@ -132,15 +133,15 @@ class UploadPlaceViewModel @Inject constructor(
         reduce { state.copy(selectedSpotType = spotType) }
     }
 
-    fun updateCafeOptionType(cafeOption: CafeOptionType) = intent {
+    fun updateCafeOptionType(cafeOption: CafeFeatureType.CafeType) = intent {
         reduce { state.copy(selectedCafeOption = cafeOption) }
     }
 
-    fun updatePriceOptionType(priceOption: PriceOptionType) = intent {
+    fun updatePriceOptionType(priceOption: PriceFeatureType.PriceOptionType) = intent {
         reduce { state.copy(selectedPriceOption = priceOption) }
     }
 
-    fun updateRestaurantType(type: RestaurantFilterType.RestaurantType) = intent {
+    fun updateRestaurantType(type: RestaurantFeatureType.RestaurantType) = intent {
         reduce {
             val currentSelectedTypes = state.selectedRestaurantTypes.toMutableList()
 
@@ -272,10 +273,10 @@ data class UploadPlaceUiState(
     val showSearchedSpotsByMap: Boolean = false,
     val selectedUriToRemove: Uri? = null,
     val selectedSpotType: SpotType? = null,
-    val selectedPriceOption: PriceOptionType? = null,
-    val selectedCafeOption: CafeOptionType? = null,
+    val selectedPriceOption: PriceFeatureType.PriceOptionType? = null,
+    val selectedCafeOption: CafeFeatureType.CafeType? = null,
     val selectedOptionList: List<RestaurantFilterType.RestaurantType> = emptyList(),
-    val selectedRestaurantTypes: List<RestaurantFilterType.RestaurantType> = emptyList(),
+    val selectedRestaurantTypes: List<RestaurantFeatureType.RestaurantType> = emptyList(),
     val recommendMenu: String? = "",
     val selectedImageUris: List<Uri>? = emptyList(),
     val maxImageCount: Int = 10,
