@@ -3,14 +3,17 @@ package com.acon.acon.feature.upload.screen
 import android.net.Uri
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.viewModelScope
+import com.acon.acon.core.model.model.upload.Feature
 import com.acon.acon.core.model.model.upload.SearchedSpotByMap
 import com.acon.acon.core.model.type.CafeFeatureType
+import com.acon.acon.core.model.type.CategoryType
 import com.acon.acon.core.model.type.PriceFeatureType
 import com.acon.acon.core.model.type.RestaurantFeatureType
-import com.acon.acon.core.model.type.RestaurantFilterType
 import com.acon.acon.core.model.type.SpotType
 import com.acon.acon.core.ui.base.BaseContainerHost
+import com.acon.acon.domain.error.upload.SubmitUploadPlaceError
 import com.acon.acon.domain.repository.MapSearchRepository
+import com.acon.acon.domain.repository.UploadRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.delay
@@ -18,13 +21,15 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
+import okhttp3.internal.toImmutableList
 import org.orbitmvi.orbit.viewmodel.container
 import javax.inject.Inject
 
 @OptIn(FlowPreview::class)
 @HiltViewModel
 class UploadPlaceViewModel @Inject constructor(
-    private val mapSearchRepository: MapSearchRepository
+    private val mapSearchRepository: MapSearchRepository,
+    private val uploadRepository: UploadRepository
 ) : BaseContainerHost<UploadPlaceUiState, UploadPlaceSideEffect>() {
 
     override val container =
@@ -247,7 +252,6 @@ class UploadPlaceViewModel @Inject constructor(
                     state.copy(showUploadPlaceLimitPouUp = false)
                 }
             }
-
         }
     }
 
@@ -257,6 +261,104 @@ class UploadPlaceViewModel @Inject constructor(
 
     fun onClickReportPlace() = intent {
         postSideEffect(UploadPlaceSideEffect.OnMoveToReportPlace)
+    }
+
+    fun onSubmitUploadPlace(onSuccess:() -> Unit) = intent {
+        createFeatureList()
+
+        when (state.selectedImageUris?.isEmpty()) {
+            true -> {
+                submitUploadPlaceNoImages(onSuccess)
+            }
+
+            false -> {
+                // TODO - WithImages
+            }
+
+            null -> {}
+        }
+    }
+
+    private fun createFeatureList() = intent {
+        val featureRequests = mutableListOf<Feature>()
+
+        state.selectedRestaurantTypes.let { restaurantTypes ->
+            featureRequests.add(
+                Feature(
+                    category = CategoryType.RESTAURANT_FEATURE,
+                    optionList = restaurantTypes.map { it }
+                )
+            )
+        }
+
+        state.selectedCafeOption?.let { cafeOption ->
+            featureRequests.add(
+                Feature(
+                    category = CategoryType.CAFE_FEATURE,
+                    optionList = listOf(cafeOption)
+                )
+            )
+        }
+
+        state.selectedPriceOption?.let { priceOption ->
+            featureRequests.add(
+                Feature(
+                    category = CategoryType.PRICE,
+                    optionList = listOf(priceOption)
+                )
+            )
+        }
+
+        reduce {
+            state.copy(
+                featureList = featureRequests.toImmutableList()
+            )
+        }
+    }
+
+    private fun submitUploadPlaceNoImages(onSuccess:() -> Unit) = intent {
+        uploadRepository.submitUploadPlace(
+            spotName = state.selectedSpotByMap?.title ?: "",
+            address = state.selectedSpotByMap?.address ?: "",
+            spotType = state.selectedSpotType ?: SpotType.CAFE,
+            featureList = state.featureList ?: emptyList(),
+            recommendedMenu = state.recommendMenu ?: "",
+            imageList = emptyList()
+        ).onSuccess {
+            onSuccess()
+        }.onFailure { error ->
+            when(error) {
+                is SubmitUploadPlaceError.InvalidSpotType -> {
+                    // TODO 유효하지 않은 spotType일 경우 처리
+                }
+                is SubmitUploadPlaceError.InvalidCategoryName -> {
+                    // TODO 유효하지 않은 categoryName일 경우 처리
+                }
+                is SubmitUploadPlaceError.InvalidRestaurantFeature -> {
+                    // TODO 유효하지 않은 restaurantFeature일 경우 처리
+                }
+                is SubmitUploadPlaceError.InvalidCafeFeature -> {
+                    // TODO 유효하지 않은 cafeFeature일 경우 처리
+                }
+                is SubmitUploadPlaceError.InvalidOpeningHour -> {
+                    // TODO 유효하지 않은 openingHour일 경우 처리
+                }
+                is SubmitUploadPlaceError.InvalidPrice -> {
+                    // TODO 유효하지 않은 price일 경우 처리
+                }
+                is SubmitUploadPlaceError.NonMatchingSpotTypeAndCategory -> {
+                    // TODO spotType에 맞지 않는 category일 경우 처리
+                }
+                is SubmitUploadPlaceError.NonMatchingCategoryAndOption -> {
+                    // TODO category에 맞지 않는 option일 경우 처리
+                }
+
+            }
+        }
+    }
+
+    companion object {
+        const val TAG = "UploadPlaceViewModel"
     }
 }
 
@@ -268,17 +370,19 @@ data class UploadPlaceUiState(
     val showRemoveUploadPlaceImageDialog: Boolean = false,
     val showUploadPlaceLimitDialog: Boolean = false,
     val showUploadPlaceLimitPouUp: Boolean = false,
-    val selectedSpotByMap: SearchedSpotByMap? = null,
-    val searchedSpotsByMap: List<SearchedSpotByMap> = listOf(),
     val showSearchedSpotsByMap: Boolean = false,
-    val selectedUriToRemove: Uri? = null,
+    val searchedSpotsByMap: List<SearchedSpotByMap> = listOf(),
+
+    val featureList :List<Feature>? = emptyList(),
+    val selectedSpotByMap: SearchedSpotByMap? = null,
     val selectedSpotType: SpotType? = null,
     val selectedPriceOption: PriceFeatureType.PriceOptionType? = null,
     val selectedCafeOption: CafeFeatureType.CafeType? = null,
-    val selectedOptionList: List<RestaurantFilterType.RestaurantType> = emptyList(),
     val selectedRestaurantTypes: List<RestaurantFeatureType.RestaurantType> = emptyList(),
     val recommendMenu: String? = "",
     val selectedImageUris: List<Uri>? = emptyList(),
+
+    val selectedUriToRemove: Uri? = null,
     val maxImageCount: Int = 10,
     val currentStep: Int = 0
 )

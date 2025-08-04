@@ -215,7 +215,7 @@ fun UploadPlaceScreen(
                             onAddSpotImageUri = viewModel::onAddImageUris,
                             onRemoveSpotImageUri = viewModel::onRemoveImageUri,
                             onUpdateNextPageBtnEnabled = viewModel::updateNextBtnEnabled,
-                            onRequestUploadPlaceLimitPouUp = viewModel::onRequestUploadPlaceLimitPouUp
+                            onRequestUploadPlaceLimitPouUp = viewModel::onRequestUploadPlaceLimitPouUp,
                         )
                         6 -> UploadPlaceCompleteScreen()
                     }
@@ -273,7 +273,13 @@ fun UploadPlaceScreen(
                         ),
                         enabled = state.isNextBtnEnabled,
                         onClick = {
-                            viewModel.goToNextStep(maxStepIndex)
+                            if(currentStep == maxStepIndex - 1) {
+                                viewModel.onSubmitUploadPlace {
+                                    viewModel.goToNextStep(maxStepIndex)
+                                }
+                            } else {
+                                viewModel.goToNextStep(maxStepIndex)
+                            }
                         },
                         modifier = Modifier
                             .weight(5f)
