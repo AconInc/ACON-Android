@@ -1,7 +1,9 @@
 package com.acon.acon.feature.upload.screen
 
+import android.app.Application
 import android.net.Uri
 import androidx.compose.runtime.Immutable
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.acon.acon.core.model.model.upload.Feature
 import com.acon.acon.core.model.model.upload.SearchedSpotByMap
@@ -10,27 +12,36 @@ import com.acon.acon.core.model.type.CategoryType
 import com.acon.acon.core.model.type.PriceFeatureType
 import com.acon.acon.core.model.type.RestaurantFeatureType
 import com.acon.acon.core.model.type.SpotType
-import com.acon.acon.core.ui.base.BaseContainerHost
 import com.acon.acon.domain.error.upload.SubmitUploadPlaceError
 import com.acon.acon.domain.repository.MapSearchRepository
 import com.acon.acon.domain.repository.UploadRepository
+import com.acon.acon.feature.upload.BuildConfig
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.internal.toImmutableList
+import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.viewmodel.container
+import timber.log.Timber
 import javax.inject.Inject
 
 @OptIn(FlowPreview::class)
 @HiltViewModel
 class UploadPlaceViewModel @Inject constructor(
     private val mapSearchRepository: MapSearchRepository,
-    private val uploadRepository: UploadRepository
-) : BaseContainerHost<UploadPlaceUiState, UploadPlaceSideEffect>() {
+    private val uploadRepository: UploadRepository,
+    application: Application
+) : AndroidViewModel(application), ContainerHost<UploadPlaceUiState, UploadPlaceSideEffect> {
 
     override val container =
         container<UploadPlaceUiState, UploadPlaceSideEffect>(UploadPlaceUiState()) {
@@ -263,22 +274,6 @@ class UploadPlaceViewModel @Inject constructor(
         postSideEffect(UploadPlaceSideEffect.OnMoveToReportPlace)
     }
 
-    fun onSubmitUploadPlace(onSuccess:() -> Unit) = intent {
-        createFeatureList()
-
-        when (state.selectedImageUris?.isEmpty()) {
-            true -> {
-                submitUploadPlaceNoImages(onSuccess)
-            }
-
-            false -> {
-                // TODO - WithImages
-            }
-
-            null -> {}
-        }
-    }
-
     private fun createFeatureList() = intent {
         val featureRequests = mutableListOf<Feature>()
 
@@ -316,14 +311,33 @@ class UploadPlaceViewModel @Inject constructor(
         }
     }
 
-    private fun submitUploadPlaceNoImages(onSuccess:() -> Unit) = intent {
+    fun onSubmitUploadPlace(onSuccess:() -> Unit) = intent {
+        createFeatureList()
+
+        when (state.selectedImageUris?.isEmpty()) {
+            true -> {
+                submitUploadPlace(onSuccess)
+            }
+
+            false -> {
+                uploadAllImagesAndSubmit(onSuccess)
+            }
+
+            null -> {}
+        }
+    }
+
+    private fun submitUploadPlace(
+        onSuccess:() -> Unit,
+        imageList: List<String> = emptyList()
+    ) = intent {
         uploadRepository.submitUploadPlace(
             spotName = state.selectedSpotByMap?.title ?: "",
             address = state.selectedSpotByMap?.address ?: "",
             spotType = state.selectedSpotType ?: SpotType.CAFE,
             featureList = state.featureList ?: emptyList(),
             recommendedMenu = state.recommendMenu ?: "",
-            imageList = emptyList()
+            imageList = imageList
         ).onSuccess {
             onSuccess()
         }.onFailure { error ->
@@ -357,6 +371,72 @@ class UploadPlaceViewModel @Inject constructor(
         }
     }
 
+    private fun uploadAllImagesAndSubmit(onSuccess:() -> Unit) = intent {
+        val uris = state.selectedImageUris ?: return@intent
+
+        val fileNames = uris.map { imageUri ->
+            viewModelScope.async {
+                val presignedResult = uploadRepository.getUploadPlacePreSignedUrl().getOrThrow()
+                putPlaceImageToPreSignedUrl(imageUri, presignedResult.preSignedUrl)
+                presignedResult.fileName
+            }
+        }.awaitAll()
+
+        val bucketUrls = fileNames.map { fileName ->
+            "${BuildConfig.BUCKET_URL}$fileName"
+        }
+
+        submitUploadPlace(
+            onSuccess = { onSuccess() },
+            imageList = bucketUrls
+        )
+    }
+
+    private fun putPlaceImageToPreSignedUrl(
+        imageUri: Uri,
+        preSignedUrl: String
+    ) = intent {
+        val context = getApplication<Application>().applicationContext
+        val client = OkHttpClient()
+
+        try {
+            val byteArray: ByteArray
+            val mimeType: String
+
+            if (imageUri.scheme == "content") {
+                val inputStream = context.contentResolver.openInputStream(imageUri)
+                byteArray = inputStream?.readBytes()
+                    ?: throw IllegalArgumentException("이미지 읽기 실패")
+                mimeType = context.contentResolver.getType(imageUri) ?: "image/jpeg"
+
+            } else {
+                Timber.tag(TAG).e("지원하지 않는 URI scheme: %s", imageUri.toString())
+                throw IllegalArgumentException("지원하지 않는 URI scheme")
+            }
+
+            val fileBody =
+                byteArray.toRequestBody(mimeType.toMediaTypeOrNull(), 0, byteArray.size)
+
+            val request = Request.Builder()
+                .url(preSignedUrl)
+                .put(fileBody)
+                .addHeader("Content-Type", mimeType)
+                .build()
+
+            val response = client.newCall(request).execute()
+            val bucketImageUri = "${BuildConfig.BUCKET_URL}${state.uploadFileName}"
+
+            if (response.isSuccessful) {
+                Timber.tag(TAG).d("이미지 업로드 성공")
+                //submitUploadPlace()
+            } else {
+                Timber.tag(TAG).e("이미지 업로드 실패, code: %d", response.code)
+            }
+        } catch (e: Exception) {
+            Timber.tag(TAG).e(e, "이미지 업로드 과정에서 예외 발생: %s", e.message)
+        }
+    }
+
     companion object {
         const val TAG = "UploadPlaceViewModel"
     }
@@ -381,6 +461,7 @@ data class UploadPlaceUiState(
     val selectedRestaurantTypes: List<RestaurantFeatureType.RestaurantType> = emptyList(),
     val recommendMenu: String? = "",
     val selectedImageUris: List<Uri>? = emptyList(),
+    val uploadFileName: String = "",
 
     val selectedUriToRemove: Uri? = null,
     val maxImageCount: Int = 10,
