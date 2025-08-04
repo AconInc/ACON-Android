@@ -2,6 +2,7 @@ package com.acon.acon.data.datasource.remote
 
 import com.acon.acon.data.api.remote.auth.UploadAuthApi
 import com.acon.acon.data.dto.request.ReviewRequest
+import com.acon.acon.data.dto.request.ReviewRequestV2
 import com.acon.acon.data.dto.response.profile.PreSignedUrlResponse
 import com.acon.acon.data.dto.response.upload.UploadSpotSuggestionsResponse
 import com.acon.acon.data.dto.response.upload.VerifyLocationResponse
@@ -32,6 +33,18 @@ class UploadRemoteDataSource @Inject constructor(
     ) = uploadAuthApi.submitReview(
         ReviewRequest(
             spotId = spotId,
+            acornCount = acornCount
+        )
+    )
+
+    suspend fun submitReviewV2(
+        spotId: Long,
+        recommendedMenu: String,
+        acornCount: Int
+    ) = uploadAuthApi.submitReviewV2(
+        ReviewRequestV2(
+            spotId = spotId,
+            recommendedMenu = recommendedMenu,
             acornCount = acornCount
         )
     )

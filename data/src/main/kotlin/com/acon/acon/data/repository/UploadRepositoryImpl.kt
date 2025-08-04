@@ -45,6 +45,18 @@ class UploadRepositoryImpl @Inject constructor(
         )
     }
 
+    override suspend fun submitReviewV2(
+        spotId: Long,
+        recommendedMenu: String,
+        acornCount: Int
+    ): Result<Unit> = runCatchingWith(UploadReviewError()) {
+        uploadRemoteDataSource.submitReviewV2(
+            spotId = spotId,
+            recommendedMenu = recommendedMenu,
+            acornCount = acornCount
+        )
+    }
+
     override suspend fun getSearchedSpots(query: String): Result<List<SearchedSpot>> {
         return runCatchingWith {
             uploadRemoteDataSource.getSearchedSpots(query).searchedSpots.map { it.toSearchedSpot() }

@@ -2,9 +2,10 @@ package com.acon.acon.domain.repository
 
 import com.acon.acon.core.model.model.profile.PreSignedUrl
 import com.acon.acon.core.model.model.upload.SearchedSpot
+import com.acon.acon.core.model.model.upload.UploadSpotSuggestion
 
 interface UploadRepository {
-    suspend fun getSuggestions(latitude: Double, longitude: Double): Result<List<com.acon.acon.core.model.model.upload.UploadSpotSuggestion>>
+    suspend fun getSuggestions(latitude: Double, longitude: Double): Result<List<UploadSpotSuggestion>>
 
     suspend fun verifyLocation(
         spotId: Long,
@@ -16,6 +17,13 @@ interface UploadRepository {
         spotId: Long,
         acornCount: Int
     ): Result<Unit>
+
+    suspend fun submitReviewV2(
+        spotId: Long,
+        recommendedMenu: String,
+        acornCount: Int
+    ): Result<Unit>
+
 
     suspend fun getSearchedSpots(
         query: String

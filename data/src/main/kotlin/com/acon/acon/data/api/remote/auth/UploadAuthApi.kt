@@ -1,6 +1,7 @@
 package com.acon.acon.data.api.remote.auth
 
 import com.acon.acon.data.dto.request.ReviewRequest
+import com.acon.acon.data.dto.request.ReviewRequestV2
 import com.acon.acon.data.dto.response.profile.PreSignedUrlResponse
 import com.acon.acon.data.dto.response.upload.SearchedSpotsResponse
 import com.acon.acon.data.dto.response.upload.UploadSpotSuggestionsResponse
@@ -28,6 +29,11 @@ interface UploadAuthApi {
     @POST("/api/v1/reviews")
     suspend fun submitReview(
         @Body request: ReviewRequest
+    )
+
+    @POST("/api/v2/reviews")
+    suspend fun submitReviewV2(
+        @Body request: ReviewRequestV2
     )
 
     @GET("/api/v1/spots/search")
