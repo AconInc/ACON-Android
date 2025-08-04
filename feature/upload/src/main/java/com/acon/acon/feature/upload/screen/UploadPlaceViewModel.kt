@@ -12,6 +12,7 @@ import com.acon.acon.core.ui.base.BaseContainerHost
 import com.acon.acon.domain.repository.MapSearchRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -231,6 +232,24 @@ class UploadPlaceViewModel @Inject constructor(
         }
     }
 
+    fun onRequestUploadPlaceLimitPouUp() = intent {
+        reduce {
+            state.copy(
+                showUploadPlaceLimitPouUp = true
+            )
+        }
+
+        viewModelScope.launch {
+            delay(3500)
+            intent {
+                reduce {
+                    state.copy(showUploadPlaceLimitPouUp = false)
+                }
+            }
+
+        }
+    }
+
     fun onNavigateToBack() = intent {
         postSideEffect(UploadPlaceSideEffect.OnNavigateToBack)
     }
@@ -247,6 +266,7 @@ data class UploadPlaceUiState(
     val showExitUploadPlaceDialog: Boolean = false,
     val showRemoveUploadPlaceImageDialog: Boolean = false,
     val showUploadPlaceLimitDialog: Boolean = false,
+    val showUploadPlaceLimitPouUp: Boolean = false,
     val selectedSpotByMap: SearchedSpotByMap? = null,
     val searchedSpotsByMap: List<SearchedSpotByMap> = listOf(),
     val showSearchedSpotsByMap: Boolean = false,

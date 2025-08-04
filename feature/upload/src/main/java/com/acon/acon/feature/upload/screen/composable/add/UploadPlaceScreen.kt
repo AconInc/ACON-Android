@@ -214,7 +214,8 @@ fun UploadPlaceScreen(
                             onDismissRemoveUploadPlaceImageDialog = viewModel::onDismissRemoveUploadPlaceImageDialog,
                             onAddSpotImageUri = viewModel::onAddImageUris,
                             onRemoveSpotImageUri = viewModel::onRemoveImageUri,
-                            onUpdateNextPageBtnEnabled = viewModel::updateNextBtnEnabled
+                            onUpdateNextPageBtnEnabled = viewModel::updateNextBtnEnabled,
+                            onRequestUploadPlaceLimitPouUp = viewModel::onRequestUploadPlaceLimitPouUp
                         )
                         6 -> UploadPlaceCompleteScreen()
                     }
