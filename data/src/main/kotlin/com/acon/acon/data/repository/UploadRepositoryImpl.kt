@@ -1,12 +1,14 @@
 package com.acon.acon.data.repository
 
+import com.acon.acon.core.model.model.profile.PreSignedUrl
+import com.acon.acon.core.model.model.upload.SearchedSpot
+import com.acon.acon.core.model.model.upload.UploadSpotSuggestion
 import com.acon.acon.data.datasource.remote.UploadRemoteDataSource
 import com.acon.acon.data.error.runCatchingWith
+import com.acon.acon.domain.error.upload.GetUploadPlacePreSignedUrlError
 import com.acon.acon.domain.error.upload.GetVerifySpotLocationError
 import com.acon.acon.domain.error.upload.UploadReviewError
 import com.acon.acon.domain.error.user.GetSuggestionsError
-import com.acon.acon.core.model.model.upload.UploadSpotSuggestion
-import com.acon.acon.core.model.model.upload.SearchedSpot
 import com.acon.acon.domain.repository.UploadRepository
 import javax.inject.Inject
 
@@ -46,6 +48,12 @@ class UploadRepositoryImpl @Inject constructor(
     override suspend fun getSearchedSpots(query: String): Result<List<SearchedSpot>> {
         return runCatchingWith {
             uploadRemoteDataSource.getSearchedSpots(query).searchedSpots.map { it.toSearchedSpot() }
+        }
+    }
+
+    override suspend fun getUploadPlacePreSignedUrl(): Result<PreSignedUrl> {
+        return runCatchingWith(GetUploadPlacePreSignedUrlError()) {
+            uploadRemoteDataSource.getUploadPlacePreSignedUrl().toPreSignedUrl()
         }
     }
 }

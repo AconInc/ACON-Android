@@ -1,6 +1,6 @@
 package com.acon.acon.domain.repository
 
-import com.acon.acon.core.model.model.upload.UploadSpotSuggestion
+import com.acon.acon.core.model.model.profile.PreSignedUrl
 import com.acon.acon.core.model.model.upload.SearchedSpot
 
 interface UploadRepository {
@@ -19,5 +19,7 @@ interface UploadRepository {
 
     suspend fun getSearchedSpots(
         query: String
-    ): Result<List<com.acon.acon.core.model.model.upload.SearchedSpot>>
+    ): Result<List<SearchedSpot>>
+
+    suspend fun getUploadPlacePreSignedUrl(): Result<PreSignedUrl>
 }

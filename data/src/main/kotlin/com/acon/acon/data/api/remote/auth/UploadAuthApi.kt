@@ -1,9 +1,10 @@
 package com.acon.acon.data.api.remote.auth
 
 import com.acon.acon.data.dto.request.ReviewRequest
+import com.acon.acon.data.dto.response.profile.PreSignedUrlResponse
+import com.acon.acon.data.dto.response.upload.SearchedSpotsResponse
 import com.acon.acon.data.dto.response.upload.UploadSpotSuggestionsResponse
 import com.acon.acon.data.dto.response.upload.VerifyLocationResponse
-import com.acon.acon.data.dto.response.upload.SearchedSpotsResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -31,4 +32,7 @@ interface UploadAuthApi {
 
     @GET("/api/v1/spots/search")
     suspend fun getSearchedSpots(@Query("keyword") query: String): SearchedSpotsResponse
+
+    @GET("/api/v2/images/presigned-url?imageType=SPOT")
+    suspend fun getUploadPlacePreSignedUrl() : PreSignedUrlResponse
 }
