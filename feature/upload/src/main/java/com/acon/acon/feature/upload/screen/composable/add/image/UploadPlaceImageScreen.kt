@@ -5,6 +5,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -17,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -35,12 +37,15 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.dialog.v2.AconTwoActionDialog
-import com.acon.acon.core.designsystem.effect.imageGradientBottomLayer
+import com.acon.acon.core.designsystem.component.popup.CustomToast
+import com.acon.acon.core.designsystem.effect.LocalHazeState
+import com.acon.acon.core.designsystem.effect.defaultHazeEffect
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.core.ui.compose.getScreenHeight
 import com.acon.acon.core.ui.compose.getScreenWidth
 import com.acon.acon.feature.upload.screen.UploadPlaceUiState
+import dev.chrisbanes.haze.hazeSource
 import kotlinx.coroutines.flow.distinctUntilChanged
 
 private const val maxImageCount = 10
@@ -52,7 +57,8 @@ internal fun UploadPlaceImageScreen(
     onDismissRemoveUploadPlaceImageDialog: () -> Unit,
     onAddSpotImageUri:(uris: List<Uri>) -> Unit,
     onRemoveSpotImageUri:(uri: Uri) -> Unit,
-    onUpdateNextPageBtnEnabled: (Boolean) -> Unit
+    onUpdateNextPageBtnEnabled: (Boolean) -> Unit,
+    onRequestUploadPlaceLimitPouUp: () -> Unit
 ) {
     val selectedUris = state.selectedImageUris ?: emptyList()
 
@@ -67,7 +73,14 @@ internal fun UploadPlaceImageScreen(
         val currentSize = selectedUris.size
         val canAddCount = maxImageCount - currentSize
         val toAdd = uris.take(canAddCount)
-        onAddSpotImageUri(toAdd)
+
+        if (toAdd.isNotEmpty()) {
+            onAddSpotImageUri(toAdd)
+        }
+
+        if (uris.size > canAddCount) {
+            onRequestUploadPlaceLimitPouUp()
+        }
     }
 
     val peekAmount = 24.dp
@@ -140,91 +153,109 @@ internal fun UploadPlaceImageScreen(
         )
 
         Spacer(Modifier.height(32.dp))
-        if (selectedUris.isEmpty()) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(imageBoxHeight)
-                    .clip(RoundedCornerShape(10.dp))
-                    .background(AconTheme.color.GlassWhiteDisabled)
-                    .aspectRatio(1f)
-                    .noRippleClickable {
-                        galleryLauncher.launch(
-                            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-                        )
-                    }
-            ) {
-                Icon(
-                    imageVector = ImageVector.vectorResource(R.drawable.ic_plus),
-                    contentDescription = stringResource(R.string.content_description_upload_place_image),
-                    tint = AconTheme.color.Gray50,
+        Box {
+            if (selectedUris.isEmpty()) {
+                Box(
                     modifier = Modifier
-                        .align(Alignment.Center)
-                )
-            }
-        } else {
-            HorizontalPager(
-                state = pagerState,
-                contentPadding = PaddingValues(horizontal = peekAmount),
-                pageSpacing = 8.dp,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(imageBoxHeight)
-            ) { page ->
-                if (page < selectedUris.size) {
-                    Box(
+                        .fillMaxWidth()
+                        .height(imageBoxHeight)
+                        .clip(RoundedCornerShape(10.dp))
+                        .background(AconTheme.color.GlassWhiteDisabled)
+                        .aspectRatio(1f)
+                        .noRippleClickable {
+                            galleryLauncher.launch(
+                                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                            )
+                        }
+                ) {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(R.drawable.ic_plus),
+                        contentDescription = stringResource(R.string.content_description_upload_place_image),
+                        tint = AconTheme.color.Gray50,
                         modifier = Modifier
-                            .fillMaxSize()
-                            .clip(RoundedCornerShape(10.dp))
-                            .aspectRatio(1f)
-                    ) {
-                        AsyncImage(
-                            model = selectedUris[page],
-                            contentDescription = stringResource(R.string.content_description_select_upload_place_image),
-                            modifier = Modifier.fillMaxSize(),
-                            contentScale = ContentScale.Crop
-                        )
-
-                        Icon(
-                            imageVector = ImageVector.vectorResource(R.drawable.ic_delete),
-                            contentDescription = stringResource(R.string.content_description_delete_uploaded_place_image),
-                            tint = AconTheme.color.Action,
-                            modifier = Modifier
-                                .align(Alignment.BottomEnd)
-                                .padding(end = 16.dp, bottom = 16.dp)
-                                .noRippleClickable {
-                                    onRequestRemoveUploadPlaceImageDialog(selectedUris[page])
-                                }
-                        )
-
+                            .align(Alignment.Center)
+                    )
+                }
+            } else {
+                HorizontalPager(
+                    state = pagerState,
+                    contentPadding = PaddingValues(horizontal = peekAmount),
+                    pageSpacing = 8.dp,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(imageBoxHeight)
+                ) { page ->
+                    if (page < selectedUris.size) {
                         Box(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .imageGradientBottomLayer()
-                        )
-                    }
-                } else {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .clip(RoundedCornerShape(10.dp))
-                            .background(AconTheme.color.GlassWhiteDisabled)
-                            .aspectRatio(1f)
-                            .noRippleClickable {
-                                galleryLauncher.launch(
-                                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                                .clip(RoundedCornerShape(10.dp))
+                                .aspectRatio(1f)
+                        ) {
+                            AsyncImage(
+                                model = selectedUris[page],
+                                contentDescription = stringResource(R.string.content_description_select_upload_place_image),
+                                modifier = Modifier.fillMaxSize()
+                                    .hazeSource(LocalHazeState.current),
+                                contentScale = ContentScale.Crop
+                            )
+
+                            Box(
+                                modifier = Modifier
+                                    .align(Alignment.BottomEnd)
+                                    .padding(end = 16.dp, bottom = 16.dp)
+                                    .clip(CircleShape)
+                                    .border(
+                                        width = 1.dp,
+                                        color = AconTheme.color.GlassWhiteSelected,
+                                        shape = CircleShape
+                                    )
+                                    .defaultHazeEffect(
+                                        hazeState = LocalHazeState.current,
+                                        tintColor = AconTheme.color.GlassWhiteLight
+                                    )
+                            ) {
+                                Icon(
+                                    imageVector = ImageVector.vectorResource(R.drawable.ic_delete),
+                                    contentDescription = stringResource(R.string.content_description_delete_uploaded_place_image),
+                                    tint = AconTheme.color.Action,
+                                    modifier = Modifier
+                                        .padding(10.dp)
+                                        .noRippleClickable {
+                                            onRequestRemoveUploadPlaceImageDialog(selectedUris[page])
+                                        }
                                 )
                             }
-                    ) {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(R.drawable.ic_plus),
-                            contentDescription = stringResource(R.string.content_description_upload_place_image),
-                            tint = AconTheme.color.Gray50,
+                        }
+                    } else {
+                        Box(
                             modifier = Modifier
-                                .align(Alignment.Center)
-                        )
+                                .fillMaxSize()
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(AconTheme.color.GlassWhiteDisabled)
+                                .aspectRatio(1f)
+                                .noRippleClickable {
+                                    galleryLauncher.launch(
+                                        PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                                    )
+                                }
+                        ) {
+                            Icon(
+                                imageVector = ImageVector.vectorResource(R.drawable.ic_plus),
+                                contentDescription = stringResource(R.string.content_description_upload_place_image),
+                                tint = AconTheme.color.Gray50,
+                                modifier = Modifier
+                                    .align(Alignment.Center)
+                            )
+                        }
                     }
                 }
+            }
+
+            if (state.showUploadPlaceLimitPouUp) {
+                CustomToast(
+                    message = stringResource(R.string.upload_place_image_limit_toast)
+                )
             }
         }
     }
@@ -240,7 +271,8 @@ private fun UploadPlaceImageScreenPreview() {
             onDismissRemoveUploadPlaceImageDialog = {},
             onAddSpotImageUri = {},
             onRemoveSpotImageUri = {},
-            onUpdateNextPageBtnEnabled = {}
+            onUpdateNextPageBtnEnabled = {},
+            onRequestUploadPlaceLimitPouUp = {}
         )
     }
 }

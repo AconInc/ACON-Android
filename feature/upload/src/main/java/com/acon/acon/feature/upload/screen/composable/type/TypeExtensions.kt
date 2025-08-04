@@ -38,7 +38,7 @@ internal fun RestaurantFilterType.RestaurantType.getNameResId(): Int {
 
 internal fun CafeOptionType.getNameResId(): Int {
     return when(this) {
-        CafeOptionType.GOOD_FOR_WORK -> R.string.upload_place_select_cafe_option_1
-        CafeOptionType.NOT_GOOD_FOR_WORK -> R.string.upload_place_select_cafe_option_2
+        CafeOptionType.GOOD_FOR_WORK -> R.string.upload_place_select_cafe_option1
+        CafeOptionType.NOT_GOOD_FOR_WORK -> R.string.upload_place_select_cafe_option2
     }
 }

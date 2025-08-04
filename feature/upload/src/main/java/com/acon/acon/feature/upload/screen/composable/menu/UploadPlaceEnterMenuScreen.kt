@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -22,6 +24,8 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -78,10 +82,22 @@ internal fun UploadPlaceEnterMenuScreen(
         Spacer(Modifier.height(32.dp))
         AconOutlinedSearchTextField(
             value = query,
-            onValueChange = {
-                query = it
-                isSelection = false
+            onValueChange = { newValue ->
+                if (newValue.text.length <= 20) {
+                    query = newValue
+                    isSelection = false
+                }
             },
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Done,
+                keyboardType = KeyboardType.Text
+            ),
+            keyboardActions = KeyboardActions(
+                onDone = {
+                    keyboardController?.hide()
+                    focusManager.clearFocus()
+                }
+            ),
             placeholder = stringResource(R.string.upload_place_enter_menu_placeholder),
             modifier = Modifier.fillMaxWidth()
         )
