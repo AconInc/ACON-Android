@@ -14,13 +14,13 @@ import retrofit2.http.Query
 
 interface UploadAuthApi {
 
-    @GET("/api/v1/spots/search-suggestions")
+    @GET("/api/v2/spots/search-suggestions")
     suspend fun getSuggestions(
         @Query("latitude") latitude: Double,
         @Query("longitude") longitude: Double
     ): UploadSpotSuggestionsResponse
 
-    @GET("/api/v1/reviews/verify")
+    @GET("/api/v2/reviews/verify")
     suspend fun verifyLocation(
         @Query("spotId") spotId: Long,
         @Query("latitude") latitude: Double,
@@ -40,9 +40,9 @@ interface UploadAuthApi {
     @GET("/api/v1/spots/search")
     suspend fun getSearchedSpots(@Query("keyword") query: String): SearchedSpotsResponse
 
-    @GET("/api/v2/images/presigned-url?imageType=SPOT")
+    @GET("/api/v1/images/presigned-url?imageType=APPLY_SPOT")
     suspend fun getUploadPlacePreSignedUrl() : PreSignedUrlResponse
 
-    @GET("/api/v1/spots/apply")
+    @POST("/api/v1/spots/apply")
     suspend fun submitUploadPlace(@Body request: SubmitUploadPlaceRequest)
 }
