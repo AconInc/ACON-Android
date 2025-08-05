@@ -35,4 +35,8 @@ abstract class ReadWriteCache<T>(scope: CoroutineScope): ReadOnlyCache<T>(scope)
     open fun updateData(newData: T) {
         _data.value = Result.success(newData)
     }
+
+    fun clearData() {
+        _data.value = emptyData
+    }
 }

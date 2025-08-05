@@ -6,12 +6,16 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.location.LocationManager
 import androidx.core.app.ActivityCompat
+import androidx.lifecycle.viewModelScope
+import com.acon.acon.core.model.model.area.Area
 import com.acon.acon.core.model.type.UserActionType
 import com.acon.acon.core.ui.base.BaseContainerHost
 import com.acon.acon.domain.error.area.ReplaceVerifiedArea
 import com.acon.acon.domain.repository.ProfileRepository
 import com.acon.acon.domain.repository.TimeRepository
+import com.acon.acon.domain.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.async
 import org.orbitmvi.orbit.viewmodel.container
 import timber.log.Timber
 import javax.inject.Inject
@@ -20,6 +24,7 @@ import javax.inject.Inject
 class AreaVerificationViewModel @Inject constructor(
     private val application: Application,
     private val profileRepository: ProfileRepository,
+    private val userRepository: UserRepository,
     private val timeRepository: TimeRepository
 ) : BaseContainerHost<AreaVerificationUiState, AreaVerificationSideEffect>() {
 
@@ -56,7 +61,10 @@ class AreaVerificationViewModel @Inject constructor(
     }
 
     fun onSkipButtonClick() = intent {
-        postSideEffect(AreaVerificationSideEffect.NavigateToOnboarding)
+        userRepository.getDidOnboarding().onSuccess { did ->
+            if (did) postSideEffect(AreaVerificationSideEffect.NavigateToSpotList)
+            else postSideEffect(AreaVerificationSideEffect.NavigateToOnboarding)
+        }.onFailure { postSideEffect(AreaVerificationSideEffect.NavigateToOnboarding) }
         timeRepository.saveUserActionTime(UserActionType.SKIP_AREA_VERIFICATION, System.currentTimeMillis())
     }
 
@@ -118,11 +126,13 @@ class AreaVerificationViewModel @Inject constructor(
     }
 
     fun verifyArea(latitude: Double, longitude: Double) = intent {
+        val didOnboarding = userRepository.getDidOnboarding().takeIf { it.isSuccess }?.getOrElse { true }!!
         profileRepository.verifyArea(latitude, longitude)
             .onSuccess {
                 reduce {
                     state.copy(
-                        isVerifySuccess = true
+                        isVerifySuccess = true,
+                        didOnboarding = didOnboarding
                     )
                 }
             }
@@ -143,7 +153,8 @@ data class AreaVerificationUiState(
     val latitude: Double = 0.0,
     val longitude: Double = 0.0,
     val isVerifySuccess: Boolean = false,
-    val verifiedAreaList: List<com.acon.acon.core.model.model.area.Area> = emptyList(),
+    val verifiedAreaList: List<Area> = emptyList(),
+    val didOnboarding: Boolean = false,
 )
 
 sealed interface AreaVerificationSideEffect {
@@ -164,4 +175,5 @@ sealed interface AreaVerificationSideEffect {
     data class ShowErrorToast(val errorMessage: String) : AreaVerificationSideEffect
 
     data object NavigateToOnboarding : AreaVerificationSideEffect
+    data object NavigateToSpotList: AreaVerificationSideEffect
 }

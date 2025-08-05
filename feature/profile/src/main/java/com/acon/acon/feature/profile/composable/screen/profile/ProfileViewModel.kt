@@ -22,7 +22,7 @@ class ProfileViewModel @Inject constructor(
         container<ProfileUiState, ProfileUiSideEffect>(ProfileUiState.Success(com.acon.acon.core.model.model.profile.ProfileInfo.Empty)) {
             userType.collect {
                 when(it) {
-                    com.acon.acon.core.model.type.UserType.GUEST -> reduce { ProfileUiState.Guest }
+                    UserType.GUEST -> reduce { ProfileUiState.Guest }
                     else -> {
                         profileRepository.fetchProfile().collect { profileInfoResult ->
                             profileInfoResult.onSuccess {

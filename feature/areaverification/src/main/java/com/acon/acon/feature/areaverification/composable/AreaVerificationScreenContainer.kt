@@ -8,6 +8,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.acon.acon.core.navigation.route.AreaVerificationRoute
 import com.acon.acon.core.ui.permission.checkLocationPermission
 import com.acon.acon.core.ui.android.showToast
 import com.acon.acon.core.ui.compose.LocalRequestLocationPermission
@@ -19,6 +20,7 @@ fun AreaVerificationScreenContainer(
     route: String,
     onNextScreen: (Double, Double) -> Unit,
     onNavigateToOnboarding: () -> Unit,
+    onNavigateToSpotList: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: AreaVerificationViewModel = hiltViewModel()
 ) {
@@ -68,6 +70,7 @@ fun AreaVerificationScreenContainer(
             }
 
             is AreaVerificationSideEffect.NavigateToOnboarding -> onNavigateToOnboarding()
+            is AreaVerificationSideEffect.NavigateToSpotList -> onNavigateToSpotList()
         }
     }
 }

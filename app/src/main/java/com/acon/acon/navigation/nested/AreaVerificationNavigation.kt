@@ -14,6 +14,7 @@ import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.core.navigation.route.AreaVerificationRoute
 import com.acon.acon.core.navigation.route.OnboardingRoute
 import com.acon.acon.core.navigation.route.SettingsRoute
+import com.acon.acon.core.navigation.route.SpotRoute
 import com.acon.acon.core.navigation.utils.navigateAndClear
 import com.acon.acon.core.ui.android.showToast
 import com.acon.acon.feature.areaverification.composable.AreaVerificationScreenContainer
@@ -40,7 +41,8 @@ fun NavGraphBuilder.areaVerificationNavigation(
                             route = routeData.route
                         )
                     )
-                }, onNavigateToOnboarding = { navController.navigateAndClear(OnboardingRoute.Graph) }
+                }, onNavigateToOnboarding = { navController.navigateAndClear(OnboardingRoute.Graph) },
+                onNavigateToSpotList = { navController.navigateAndClear(SpotRoute.Graph) }
             )
         }
 
@@ -52,10 +54,12 @@ fun NavGraphBuilder.areaVerificationNavigation(
                 latitude = route.latitude,
                 longitude = route.longitude,
                 previousVerifiedAreaId = route.verifiedAreaId,
-                onNavigateToNext = {
+                onNavigateToNext = { didOnboarding ->
                     if (route.route == "settings") {
                         context.showToast("인증 되었습니다")
                         navController.popBackStack(route = SettingsRoute.LocalVerification, inclusive = false)
+                    } else if (didOnboarding) {
+                        navController.navigateAndClear(SpotRoute.Graph)
                     } else {
                         navController.navigate(OnboardingRoute.Graph) {
                             popUpTo(0) { inclusive = true }

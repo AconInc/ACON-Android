@@ -9,17 +9,16 @@ class IsCooldownExpiredUseCase @Inject constructor(
 ) {
 
     suspend operator fun invoke(action: UserActionType, cooldownSeconds: Long, currentTimestamp: Long = System.currentTimeMillis()) : Boolean {
-        return true
-//        timeRepository.getUserActionTime(action).onSuccess {
-//            if (it == null)
-//                return true
-//
-//            val elapsedTime = currentTimestamp - it
-//            return elapsedTime >= cooldownSeconds * 1000
-//        }.onFailure {
-//            return false
-//        }
-//
-//        return false
+        timeRepository.getUserActionTime(action).onSuccess {
+            if (it == null)
+                return true
+
+            val elapsedTime = currentTimestamp - it
+            return elapsedTime >= cooldownSeconds * 1000
+        }.onFailure {
+            return false
+        }
+
+        return false
     }
 }

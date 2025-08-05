@@ -26,6 +26,7 @@ import com.acon.acon.core.ui.base.BaseContainerHost
 import com.acon.acon.domain.error.spot.FetchSpotListError
 import com.acon.acon.domain.repository.ProfileRepository
 import com.acon.acon.domain.repository.SpotRepository
+import com.acon.acon.domain.repository.TimeRepository
 import com.acon.acon.domain.usecase.IsCooldownExpiredUseCase
 import com.acon.acon.domain.usecase.IsDistanceExceededUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -43,6 +44,7 @@ class SpotListViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val spotRepository: SpotRepository,
     private val profileRepository: ProfileRepository,
+    private val timeRepository: TimeRepository,
     private val isDistanceExceededUseCase: IsDistanceExceededUseCase,
     private val isCooldownExpiredUseCase: IsCooldownExpiredUseCase
 ) : BaseContainerHost<SpotListUiStateV2, SpotListSideEffectV2>() {
@@ -75,7 +77,7 @@ class SpotListViewModel @Inject constructor(
                 initialLocation = location
                 if (location.isInKorea(context)) {
                     var showAreaVerificationModal = false
-                    if (isCooldownExpiredUseCase(UserActionType.SKIP_AREA_VERIFICATION, 24 * 60 * 60) && userType.value != UserType.GUEST)
+                    if (isCooldownExpiredUseCase(UserActionType.SKIP_AREA_VERIFICATION, 60) && userType.value != UserType.GUEST)
                         showAreaVerificationModal =
                             profileRepository.fetchVerifiedAreaList().takeIf { it.isSuccess }?.getOrNull()?.isEmpty() == true
                     fetchSpotList(location,
@@ -343,6 +345,7 @@ class SpotListViewModel @Inject constructor(
 
     fun onDismissAreaVerificationModal() = intent {
         runOn<SpotListUiStateV2.Success> {
+            timeRepository.saveUserActionTime(UserActionType.SKIP_AREA_VERIFICATION, System.currentTimeMillis())
             reduce {
                 state.copy(showAreaVerificationModal = false)
             }
