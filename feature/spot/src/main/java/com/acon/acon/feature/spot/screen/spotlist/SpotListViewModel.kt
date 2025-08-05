@@ -77,7 +77,7 @@ class SpotListViewModel @Inject constructor(
                 initialLocation = location
                 if (location.isInKorea(context)) {
                     var showAreaVerificationModal = false
-                    if (isCooldownExpiredUseCase(UserActionType.SKIP_AREA_VERIFICATION, 60) && userType.value != UserType.GUEST)
+                    if (isCooldownExpiredUseCase(UserActionType.SKIP_AREA_VERIFICATION, 24 * 60 * 60) && userType.value != UserType.GUEST)
                         showAreaVerificationModal =
                             profileRepository.fetchVerifiedAreaList().takeIf { it.isSuccess }?.getOrNull()?.isEmpty() == true
                     fetchSpotList(location,
