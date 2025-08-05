@@ -12,7 +12,6 @@ import com.acon.acon.core.model.type.CategoryType
 import com.acon.acon.core.model.type.PriceFeatureType
 import com.acon.acon.core.model.type.RestaurantFeatureType
 import com.acon.acon.core.model.type.SpotType
-import com.acon.acon.domain.error.upload.SubmitUploadPlaceError
 import com.acon.acon.domain.repository.MapSearchRepository
 import com.acon.acon.domain.repository.UploadRepository
 import com.acon.acon.feature.upload.BuildConfig
@@ -349,48 +348,32 @@ class UploadPlaceViewModel @Inject constructor(
             imageList = imageList
         ).onSuccess {
             onSuccess()
-        }.onFailure { error ->
-            when(error) {
-                is SubmitUploadPlaceError.InvalidSpotType -> {
-                    // TODO 유효하지 않은 spotType일 경우 처리
-                }
-                is SubmitUploadPlaceError.InvalidCategoryName -> {
-                    // TODO 유효하지 않은 categoryName일 경우 처리
-                }
-                is SubmitUploadPlaceError.InvalidRestaurantFeature -> {
-                    // TODO 유효하지 않은 restaurantFeature일 경우 처리
-                }
-                is SubmitUploadPlaceError.InvalidCafeFeature -> {
-                    // TODO 유효하지 않은 cafeFeature일 경우 처리
-                }
-                is SubmitUploadPlaceError.InvalidOpeningHour -> {
-                    // TODO 유효하지 않은 openingHour일 경우 처리
-                }
-                is SubmitUploadPlaceError.InvalidPrice -> {
-                    // TODO 유효하지 않은 price일 경우 처리
-                }
-                is SubmitUploadPlaceError.NonMatchingSpotTypeAndCategory -> {
-                    // TODO spotType에 맞지 않는 category일 경우 처리
-                }
-                is SubmitUploadPlaceError.NonMatchingCategoryAndOption -> {
-                    // TODO category에 맞지 않는 option일 경우 처리
-                }
-
-            }
+        }.onFailure {
+            postSideEffect(UploadPlaceSideEffect.ShowToastUploadFailed)
         }
     }
 
     private fun uploadAllImagesAndSubmit(onSuccess: () -> Unit) = intent {
         val uris = state.selectedImageUris
 
-        val fileNames = coroutineScope {
-            uris?.map { imageUri ->
-                async {
-                    val presignedResult = uploadRepository.getUploadPlacePreSignedUrl().getOrThrow()
-                    putPlaceImageToPreSignedUrl(imageUri, presignedResult.preSignedUrl)
-                    presignedResult.fileName
-                }
-            }?.awaitAll()
+        val fileNames = try {
+            coroutineScope {
+                uris?.map { imageUri ->
+                    async {
+                        val presignedResult = try {
+                            uploadRepository.getUploadPlacePreSignedUrl().getOrThrow()
+                        } catch (e: Exception) {
+                            postSideEffect(UploadPlaceSideEffect.ShowToastUploadImageFailed)
+                            throw e
+                        }
+                        putPlaceImageToPreSignedUrl(imageUri, presignedResult.preSignedUrl)
+                        presignedResult.fileName
+                    }
+                }?.awaitAll()
+            }
+        } catch (e: Exception) {
+            postSideEffect(UploadPlaceSideEffect.ShowToastUploadImageFailed)
+            null
         }
 
         val bucketUrls = fileNames?.map { fileName ->
@@ -440,9 +423,11 @@ class UploadPlaceViewModel @Inject constructor(
                 Timber.tag(TAG).d("이미지 업로드 성공")
             } else {
                 Timber.tag(TAG).e("이미지 업로드 실패, code: %d", response.code)
+                postSideEffect(UploadPlaceSideEffect.ShowToastUploadImageFailed)
             }
         } catch (e: Exception) {
             Timber.tag(TAG).e(e, "이미지 업로드 과정에서 예외 발생: %s", e.message)
+            postSideEffect(UploadPlaceSideEffect.ShowToastUploadImageFailed)
         }
     }
 
@@ -478,6 +463,8 @@ data class UploadPlaceUiState(
 )
 
 sealed interface UploadPlaceSideEffect {
+    data object ShowToastUploadFailed : UploadPlaceSideEffect
+    data object ShowToastUploadImageFailed : UploadPlaceSideEffect
     data object OnNavigateToBack : UploadPlaceSideEffect
     data object OnMoveToReportPlace : UploadPlaceSideEffect
 }

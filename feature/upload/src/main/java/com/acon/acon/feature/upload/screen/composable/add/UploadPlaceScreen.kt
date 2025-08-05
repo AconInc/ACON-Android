@@ -45,6 +45,7 @@ import com.acon.acon.core.designsystem.component.topbar.AconTopBar
 import com.acon.acon.core.designsystem.effect.LocalHazeState
 import com.acon.acon.core.designsystem.effect.defaultHazeEffect
 import com.acon.acon.core.designsystem.theme.AconTheme
+import com.acon.acon.core.ui.android.showToast
 import com.acon.acon.core.ui.compose.getScreenWidth
 import com.acon.acon.feature.upload.screen.UploadPlaceSideEffect
 import com.acon.acon.feature.upload.screen.UploadPlaceViewModel
@@ -83,7 +84,15 @@ fun UploadPlaceScreen(
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse(UrlConstants.ACON_INSTARGRAM))
                 context.startActivity(intent)
             }
-            UploadPlaceSideEffect.OnNavigateToBack -> onNavigateHome()
+            UploadPlaceSideEffect.OnNavigateToBack -> {
+                onNavigateHome()
+            }
+            UploadPlaceSideEffect.ShowToastUploadFailed -> {
+                context.showToast(context.getString(R.string.failed_upload_place))
+            }
+            UploadPlaceSideEffect.ShowToastUploadImageFailed -> {
+                context.showToast(context.getString(R.string.failed_upload_place_image))
+            }
         }
     }
 
