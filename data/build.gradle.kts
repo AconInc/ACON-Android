@@ -19,6 +19,8 @@ android {
         buildConfigField("String", "BASE_URL", "\"${localProperties["BASE_URL"]}\"")
         buildConfigField("String", "NAVER_CLIENT_ID", "\"${localProperties["naver_client_id"]}\"")
         buildConfigField("String", "NAVER_CLIENT_SECRET", "\"${localProperties["naver_client_secret"]}\"")
+        buildConfigField("String", "NAVER_DEVELOPERS_CLIENT_ID", "\"${localProperties["naver_developers_client_id"]}\"")
+        buildConfigField("String", "NAVER_DEVELOPERS_CLIENT_SECRET", "\"${localProperties["naver_developers_client_secret"]}\"")
     }
 }
 

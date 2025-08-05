@@ -4,6 +4,7 @@ import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraphBuilder
@@ -101,11 +102,17 @@ internal fun NavGraphBuilder.uploadNavigation(
             }
         ) {
             UploadPlaceScreen(
-                onNavigateBack = navController::popBackStack,
+                onNavigateHome = {
+                    navController.navigate(SpotRoute.Graph) {
+                        popUpTo(UploadRoute.Search) {
+                            inclusive = true
+                        }
+                    }
+                },
                 modifier = Modifier
                     .background(AconTheme.color.Gray900)
-                    .systemBarsPadding()
                     .fillMaxSize()
+                    .navigationBarsPadding()
             )
         }
     }

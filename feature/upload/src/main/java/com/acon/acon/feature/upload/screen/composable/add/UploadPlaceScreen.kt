@@ -1,5 +1,8 @@
 package com.acon.acon.feature.upload.screen.composable.add
 
+import android.content.Intent
+import android.net.Uri
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.slideInVertically
@@ -26,12 +29,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.acon.acon.core.common.UrlConstants
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.button.v2.AconFilledTextButton
 import com.acon.acon.core.designsystem.component.dialog.v2.AconTwoActionDialog
@@ -40,6 +46,7 @@ import com.acon.acon.core.designsystem.effect.LocalHazeState
 import com.acon.acon.core.designsystem.effect.defaultHazeEffect
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.core.ui.compose.getScreenWidth
+import com.acon.acon.feature.upload.screen.UploadPlaceSideEffect
 import com.acon.acon.feature.upload.screen.UploadPlaceViewModel
 import com.acon.acon.feature.upload.screen.composable.add.image.UploadPlaceImageScreen
 import com.acon.acon.feature.upload.screen.composable.add.place.UploadSelectPlaceDetailScreen
@@ -47,17 +54,18 @@ import com.acon.acon.feature.upload.screen.composable.add.place.UploadSelectPlac
 import com.acon.acon.feature.upload.screen.composable.add.price.UploadSelectPriceScreen
 import com.acon.acon.feature.upload.screen.composable.add.search.UploadPlaceSearchScreen
 import com.acon.acon.feature.upload.screen.composable.menu.UploadPlaceEnterMenuScreen
-import dev.chrisbanes.haze.hazeSource
 import org.orbitmvi.orbit.compose.collectAsState
+import org.orbitmvi.orbit.compose.collectSideEffect
 
 private const val maxStepIndex = 6
 
 @Composable
 fun UploadPlaceScreen(
     modifier: Modifier = Modifier,
-    onNavigateBack: () -> Unit = {},
+    onNavigateHome: () -> Unit = {},
     viewModel: UploadPlaceViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
     val state by viewModel.collectAsState()
 
     val screenWidthDp = getScreenWidth()
@@ -65,12 +73,26 @@ fun UploadPlaceScreen(
 
     val currentStep = state.currentStep
 
+    BackHandler {
+        viewModel.onRequestExitUploadPlaceDialog()
+    }
+
+    viewModel.collectSideEffect {
+        when(it) {
+            UploadPlaceSideEffect.OnMoveToReportPlace -> {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(UrlConstants.ACON_INSTARGRAM))
+                context.startActivity(intent)
+            }
+            UploadPlaceSideEffect.OnNavigateToBack -> onNavigateHome()
+        }
+    }
+
     LaunchedEffect(Unit) {
         snapshotFlow { state.currentStep }
             .collect { currentStep ->
                 if (currentStep == 0) {
                     viewModel.onPreviousBtnDisabled()
-                    viewModel.updateNextBtnEnabled(true) // TODO - 임시조건 (검색 구현 후 삭제)
+                    viewModel.updateNextBtnEnabled(state.selectedSpotByMap?.title?.isNotEmpty() == true)
                 } else {
                     viewModel.onPreviousBtnEnabled()
                 }
@@ -87,7 +109,7 @@ fun UploadPlaceScreen(
                 viewModel.onDismissExitUploadPlaceDialog()
             },
             onAction2 = {
-                onNavigateBack()
+                viewModel.onNavigateToBack()
             },
             modifier = Modifier.width(dialogWidth)
         )
@@ -99,6 +121,7 @@ fun UploadPlaceScreen(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
+                .zIndex(1f)
                 .defaultHazeEffect(
                     hazeState = LocalHazeState.current,
                     tintColor = AconTheme.color.GlassGray900,
@@ -141,7 +164,6 @@ fun UploadPlaceScreen(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .hazeSource(LocalHazeState.current)
             ) {
                 AnimatedContent(
                     targetState = currentStep,
@@ -156,7 +178,15 @@ fun UploadPlaceScreen(
                     contentKey = { it }
                 ) { step ->
                     when(step) {
-                        0 -> UploadPlaceSearchScreen()
+
+                        0 -> UploadPlaceSearchScreen(
+                            state = state,
+                            onBackAction = viewModel::onNavigateToBack,
+                            onClickReportPlace = viewModel::onClickReportPlace,
+                            onHideSearchedPlaceList = viewModel::onHideSearchedPlaceList,
+                            onSearchedSpotClick = viewModel::onSearchSpotByMapClicked,
+                            onSearchQueryOrSelectionChanged = viewModel::onSearchQueryOrSelectionChanged
+                        )
                         1 -> UploadSelectPlaceScreen(
                             state = state,
                             onSelectSpotType = viewModel::updateSpotType,
@@ -184,7 +214,8 @@ fun UploadPlaceScreen(
                             onDismissRemoveUploadPlaceImageDialog = viewModel::onDismissRemoveUploadPlaceImageDialog,
                             onAddSpotImageUri = viewModel::onAddImageUris,
                             onRemoveSpotImageUri = viewModel::onRemoveImageUri,
-                            onUpdateNextPageBtnEnabled = viewModel::updateNextBtnEnabled
+                            onUpdateNextPageBtnEnabled = viewModel::updateNextBtnEnabled,
+                            onRequestUploadPlaceLimitPouUp = viewModel::onRequestUploadPlaceLimitPouUp
                         )
                         6 -> UploadPlaceCompleteScreen()
                     }
@@ -258,7 +289,7 @@ fun UploadPlaceScreen(
 private fun UploadPlaceScreenPreview() {
     AconTheme {
         UploadPlaceScreen(
-            onNavigateBack = {}
+            onNavigateHome = {}
         )
     }
 }

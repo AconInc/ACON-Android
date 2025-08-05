@@ -3,25 +3,27 @@ package com.acon.acon.feature.upload.screen
 import android.net.Uri
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.viewModelScope
+import com.acon.acon.core.model.model.upload.SearchedSpotByMap
 import com.acon.acon.core.model.type.CafeOptionType
 import com.acon.acon.core.model.type.PriceOptionType
 import com.acon.acon.core.model.type.RestaurantFilterType
 import com.acon.acon.core.model.type.SpotType
 import com.acon.acon.core.ui.base.BaseContainerHost
+import com.acon.acon.domain.repository.MapSearchRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
-import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.viewmodel.container
 import javax.inject.Inject
 
-@OptIn(OrbitExperimental::class, FlowPreview::class)
+@OptIn(FlowPreview::class)
 @HiltViewModel
 class UploadPlaceViewModel @Inject constructor(
-
+    private val mapSearchRepository: MapSearchRepository
 ) : BaseContainerHost<UploadPlaceUiState, UploadPlaceSideEffect>() {
 
     override val container =
@@ -46,12 +48,72 @@ class UploadPlaceViewModel @Inject constructor(
                         }
                     }
             }
+
+            viewModelScope.launch {
+                searchPlaceQueryFlow
+                    .debounce(100)
+                    .distinctUntilChanged()
+                    .collect { query ->
+                        if (query.isBlank()) {
+                            reduce {
+                                state.copy(
+                                    searchedSpotsByMap = emptyList(),
+                                    showSearchedSpotsByMap = false,
+                                    isNextBtnEnabled = false
+                                )
+                            }
+                        } else {
+                            mapSearchRepository.fetchMapSearch(query).onSuccess {
+                                reduce {
+                                    state.copy(
+                                        searchedSpotsByMap = it
+                                    )
+                                }
+                            }.onFailure {
+                                if (it.message?.contains("HTTP 429") == true) {
+                                    reduce {
+                                        state.copy(
+                                            showUploadPlaceLimitDialog = true
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+            }
         }
 
     private val queryFlow = MutableStateFlow("")
+    private val searchPlaceQueryFlow = MutableStateFlow("")
 
     fun onSearchQueryChanged(query: String) = intent {
         queryFlow.value = query
+    }
+
+    fun onSearchQueryOrSelectionChanged(query: String, isSelection: Boolean) = intent {
+        reduce {
+            if (isSelection)
+                state.copy(
+                    showSearchedSpotsByMap = false
+                )
+            else
+                state.copy(
+                    selectedSpotByMap = state.selectedSpotByMap?.takeIf { it.title == query },
+                    showSearchedSpotsByMap = query.isNotBlank()
+                )
+        }
+        searchPlaceQueryFlow.value = query
+    }
+
+    fun onSearchSpotByMapClicked(searchedSpotByMap: SearchedSpotByMap, onUpdateTextField: () -> Unit) = intent {
+        onUpdateTextField()
+        reduce {
+            state.copy(
+                selectedSpotByMap = searchedSpotByMap,
+                showSearchedSpotsByMap = false,
+                isNextBtnEnabled = true
+            )
+        }
     }
 
     fun onPreviousBtnDisabled() = intent {
@@ -60,10 +122,6 @@ class UploadPlaceViewModel @Inject constructor(
 
     fun onPreviousBtnEnabled() = intent {
         reduce { state.copy(isPreviousBtnEnabled = true)}
-    }
-
-    fun onUpdateNextBtnEnabled() = intent {
-        reduce { state.copy(isNextBtnEnabled = true)}
     }
 
     fun updateNextBtnEnabled(isEnabled: Boolean) = intent {
@@ -165,20 +223,54 @@ class UploadPlaceViewModel @Inject constructor(
             state.copy(showExitUploadPlaceDialog = false)
         }
     }
+
+    fun onHideSearchedPlaceList() = intent {
+        reduce {
+            state.copy(
+                showSearchedSpotsByMap = false
+            )
+        }
+    }
+
+    fun onRequestUploadPlaceLimitPouUp() = intent {
+        reduce {
+            state.copy(
+                showUploadPlaceLimitPouUp = true
+            )
+        }
+
+        viewModelScope.launch {
+            delay(3500)
+            intent {
+                reduce {
+                    state.copy(showUploadPlaceLimitPouUp = false)
+                }
+            }
+
+        }
+    }
+
+    fun onNavigateToBack() = intent {
+        postSideEffect(UploadPlaceSideEffect.OnNavigateToBack)
+    }
+
+    fun onClickReportPlace() = intent {
+        postSideEffect(UploadPlaceSideEffect.OnMoveToReportPlace)
+    }
 }
 
-// featureList - 장소 특징 목록
-//val selectedSpotType: SpotType
-//val selectedRestaurantFilters: Map<FilterDetailKey, Set<RestaurantFilterType>>
 @Immutable
 data class UploadPlaceUiState(
     val isPreviousBtnEnabled: Boolean = false,
     val isNextBtnEnabled: Boolean = false,
     val showExitUploadPlaceDialog: Boolean = false,
     val showRemoveUploadPlaceImageDialog: Boolean = false,
+    val showUploadPlaceLimitDialog: Boolean = false,
+    val showUploadPlaceLimitPouUp: Boolean = false,
+    val selectedSpotByMap: SearchedSpotByMap? = null,
+    val searchedSpotsByMap: List<SearchedSpotByMap> = listOf(),
+    val showSearchedSpotsByMap: Boolean = false,
     val selectedUriToRemove: Uri? = null,
-    val selectedSpotName: String = "",
-    val selectedSpotAddress: String = "",
     val selectedSpotType: SpotType? = null,
     val selectedPriceOption: PriceOptionType? = null,
     val selectedCafeOption: CafeOptionType? = null,
@@ -191,5 +283,6 @@ data class UploadPlaceUiState(
 )
 
 sealed interface UploadPlaceSideEffect {
-    data object NavigateBack : UploadPlaceSideEffect
+    data object OnNavigateToBack : UploadPlaceSideEffect
+    data object OnMoveToReportPlace : UploadPlaceSideEffect
 }
