@@ -131,16 +131,18 @@ fun UploadPlaceScreen(
         ) {
             AconTopBar(
                 leadingIcon = {
-                    IconButton(
-                        onClick = {
-                            viewModel.onRequestExitUploadPlaceDialog()
+                    if(currentStep != maxStepIndex) {
+                        IconButton(
+                            onClick = {
+                                viewModel.onRequestExitUploadPlaceDialog()
+                            }
+                        ) {
+                            Icon(
+                                imageVector = ImageVector.vectorResource(R.drawable.ic_x_mark),
+                                contentDescription = stringResource(R.string.exit),
+                                tint = AconTheme.color.Gray50
+                            )
                         }
-                    ) {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(R.drawable.ic_x_mark),
-                            contentDescription = stringResource(R.string.exit),
-                            tint = AconTheme.color.Gray50
-                        )
                     }
                 },
                 content = {
@@ -215,9 +217,11 @@ fun UploadPlaceScreen(
                             onAddSpotImageUri = viewModel::onAddImageUris,
                             onRemoveSpotImageUri = viewModel::onRemoveImageUri,
                             onUpdateNextPageBtnEnabled = viewModel::updateNextBtnEnabled,
-                            onRequestUploadPlaceLimitPouUp = viewModel::onRequestUploadPlaceLimitPouUp,
+                            onRequestUploadPlaceLimitPouUp = viewModel::onRequestUploadPlaceLimitPouUp
                         )
-                        6 -> UploadPlaceCompleteScreen()
+                        6 -> UploadPlaceCompleteScreen(
+                            onClickGoHome = viewModel::onNavigateToBack
+                        )
                     }
                 }
             }

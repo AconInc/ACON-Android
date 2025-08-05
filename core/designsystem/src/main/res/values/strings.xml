@@ -28,6 +28,7 @@
     <string name="ellipsis">…</string>
     <string name="fail_to_load_image">이미지 로딩에 실패했어요</string>
     <string name="top">Top %d</string>
+    <string name="go_home">홈으로 가기</string>
 
     <!-- Etc -->
     <string name="restart">마무리 하기</string>
