@@ -5,5 +5,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class SimpleSpot(
     val spotId: Long,
-    val name: String
+    val name: String,
+    val recommendedMenu: String ?= null
 )
