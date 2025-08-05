@@ -18,6 +18,7 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 fun SignInScreenContainer(
     navigateToSpotListView: () -> Unit,
     navigateToAreaVerification: () -> Unit,
+    navigateToOnboarding: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: SignInViewModel = hiltViewModel()
 ) {
@@ -29,6 +30,7 @@ fun SignInScreenContainer(
         modifier = modifier.fillMaxSize(),
         navigateToSpotListView = viewModel::navigateToSpotListView,
         navigateToAreaVerification = viewModel::navigateToAreaVerification,
+        navigateToOnboarding = viewModel::navigateToOnboarding,
         onClickTermsOfUse = viewModel::onClickTermsOfUse,
         onClickPrivacyPolicy = viewModel::onClickPrivacyPolicy,
         onAnimationEnd = viewModel::signIn,
@@ -50,6 +52,7 @@ fun SignInScreenContainer(
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
                 context.startActivity(intent)
             }
+            is SignInSideEffect.NavigateToOnboarding -> navigateToOnboarding()
         }
     }
 }
