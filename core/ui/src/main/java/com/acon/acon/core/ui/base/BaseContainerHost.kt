@@ -40,7 +40,7 @@ abstract class BaseContainerHost<STATE : Any, SIDE_EFFECT : Any>() :
 
     @Composable
     fun useUserType() {
-        val userType = LocalUserType.current
+        val userType by rememberUpdatedState(LocalUserType.current)
 
         LaunchedEffect(Unit) {
             snapshotFlow { userType }.collect {
