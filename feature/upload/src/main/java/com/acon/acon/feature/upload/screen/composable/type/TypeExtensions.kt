@@ -27,12 +27,12 @@ internal fun RestaurantFeatureType.RestaurantType.getNameResId(): Int {
         RestaurantFeatureType.RestaurantType.CHINESE -> R.string.chinese
         RestaurantFeatureType.RestaurantType.JAPANESE -> R.string.japanese
         RestaurantFeatureType.RestaurantType.WESTERN -> R.string.western
-        RestaurantFeatureType.RestaurantType.ASIAN -> R.string.asian
+        RestaurantFeatureType.RestaurantType.SOUTHEAST_ASIAN -> R.string.asian
         RestaurantFeatureType.RestaurantType.FUSION -> R.string.fusion
         RestaurantFeatureType.RestaurantType.BUNSIK -> R.string.korean_street
         RestaurantFeatureType.RestaurantType.BUFFET -> R.string.buffet
         RestaurantFeatureType.RestaurantType.DRINKING_PLACE -> R.string.drink_bar
-        RestaurantFeatureType.RestaurantType.EXCLUDE_FRANCHISE -> R.string.reason_other
+        RestaurantFeatureType.RestaurantType.OTHERS -> R.string.reason_other
     }
 }
 

@@ -17,12 +17,12 @@ sealed interface RestaurantFeatureType : FeatureType {
         CHINESE,
         JAPANESE,
         WESTERN,
-        ASIAN,
+        SOUTHEAST_ASIAN,
         FUSION,
         BUNSIK,
         BUFFET,
         DRINKING_PLACE,
-        EXCLUDE_FRANCHISE;
+        OTHERS;
     }
 }
 
