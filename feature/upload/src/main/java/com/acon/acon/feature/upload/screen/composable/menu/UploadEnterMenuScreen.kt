@@ -1,46 +1,76 @@
 package com.acon.acon.feature.upload.screen.composable.menu
 
-import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.textfield.v2.AconSearchTextField
 import com.acon.acon.core.designsystem.theme.AconTheme
+import com.acon.acon.feature.upload.screen.UploadEnterMenuUiState
 import com.acon.acon.feature.upload.screen.composable.search.UploadTopAppBar
 
 @Composable
 internal fun UploadEnterMenuScreen(
-
+    state: UploadEnterMenuUiState,
+    onBackAction: () -> Unit,
+    onNextAction: () -> Unit,
+    onSearchQueryChanged: (String) -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    var query by rememberSaveable(stateSaver = TextFieldValue.Saver) { mutableStateOf(TextFieldValue("")) }
+    val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+    var query by rememberSaveable(stateSaver = TextFieldValue.Saver) { mutableStateOf(TextFieldValue(state.recommendMenu ?: "")) }
     var isSelection by remember { mutableStateOf(false) }
 
+    LaunchedEffect(Unit) {
+        snapshotFlow { query }.collect {
+            onSearchQueryChanged(it.text)
+        }
+    }
+
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(AconTheme.color.Gray900)
+        modifier = modifier
             .padding(horizontal = 16.dp)
+            .pointerInput(Unit) {
+                detectTapGestures(onTap = {
+                    keyboardController?.hide()
+                    focusManager.clearFocus()
+                })
+            }
     ) {
         UploadTopAppBar(
-            isRightActionEnabled = true, // isNextActionEnabled
-            onLeftAction = {}, // onBackAction
-            onRightAction = {}, // onNextAction
+            isRightActionEnabled = query.text.isNotEmpty(),
+            onLeftAction = {
+                onBackAction()
+            },
+            onRightAction = {
+                onNextAction()
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 14.dp)
@@ -60,6 +90,16 @@ internal fun UploadEnterMenuScreen(
                 query = it
                 isSelection = false
             },
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Done,
+                keyboardType = KeyboardType.Text
+            ),
+            keyboardActions = KeyboardActions(
+                onDone = {
+                    keyboardController?.hide()
+                    focusManager.clearFocus()
+                }
+            ),
             placeholder = stringResource(R.string.upload_place_enter_menu_placeholder),
             modifier = Modifier.fillMaxWidth()
         )
@@ -70,6 +110,11 @@ internal fun UploadEnterMenuScreen(
 @Composable
 private fun UploadEnterMenuScreenPreview() {
     AconTheme {
-        UploadEnterMenuScreen()
+        UploadEnterMenuScreen(
+            state = UploadEnterMenuUiState(),
+            onBackAction = {},
+            onNextAction = {},
+            onSearchQueryChanged = {}
+        )
     }
 }
