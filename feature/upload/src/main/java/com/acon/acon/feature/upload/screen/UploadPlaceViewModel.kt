@@ -20,6 +20,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.debounce
@@ -150,7 +151,11 @@ class UploadPlaceViewModel @Inject constructor(
     }
 
     fun updateCafeOptionType(cafeOption: CafeFeatureType.CafeType) = intent {
-        reduce { state.copy(selectedCafeOption = cafeOption) }
+        if(cafeOption == CafeFeatureType.CafeType.NOT_GOOD_FOR_WORK) {
+            reduce { state.copy(selectedCafeOption = null) }
+        } else {
+            reduce { state.copy(selectedCafeOption = cafeOption) }
+        }
     }
 
     fun updatePriceOptionType(priceOption: PriceFeatureType.PriceOptionType) = intent {
@@ -277,22 +282,25 @@ class UploadPlaceViewModel @Inject constructor(
     private fun createFeatureList() = intent {
         val featureRequests = mutableListOf<Feature>()
 
-        state.selectedRestaurantTypes.let { restaurantTypes ->
-            featureRequests.add(
-                Feature(
-                    category = CategoryType.RESTAURANT_FEATURE,
-                    optionList = restaurantTypes.map { it }
+        when(state.selectedRestaurantTypes.isEmpty()) {
+            true -> {
+                state.selectedCafeOption?.let { cafeOption ->
+                    featureRequests.add(
+                        Feature(
+                            category = CategoryType.CAFE_FEATURE,
+                            optionList = listOf(cafeOption)
+                        )
+                    )
+                }
+            }
+            false -> {
+                featureRequests.add(
+                    Feature(
+                        category = CategoryType.RESTAURANT_FEATURE,
+                        optionList = state.selectedRestaurantTypes.map { it }
+                    )
                 )
-            )
-        }
-
-        state.selectedCafeOption?.let { cafeOption ->
-            featureRequests.add(
-                Feature(
-                    category = CategoryType.CAFE_FEATURE,
-                    optionList = listOf(cafeOption)
-                )
-            )
+            }
         }
 
         state.selectedPriceOption?.let { priceOption ->
@@ -331,6 +339,7 @@ class UploadPlaceViewModel @Inject constructor(
         onSuccess:() -> Unit,
         imageList: List<String> = emptyList()
     ) = intent {
+
         uploadRepository.submitUploadPlace(
             spotName = state.selectedSpotByMap?.title ?: "",
             address = state.selectedSpotByMap?.address ?: "",
@@ -371,24 +380,26 @@ class UploadPlaceViewModel @Inject constructor(
         }
     }
 
-    private fun uploadAllImagesAndSubmit(onSuccess:() -> Unit) = intent {
-        val uris = state.selectedImageUris ?: return@intent
+    private fun uploadAllImagesAndSubmit(onSuccess: () -> Unit) = intent {
+        val uris = state.selectedImageUris
 
-        val fileNames = uris.map { imageUri ->
-            viewModelScope.async {
-                val presignedResult = uploadRepository.getUploadPlacePreSignedUrl().getOrThrow()
-                putPlaceImageToPreSignedUrl(imageUri, presignedResult.preSignedUrl)
-                presignedResult.fileName
-            }
-        }.awaitAll()
+        val fileNames = coroutineScope {
+            uris?.map { imageUri ->
+                async {
+                    val presignedResult = uploadRepository.getUploadPlacePreSignedUrl().getOrThrow()
+                    putPlaceImageToPreSignedUrl(imageUri, presignedResult.preSignedUrl)
+                    presignedResult.fileName
+                }
+            }?.awaitAll()
+        }
 
-        val bucketUrls = fileNames.map { fileName ->
+        val bucketUrls = fileNames?.map { fileName ->
             "${BuildConfig.BUCKET_URL}$fileName"
         }
 
         submitUploadPlace(
-            onSuccess = { onSuccess() },
-            imageList = bucketUrls
+            onSuccess = onSuccess,
+            imageList = bucketUrls ?: emptyList()
         )
     }
 
@@ -424,11 +435,9 @@ class UploadPlaceViewModel @Inject constructor(
                 .build()
 
             val response = client.newCall(request).execute()
-            val bucketImageUri = "${BuildConfig.BUCKET_URL}${state.uploadFileName}"
 
             if (response.isSuccessful) {
                 Timber.tag(TAG).d("이미지 업로드 성공")
-                //submitUploadPlace()
             } else {
                 Timber.tag(TAG).e("이미지 업로드 실패, code: %d", response.code)
             }
