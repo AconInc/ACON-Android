@@ -51,6 +51,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
 import com.acon.acon.core.designsystem.R
+import com.acon.acon.core.designsystem.animation.slideUpAnimation
 import com.acon.acon.core.designsystem.component.dialog.v2.AconTwoActionDialog
 import com.acon.acon.core.designsystem.component.textfield.v2.AconSearchTextField
 import com.acon.acon.core.designsystem.effect.LocalHazeState
@@ -70,7 +71,8 @@ internal fun UploadPlaceSearchScreen(
     onClickReportPlace: () -> Unit,
     onHideSearchedPlaceList: () -> Unit,
     onSearchedSpotClick: (SearchedSpotByMap, onUpdateTextField: () -> Unit) -> Unit,
-    onSearchQueryOrSelectionChanged: (String, Boolean) -> Unit
+    onSearchQueryOrSelectionChanged: (String, Boolean) -> Unit,
+    onAnimationEnded: (String) -> Unit
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
 
@@ -90,11 +92,15 @@ internal fun UploadPlaceSearchScreen(
         animationSpec = tween(durationMillis = 300)
     )
 
+    val hasAnimated = state.hasAnimated["1"] ?: false
+
     LaunchedEffect(Unit) {
         snapshotFlow { query }.collect {
             onSearchQueryOrSelectionChanged(it.text, isSelection)
         }
     }
+
+    state.hasAnimated
 
     LaunchedEffect(lifecycleOwner, Unit) {
         lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
@@ -128,6 +134,7 @@ internal fun UploadPlaceSearchScreen(
         }
     }
 
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -155,17 +162,21 @@ internal fun UploadPlaceSearchScreen(
                 text = stringResource(R.string.required_field),
                 style = AconTheme.typography.Body1,
                 color = AconTheme.color.Danger,
-                modifier = Modifier.padding(top = 40.dp)
+                modifier = Modifier
+                    .padding(top = 40.dp)
+                    .then(if (!hasAnimated) Modifier.slideUpAnimation(order = 1) else Modifier)
             )
 
             Spacer(Modifier.height(4.dp))
             Text(
                 text = stringResource(R.string.upload_place_search_title),
                 style = AconTheme.typography.Headline3,
-                color = AconTheme.color.White
+                color = AconTheme.color.White,
+                modifier = Modifier
+                    .then(if (!hasAnimated) Modifier.slideUpAnimation(order = 2) else Modifier)
             )
 
-            Spacer(Modifier.height(20.dp))
+            Spacer(Modifier.height(32.dp))
         }
 
         Column {
@@ -189,36 +200,43 @@ internal fun UploadPlaceSearchScreen(
                 ),
                 modifier = Modifier
                     .fillMaxWidth()
+                    .then(
+                        if (!hasAnimated) Modifier.slideUpAnimation(
+                            hasCaption = false,
+                            order = 4,
+                            onAnimationEnded = { onAnimationEnded("1") }
+                        ) else Modifier
+                    )
                     .onFocusChanged { focusState ->
                         if (focusState.isFocused) {
                             showOffset = true
                         }
                     }
             )
-            Box {
-                if (state.showSearchedSpotsByMap) {
-                    SearchedSpots(
-                        searchedSpotsByMap = state.searchedSpotsByMap.toImmutableList(),
-                        onItemClick = {
-                            keyboardController?.hide()
-                            focusManager.clearFocus()
-                            onSearchedSpotClick(it) {
-                                isSelection = true
-                                query = TextFieldValue(
-                                    text = it.title,
-                                    selection = TextRange(it.title.length)
-                                )
-                                showOffset = false
-                            }
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 10.dp)
-                            .height(300.dp)
-                            .clip(RoundedCornerShape(10.dp))
-                            .background(AconTheme.color.GlassWhiteLight)
-                    )
-                }
+        }
+        Box {
+            if (state.showSearchedSpotsByMap) {
+                SearchedSpots(
+                    searchedSpotsByMap = state.searchedSpotsByMap.toImmutableList(),
+                    onItemClick = {
+                        keyboardController?.hide()
+                        focusManager.clearFocus()
+                        onSearchedSpotClick(it) {
+                            isSelection = true
+                            query = TextFieldValue(
+                                text = it.title,
+                                selection = TextRange(it.title.length)
+                            )
+                            showOffset = false
+                        }
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 10.dp)
+                        .height(300.dp)
+                        .clip(RoundedCornerShape(10.dp))
+                        .background(AconTheme.color.GlassWhiteLight)
+                )
             }
         }
     }
@@ -316,7 +334,8 @@ private fun UploadPlaceSearchScreenPreview() {
             onClickReportPlace = {},
             onHideSearchedPlaceList = {},
             onSearchedSpotClick = { _, _ -> },
-            onSearchQueryOrSelectionChanged = { _, _ -> }
+            onSearchQueryOrSelectionChanged = { _, _ -> },
+            onAnimationEnded = {}
         )
     }
 }

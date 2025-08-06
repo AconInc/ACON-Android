@@ -196,28 +196,33 @@ fun UploadPlaceScreen(
                             onClickReportPlace = viewModel::onClickReportPlace,
                             onHideSearchedPlaceList = viewModel::onHideSearchedPlaceList,
                             onSearchedSpotClick = viewModel::onSearchSpotByMapClicked,
-                            onSearchQueryOrSelectionChanged = viewModel::onSearchQueryOrSelectionChanged
+                            onSearchQueryOrSelectionChanged = viewModel::onSearchQueryOrSelectionChanged,
+                            onAnimationEnded = viewModel::onSlideAnimationEnd
                         )
                         1 -> UploadSelectPlaceScreen(
                             state = state,
                             onSelectSpotType = viewModel::updateSpotType,
-                            onUpdateNextPageBtnEnabled = viewModel::updateNextBtnEnabled
+                            onUpdateNextPageBtnEnabled = viewModel::updateNextBtnEnabled,
+                            //onAnimationEnded = viewModel::onSlideAnimationEnd
                         )
                         2 -> UploadSelectPlaceDetailScreen(
                             state = state,
                             onUpdateCafeOptionType = viewModel::updateCafeOptionType,
                             onUpdateRestaurantType = viewModel::updateRestaurantType,
-                            onUpdateNextPageBtnEnabled = viewModel::updateNextBtnEnabled
+                            onUpdateNextPageBtnEnabled = viewModel::updateNextBtnEnabled,
+                            //onAnimationEnded = viewModel::onSlideAnimationEnd
                         )
                         3 -> UploadPlaceEnterMenuScreen(
                             state = state,
                             onSearchQueryChanged = viewModel::onSearchQueryChanged,
-                            onUpdateNextPageBtnEnabled = viewModel::updateNextBtnEnabled
+                            onUpdateNextPageBtnEnabled = viewModel::updateNextBtnEnabled,
+                            //onAnimationEnded = viewModel::onSlideAnimationEnd
                         )
                         4 -> UploadSelectPriceScreen(
                             state = state,
                             onUpdatePriceOptionType = viewModel::updatePriceOptionType,
-                            onUpdateNextPageBtnEnabled = viewModel::updateNextBtnEnabled
+                            onUpdateNextPageBtnEnabled = viewModel::updateNextBtnEnabled,
+                            //onAnimationEnded = viewModel::onSlideAnimationEnd
                         )
                         5 -> UploadPlaceImageScreen(
                             state = state,
@@ -226,10 +231,12 @@ fun UploadPlaceScreen(
                             onAddSpotImageUri = viewModel::onAddImageUris,
                             onRemoveSpotImageUri = viewModel::onRemoveImageUri,
                             onUpdateNextPageBtnEnabled = viewModel::updateNextBtnEnabled,
-                            onRequestUploadPlaceLimitPouUp = viewModel::onRequestUploadPlaceLimitPouUp
+                            onRequestUploadPlaceLimitPouUp = viewModel::onRequestUploadPlaceLimitPouUp,
+                            //onAnimationEnded = viewModel::onSlideAnimationEnd
                         )
                         6 -> UploadPlaceCompleteScreen(
-                            onClickGoHome = viewModel::onNavigateToBack
+                            onClickGoHome = viewModel::onNavigateToBack,
+                            //onAnimationEnded = viewModel::onSlideAnimationEnd
                         )
                     }
                 }
