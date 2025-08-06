@@ -270,6 +270,13 @@ class UploadPlaceViewModel @Inject constructor(
         }
     }
 
+    fun onSlideAnimationEnd(route: String) = intent {
+        reduce {
+            val updatedMap = state.hasAnimated.toMutableMap().apply { this[route] = true }
+            state.copy(hasAnimated = updatedMap)
+        }
+    }
+
     fun onNavigateToBack() = intent {
         postSideEffect(UploadPlaceSideEffect.OnNavigateToBack)
     }
@@ -338,7 +345,6 @@ class UploadPlaceViewModel @Inject constructor(
         onSuccess:() -> Unit,
         imageList: List<String> = emptyList()
     ) = intent {
-
         uploadRepository.submitUploadPlace(
             spotName = state.selectedSpotByMap?.title ?: "",
             address = state.selectedSpotByMap?.address ?: "",
@@ -438,6 +444,7 @@ class UploadPlaceViewModel @Inject constructor(
 
 @Immutable
 data class UploadPlaceUiState(
+    val hasAnimated: Map<String, Boolean> = emptyMap(),
     val isPreviousBtnEnabled: Boolean = false,
     val isNextBtnEnabled: Boolean = false,
     val showExitUploadPlaceDialog: Boolean = false,

@@ -31,6 +31,10 @@
     <string name="do_next">다음에 하기</string>
     <string name="go_home">홈으로 가기</string>
 
+    <!-- label -->
+    <string name="slide_up_offset">slide_up_offset</string>
+    <string name="slide_up_alpha">slide_up_alpha</string>
+
     <!-- Etc -->
     <string name="restart">마무리 하기</string>
     <string name="update">업데이트</string>
