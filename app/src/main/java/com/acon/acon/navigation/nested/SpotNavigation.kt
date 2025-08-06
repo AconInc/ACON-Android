@@ -40,7 +40,7 @@ internal fun NavGraphBuilder.spotNavigation(
                 onNavigateToSpotDetailScreen = { spot, tm ->
                     navController.navigate(
                         SpotRoute.SpotDetail(
-                            com.acon.acon.core.model.model.spot.SpotNavigationParameter(
+                            SpotNavigationParameter(
                                 spot.id,
                                 spot.tags,
                                 tm,
@@ -53,6 +53,14 @@ internal fun NavGraphBuilder.spotNavigation(
                 },
                 onNavigateToDeeplinkSpotDetailScreen = { spotNav ->
                     navController.navigate(SpotRoute.SpotDetail(spotNav))
+                },
+                onNavigateToAreaVerificationScreen = { lat, lon ->
+                    navController.navigate(AreaVerificationRoute.CheckInMap(
+                        latitude = lat,
+                        longitude = lon,
+                        verifiedAreaId = -1,
+                        route = "spotlist"
+                    ))
                 },
                 modifier = Modifier
                     .fillMaxSize()

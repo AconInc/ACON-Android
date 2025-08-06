@@ -2,6 +2,7 @@ package com.acon.acon.navigation.nested
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavGraphBuilder
@@ -10,12 +11,14 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.toRoute
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.core.ui.android.showToast
-import com.acon.acon.core.navigation.route.SettingsRoute
 import com.acon.acon.core.navigation.route.AreaVerificationRoute
+import com.acon.acon.core.navigation.route.OnboardingRoute
+import com.acon.acon.core.navigation.route.SettingsRoute
+import com.acon.acon.core.navigation.route.SpotRoute
+import com.acon.acon.core.navigation.utils.navigateAndClear
+import com.acon.acon.core.ui.android.showToast
 import com.acon.acon.feature.areaverification.composable.AreaVerificationScreenContainer
 import com.acon.acon.feature.areaverification.composable.PreferenceMapScreen
-import com.acon.acon.core.navigation.route.OnboardingRoute
 
 fun NavGraphBuilder.areaVerificationNavigation(
     navController: NavHostController
@@ -27,7 +30,7 @@ fun NavGraphBuilder.areaVerificationNavigation(
             val routeData = backStackEntry.toRoute<AreaVerificationRoute.AreaVerification>()
 
             AreaVerificationScreenContainer(
-                modifier = Modifier.fillMaxSize().background(AconTheme.color.Gray900),
+                modifier = Modifier.fillMaxSize().background(AconTheme.color.Gray900).statusBarsPadding(),
                 route = routeData.route ?: "onboarding",
                 onNextScreen = { latitude, longitude ->
                     navController.navigate(
@@ -38,7 +41,8 @@ fun NavGraphBuilder.areaVerificationNavigation(
                             route = routeData.route
                         )
                     )
-                }
+                }, onNavigateToOnboarding = { navController.navigateAndClear(OnboardingRoute.Graph) },
+                onNavigateToSpotList = { navController.navigateAndClear(SpotRoute.Graph) }
             )
         }
 
@@ -50,10 +54,12 @@ fun NavGraphBuilder.areaVerificationNavigation(
                 latitude = route.latitude,
                 longitude = route.longitude,
                 previousVerifiedAreaId = route.verifiedAreaId,
-                onNavigateToNext = {
+                onNavigateToNext = { didOnboarding ->
                     if (route.route == "settings") {
                         context.showToast("인증 되었습니다")
                         navController.popBackStack(route = SettingsRoute.LocalVerification, inclusive = false)
+                    } else if (didOnboarding) {
+                        navController.navigateAndClear(SpotRoute.Graph)
                     } else {
                         navController.navigate(OnboardingRoute.Graph) {
                             popUpTo(0) { inclusive = true }

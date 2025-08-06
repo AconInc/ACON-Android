@@ -28,6 +28,7 @@
     <string name="ellipsis">…</string>
     <string name="fail_to_load_image">이미지 로딩에 실패했어요</string>
     <string name="top">Top %d</string>
+    <string name="do_next">다음에 하기</string>
     <string name="go_home">홈으로 가기</string>
 
     <!-- Etc -->
@@ -107,6 +108,11 @@
     <string name="sign_in_failed_toast">로그인에 실패했습니다.</string>
 
     <!-- AreaVerification -->
+    <string name="go_to_area_verification">지역 인증하러 가기</string>
+    <string name="request_area_verification_title">내 지역을 인증해 주세요!</string>
+    <string name="request_area_verification_content">내 지역에 남긴 리뷰는 로컬리뷰로 인정되어\n더 많은 사람들에게 추천돼요</string>
+    <string name="alert_about_skip_area_verification">현재 내 지역에 안 계시면 건너뛰기를 해주세요 </string>
+    <string name="skip_area_verification">건너뛰기</string>
     <string name="area_verification_settings">settings</string>
     <string name="area_verification_topbar">지역인증</string>
     <string name="area_verification_main_title">믿을 수 있는 리뷰를 위해\n지역인증이 필요해요</string>

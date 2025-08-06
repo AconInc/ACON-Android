@@ -9,10 +9,12 @@ data class SignInResponse(
     @SerialName("externalUUID") val externalUUID: String,
     @SerialName("accessToken") val accessToken: String?,
     @SerialName("refreshToken") val refreshToken: String?,
-    @SerialName("hasVerifiedArea") val hasVerifiedArea: Boolean
+    @SerialName("hasVerifiedArea") val hasVerifiedArea: Boolean,
+    @SerialName("hasPreference") val hasPreference: Boolean
 ) {
     fun toVerificationStatus() = VerificationStatus(
         externalUUID = externalUUID,
-        hasVerifiedArea = hasVerifiedArea
+        hasVerifiedArea = hasVerifiedArea,
+        hasPreference = hasPreference
     )
 }

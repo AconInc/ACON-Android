@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.location.Location
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import com.acon.acon.core.common.utils.firstNotNull
@@ -38,7 +40,7 @@ abstract class BaseContainerHost<STATE : Any, SIDE_EFFECT : Any>() :
 
     @Composable
     fun useUserType() {
-        val userType = LocalUserType.current
+        val userType by rememberUpdatedState(LocalUserType.current)
 
         LaunchedEffect(Unit) {
             snapshotFlow { userType }.collect {
@@ -49,13 +51,15 @@ abstract class BaseContainerHost<STATE : Any, SIDE_EFFECT : Any>() :
 
     @Composable
     fun useLiveLocation() {
-        val newLocation = LocalLocation.current
+        val newLocation by rememberUpdatedState(LocalLocation.current)
 
         LaunchedEffect(Unit) {
-            snapshotFlow { newLocation }.filterNotNull().collect {
-                currentLocation.emit(it)
-                onNewLocation(it)
-            }
+            snapshotFlow { newLocation }
+                .filterNotNull()
+                .collect { location ->
+                    currentLocation.emit(location)
+                    onNewLocation(location)
+                }
         }
     }
 

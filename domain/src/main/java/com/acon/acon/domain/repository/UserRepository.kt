@@ -10,5 +10,7 @@ interface UserRepository {
     suspend fun signOut(): Result<Unit>
     suspend fun deleteAccount(reason: String): Result<Unit>
     suspend fun clearSession(): Result<Unit>
+    suspend fun saveDidOnboarding(didOnboarding: Boolean): Result<Unit>
+    suspend fun getDidOnboarding(): Result<Boolean>
     fun getUserType(): Flow<UserType>
 }

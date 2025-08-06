@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.transform
 import javax.inject.Inject
 
 class ProfileRepositoryImpl @Inject constructor(
@@ -31,7 +32,12 @@ class ProfileRepositoryImpl @Inject constructor(
 ) : ProfileRepository {
 
     override fun fetchProfile(): Flow<Result<ProfileInfo>> {
-        return profileInfoCache.data
+        return flow {
+            emit(runCatchingWith {
+                profileRemoteDataSource.fetchProfile().toProfile()
+            })
+        }
+        return  profileInfoCache.data
     }
 
     override suspend fun getPreSignedUrl(): Result<PreSignedUrl> {

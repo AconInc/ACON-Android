@@ -63,7 +63,7 @@ fun DeleteAccountBottomSheet(
                 AconFilledButton(
                     modifier = Modifier.weight(3f),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = AconTheme.color.Gray900,
+                        containerColor = AconTheme.color.GlassWhiteDisabled,
                         contentColor = AconTheme.color.White
                     ),
                     border = BorderStroke(

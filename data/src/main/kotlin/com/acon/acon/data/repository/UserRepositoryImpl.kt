@@ -2,8 +2,10 @@ package com.acon.acon.data.repository
 
 import com.acon.acon.core.model.model.user.VerificationStatus
 import com.acon.acon.core.model.type.SocialType
+import com.acon.acon.data.cache.ProfileInfoCache
 import com.acon.acon.data.session.SessionHandler
 import com.acon.acon.data.datasource.local.TokenLocalDataSource
+import com.acon.acon.data.datasource.local.UserLocalDataSource
 import com.acon.acon.data.datasource.remote.UserRemoteDataSource
 import com.acon.acon.data.dto.request.DeleteAccountRequest
 import com.acon.acon.data.dto.request.SignInRequest
@@ -17,7 +19,9 @@ import javax.inject.Inject
 class UserRepositoryImpl @Inject constructor(
     private val userRemoteDataSource: UserRemoteDataSource,
     private val tokenLocalDataSource: TokenLocalDataSource,
+    private val userLocalDataSource: UserLocalDataSource,
     private val sessionHandler: SessionHandler,
+    private val profileInfoCache: ProfileInfoCache
 ) : UserRepository {
 
     override fun getUserType() = sessionHandler.getUserType()
@@ -34,7 +38,11 @@ class UserRepositoryImpl @Inject constructor(
                 )
             )
 
-            sessionHandler.completeSignIn(signInResponse.accessToken.orEmpty(), signInResponse.refreshToken.orEmpty())
+            sessionHandler.completeSignIn(
+                signInResponse.accessToken.orEmpty(),
+                signInResponse.refreshToken.orEmpty()
+            )
+            saveDidOnboarding(signInResponse.toVerificationStatus().hasPreference)
 
             signInResponse.toVerificationStatus()
         }
@@ -47,6 +55,7 @@ class UserRepositoryImpl @Inject constructor(
                 SignOutRequest(refreshToken = refreshToken)
             )
         }.onSuccess {
+            saveDidOnboarding(false)
             clearSession()
         }
     }
@@ -61,11 +70,25 @@ class UserRepositoryImpl @Inject constructor(
                 )
             )
         }.onSuccess {
+            saveDidOnboarding(false)
             clearSession()
         }
     }
 
+    override suspend fun saveDidOnboarding(didOnboarding: Boolean): Result<Unit> {
+        return runCatchingWith {
+            userLocalDataSource.saveDidOnboarding(didOnboarding)
+        }
+    }
+
+    override suspend fun getDidOnboarding(): Result<Boolean> {
+        return runCatchingWith {
+            userLocalDataSource.getDidOnboarding()
+        }
+    }
+
     override suspend fun clearSession() = runCatchingWith {
+        profileInfoCache.clearData()
         sessionHandler.clearSession()
     }
 }

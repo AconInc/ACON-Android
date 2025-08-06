@@ -40,7 +40,7 @@ fun PreferenceMapScreen(
     previousVerifiedAreaId: Long,
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit = {},
-    onNavigateToNext: () -> Unit = {},
+    onNavigateToNext: (didOnboarding: Boolean) -> Unit = {},
     viewModel: AreaVerificationViewModel = hiltViewModel()
 ) {
     var currentLatitude by remember { mutableDoubleStateOf(latitude) }
@@ -72,7 +72,7 @@ fun PreferenceMapScreen(
 
     LaunchedEffect(state.isVerifySuccess) {
         if (state.isVerifySuccess) {
-            onNavigateToNext()
+            onNavigateToNext(state.didOnboarding)
         }
     }
 

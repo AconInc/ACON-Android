@@ -63,6 +63,7 @@ fun SignInScreen(
     modifier: Modifier = Modifier,
     navigateToSpotListView: () -> Unit,
     navigateToAreaVerification: () -> Unit,
+    navigateToOnboarding: () -> Unit,
     onClickTermsOfUse: () -> Unit,
     onClickPrivacyPolicy: () -> Unit,
     onAnimationEnd:() -> Unit,
@@ -186,10 +187,12 @@ fun SignInScreen(
                                                         PropertyKeys.SIGN_IN_OR_NOT to true
                                                     )
                                                 )
-                                                if (it.hasVerifiedArea) {
-                                                    navigateToSpotListView()
-                                                } else {
+                                                if (it.hasVerifiedArea.not()) {
                                                     navigateToAreaVerification()
+                                                } else if (it.hasPreference.not()) {
+                                                    navigateToOnboarding()
+                                                } else {
+                                                    navigateToSpotListView()
                                                 }
                                                 AconAmplitude.setUserId(it.externalUUID)
                                             }.onFailure {
@@ -266,6 +269,7 @@ private fun PreviewSignInScreen() {
             onClickTermsOfUse = {},
             onClickPrivacyPolicy = {},
             onAnimationEnd = {},
+            navigateToOnboarding = {}
         )
     }
 }
