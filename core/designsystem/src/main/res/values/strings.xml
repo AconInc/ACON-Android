@@ -29,6 +29,7 @@
     <string name="fail_to_load_image">이미지 로딩에 실패했어요</string>
     <string name="top">Top %d</string>
     <string name="do_next">다음에 하기</string>
+    <string name="go_home">홈으로 가기</string>
 
     <!-- Etc -->
     <string name="restart">마무리 하기</string>
@@ -239,6 +240,8 @@
     <string name="upload_place_limit_dialog_title">장소 등록 마감</string>
     <string name="upload_place_limit_dialog_content">오늘 너무 많은 장소가 등록돼서\n새로운 장소 등록이 불가능해요.\nAcon Instargram을 통해 제보할 수 있어요.</string>
     <string name="upload_place_image_limit_toast">이미지는 최대 10장까지 넣을 수 있어요</string>
+    <string name="failed_upload_place">장소 등록에 실패했어요</string>
+    <string name="failed_upload_place_image">장소 이미지 등록에 실패했어요</string>
 
     <!-- Onboarding -->
     <string name="request_dislike_food_title">싫어하는 음식을\n알려줄 수 있나요?</string>

@@ -5,6 +5,7 @@ import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraphBuilder
@@ -20,6 +21,7 @@ import com.acon.acon.core.navigation.route.UploadRoute
 import com.acon.acon.core.navigation.type.simpleSpotNavType
 import com.acon.acon.feature.upload.screen.composable.add.UploadPlaceScreen
 import com.acon.acon.feature.upload.screen.composable.complete.UploadCompleteScreenContainer
+import com.acon.acon.feature.upload.screen.composable.menu.UploadEnterMenuScreenContainer
 import com.acon.acon.feature.upload.screen.composable.review.UploadReviewScreenContainer
 import com.acon.acon.feature.upload.screen.composable.search.UploadSearchScreenContainer
 
@@ -42,8 +44,8 @@ internal fun NavGraphBuilder.uploadNavigation(
         ) {
             UploadSearchScreenContainer(
                 onNavigateBack = navController::popBackStack,
-                onNavigateToReview = { spot ->
-                    navController.navigate(UploadRoute.Review(spot))
+                onNavigateToEnterMenu = { spot ->
+                    navController.navigate(UploadRoute.EnterMenu(spot))
                 },
                 onNavigateToPlace = {
                     navController.navigate(UploadRoute.Place)
@@ -51,6 +53,21 @@ internal fun NavGraphBuilder.uploadNavigation(
                 modifier = Modifier
                     .background(AconTheme.color.Gray900)
                     .systemBarsPadding()
+                    .fillMaxSize()
+            )
+        }
+
+        composable<UploadRoute.EnterMenu>(
+            typeMap = mapOf(simpleSpotNavType)
+        ) {
+            UploadEnterMenuScreenContainer(
+                onNavigateBack = navController::popBackStack,
+                onNavigateToReview = { spot ->
+                    navController.navigate(UploadRoute.Review(spot))
+                },
+                modifier = Modifier
+                    .background(AconTheme.color.Gray900)
+                    .statusBarsPadding()
                     .fillMaxSize()
             )
         }

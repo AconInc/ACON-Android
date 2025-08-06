@@ -20,7 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.core.model.type.PriceOptionType
+import com.acon.acon.core.model.type.PriceFeatureType
 import com.acon.acon.feature.upload.screen.UploadPlaceUiState
 import com.acon.acon.feature.upload.screen.composable.add.UploadPlaceSelectItem
 import com.acon.acon.feature.upload.screen.composable.type.getNameResId
@@ -28,7 +28,7 @@ import com.acon.acon.feature.upload.screen.composable.type.getNameResId
 @Composable
 internal fun UploadSelectPriceScreen(
     state: UploadPlaceUiState,
-    onUpdatePriceOptionType: (PriceOptionType) -> Unit,
+    onUpdatePriceOptionType: (PriceFeatureType.PriceOptionType) -> Unit,
     onUpdateNextPageBtnEnabled: (Boolean) -> Unit
 ) {
     val isNextPageBtnEnabled by remember(state) {
@@ -70,24 +70,24 @@ internal fun UploadSelectPriceScreen(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             UploadPlaceSelectItem(
-                title = stringResource(PriceOptionType.VALUE_FOR_MONEY.getNameResId()),
-                isSelected = state.selectedPriceOption == PriceOptionType.VALUE_FOR_MONEY,
+                title = stringResource(PriceFeatureType.PriceOptionType.VALUE_FOR_MONEY.getNameResId()),
+                isSelected = state.selectedPriceOption == PriceFeatureType.PriceOptionType.VALUE_FOR_MONEY,
                 onClickUploadPlaceSelectItem = {
-                    onUpdatePriceOptionType(PriceOptionType.VALUE_FOR_MONEY)
+                    onUpdatePriceOptionType(PriceFeatureType.PriceOptionType.VALUE_FOR_MONEY)
                 }
             )
             UploadPlaceSelectItem(
-                title = stringResource(PriceOptionType.AVERAGE_VALUE.getNameResId()),
-                isSelected = state.selectedPriceOption == PriceOptionType.AVERAGE_VALUE,
+                title = stringResource(PriceFeatureType.PriceOptionType.AVERAGE_VALUE.getNameResId()),
+                isSelected = state.selectedPriceOption == PriceFeatureType.PriceOptionType.AVERAGE_VALUE,
                 onClickUploadPlaceSelectItem = {
-                    onUpdatePriceOptionType(PriceOptionType.AVERAGE_VALUE)
+                    onUpdatePriceOptionType(PriceFeatureType.PriceOptionType.AVERAGE_VALUE)
                 }
             )
             UploadPlaceSelectItem(
-                title = stringResource(PriceOptionType.LOW_VALUE.getNameResId()),
-                isSelected = state.selectedPriceOption == PriceOptionType.LOW_VALUE,
+                title = stringResource(PriceFeatureType.PriceOptionType.LOW_VALUE.getNameResId()),
+                isSelected = state.selectedPriceOption == PriceFeatureType.PriceOptionType.LOW_VALUE,
                 onClickUploadPlaceSelectItem = {
-                    onUpdatePriceOptionType(PriceOptionType.LOW_VALUE)
+                    onUpdatePriceOptionType(PriceFeatureType.PriceOptionType.LOW_VALUE)
                 }
             )
         }

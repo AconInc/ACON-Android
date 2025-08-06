@@ -15,12 +15,17 @@ sealed interface UploadRoute {
     data object Place : UploadRoute
 
     @Serializable
+    data class EnterMenu(
+        val spot: SimpleSpot
+    ) : UploadRoute
+
+    @Serializable
     data class Review(
-        val spot: com.acon.acon.core.model.model.spot.SimpleSpot
+        val spot: SimpleSpot
     ) : UploadRoute
 
     @Serializable
     data class Complete(
-        val spot: com.acon.acon.core.model.model.spot.SimpleSpot
+        val spot: SimpleSpot
     ) : UploadRoute
 }
