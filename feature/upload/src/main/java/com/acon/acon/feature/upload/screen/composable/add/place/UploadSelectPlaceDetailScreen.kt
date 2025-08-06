@@ -23,8 +23,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.core.model.type.CafeOptionType
-import com.acon.acon.core.model.type.RestaurantFilterType
+import com.acon.acon.core.model.type.CafeFeatureType
+import com.acon.acon.core.model.type.RestaurantFeatureType
 import com.acon.acon.core.model.type.SpotType
 import com.acon.acon.feature.upload.screen.UploadPlaceUiState
 import com.acon.acon.feature.upload.screen.composable.add.UploadPlaceSelectItem
@@ -34,12 +34,12 @@ import kotlinx.collections.immutable.persistentListOf
 @Composable
 internal fun UploadSelectPlaceDetailScreen(
     state: UploadPlaceUiState,
-    onUpdateCafeOptionType: (CafeOptionType) -> Unit,
-    onUpdateRestaurantType: (RestaurantFilterType.RestaurantType) -> Unit,
+    onUpdateCafeOptionType: (CafeFeatureType.CafeType) -> Unit,
+    onUpdateRestaurantType: (RestaurantFeatureType.RestaurantType) -> Unit,
     onUpdateNextPageBtnEnabled: (Boolean) -> Unit
 ) {
     val allRestaurantTypes = remember {
-        persistentListOf(*RestaurantFilterType.RestaurantType.entries.toTypedArray())
+        persistentListOf(*RestaurantFeatureType.RestaurantType.entries.toTypedArray())
     }
 
     val isNextPageBtnEnabled by remember(state) {
@@ -136,17 +136,17 @@ internal fun UploadSelectPlaceDetailScreen(
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     UploadPlaceSelectItem(
-                        title = stringResource(CafeOptionType.GOOD_FOR_WORK.getNameResId()),
-                        isSelected = state.selectedCafeOption == CafeOptionType.GOOD_FOR_WORK,
+                        title = stringResource(CafeFeatureType.CafeType.GOOD_FOR_WORK.getNameResId()),
+                        isSelected = state.selectedCafeOption == CafeFeatureType.CafeType.GOOD_FOR_WORK,
                         onClickUploadPlaceSelectItem = {
-                            onUpdateCafeOptionType(CafeOptionType.GOOD_FOR_WORK)
+                            onUpdateCafeOptionType(CafeFeatureType.CafeType.GOOD_FOR_WORK)
                         }
                     )
                     UploadPlaceSelectItem(
-                        title = stringResource(CafeOptionType.NOT_GOOD_FOR_WORK.getNameResId()),
-                        isSelected = state.selectedCafeOption == CafeOptionType.NOT_GOOD_FOR_WORK,
+                        title = stringResource(CafeFeatureType.CafeType.NOT_GOOD_FOR_WORK.getNameResId()),
+                        isSelected = state.selectedCafeOption == CafeFeatureType.CafeType.NOT_GOOD_FOR_WORK,
                         onClickUploadPlaceSelectItem = {
-                            onUpdateCafeOptionType(CafeOptionType.NOT_GOOD_FOR_WORK)
+                            onUpdateCafeOptionType(CafeFeatureType.CafeType.NOT_GOOD_FOR_WORK)
                         }
                     )
                 }

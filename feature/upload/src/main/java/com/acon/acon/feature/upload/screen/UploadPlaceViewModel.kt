@@ -1,30 +1,47 @@
 package com.acon.acon.feature.upload.screen
 
+import android.app.Application
 import android.net.Uri
 import androidx.compose.runtime.Immutable
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.acon.acon.core.model.model.upload.Feature
 import com.acon.acon.core.model.model.upload.SearchedSpotByMap
-import com.acon.acon.core.model.type.CafeOptionType
-import com.acon.acon.core.model.type.PriceOptionType
-import com.acon.acon.core.model.type.RestaurantFilterType
+import com.acon.acon.core.model.type.CafeFeatureType
+import com.acon.acon.core.model.type.CategoryType
+import com.acon.acon.core.model.type.PriceFeatureType
+import com.acon.acon.core.model.type.RestaurantFeatureType
 import com.acon.acon.core.model.type.SpotType
-import com.acon.acon.core.ui.base.BaseContainerHost
 import com.acon.acon.domain.repository.MapSearchRepository
+import com.acon.acon.domain.repository.UploadRepository
+import com.acon.acon.feature.upload.BuildConfig
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.internal.toImmutableList
+import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.viewmodel.container
+import timber.log.Timber
 import javax.inject.Inject
 
 @OptIn(FlowPreview::class)
 @HiltViewModel
 class UploadPlaceViewModel @Inject constructor(
-    private val mapSearchRepository: MapSearchRepository
-) : BaseContainerHost<UploadPlaceUiState, UploadPlaceSideEffect>() {
+    private val mapSearchRepository: MapSearchRepository,
+    private val uploadRepository: UploadRepository,
+    application: Application
+) : AndroidViewModel(application), ContainerHost<UploadPlaceUiState, UploadPlaceSideEffect> {
 
     override val container =
         container<UploadPlaceUiState, UploadPlaceSideEffect>(UploadPlaceUiState()) {
@@ -132,15 +149,19 @@ class UploadPlaceViewModel @Inject constructor(
         reduce { state.copy(selectedSpotType = spotType) }
     }
 
-    fun updateCafeOptionType(cafeOption: CafeOptionType) = intent {
-        reduce { state.copy(selectedCafeOption = cafeOption) }
+    fun updateCafeOptionType(cafeOption: CafeFeatureType.CafeType) = intent {
+        if(cafeOption == CafeFeatureType.CafeType.NOT_GOOD_FOR_WORK) {
+            reduce { state.copy(selectedCafeOption = null) }
+        } else {
+            reduce { state.copy(selectedCafeOption = cafeOption) }
+        }
     }
 
-    fun updatePriceOptionType(priceOption: PriceOptionType) = intent {
+    fun updatePriceOptionType(priceOption: PriceFeatureType.PriceOptionType) = intent {
         reduce { state.copy(selectedPriceOption = priceOption) }
     }
 
-    fun updateRestaurantType(type: RestaurantFilterType.RestaurantType) = intent {
+    fun updateRestaurantType(type: RestaurantFeatureType.RestaurantType) = intent {
         reduce {
             val currentSelectedTypes = state.selectedRestaurantTypes.toMutableList()
 
@@ -246,7 +267,6 @@ class UploadPlaceViewModel @Inject constructor(
                     state.copy(showUploadPlaceLimitPouUp = false)
                 }
             }
-
         }
     }
 
@@ -256,6 +276,163 @@ class UploadPlaceViewModel @Inject constructor(
 
     fun onClickReportPlace() = intent {
         postSideEffect(UploadPlaceSideEffect.OnMoveToReportPlace)
+    }
+
+    private fun createFeatureList() = intent {
+        val featureRequests = mutableListOf<Feature>()
+
+        when(state.selectedRestaurantTypes.isEmpty()) {
+            true -> {
+                state.selectedCafeOption?.let { cafeOption ->
+                    featureRequests.add(
+                        Feature(
+                            category = CategoryType.CAFE_FEATURE,
+                            optionList = listOf(cafeOption)
+                        )
+                    )
+                }
+            }
+            false -> {
+                featureRequests.add(
+                    Feature(
+                        category = CategoryType.RESTAURANT_FEATURE,
+                        optionList = state.selectedRestaurantTypes.map { it }
+                    )
+                )
+            }
+        }
+
+        state.selectedPriceOption?.let { priceOption ->
+            featureRequests.add(
+                Feature(
+                    category = CategoryType.PRICE,
+                    optionList = listOf(priceOption)
+                )
+            )
+        }
+
+        reduce {
+            state.copy(
+                featureList = featureRequests.toImmutableList()
+            )
+        }
+    }
+
+    fun onSubmitUploadPlace(onSuccess:() -> Unit) = intent {
+        createFeatureList()
+
+        when (state.selectedImageUris?.isEmpty()) {
+            true -> {
+                submitUploadPlace(onSuccess)
+            }
+
+            false -> {
+                uploadAllImagesAndSubmit(onSuccess)
+            }
+
+            null -> {}
+        }
+    }
+
+    private fun submitUploadPlace(
+        onSuccess:() -> Unit,
+        imageList: List<String> = emptyList()
+    ) = intent {
+
+        uploadRepository.submitUploadPlace(
+            spotName = state.selectedSpotByMap?.title ?: "",
+            address = state.selectedSpotByMap?.address ?: "",
+            spotType = state.selectedSpotType ?: SpotType.CAFE,
+            featureList = state.featureList ?: emptyList(),
+            recommendedMenu = state.recommendMenu ?: "",
+            imageList = imageList
+        ).onSuccess {
+            onSuccess()
+        }.onFailure {
+            postSideEffect(UploadPlaceSideEffect.ShowToastUploadFailed)
+        }
+    }
+
+    private fun uploadAllImagesAndSubmit(onSuccess: () -> Unit) = intent {
+        val uris = state.selectedImageUris
+
+        val fileNames = try {
+            coroutineScope {
+                uris?.map { imageUri ->
+                    async {
+                        val presignedResult = try {
+                            uploadRepository.getUploadPlacePreSignedUrl().getOrThrow()
+                        } catch (e: Exception) {
+                            postSideEffect(UploadPlaceSideEffect.ShowToastUploadImageFailed)
+                            throw e
+                        }
+                        putPlaceImageToPreSignedUrl(imageUri, presignedResult.preSignedUrl)
+                        presignedResult.fileName
+                    }
+                }?.awaitAll()
+            }
+        } catch (e: Exception) {
+            postSideEffect(UploadPlaceSideEffect.ShowToastUploadImageFailed)
+            null
+        }
+
+        val bucketUrls = fileNames?.map { fileName ->
+            "${BuildConfig.BUCKET_URL}$fileName"
+        }
+
+        submitUploadPlace(
+            onSuccess = onSuccess,
+            imageList = bucketUrls ?: emptyList()
+        )
+    }
+
+    private fun putPlaceImageToPreSignedUrl(
+        imageUri: Uri,
+        preSignedUrl: String
+    ) = intent {
+        val context = getApplication<Application>().applicationContext
+        val client = OkHttpClient()
+
+        try {
+            val byteArray: ByteArray
+            val mimeType: String
+
+            if (imageUri.scheme == "content") {
+                val inputStream = context.contentResolver.openInputStream(imageUri)
+                byteArray = inputStream?.readBytes()
+                    ?: throw IllegalArgumentException("이미지 읽기 실패")
+                mimeType = context.contentResolver.getType(imageUri) ?: "image/jpeg"
+
+            } else {
+                Timber.tag(TAG).e("지원하지 않는 URI scheme: %s", imageUri.toString())
+                throw IllegalArgumentException("지원하지 않는 URI scheme")
+            }
+
+            val fileBody =
+                byteArray.toRequestBody(mimeType.toMediaTypeOrNull(), 0, byteArray.size)
+
+            val request = Request.Builder()
+                .url(preSignedUrl)
+                .put(fileBody)
+                .addHeader("Content-Type", mimeType)
+                .build()
+
+            val response = client.newCall(request).execute()
+
+            if (response.isSuccessful) {
+                Timber.tag(TAG).d("이미지 업로드 성공")
+            } else {
+                Timber.tag(TAG).e("이미지 업로드 실패, code: %d", response.code)
+                postSideEffect(UploadPlaceSideEffect.ShowToastUploadImageFailed)
+            }
+        } catch (e: Exception) {
+            Timber.tag(TAG).e(e, "이미지 업로드 과정에서 예외 발생: %s", e.message)
+            postSideEffect(UploadPlaceSideEffect.ShowToastUploadImageFailed)
+        }
+    }
+
+    companion object {
+        const val TAG = "UploadPlaceViewModel"
     }
 }
 
@@ -267,22 +444,27 @@ data class UploadPlaceUiState(
     val showRemoveUploadPlaceImageDialog: Boolean = false,
     val showUploadPlaceLimitDialog: Boolean = false,
     val showUploadPlaceLimitPouUp: Boolean = false,
-    val selectedSpotByMap: SearchedSpotByMap? = null,
-    val searchedSpotsByMap: List<SearchedSpotByMap> = listOf(),
     val showSearchedSpotsByMap: Boolean = false,
-    val selectedUriToRemove: Uri? = null,
+    val searchedSpotsByMap: List<SearchedSpotByMap> = listOf(),
+
+    val featureList :List<Feature>? = emptyList(),
+    val selectedSpotByMap: SearchedSpotByMap? = null,
     val selectedSpotType: SpotType? = null,
-    val selectedPriceOption: PriceOptionType? = null,
-    val selectedCafeOption: CafeOptionType? = null,
-    val selectedOptionList: List<RestaurantFilterType.RestaurantType> = emptyList(),
-    val selectedRestaurantTypes: List<RestaurantFilterType.RestaurantType> = emptyList(),
+    val selectedPriceOption: PriceFeatureType.PriceOptionType? = null,
+    val selectedCafeOption: CafeFeatureType.CafeType? = null,
+    val selectedRestaurantTypes: List<RestaurantFeatureType.RestaurantType> = emptyList(),
     val recommendMenu: String? = "",
     val selectedImageUris: List<Uri>? = emptyList(),
+    val uploadFileName: String = "",
+
+    val selectedUriToRemove: Uri? = null,
     val maxImageCount: Int = 10,
     val currentStep: Int = 0
 )
 
 sealed interface UploadPlaceSideEffect {
+    data object ShowToastUploadFailed : UploadPlaceSideEffect
+    data object ShowToastUploadImageFailed : UploadPlaceSideEffect
     data object OnNavigateToBack : UploadPlaceSideEffect
     data object OnMoveToReportPlace : UploadPlaceSideEffect
 }

@@ -45,6 +45,7 @@ import com.acon.acon.core.designsystem.component.topbar.AconTopBar
 import com.acon.acon.core.designsystem.effect.LocalHazeState
 import com.acon.acon.core.designsystem.effect.defaultHazeEffect
 import com.acon.acon.core.designsystem.theme.AconTheme
+import com.acon.acon.core.ui.android.showToast
 import com.acon.acon.core.ui.compose.getScreenWidth
 import com.acon.acon.feature.upload.screen.UploadPlaceSideEffect
 import com.acon.acon.feature.upload.screen.UploadPlaceViewModel
@@ -83,7 +84,15 @@ fun UploadPlaceScreen(
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse(UrlConstants.ACON_INSTARGRAM))
                 context.startActivity(intent)
             }
-            UploadPlaceSideEffect.OnNavigateToBack -> onNavigateHome()
+            UploadPlaceSideEffect.OnNavigateToBack -> {
+                onNavigateHome()
+            }
+            UploadPlaceSideEffect.ShowToastUploadFailed -> {
+                context.showToast(context.getString(R.string.failed_upload_place))
+            }
+            UploadPlaceSideEffect.ShowToastUploadImageFailed -> {
+                context.showToast(context.getString(R.string.failed_upload_place_image))
+            }
         }
     }
 
@@ -131,16 +140,18 @@ fun UploadPlaceScreen(
         ) {
             AconTopBar(
                 leadingIcon = {
-                    IconButton(
-                        onClick = {
-                            viewModel.onRequestExitUploadPlaceDialog()
+                    if(currentStep != maxStepIndex) {
+                        IconButton(
+                            onClick = {
+                                viewModel.onRequestExitUploadPlaceDialog()
+                            }
+                        ) {
+                            Icon(
+                                imageVector = ImageVector.vectorResource(R.drawable.ic_x_mark),
+                                contentDescription = stringResource(R.string.exit),
+                                tint = AconTheme.color.Gray50
+                            )
                         }
-                    ) {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(R.drawable.ic_x_mark),
-                            contentDescription = stringResource(R.string.exit),
-                            tint = AconTheme.color.Gray50
-                        )
                     }
                 },
                 content = {
@@ -217,7 +228,9 @@ fun UploadPlaceScreen(
                             onUpdateNextPageBtnEnabled = viewModel::updateNextBtnEnabled,
                             onRequestUploadPlaceLimitPouUp = viewModel::onRequestUploadPlaceLimitPouUp
                         )
-                        6 -> UploadPlaceCompleteScreen()
+                        6 -> UploadPlaceCompleteScreen(
+                            onClickGoHome = viewModel::onNavigateToBack
+                        )
                     }
                 }
             }
@@ -273,7 +286,13 @@ fun UploadPlaceScreen(
                         ),
                         enabled = state.isNextBtnEnabled,
                         onClick = {
-                            viewModel.goToNextStep(maxStepIndex)
+                            if(currentStep == maxStepIndex - 1) {
+                                viewModel.onSubmitUploadPlace {
+                                    viewModel.goToNextStep(maxStepIndex)
+                                }
+                            } else {
+                                viewModel.goToNextStep(maxStepIndex)
+                            }
                         },
                         modifier = Modifier
                             .weight(5f)
