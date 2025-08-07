@@ -5,6 +5,7 @@ import android.net.Uri
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.SizeTransform
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
@@ -58,6 +59,7 @@ import com.acon.acon.feature.upload.screen.composable.menu.UploadPlaceEnterMenuS
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
+private const val animationDuration = 500
 private const val maxStepIndex = 6
 
 @Composable
@@ -186,9 +188,23 @@ fun UploadPlaceScreen(
                     targetState = currentStep,
                     transitionSpec = {
                         if (targetState > initialState) {
-                            slideInVertically { height -> height } togetherWith slideOutVertically { height -> -height }
+                            slideInVertically(
+                                animationSpec = tween(durationMillis = animationDuration)
+                            ) { height -> height }
+                                .togetherWith(
+                                    slideOutVertically(
+                                        animationSpec = tween(durationMillis = animationDuration)
+                                    ) { height -> -height }
+                                )
                         } else {
-                            slideInVertically { height -> -height } togetherWith slideOutVertically { height -> height }
+                            slideInVertically(
+                                animationSpec = tween(durationMillis = animationDuration)
+                            ) { height -> -height }
+                                .togetherWith(
+                                    slideOutVertically(animationSpec = tween(durationMillis = animationDuration)) {
+                                        height -> height
+                                    }
+                                )
                         }.using(SizeTransform(clip = true))
                     },
                     label = stringResource(R.string.upload_process_step_transition),
