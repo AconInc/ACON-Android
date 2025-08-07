@@ -94,7 +94,7 @@ internal fun UploadPlaceEnterMenuScreen(
             AconOutlinedSearchTextField(
                 value = query,
                 onValueChange = { newValue ->
-                    if (newValue.text.length <= 20) {
+                    if (newValue.text.length <= 30) {
                         query = newValue
                         isSelection = false
                     }
