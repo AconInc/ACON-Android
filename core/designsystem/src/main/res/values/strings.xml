@@ -12,6 +12,7 @@
     <string name="select">선택</string>
     <string name="submit">제출하기</string>
     <string name="end">끝내기</string>
+    <string name="quit">그만두기</string>
     <string name="report">제보하기</string>
     <string name="continue_writing">계속 작성</string>
     <string name="next">다음</string>
@@ -216,7 +217,7 @@
 
     <!-- Upload Place -->
     <string name="upload_process_step_transition">upload_process_step_transition</string>
-    <string name="upload_place_exit">등록을 취소하시겠습니까?</string>
+    <string name="upload_place_exit">여기서 그만두면\n작성중인 내용이 사라져요</string>
     <string name="upload_place_topbar">장소 등록</string>
     <string name="required_field">필수 입력</string>
     <string name="optional_field">선택 입력</string>

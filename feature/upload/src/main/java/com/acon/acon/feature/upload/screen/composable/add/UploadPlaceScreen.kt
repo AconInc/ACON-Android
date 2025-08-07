@@ -75,7 +75,11 @@ fun UploadPlaceScreen(
     val currentStep = state.currentStep
 
     BackHandler {
-        viewModel.onRequestExitUploadPlaceDialog()
+        if(currentStep != maxStepIndex) {
+            viewModel.onRequestExitUploadPlaceDialog()
+        } else {
+            viewModel.onNavigateToBack()
+        }
     }
 
     viewModel.collectSideEffect {
@@ -112,7 +116,7 @@ fun UploadPlaceScreen(
         AconTwoActionDialog(
             title = stringResource(R.string.upload_place_exit),
             action1 = stringResource(R.string.cancel),
-            action2 = stringResource(R.string.exit),
+            action2 = stringResource(R.string.quit),
             onDismissRequest = {},
             onAction1 = {
                 viewModel.onDismissExitUploadPlaceDialog()
@@ -120,7 +124,9 @@ fun UploadPlaceScreen(
             onAction2 = {
                 viewModel.onNavigateToBack()
             },
-            modifier = Modifier.width(dialogWidth)
+            isTextAlign = true,
+            modifier = Modifier
+                .width(dialogWidth)
         )
     }
 

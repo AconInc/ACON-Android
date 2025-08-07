@@ -34,6 +34,7 @@ fun AconTwoActionDialog(
     onAction1: () -> Unit,
     onAction2: () -> Unit,
     onDismissRequest: () -> Unit,
+    isTextAlign: Boolean = false,
     action1Color: Color = AconTheme.color.White,
     action2Color: Color = AconTheme.color.Action,
     modifier: Modifier = Modifier,
@@ -65,6 +66,7 @@ fun AconTwoActionDialog(
                     style = AconTheme.typography.Title4,
                     fontWeight = FontWeight.SemiBold,
                     color = AconTheme.color.White,
+                    textAlign = if (isTextAlign) TextAlign.Center else TextAlign.Unspecified,
                     modifier = Modifier
                         .padding(top = 24.dp, bottom = 22.dp)
                         .padding(horizontal = 16.dp)
