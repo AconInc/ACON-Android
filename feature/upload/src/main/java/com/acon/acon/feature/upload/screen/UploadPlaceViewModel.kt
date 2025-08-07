@@ -16,6 +16,7 @@ import com.acon.acon.domain.repository.MapSearchRepository
 import com.acon.acon.domain.repository.UploadRepository
 import com.acon.acon.feature.upload.BuildConfig
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -25,6 +26,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import okhttp3.ConnectionPool
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -33,6 +36,7 @@ import okhttp3.internal.toImmutableList
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.viewmodel.container
 import timber.log.Timber
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @OptIn(FlowPreview::class)
@@ -327,7 +331,7 @@ class UploadPlaceViewModel @Inject constructor(
 
     fun onSubmitUploadPlace(onSuccess:() -> Unit) = intent {
         createFeatureList()
-
+        reduce { state.copy(isNextBtnEnabled = false) }
         when (state.selectedImageUris?.isEmpty()) {
             true -> {
                 submitUploadPlace(onSuccess)
@@ -353,91 +357,113 @@ class UploadPlaceViewModel @Inject constructor(
             recommendedMenu = state.recommendMenu ?: "",
             imageList = imageList
         ).onSuccess {
+            reduce { state.copy(isNextBtnEnabled = true) }
             onSuccess()
         }.onFailure {
+            reduce { state.copy(isNextBtnEnabled = true) }
             postSideEffect(UploadPlaceSideEffect.ShowToastUploadFailed)
         }
     }
 
     private fun uploadAllImagesAndSubmit(onSuccess: () -> Unit) = intent {
-        val uris = state.selectedImageUris
+        val uris = state.selectedImageUris ?: emptyList()
 
-        val fileNames = try {
+        if (uris.isEmpty()) {
+            submitUploadPlace(onSuccess = onSuccess, imageList = emptyList())
+            return@intent
+        }
+
+        // Step 1: Get all presigned URLs concurrently (like iOS DispatchGroup)
+        val presignedResults = runCatching {
             coroutineScope {
-                uris?.map { imageUri ->
-                    async {
-                        val presignedResult = try {
-                            uploadRepository.getUploadPlacePreSignedUrl().getOrThrow()
-                        } catch (e: Exception) {
-                            postSideEffect(UploadPlaceSideEffect.ShowToastUploadImageFailed)
-                            throw e
-                        }
-                        putPlaceImageToPreSignedUrl(imageUri, presignedResult.preSignedUrl)
-                        presignedResult.fileName
+                (0 until uris.size).map {
+                    async(Dispatchers.IO) {
+                        uploadRepository.getUploadPlacePreSignedUrl().getOrThrow()
                     }
-                }?.awaitAll()
+                }.awaitAll()
             }
-        } catch (e: Exception) {
+        }.onFailure {
             postSideEffect(UploadPlaceSideEffect.ShowToastUploadImageFailed)
-            null
+            return@intent
+        }.getOrThrow()
+
+        // Step 2: Upload all images concurrently
+        val uploadSuccessful = runCatching {
+            coroutineScope {
+                uris.zip(presignedResults).map { (imageUri, presignedResult) ->
+                    async(Dispatchers.IO) {
+                        putPlaceImageToPreSignedUrlOptimized(imageUri, presignedResult.preSignedUrl)
+                    }
+                }.awaitAll().all { it }
+            }
+        }.onFailure {
+            postSideEffect(UploadPlaceSideEffect.ShowToastUploadImageFailed)
+            return@intent
+        }.getOrThrow()
+
+        if (!uploadSuccessful) {
+            postSideEffect(UploadPlaceSideEffect.ShowToastUploadImageFailed)
+            return@intent
         }
 
-        val bucketUrls = fileNames?.map { fileName ->
-            "${BuildConfig.BUCKET_URL}$fileName"
-        }
-
-        submitUploadPlace(
-            onSuccess = onSuccess,
-            imageList = bucketUrls ?: emptyList()
-        )
+        val bucketUrls = presignedResults.map { "${BuildConfig.BUCKET_URL}${it.fileName}" }
+        submitUploadPlace(onSuccess = onSuccess, imageList = bucketUrls)
     }
 
-    private fun putPlaceImageToPreSignedUrl(
+    private suspend fun putPlaceImageToPreSignedUrlOptimized(
         imageUri: Uri,
         preSignedUrl: String
-    ) = intent {
+    ): Boolean = withContext(Dispatchers.IO) {
         val context = getApplication<Application>().applicationContext
-        val client = OkHttpClient()
 
-        try {
+        return@withContext try {
             val byteArray: ByteArray
             val mimeType: String
 
             if (imageUri.scheme == "content") {
-                val inputStream = context.contentResolver.openInputStream(imageUri)
-                byteArray = inputStream?.readBytes()
-                    ?: throw IllegalArgumentException("이미지 읽기 실패")
+                context.contentResolver.openInputStream(imageUri).use { inputStream ->
+                    byteArray = inputStream?.readBytes()
+                        ?: throw IllegalArgumentException("이미지 읽기 실패")
+                }
                 mimeType = context.contentResolver.getType(imageUri) ?: "image/jpeg"
-
             } else {
                 Timber.tag(TAG).e("지원하지 않는 URI scheme: %s", imageUri.toString())
                 throw IllegalArgumentException("지원하지 않는 URI scheme")
             }
 
-            val fileBody =
-                byteArray.toRequestBody(mimeType.toMediaTypeOrNull(), 0, byteArray.size)
-
+            val fileBody = byteArray.toRequestBody(mimeType.toMediaTypeOrNull(), 0, byteArray.size)
             val request = Request.Builder()
                 .url(preSignedUrl)
                 .put(fileBody)
                 .addHeader("Content-Type", mimeType)
                 .build()
 
-            val response = client.newCall(request).execute()
-
-            if (response.isSuccessful) {
-                Timber.tag(TAG).d("이미지 업로드 성공")
-            } else {
-                Timber.tag(TAG).e("이미지 업로드 실패, code: %d", response.code)
-                postSideEffect(UploadPlaceSideEffect.ShowToastUploadImageFailed)
+            client.newCall(request).execute().use { response ->
+                if (response.isSuccessful) {
+                    Timber.tag(TAG).d("이미지 업로드 성공")
+                    true
+                } else {
+                    Timber.tag(TAG).e("이미지 업로드 실패, code: ${response.code}")
+                    false
+                }
             }
         } catch (e: Exception) {
-            Timber.tag(TAG).e(e, "이미지 업로드 과정에서 예외 발생: %s", e.message)
-            postSideEffect(UploadPlaceSideEffect.ShowToastUploadImageFailed)
+            Timber.tag(TAG).e(e, "이미지 업로드 과정에서 예외 발생: ${e.message}")
+            false
         }
     }
 
     companion object {
+        private val client: OkHttpClient by lazy {
+            OkHttpClient.Builder()
+                .connectionPool(ConnectionPool(20, 5, TimeUnit.MINUTES))
+                .connectTimeout(30, TimeUnit.SECONDS)
+                .writeTimeout(30, TimeUnit.SECONDS)
+                .readTimeout(30, TimeUnit.SECONDS)
+                .retryOnConnectionFailure(true)
+                .build()
+        }
+
         const val TAG = "UploadPlaceViewModel"
     }
 }
