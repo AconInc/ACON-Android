@@ -154,11 +154,7 @@ class UploadPlaceViewModel @Inject constructor(
     }
 
     fun updateCafeOptionType(cafeOption: CafeFeatureType.CafeType) = intent {
-        if(cafeOption == CafeFeatureType.CafeType.NOT_GOOD_FOR_WORK) {
-            reduce { state.copy(selectedCafeOption = null) }
-        } else {
-            reduce { state.copy(selectedCafeOption = cafeOption) }
-        }
+        reduce { state.copy(selectedCafeOption = cafeOption) }
     }
 
     fun updatePriceOptionType(priceOption: PriceFeatureType.PriceOptionType) = intent {
@@ -295,12 +291,21 @@ class UploadPlaceViewModel @Inject constructor(
         when(state.selectedRestaurantTypes.isEmpty()) {
             true -> {
                 state.selectedCafeOption?.let { cafeOption ->
-                    featureRequests.add(
-                        Feature(
-                            category = CategoryType.CAFE_FEATURE,
-                            optionList = listOf(cafeOption)
+                    if (cafeOption == CafeFeatureType.CafeType.NOT_GOOD_FOR_WORK) {
+                        featureRequests.add(
+                            Feature(
+                                category = CategoryType.CAFE_FEATURE,
+                                optionList = emptyList()
+                            )
                         )
-                    )
+                    } else {
+                        featureRequests.add(
+                            Feature(
+                                category = CategoryType.CAFE_FEATURE,
+                                optionList = listOf(cafeOption)
+                            )
+                        )
+                    }
                 }
             }
             false -> {

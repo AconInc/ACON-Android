@@ -171,10 +171,10 @@ internal fun UploadSelectPlaceDetailScreen(
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     UploadPlaceSelectItem(
-                        title = stringResource(CafeFeatureType.CafeType.GOOD_FOR_WORK.getNameResId()),
-                        isSelected = state.selectedCafeOption == CafeFeatureType.CafeType.GOOD_FOR_WORK,
+                        title = stringResource(CafeFeatureType.CafeType.WORK_FRIENDLY.getNameResId()),
+                        isSelected = state.selectedCafeOption == CafeFeatureType.CafeType.WORK_FRIENDLY,
                         onClickUploadPlaceSelectItem = {
-                            onUpdateCafeOptionType(CafeFeatureType.CafeType.GOOD_FOR_WORK)
+                            onUpdateCafeOptionType(CafeFeatureType.CafeType.WORK_FRIENDLY)
                         }
                     )
                     UploadPlaceSelectItem(

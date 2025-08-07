@@ -29,7 +29,7 @@ sealed interface RestaurantFeatureType : FeatureType {
 sealed interface CafeFeatureType : FeatureType {
 
     enum class CafeType: FeatureType {
-        GOOD_FOR_WORK,
+        WORK_FRIENDLY,
         NOT_GOOD_FOR_WORK;
     }
 }
