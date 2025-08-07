@@ -22,6 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
 import com.acon.acon.core.designsystem.R
+import com.acon.acon.core.designsystem.animation.slideUpAnimation
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.core.model.type.CafeFeatureType
 import com.acon.acon.core.model.type.RestaurantFeatureType
@@ -36,8 +37,12 @@ internal fun UploadSelectPlaceDetailScreen(
     state: UploadPlaceUiState,
     onUpdateCafeOptionType: (CafeFeatureType.CafeType) -> Unit,
     onUpdateRestaurantType: (RestaurantFeatureType.RestaurantType) -> Unit,
-    onUpdateNextPageBtnEnabled: (Boolean) -> Unit
+    onUpdateNextPageBtnEnabled: (Boolean) -> Unit,
+    onAnimationEnded: (String) -> Unit
 ) {
+    val hasAnimatedRestaurant = state.hasAnimated["3"] ?: false
+    val hasAnimatedCafe = state.hasAnimated["4"] ?: false
+
     val allRestaurantTypes = remember {
         persistentListOf(*RestaurantFeatureType.RestaurantType.entries.toTypedArray())
     }
@@ -68,14 +73,17 @@ internal fun UploadSelectPlaceDetailScreen(
                     text = stringResource(R.string.required_field),
                     style = AconTheme.typography.Body1,
                     color = AconTheme.color.Danger,
-                    modifier = Modifier.padding(top = 40.dp)
+                    modifier = Modifier
+                        .padding(top = 40.dp)
+                        .then(if (!hasAnimatedRestaurant) Modifier.slideUpAnimation(order = 1) else Modifier)
                 )
 
                 Spacer(Modifier.height(4.dp))
                 Text(
                     text = stringResource(R.string.upload_place_select_restaurant_title),
                     style = AconTheme.typography.Headline3,
-                    color = AconTheme.color.White
+                    color = AconTheme.color.White,
+                    modifier = Modifier.then(if (!hasAnimatedRestaurant) Modifier.slideUpAnimation(order = 2) else Modifier)
                 )
 
                 Spacer(Modifier.height(10.dp))
@@ -83,14 +91,28 @@ internal fun UploadSelectPlaceDetailScreen(
                     text = stringResource(R.string.upload_place_select_cafe_sub_title),
                     style = AconTheme.typography.Title5,
                     color = AconTheme.color.Gray500,
-                    fontWeight = FontWeight.Normal
+                    fontWeight = FontWeight.Normal,
+                    modifier = Modifier
+                        .then(
+                            if (!hasAnimatedRestaurant) Modifier.slideUpAnimation(
+                                hasCaption = true,
+                                order = 3
+                            ) else Modifier
+                        )
                 )
 
                 Spacer(Modifier.height(32.dp))
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 4.dp),
+                        .padding(horizontal = 4.dp)
+                        .then(
+                            if (!hasAnimatedRestaurant) Modifier.slideUpAnimation(
+                                hasCaption = true,
+                                order = 4,
+                                onAnimationEnded = { onAnimationEnded("3") }
+                            ) else Modifier
+                        ),
                     verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
                     allRestaurantTypes.chunked(2).fastForEach { pair ->
@@ -118,21 +140,34 @@ internal fun UploadSelectPlaceDetailScreen(
                     text = stringResource(R.string.required_field),
                     style = AconTheme.typography.Body1,
                     color = AconTheme.color.Danger,
-                    modifier = Modifier.padding(top = 40.dp)
+                    modifier = Modifier
+                        .padding(top = 40.dp)
+                        .then(if (!hasAnimatedCafe) Modifier.slideUpAnimation(order = 1) else Modifier)
+
+
                 )
 
                 Spacer(Modifier.height(10.dp))
                 Text(
                     text = stringResource(R.string.upload_place_select_restaurant_cafe),
                     style = AconTheme.typography.Headline3,
-                    color = AconTheme.color.White
+                    color = AconTheme.color.White,
+                    modifier = Modifier
+                        .then(if (!hasAnimatedCafe) Modifier.slideUpAnimation(order = 2) else Modifier)
                 )
 
                 Spacer(Modifier.height(32.dp))
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 8.dp),
+                        .padding(horizontal = 8.dp)
+                        .then(
+                            if (!hasAnimatedCafe) Modifier.slideUpAnimation(
+                                hasCaption = false,
+                                order = 4,
+                                onAnimationEnded = { onAnimationEnded("4") }
+                            ) else Modifier
+                        ),
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     UploadPlaceSelectItem(
@@ -165,7 +200,8 @@ private fun UploadSelectPlaceDetailScreenPreview() {
             state = UploadPlaceUiState(),
             onUpdateCafeOptionType = {},
             onUpdateRestaurantType = {},
-            onUpdateNextPageBtnEnabled = {}
+            onUpdateNextPageBtnEnabled = {},
+            onAnimationEnded = {}
         )
     }
 }

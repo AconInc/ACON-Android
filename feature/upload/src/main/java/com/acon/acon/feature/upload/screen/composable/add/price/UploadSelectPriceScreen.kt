@@ -19,6 +19,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.acon.acon.core.designsystem.R
+import com.acon.acon.core.designsystem.animation.slideUpAnimation
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.core.model.type.PriceFeatureType
 import com.acon.acon.feature.upload.screen.UploadPlaceUiState
@@ -29,8 +30,11 @@ import com.acon.acon.feature.upload.screen.composable.type.getNameResId
 internal fun UploadSelectPriceScreen(
     state: UploadPlaceUiState,
     onUpdatePriceOptionType: (PriceFeatureType.PriceOptionType) -> Unit,
-    onUpdateNextPageBtnEnabled: (Boolean) -> Unit
+    onUpdateNextPageBtnEnabled: (Boolean) -> Unit,
+    onAnimationEnded: (String) -> Unit
 ) {
+    val hasAnimated = state.hasAnimated["6"] ?: false
+
     val isNextPageBtnEnabled by remember(state) {
         derivedStateOf {
             state.selectedPriceOption != null
@@ -51,7 +55,9 @@ internal fun UploadSelectPriceScreen(
             text = stringResource(R.string.required_field),
             style = AconTheme.typography.Body1,
             color = AconTheme.color.Danger,
-            modifier = Modifier.padding(top = 40.dp)
+            modifier = Modifier
+                .padding(top = 40.dp)
+                .then(if (!hasAnimated) Modifier.slideUpAnimation(order = 1) else Modifier)
         )
 
         Spacer(Modifier.height(4.dp))
@@ -59,14 +65,23 @@ internal fun UploadSelectPriceScreen(
             text = stringResource(R.string.upload_place_select_price_title),
             style = AconTheme.typography.Headline3,
             color = AconTheme.color.White,
-            modifier = Modifier.padding(2.dp)
+            modifier = Modifier
+                .padding(2.dp)
+                .then(if (!hasAnimated) Modifier.slideUpAnimation(order = 2) else Modifier)
         )
 
         Spacer(Modifier.height(32.dp))
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 8.dp),
+                .padding(horizontal = 8.dp)
+                .then(
+                    if (!hasAnimated) Modifier.slideUpAnimation(
+                        hasCaption = true,
+                        order = 3,
+                        onAnimationEnded = { onAnimationEnded("6") }
+                    ) else Modifier
+                ),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             UploadPlaceSelectItem(
@@ -103,7 +118,8 @@ private fun UploadSelectPriceScreenPreview(
         UploadSelectPriceScreen(
             state = UploadPlaceUiState(),
             onUpdatePriceOptionType = {},
-            onUpdateNextPageBtnEnabled = {}
+            onUpdateNextPageBtnEnabled = {},
+            onAnimationEnded = {}
         )
     }
 }

@@ -100,8 +100,6 @@ internal fun UploadPlaceSearchScreen(
         }
     }
 
-    state.hasAnimated
-
     LaunchedEffect(lifecycleOwner, Unit) {
         lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
             if (state.selectedSpotByMap?.title?.isNotEmpty() == true) {
@@ -202,7 +200,6 @@ internal fun UploadPlaceSearchScreen(
                     .fillMaxWidth()
                     .then(
                         if (!hasAnimated) Modifier.slideUpAnimation(
-                            hasCaption = false,
                             order = 4,
                             onAnimationEnded = { onAnimationEnded("1") }
                         ) else Modifier

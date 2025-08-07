@@ -39,8 +39,12 @@ fun Modifier.slideUpAnimation(
         when (order) {
             1 -> delay
             2 -> delay + titleDelay
-            3 -> if (hasCaption) delay + titleDelay * 2 else delay
-            4 -> delay + contentDelay + titleDelay * (if (hasCaption) 2 else 1)
+            3 -> if (hasCaption) delay + titleDelay * 2 else 0
+            4 -> if (hasCaption) {
+                delay + titleDelay * 2 + contentDelay
+            } else {
+                delay + titleDelay + contentDelay
+            }
             else -> delay
         }
     }

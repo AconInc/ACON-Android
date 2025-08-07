@@ -36,6 +36,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.acon.acon.core.designsystem.R
+import com.acon.acon.core.designsystem.animation.slideUpAnimation
 import com.acon.acon.core.designsystem.component.dialog.v2.AconTwoActionDialog
 import com.acon.acon.core.designsystem.component.popup.CustomToast
 import com.acon.acon.core.designsystem.effect.LocalHazeState
@@ -58,8 +59,10 @@ internal fun UploadPlaceImageScreen(
     onAddSpotImageUri:(uris: List<Uri>) -> Unit,
     onRemoveSpotImageUri:(uri: Uri) -> Unit,
     onUpdateNextPageBtnEnabled: (Boolean) -> Unit,
-    onRequestUploadPlaceLimitPouUp: () -> Unit
+    onRequestUploadPlaceLimitPouUp: () -> Unit,
+    onAnimationEnded: (String) -> Unit
 ) {
+    val hasAnimated = state.hasAnimated["7"] ?: false
     val selectedUris = state.selectedImageUris ?: emptyList()
 
     val screenHeightDp = getScreenHeight()
@@ -141,7 +144,9 @@ internal fun UploadPlaceImageScreen(
             text = stringResource(R.string.optional_field),
             style = AconTheme.typography.Body1,
             color = AconTheme.color.Gray300,
-            modifier = Modifier.padding(top = 40.dp)
+            modifier = Modifier
+                .padding(top = 40.dp)
+                .then(if (!hasAnimated) Modifier.slideUpAnimation(order = 1) else Modifier)
         )
 
         Spacer(Modifier.height(4.dp))
@@ -149,16 +154,28 @@ internal fun UploadPlaceImageScreen(
             text = stringResource(R.string.upload_place_image_title),
             style = AconTheme.typography.Headline3,
             color = AconTheme.color.White,
-            modifier = Modifier.padding(2.dp)
+            modifier = Modifier
+                .padding(2.dp)
+                .then(if (!hasAnimated) Modifier.slideUpAnimation(order = 2) else Modifier)
         )
 
         Spacer(Modifier.height(32.dp))
-        Box {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(imageBoxHeight)
+                .clip(RoundedCornerShape(10.dp))
+                .then(
+                    if (!hasAnimated) Modifier.slideUpAnimation(
+                        order = 4,
+                        onAnimationEnded = { onAnimationEnded("7") }
+                    ) else Modifier
+                )
+        ) {
             if (selectedUris.isEmpty()) {
                 Box(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .height(imageBoxHeight)
+                        .fillMaxSize()
                         .clip(RoundedCornerShape(10.dp))
                         .background(AconTheme.color.GlassWhiteDisabled)
                         .aspectRatio(1f)
@@ -272,7 +289,8 @@ private fun UploadPlaceImageScreenPreview() {
             onAddSpotImageUri = {},
             onRemoveSpotImageUri = {},
             onUpdateNextPageBtnEnabled = {},
-            onRequestUploadPlaceLimitPouUp = {}
+            onRequestUploadPlaceLimitPouUp = {},
+            onAnimationEnded = {}
         )
     }
 }
