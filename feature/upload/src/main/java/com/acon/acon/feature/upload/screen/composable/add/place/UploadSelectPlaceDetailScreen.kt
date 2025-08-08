@@ -27,6 +27,7 @@ import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.core.model.type.CafeFeatureType
 import com.acon.acon.core.model.type.RestaurantFeatureType
 import com.acon.acon.core.model.type.SpotType
+import com.acon.acon.feature.upload.screen.SelectedFeature
 import com.acon.acon.feature.upload.screen.UploadPlaceUiState
 import com.acon.acon.feature.upload.screen.composable.add.UploadPlaceSelectItem
 import com.acon.acon.feature.upload.screen.composable.type.getNameResId
@@ -49,10 +50,10 @@ internal fun UploadSelectPlaceDetailScreen(
 
     val isNextPageBtnEnabled by remember(state) {
         derivedStateOf {
-            when (state.selectedSpotType) {
-                SpotType.RESTAURANT -> state.selectedRestaurantTypes.isNotEmpty()
-                SpotType.CAFE -> state.selectedCafeOption != null
-                else -> false
+            when(val feature = state.selectedFeature) {
+                is SelectedFeature.Restaurant -> feature.types.isNotEmpty()
+                is SelectedFeature.Cafe -> true
+                null -> false
             }
         }
     }
@@ -124,7 +125,7 @@ internal fun UploadSelectPlaceDetailScreen(
                                 UploadPlaceSelectItem(
                                     title = stringResource(id = restaurantType.getNameResId()),
                                     modifier = Modifier.weight(1f),
-                                    isSelected = state.selectedRestaurantTypes.contains(restaurantType),
+                                    isSelected = (state.selectedFeature as? SelectedFeature.Restaurant)?.types?.contains(restaurantType) == true,
                                     onClickUploadPlaceSelectItem = {
                                         onUpdateRestaurantType(restaurantType)
                                     }
@@ -172,14 +173,14 @@ internal fun UploadSelectPlaceDetailScreen(
                 ) {
                     UploadPlaceSelectItem(
                         title = stringResource(CafeFeatureType.CafeType.WORK_FRIENDLY.getNameResId()),
-                        isSelected = state.selectedCafeOption == CafeFeatureType.CafeType.WORK_FRIENDLY,
+                        isSelected = (state.selectedFeature as? SelectedFeature.Cafe)?.option == CafeFeatureType.CafeType.WORK_FRIENDLY,
                         onClickUploadPlaceSelectItem = {
                             onUpdateCafeOptionType(CafeFeatureType.CafeType.WORK_FRIENDLY)
                         }
                     )
                     UploadPlaceSelectItem(
                         title = stringResource(CafeFeatureType.CafeType.NOT_GOOD_FOR_WORK.getNameResId()),
-                        isSelected = state.selectedCafeOption == CafeFeatureType.CafeType.NOT_GOOD_FOR_WORK,
+                        isSelected = (state.selectedFeature as? SelectedFeature.Cafe)?.option == CafeFeatureType.CafeType.NOT_GOOD_FOR_WORK,
                         onClickUploadPlaceSelectItem = {
                             onUpdateCafeOptionType(CafeFeatureType.CafeType.NOT_GOOD_FOR_WORK)
                         }

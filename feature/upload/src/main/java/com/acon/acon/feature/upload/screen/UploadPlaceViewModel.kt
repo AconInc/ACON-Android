@@ -154,7 +154,7 @@ class UploadPlaceViewModel @Inject constructor(
     }
 
     fun updateCafeOptionType(cafeOption: CafeFeatureType.CafeType) = intent {
-        reduce { state.copy(selectedCafeOption = cafeOption) }
+        reduce { state.copy(selectedFeature = SelectedFeature.Cafe(cafeOption)) }
     }
 
     fun updatePriceOptionType(priceOption: PriceFeatureType.PriceOptionType) = intent {
@@ -163,14 +163,14 @@ class UploadPlaceViewModel @Inject constructor(
 
     fun updateRestaurantType(type: RestaurantFeatureType.RestaurantType) = intent {
         reduce {
-            val currentSelectedTypes = state.selectedRestaurantTypes.toMutableList()
+            val currentSelectedTypes = (state.selectedFeature as? SelectedFeature.Restaurant)?.types?.toMutableList() ?: mutableListOf()
 
             if (currentSelectedTypes.contains(type)) {
                 currentSelectedTypes.remove(type)
             } else {
                 currentSelectedTypes.add(type)
             }
-            state.copy(selectedRestaurantTypes = currentSelectedTypes)
+            state.copy(selectedFeature = SelectedFeature.Restaurant(currentSelectedTypes))
         }
     }
 
@@ -288,36 +288,28 @@ class UploadPlaceViewModel @Inject constructor(
     private fun createFeatureList() = intent {
         val featureRequests = mutableListOf<Feature>()
 
-        when(state.selectedRestaurantTypes.isEmpty()) {
-            true -> {
-                state.selectedCafeOption?.let { cafeOption ->
-                    if (cafeOption == CafeFeatureType.CafeType.NOT_GOOD_FOR_WORK) {
-                        featureRequests.add(
-                            Feature(
-                                category = CategoryType.CAFE_FEATURE,
-                                optionList = emptyList()
-                            )
+        when (val feature = state.selectedFeature) {
+            is SelectedFeature.Cafe -> {
+                if (feature.option == CafeFeatureType.CafeType.WORK_FRIENDLY) {
+                    featureRequests.add(
+                        Feature(
+                            category = CategoryType.CAFE_FEATURE,
+                            optionList = listOf(feature.option)
                         )
-                    } else {
-                        featureRequests.add(
-                            Feature(
-                                category = CategoryType.CAFE_FEATURE,
-                                optionList = listOf(cafeOption)
-                            )
-                        )
-                    }
+                    )
                 }
             }
-            false -> {
+            is SelectedFeature.Restaurant -> {
                 featureRequests.add(
                     Feature(
                         category = CategoryType.RESTAURANT_FEATURE,
-                        optionList = state.selectedRestaurantTypes.map { it }
+                        optionList = feature.types
                     )
                 )
             }
-        }
 
+            null -> TODO()
+        }
         state.selectedPriceOption?.let { priceOption ->
             featureRequests.add(
                 Feature(
@@ -378,7 +370,6 @@ class UploadPlaceViewModel @Inject constructor(
             return@intent
         }
 
-        // Step 1: Get all presigned URLs concurrently (like iOS DispatchGroup)
         val presignedResults = runCatching {
             coroutineScope {
                 (0 until uris.size).map {
@@ -392,7 +383,6 @@ class UploadPlaceViewModel @Inject constructor(
             return@intent
         }.getOrThrow()
 
-        // Step 2: Upload all images concurrently
         val uploadSuccessful = runCatching {
             coroutineScope {
                 uris.zip(presignedResults).map { (imageUri, presignedResult) ->
@@ -489,8 +479,7 @@ data class UploadPlaceUiState(
     val selectedSpotByMap: SearchedSpotByMap? = null,
     val selectedSpotType: SpotType? = null,
     val selectedPriceOption: PriceFeatureType.PriceOptionType? = null,
-    val selectedCafeOption: CafeFeatureType.CafeType? = null,
-    val selectedRestaurantTypes: List<RestaurantFeatureType.RestaurantType> = emptyList(),
+    val selectedFeature: SelectedFeature? = null,
     val recommendMenu: String? = "",
     val selectedImageUris: List<Uri>? = emptyList(),
     val uploadFileName: String = "",
@@ -499,6 +488,11 @@ data class UploadPlaceUiState(
     val maxImageCount: Int = 10,
     val currentStep: Int = 0
 )
+
+sealed class SelectedFeature {
+    data class Cafe(val option: CafeFeatureType.CafeType) : SelectedFeature()
+    data class Restaurant(val types: List<RestaurantFeatureType.RestaurantType>) : SelectedFeature()
+}
 
 sealed interface UploadPlaceSideEffect {
     data object ShowToastUploadFailed : UploadPlaceSideEffect
