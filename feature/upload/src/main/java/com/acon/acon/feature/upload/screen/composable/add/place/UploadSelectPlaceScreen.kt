@@ -20,6 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.acon.acon.core.designsystem.R
+import com.acon.acon.core.designsystem.animation.slideUpAnimation
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.core.model.type.SpotType
 import com.acon.acon.feature.upload.screen.UploadPlaceUiState
@@ -30,8 +31,11 @@ import com.acon.acon.feature.upload.screen.composable.type.getNameResId
 internal fun UploadSelectPlaceScreen(
     state: UploadPlaceUiState,
     onSelectSpotType: (SpotType) -> Unit,
-    onUpdateNextPageBtnEnabled: (Boolean) -> Unit
+    onUpdateNextPageBtnEnabled: (Boolean) -> Unit,
+    onAnimationEnded: (String) -> Unit
 ) {
+    val hasAnimated = state.hasAnimated["2"] ?: false
+
     val isNextPageBtnEnabled by remember(state) {
         derivedStateOf {
             state.selectedSpotType != null
@@ -52,14 +56,17 @@ internal fun UploadSelectPlaceScreen(
             text = stringResource(R.string.required_field),
             style = AconTheme.typography.Body1,
             color = AconTheme.color.Danger,
-            modifier = Modifier.padding(top = 40.dp)
+            modifier = Modifier
+                .padding(top = 40.dp)
+                .then(if (!hasAnimated) Modifier.slideUpAnimation(order = 1) else Modifier)
         )
 
         Spacer(Modifier.height(4.dp))
         Text(
             text = stringResource(R.string.upload_place_select_place_title),
             style = AconTheme.typography.Headline3,
-            color = AconTheme.color.White
+            color = AconTheme.color.White,
+            modifier = Modifier.then(if (!hasAnimated) Modifier.slideUpAnimation(order = 2) else Modifier)
         )
 
         Spacer(Modifier.height(10.dp))
@@ -67,14 +74,28 @@ internal fun UploadSelectPlaceScreen(
             text = stringResource(R.string.upload_place_select_place_sub_title),
             style = AconTheme.typography.Title5,
             color = AconTheme.color.Gray500,
-            fontWeight = FontWeight.Normal
+            fontWeight = FontWeight.Normal,
+            modifier = Modifier
+                .then(
+                    if (!hasAnimated) Modifier.slideUpAnimation(
+                        hasCaption = true,
+                        order = 3
+                    ) else Modifier
+                )
         )
 
         Spacer(Modifier.height(32.dp))
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 8.dp),
+                .padding(horizontal = 8.dp)
+                .then(
+                    if (!hasAnimated) Modifier.slideUpAnimation(
+                        hasCaption = true,
+                        order = 4,
+                        onAnimationEnded = { onAnimationEnded("2") }
+                    ) else Modifier
+                ),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             UploadPlaceSelectItem(
@@ -103,6 +124,7 @@ private fun UploadSelectPlaceScreenPreview() {
             state = UploadPlaceUiState(),
             onSelectSpotType = {},
             onUpdateNextPageBtnEnabled = {},
+            onAnimationEnded = {}
         )
     }
 }

@@ -86,9 +86,11 @@ internal fun UploadEnterMenuScreen(
         Spacer(Modifier.height(32.dp))
         AconSearchTextField(
             value = query,
-            onValueChange = {
-                query = it
-                isSelection = false
+            onValueChange = { newValue ->
+                if (newValue.text.length <= 30) {
+                    query = newValue
+                    isSelection = false
+                }
             },
             keyboardOptions = KeyboardOptions(
                 imeAction = ImeAction.Done,
