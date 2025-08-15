@@ -39,10 +39,10 @@
 ---
 
 ## 🙌 Contributors
-[@Thirfir](https://github.com/ThirFir)
+[@Thirfir](https://github.com/ThirFir) (2025.1 ~ )
 <br/>
-[@1971123-seongmin](https://github.com/1971123-seongmin)
+[@1971123-seongmin](https://github.com/1971123-seongmin) (2025.1 ~ )
 <br/>
-[@tunaunnie](https://github.com/tunaunnie)
+[@tunaunnie](https://github.com/tunaunnie) (2025.1 ~ 2025.2)
 <br/>
-[@0se0](https://github.com/0se0)
+[@0se0](https://github.com/0se0) (2025.1 ~ 2025.2)
