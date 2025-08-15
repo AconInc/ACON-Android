@@ -3,7 +3,11 @@
 </p>
 
 
-
+<p align="center" style="font-size:150%">
+  <a href="https://play.google.com/store/apps/details?id=com.acon.acon" target="_blank">PlayStore</a> ·
+  <a href="https://aconinc.netlify.app/" target="_blank">About us</a> ·
+  <a href="https://github.com/SOPT-all/SOPT-all-35-APPJAM-ANDROID-ACON" target="_blank">Previous Repository</a>
+</p>
 <p align="center" style="font-size:200%"><strong>No More Research</strong></p>
 <h1 align="center">Acon</h1>
 
