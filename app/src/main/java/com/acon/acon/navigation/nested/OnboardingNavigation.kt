@@ -12,7 +12,7 @@ import androidx.navigation.compose.navigation
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.core.navigation.route.SettingsRoute
 import com.acon.acon.core.navigation.route.OnboardingRoute
-import com.acon.acon.feature.onboarding.screen.composable.ChooseDislikesScreenContainer
+import com.acon.feature.onboarding.dislikes.composable.ChooseDislikesScreenContainer
 import com.acon.acon.core.navigation.LocalNavController
 import com.acon.acon.core.navigation.route.SpotRoute
 
