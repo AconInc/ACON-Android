@@ -2,14 +2,14 @@ package com.acon.acon.feature.upload.screen
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.toRoute
-import com.acon.feature.common.base.BaseContainerHost
-import com.acon.acon.domain.model.spot.SimpleSpot
+import com.acon.acon.core.analytics.amplitude.AconAmplitude
+import com.acon.acon.core.analytics.constants.EventNames
+import com.acon.acon.core.analytics.constants.PropertyKeys
+import com.acon.acon.core.model.model.spot.SimpleSpot
+import com.acon.acon.core.navigation.route.UploadRoute
+import com.acon.acon.core.navigation.type.simpleSpotNavType
+import com.acon.acon.core.ui.base.BaseContainerHost
 import com.acon.acon.domain.repository.UploadRepository
-import com.acon.acon.feature.upload.UploadRoute
-import com.acon.core.analytics.amplitude.AconAmplitude
-import com.acon.core.analytics.constants.EventNames
-import com.acon.core.analytics.constants.PropertyKeys
-import com.acon.feature.common.navigation.simpleSpotNavType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.viewmodel.container
@@ -49,8 +49,9 @@ class UploadReviewViewModel @Inject constructor(
                 property = PropertyKeys.CLICK_REVIEW_ACON to true
             )
 
-            uploadRepository.submitReview(
+            uploadRepository.submitReviewV2(
                 spotId = spot.spotId,
+                recommendedMenu = spot.recommendedMenu ?: "",
                 acornCount = state.selectedAcornCount
             ).onSuccess {
                 postSideEffect(UploadReviewSideEffect.NavigateToComplete(state.spot))

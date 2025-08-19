@@ -5,5 +5,5 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class VerifyLocationResponse(
-    @SerialName("success") val isPossible: Boolean
+    @SerialName("available") val isPossible: Boolean
 )

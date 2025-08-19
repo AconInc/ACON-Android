@@ -1,20 +1,23 @@
 package com.acon.acon.data.datasource.remote
 
+import com.acon.acon.data.api.remote.auth.UploadAuthApi
 import com.acon.acon.data.dto.request.ReviewRequest
+import com.acon.acon.data.dto.request.ReviewRequestV2
+import com.acon.acon.data.dto.request.SubmitUploadPlaceRequest
+import com.acon.acon.data.dto.response.profile.PreSignedUrlResponse
 import com.acon.acon.data.dto.response.upload.UploadSpotSuggestionsResponse
 import com.acon.acon.data.dto.response.upload.VerifyLocationResponse
-import com.acon.acon.data.api.remote.UploadApi
 import javax.inject.Inject
 
 class UploadRemoteDataSource @Inject constructor(
-    private val uploadApi: UploadApi
+    private val uploadAuthApi: UploadAuthApi
 ) {
 
     suspend fun getSuggestions(
         latitude: Double,
         longitude: Double
     ): UploadSpotSuggestionsResponse {
-        return uploadApi.getSuggestions(latitude, longitude)
+        return uploadAuthApi.getSuggestions(latitude, longitude)
     }
 
     suspend fun verifyLocation(
@@ -22,20 +25,41 @@ class UploadRemoteDataSource @Inject constructor(
         latitude: Double,
         longitude: Double
     ): VerifyLocationResponse {
-        return uploadApi.verifyLocation(spotId, latitude, longitude)
+        return uploadAuthApi.verifyLocation(spotId, latitude, longitude)
     }
 
     suspend fun submitReview(
         spotId: Long,
         acornCount: Int
-    ) = uploadApi.submitReview(
+    ) = uploadAuthApi.submitReview(
         ReviewRequest(
             spotId = spotId,
             acornCount = acornCount
         )
     )
 
+    suspend fun submitReviewV2(
+        spotId: Long,
+        recommendedMenu: String,
+        acornCount: Int
+    ) = uploadAuthApi.submitReviewV2(
+        ReviewRequestV2(
+            spotId = spotId,
+            recommendedMenu = recommendedMenu,
+            acornCount = acornCount
+        )
+    )
+
     suspend fun getSearchedSpots(
         query: String
-    ) = uploadApi.getSearchedSpots(query)
+    ) = uploadAuthApi.getSearchedSpots(query)
+
+
+    suspend fun getUploadPlacePreSignedUrl(): PreSignedUrlResponse {
+        return uploadAuthApi.getUploadPlacePreSignedUrl()
+    }
+
+    suspend fun submitUploadPlace(request: SubmitUploadPlaceRequest) {
+        return uploadAuthApi.submitUploadPlace(request)
+    }
 }

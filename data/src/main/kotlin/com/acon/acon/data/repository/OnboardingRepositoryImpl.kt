@@ -5,24 +5,22 @@ import com.acon.acon.data.dto.request.OnboardingRequest
 import com.acon.acon.data.error.runCatchingWith
 import com.acon.acon.domain.error.onboarding.PostOnboardingResultError
 import com.acon.acon.domain.repository.OnboardingRepository
-import com.acon.acon.domain.type.FoodType
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
+import com.acon.acon.core.model.type.FoodType
+import com.acon.acon.domain.repository.UserRepository
 import javax.inject.Inject
 
 class OnboardingRepositoryImpl @Inject constructor(
     private val onboardingRemoteDataSource: OnboardingRemoteDataSource,
+    private val userRepository: UserRepository
 ) : OnboardingRepository {
 
     override suspend fun submitOnboardingResult(
         dislikeFoodList: List<FoodType>
     ): Result<Unit> {
-        return runCatchingWith(*PostOnboardingResultError.createErrorInstances()) {
+        return runCatchingWith(PostOnboardingResultError()) {
             val request = OnboardingRequest(dislikeFoods = dislikeFoodList.map { it.name })
             onboardingRemoteDataSource.submitOnboardingResult(request)
+            userRepository.saveDidOnboarding(true)
         }
     }
 }

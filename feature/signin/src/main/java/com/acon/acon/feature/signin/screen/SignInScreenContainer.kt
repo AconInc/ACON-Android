@@ -10,7 +10,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.acon.acon.core.common.UrlConstants
 import com.acon.acon.core.designsystem.R
-import com.acon.acon.core.utils.feature.toast.showToast
+import com.acon.acon.core.ui.android.showToast
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
@@ -18,6 +18,7 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 fun SignInScreenContainer(
     navigateToSpotListView: () -> Unit,
     navigateToAreaVerification: () -> Unit,
+    navigateToOnboarding: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: SignInViewModel = hiltViewModel()
 ) {
@@ -29,12 +30,13 @@ fun SignInScreenContainer(
         modifier = modifier.fillMaxSize(),
         navigateToSpotListView = viewModel::navigateToSpotListView,
         navigateToAreaVerification = viewModel::navigateToAreaVerification,
+        navigateToOnboarding = viewModel::navigateToOnboarding,
         onClickTermsOfUse = viewModel::onClickTermsOfUse,
         onClickPrivacyPolicy = viewModel::onClickPrivacyPolicy,
         onAnimationEnd = viewModel::signIn,
     )
 
-    viewModel.emitUserType()
+    viewModel.useUserType()
     viewModel.collectSideEffect { sideEffect ->
         when(sideEffect) {
             is SignInSideEffect.ShowToastMessage -> { context.showToast(R.string.sign_in_failed_toast) }
@@ -50,6 +52,7 @@ fun SignInScreenContainer(
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
                 context.startActivity(intent)
             }
+            is SignInSideEffect.NavigateToOnboarding -> navigateToOnboarding()
         }
     }
 }

@@ -1,8 +1,9 @@
 package com.acon.acon.feature.signin.screen
 
+import com.acon.acon.core.model.type.UserType
+import com.acon.acon.core.ui.base.BaseContainerHost
+import com.acon.acon.domain.repository.ProfileRepository
 import com.acon.acon.domain.repository.UserRepository
-import com.acon.acon.domain.type.UserType
-import com.acon.feature.common.base.BaseContainerHost
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import org.orbitmvi.orbit.Container
@@ -11,6 +12,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SignInViewModel @Inject constructor(
+    private val profileRepository: ProfileRepository,
     private val userRepository: UserRepository
 ) : BaseContainerHost<SignInUiState, SignInSideEffect>() {
 
@@ -23,9 +25,9 @@ class SignInViewModel @Inject constructor(
                 SignInUiState.SignIn(showSignInInfo = true)
             }
         } else {
-            userRepository.fetchVerifiedAreaList().onSuccess { areas ->
-                if (areas.isEmpty())
-                    postSideEffect(SignInSideEffect.NavigateToAreaVerification)
+            userRepository.getDidOnboarding().onSuccess { did ->
+                if (!did)
+                    postSideEffect(SignInSideEffect.NavigateToOnboarding)
                 else
                     postSideEffect(SignInSideEffect.NavigateToSpotListView)
             }
@@ -48,6 +50,12 @@ class SignInViewModel @Inject constructor(
     fun navigateToAreaVerification() = intent {
         postSideEffect(
             SignInSideEffect.NavigateToAreaVerification
+        )
+    }
+
+    fun navigateToOnboarding() = intent {
+        postSideEffect(
+            SignInSideEffect.NavigateToOnboarding
         )
     }
 
@@ -74,6 +82,7 @@ sealed interface SignInSideEffect {
     data object ShowToastMessage : SignInSideEffect
     data object NavigateToSpotListView : SignInSideEffect
     data object NavigateToAreaVerification : SignInSideEffect
+    data object NavigateToOnboarding : SignInSideEffect
     data object OnClickTermsOfUse : SignInSideEffect
     data object OnClickPrivacyPolicy : SignInSideEffect
 }

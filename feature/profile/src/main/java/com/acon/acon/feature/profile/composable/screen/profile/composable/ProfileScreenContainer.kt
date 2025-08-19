@@ -11,8 +11,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.acon.acon.core.designsystem.R
-import com.acon.acon.core.utils.feature.toast.showToast
-import com.acon.acon.domain.type.UpdateProfileType
+import com.acon.acon.core.ui.android.showToast
+import com.acon.acon.core.model.type.UpdateProfileType
 import com.acon.acon.feature.profile.composable.screen.profile.ProfileUiSideEffect
 import com.acon.acon.feature.profile.composable.screen.profile.ProfileViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -41,8 +41,8 @@ fun ProfileScreenContainer(
     LaunchedEffect(viewModel.updateProfileState) {
         viewModel.updateProfileState.collectLatest {
             when(it) {
-                UpdateProfileType.IDLE -> {}
-                UpdateProfileType.SUCCESS -> {
+                com.acon.acon.core.model.type.UpdateProfileType.IDLE -> {}
+                com.acon.acon.core.model.type.UpdateProfileType.SUCCESS -> {
                     coroutineScope.launch {
                         snackbarHostState.showSnackbar(
                             message = snackbarMsg,
@@ -51,7 +51,7 @@ fun ProfileScreenContainer(
                     }
                     viewModel.resetUpdateProfileType()
                 }
-                UpdateProfileType.FAILURE -> {}
+                com.acon.acon.core.model.type.UpdateProfileType.FAILURE -> {}
             }
         }
     }
@@ -67,7 +67,7 @@ fun ProfileScreenContainer(
         onNavigateToUploadScreen = onNavigateToUploadScreen
     )
 
-    viewModel.emitUserType()
+    viewModel.useUserType()
     viewModel.collectSideEffect {
         when(it) {
             is ProfileUiSideEffect.OnNavigateToSpotDetailScreen -> { onNavigateToSpotDetailScreen(it.spotId) }

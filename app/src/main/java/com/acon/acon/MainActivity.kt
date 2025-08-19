@@ -35,7 +35,12 @@ import androidx.core.view.WindowCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.rememberNavController
+import com.acon.acon.core.ads_api.AdProvider
+import com.acon.acon.core.ads_api.LocalSpotListAdProvider
+import com.acon.acon.core.analytics.amplitude.AconAmplitude
+import com.acon.acon.core.analytics.constants.EventNames
 import com.acon.acon.core.common.DeepLinkHandler
+import com.acon.acon.core.common.utils.firstNotNull
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.bottomsheet.SignInBottomSheet
 import com.acon.acon.core.designsystem.component.dialog.AconPermissionDialog
@@ -44,26 +49,24 @@ import com.acon.acon.core.designsystem.component.dialog.v2.AconTwoActionDialog
 import com.acon.acon.core.designsystem.effect.LocalHazeState
 import com.acon.acon.core.designsystem.effect.rememberHazeState
 import com.acon.acon.core.designsystem.theme.AconTheme
+import com.acon.acon.core.navigation.LocalNavController
+import com.acon.acon.core.navigation.route.AreaVerificationRoute
+import com.acon.acon.core.navigation.route.SpotRoute
+import com.acon.acon.core.ui.android.launchPlayStore
+import com.acon.acon.core.ui.compose.LocalDeepLinkHandler
+import com.acon.acon.core.ui.compose.LocalLocation
+import com.acon.acon.core.ui.compose.LocalRequestLocationPermission
+import com.acon.acon.core.ui.compose.LocalRequestSignIn
+import com.acon.acon.core.ui.compose.LocalSnackbarHostState
+import com.acon.acon.core.ui.compose.LocalUserType
 import com.acon.acon.domain.repository.AconAppRepository
 import com.acon.acon.domain.repository.SocialRepository
 import com.acon.acon.domain.repository.UserRepository
-import com.acon.acon.feature.areaverification.AreaVerificationRoute
-import com.acon.acon.feature.spot.SpotRoute
 import com.acon.acon.navigation.AconNavigation
-import com.acon.core.ads_api.AdProvider
-import com.acon.core.ads_api.LocalSpotListAdProvider
-import com.acon.core.analytics.amplitude.AconAmplitude
-import com.acon.core.analytics.constants.EventNames
-import com.acon.feature.ads_impl.SpotListAdProvider
-import com.acon.feature.common.compose.LocalDeepLinkHandler
-import com.acon.feature.common.compose.LocalLocation
-import com.acon.feature.common.compose.LocalNavController
-import com.acon.feature.common.compose.LocalRequestLocationPermission
-import com.acon.feature.common.compose.LocalRequestSignIn
-import com.acon.feature.common.compose.LocalSnackbarHostState
-import com.acon.feature.common.compose.LocalUserType
-import com.acon.feature.common.coroutine.firstNotNull
-import com.acon.feature.common.intent.launchPlayStore
+import com.acon.acon.provider.ads_impl.SpotListAdProvider
+import com.acon.acon.update.AppUpdateHandler
+import com.acon.acon.update.AppUpdateHandlerImpl
+import com.acon.acon.update.UpdateState
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -73,15 +76,12 @@ import com.google.android.gms.location.LocationSettingsRequest
 import com.google.android.gms.location.Priority
 import com.google.android.gms.location.SettingsClient
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
-import com.google.android.play.core.appupdate.AppUpdateOptions
+import com.google.android.play.core.install.InstallState
 import com.google.android.play.core.install.InstallStateUpdatedListener
 import com.google.android.play.core.install.model.ActivityResult
-import com.google.android.play.core.install.model.AppUpdateType
 import com.google.android.play.core.install.model.InstallStatus
-import com.google.android.play.core.install.model.UpdateAvailability
 import dagger.hilt.android.AndroidEntryPoint
 import io.branch.referral.Branch
-import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -124,33 +124,6 @@ class MainActivity : ComponentActivity() {
     private val appUpdateManager by lazy {
         AppUpdateManagerFactory.create(application)
     }
-    private val appUpdateInfo = flow {
-        emit(appUpdateManager.appUpdateInfo.await())
-    }.stateIn(
-        scope = lifecycleScope,
-        started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = null
-    )
-
-    private val appInstallStateListener by lazy {
-        InstallStateUpdatedListener { state ->
-            if (state.installStatus() == InstallStatus.DOWNLOADED) {
-                lifecycleScope.launch {
-                    val result = viewModel.state.value.snackbarHostState.showSnackbar(
-                        message = getString(R.string.update_complete),
-                        actionLabel = getString(R.string.restart)
-                    )
-                    when (result) {
-                        SnackbarResult.ActionPerformed -> {
-                            appUpdateManager.completeUpdate()
-                        }
-
-                        SnackbarResult.Dismissed -> Unit
-                    }
-                }
-            }
-        }
-    }
     private val appUpdateActivityResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
             if (result.resultCode == RESULT_OK) {   // Immediate에서는 받을 일 없음
@@ -161,6 +134,42 @@ class MainActivity : ComponentActivity() {
                 Timber.d("업데이트 실패")
             }
         }
+
+    private val appInstallStateListener by lazy {
+        object: InstallStateUpdatedListener {
+            override fun onStateUpdate(state: InstallState) {
+                if (state.installStatus() == InstallStatus.DOWNLOADED) {
+                    lifecycleScope.launch {
+                        val result = viewModel.state.value.snackbarHostState.showSnackbar(
+                            message = getString(R.string.update_complete),
+                            actionLabel = getString(R.string.restart)
+                        )
+                        when (result) {
+                            SnackbarResult.ActionPerformed -> {
+                                appUpdateManager.completeUpdate()
+                            }
+
+                            SnackbarResult.Dismissed -> Unit
+                        }
+                    }
+                } else if (state.installStatus() == InstallStatus.INSTALLED) {
+                    appUpdateManager.unregisterListener(this)
+                }
+            }
+        }
+    }
+
+    private val appUpdateHandler: AppUpdateHandler by lazy {
+        AppUpdateHandlerImpl(
+            appUpdateManager = appUpdateManager.apply {
+                registerListener(appInstallStateListener)
+            },
+            aconAppRepository = aconAppRepository,
+            appUpdateActivityResultLauncher = appUpdateActivityResultLauncher,
+            application = this.application,
+            scope = lifecycleScope
+        )
+    }
 
     private val _isLocationPermissionGranted = MutableStateFlow(false)
     private val isLocationPermissionGranted = flow {
@@ -274,10 +283,6 @@ class MainActivity : ComponentActivity() {
             }
         }.withData(intent?.data).init()
 
-        if (BuildConfig.DEBUG) {
-            Timber.plant(Timber.DebugTree())
-        }
-
         val windowInsetsController = WindowCompat.getInsetsController(window, window.decorView)
         windowInsetsController.isAppearanceLightStatusBars = false
 
@@ -285,29 +290,15 @@ class MainActivity : ComponentActivity() {
 
 
         lifecycleScope.launch {
-            val shouldUpdateAppDeferred = lifecycleScope.async {
-                val currentAppVersion = try {
-                    val packageInfo =
-                        application.packageManager.getPackageInfo(application.packageName, 0)
-                    packageInfo.versionName
-                } catch (e: Exception) {
-                    null
+            val updateState = appUpdateHandler.getUpdateState()
+            when(updateState) {
+                UpdateState.FORCE -> {
+                    viewModel.shouldUpdate()
                 }
-                currentAppVersion?.let { v ->
-                    aconAppRepository.shouldUpdateApp(v).getOrElse { false }
+                UpdateState.OPTIONAL -> {
+                    viewModel.canOptionalUpdate()
                 }
-            }
-
-            appUpdateInfo.firstNotNull().let { updateInfo ->
-                if (updateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE) {
-                    if (shouldUpdateAppDeferred.await() == true) { // 2. 강제 업데이트 (스토어 이동)
-                        viewModel.shouldUpdate()
-                    } else if (updateInfo.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE)) { // 3. 선택적 업데이트 (인앱)
-                        viewModel.canOptionalUpdate()
-                    } else if (updateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)) {  // 1. 강제 업데이트 (인앱)
-                        // Not used
-                    }
-                }
+                UpdateState.NONE -> Unit
             }
         }
 
@@ -369,7 +360,6 @@ class MainActivity : ComponentActivity() {
                                                     eventName = EventNames.GUEST,
                                                     property = appState.propertyKey to true
                                                 )
-                                                Timber.d("dddd  " + appState.propertyKey)
                                             }
                                             AconAmplitude.setUserId(it.externalUUID)
                                         }.onFailure {
@@ -468,11 +458,7 @@ class MainActivity : ComponentActivity() {
                     viewModel.dismissOptionalUpdateModal()
                 }, onAction2 = {
                     viewModel.dismissOptionalUpdateModal()
-                    appUpdateManager.startUpdateFlowForResult(
-                        appUpdateInfo.value ?: return@AconTwoActionDialog,
-                        appUpdateActivityResultLauncher,
-                        AppUpdateOptions.defaultOptions(AppUpdateType.FLEXIBLE)
-                    )
+                    appUpdateHandler.startFlexibleUpdate()
                 }, onDismissRequest = {
                     viewModel.dismissOptionalUpdateModal()
                 }

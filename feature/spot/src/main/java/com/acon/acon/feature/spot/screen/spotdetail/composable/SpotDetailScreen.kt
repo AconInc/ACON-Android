@@ -52,18 +52,17 @@ import com.acon.acon.core.designsystem.effect.imageGradientLayer
 import com.acon.acon.core.designsystem.image.rememberDefaultLoadImageErrorPainter
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.domain.type.UserType
 import com.acon.acon.feature.spot.screen.component.OperationDot
 import com.acon.acon.feature.spot.screen.spotdetail.createBranchDeepLink
 import com.acon.acon.feature.spot.screen.spotlist.composable.SpotDetailLoadingView
-import com.acon.core.analytics.amplitude.AconAmplitude
-import com.acon.core.analytics.constants.EventNames
-import com.acon.core.analytics.constants.PropertyKeys
-import com.acon.feature.common.compose.LocalDeepLinkHandler
-import com.acon.feature.common.compose.LocalOnRetry
-import com.acon.feature.common.compose.LocalRequestSignIn
-import com.acon.feature.common.compose.LocalUserType
-import com.acon.feature.common.compose.getTextSizeDp
+import com.acon.acon.core.analytics.amplitude.AconAmplitude
+import com.acon.acon.core.analytics.constants.EventNames
+import com.acon.acon.core.analytics.constants.PropertyKeys
+import com.acon.acon.core.ui.compose.LocalDeepLinkHandler
+import com.acon.acon.core.ui.compose.LocalOnRetry
+import com.acon.acon.core.ui.compose.LocalRequestSignIn
+import com.acon.acon.core.ui.compose.LocalUserType
+import com.acon.acon.core.ui.compose.getTextSizeDp
 import dev.chrisbanes.haze.hazeSource
 import okhttp3.internal.immutableListOf
 
@@ -127,7 +126,7 @@ internal fun SpotDetailScreen(
                 if (state.isAreaVerified) {
                     deepLinkHandler.clear()
                     onNavigateToBack()
-                } else if (deepLinkHandler.hasDeepLink.value && userType == UserType.USER) {
+                } else if (deepLinkHandler.hasDeepLink.value && userType == com.acon.acon.core.model.type.UserType.USER) {
                     deepLinkHandler.clear()
                     onBackToAreaVerification()
                 } else {
@@ -256,7 +255,7 @@ internal fun SpotDetailScreen(
                                     if (state.isAreaVerified) {
                                         deepLinkHandler.clear()
                                         onNavigateToBack()
-                                    } else if (deepLinkHandler.hasDeepLink.value && userType == UserType.USER) {
+                                    } else if (deepLinkHandler.hasDeepLink.value && userType == com.acon.acon.core.model.type.UserType.USER) {
                                         deepLinkHandler.clear()
                                         onBackToAreaVerification()
                                     } else {
@@ -411,14 +410,14 @@ internal fun SpotDetailScreen(
                                 }
                             },
                             onClickBookmark = {
-                                if (userType == UserType.GUEST) {
+                                if (userType == com.acon.acon.core.model.type.UserType.GUEST) {
                                     onSignInRequired("")
                                     deepLinkHandler.clear()
                                 } else {
                                     onClickBookmark()
                                 }
                             },
-                            isBookmarkSelected = if (userType == UserType.GUEST) false else state.spotDetail.isSaved,
+                            isBookmarkSelected = if (userType == com.acon.acon.core.model.type.UserType.GUEST) false else state.spotDetail.isSaved,
                             isMenuBoardEnabled = state.spotDetail.hasMenuboardImage
                         )
                     }

@@ -4,12 +4,13 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.longPreferencesKey
+import com.acon.acon.data.di.AconAppDataStore
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class AconAppLocalDataSource @Inject constructor(
-    private val dataStore: DataStore<Preferences>
+    @AconAppDataStore private val dataStore: DataStore<Preferences>
 ) {
 
     suspend fun setUpdatePostponeTime(time: Long) {

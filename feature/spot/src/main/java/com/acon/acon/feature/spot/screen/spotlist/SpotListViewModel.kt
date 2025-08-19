@@ -4,27 +4,34 @@ import android.content.Context
 import android.location.Location
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.util.fastForEach
+import androidx.lifecycle.viewModelScope
+import com.acon.acon.core.analytics.amplitude.AconAmplitude
+import com.acon.acon.core.analytics.constants.EventNames
+import com.acon.acon.core.analytics.constants.PropertyKeys
+import com.acon.acon.core.model.model.spot.Condition
+import com.acon.acon.core.model.model.spot.Filter
+import com.acon.acon.core.model.model.spot.Spot
+import com.acon.acon.core.model.model.spot.SpotList
+import com.acon.acon.core.model.type.CafeFilterType
+import com.acon.acon.core.model.type.CategoryType
+import com.acon.acon.core.model.type.RestaurantFilterType
+import com.acon.acon.core.model.type.SpotType
+import com.acon.acon.core.model.type.TagType
+import com.acon.acon.core.model.type.TransportMode
+import com.acon.acon.core.model.type.UserActionType
+import com.acon.acon.core.model.type.UserType
+import com.acon.acon.core.ui.android.NavigationAppHandler
+import com.acon.acon.core.ui.android.isInKorea
+import com.acon.acon.core.ui.base.BaseContainerHost
 import com.acon.acon.domain.error.spot.FetchSpotListError
-import com.acon.acon.domain.model.spot.Condition
-import com.acon.acon.domain.model.spot.Filter
-import com.acon.acon.domain.model.spot.v2.Spot
-import com.acon.acon.domain.model.spot.v2.SpotList
+import com.acon.acon.domain.repository.ProfileRepository
 import com.acon.acon.domain.repository.SpotRepository
-import com.acon.acon.domain.type.CafeFilterType
-import com.acon.acon.domain.type.CategoryType
-import com.acon.acon.domain.type.RestaurantFilterType
-import com.acon.acon.domain.type.SpotType
-import com.acon.acon.domain.type.TagType
-import com.acon.acon.domain.type.TransportMode
+import com.acon.acon.domain.repository.TimeRepository
+import com.acon.acon.domain.usecase.IsCooldownExpiredUseCase
 import com.acon.acon.domain.usecase.IsDistanceExceededUseCase
-import com.acon.core.analytics.amplitude.AconAmplitude
-import com.acon.core.analytics.constants.EventNames
-import com.acon.core.analytics.constants.PropertyKeys
-import com.acon.feature.common.base.BaseContainerHost
-import com.acon.feature.common.intent.NavigationAppHandler
-import com.acon.feature.common.location.isInKorea
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.viewmodel.container
@@ -36,7 +43,10 @@ import kotlin.reflect.KClass
 class SpotListViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val spotRepository: SpotRepository,
-    private val isDistanceExceededUseCase: IsDistanceExceededUseCase
+    private val profileRepository: ProfileRepository,
+    private val timeRepository: TimeRepository,
+    private val isDistanceExceededUseCase: IsDistanceExceededUseCase,
+    private val isCooldownExpiredUseCase: IsCooldownExpiredUseCase
 ) : BaseContainerHost<SpotListUiStateV2, SpotListSideEffectV2>() {
 
     override val container =
@@ -66,13 +76,23 @@ class SpotListViewModel @Inject constructor(
             runOn<SpotListUiStateV2.Loading> {
                 initialLocation = location
                 if (location.isInKorea(context)) {
-                    fetchSpotList(location, Condition(state.selectedSpotType, emptyList())) {
+                    var showAreaVerificationModal = false
+                    if (isCooldownExpiredUseCase(UserActionType.SKIP_AREA_VERIFICATION, 24 * 60 * 60) && userType.value != UserType.GUEST)
+                        showAreaVerificationModal =
+                            profileRepository.fetchVerifiedAreaList().takeIf { it.isSuccess }?.getOrNull()?.isEmpty() == true
+                    fetchSpotList(location,
+                        Condition(
+                            state.selectedSpotType,
+                            emptyList()
+                        )
+                    ) {
                         SpotListUiStateV2.Success(
                             transportMode = it.transportMode,
                             spotList = it.spots,
                             headTitle = "최고의 선택.",
                             selectedSpotType = state.selectedSpotType,
-                            currentLocation = location
+                            currentLocation = location,
+                            showAreaVerificationModal = showAreaVerificationModal
                         )
                     }
                 } else {
@@ -322,12 +342,22 @@ class SpotListViewModel @Inject constructor(
             }
         )
     }
+
+    fun onDismissAreaVerificationModal() = intent {
+        runOn<SpotListUiStateV2.Success> {
+            timeRepository.saveUserActionTime(UserActionType.SKIP_AREA_VERIFICATION, System.currentTimeMillis())
+            reduce {
+                state.copy(showAreaVerificationModal = false)
+            }
+        }
+    }
 }
 
 sealed interface SpotListUiStateV2 {
     val selectedSpotType: SpotType
     val selectedRestaurantFilters: Map<FilterDetailKey, Set<RestaurantFilterType>>
     val selectedCafeFilters: Map<FilterDetailKey, Set<CafeFilterType>>
+    val showAreaVerificationModal: Boolean
 
     @Immutable
     data class Success(
@@ -340,25 +370,29 @@ sealed interface SpotListUiStateV2 {
         override val selectedCafeFilters: Map<FilterDetailKey, Set<CafeFilterType>> = emptyMap(),
         val showFilterModal: Boolean = false,
         val showRefreshPopup: Boolean = false,
-        val showChooseNavigationAppModal: Boolean = false
+        val showChooseNavigationAppModal: Boolean = false,
+        override val showAreaVerificationModal: Boolean = false
     ) : SpotListUiStateV2
 
     data class Loading(
         override val selectedSpotType: SpotType,
         override val selectedRestaurantFilters: Map<FilterDetailKey, Set<RestaurantFilterType>> = emptyMap(),
         override val selectedCafeFilters: Map<FilterDetailKey, Set<CafeFilterType>> = emptyMap(),
+        override val showAreaVerificationModal: Boolean = false
     ) : SpotListUiStateV2
 
     data class LoadFailed(
         override val selectedSpotType: SpotType,
         override val selectedRestaurantFilters: Map<FilterDetailKey, Set<RestaurantFilterType>> = emptyMap(),
         override val selectedCafeFilters: Map<FilterDetailKey, Set<CafeFilterType>> = emptyMap(),
+        override val showAreaVerificationModal: Boolean = false
     ) : SpotListUiStateV2
 
     data class OutOfServiceArea(
         override val selectedSpotType: SpotType,
         override val selectedRestaurantFilters: Map<FilterDetailKey, Set<RestaurantFilterType>> = emptyMap(),
         override val selectedCafeFilters: Map<FilterDetailKey, Set<CafeFilterType>> = emptyMap(),
+        override val showAreaVerificationModal: Boolean = false
     ) : SpotListUiStateV2
 }
 

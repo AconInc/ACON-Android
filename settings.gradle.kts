@@ -29,8 +29,6 @@ include(":app")
 
 include(
     ":core:designsystem",
-    ":core:utils:feature",
-    ":core:utils:feature",
     ":core:common",
     ":core:map"
 )
@@ -48,6 +46,9 @@ include(":domain")
 include(":feature:profile")
 include(":feature:settings")
 include(":core:analytics")
-include(":feature:common")
 include(":core:ads-api")
-include(":feature:ads-impl")
+include(":core:ui")
+include(":core:model")
+include(":core:navigation")
+include(":provider:ads-impl")
+include(":core:launcher")

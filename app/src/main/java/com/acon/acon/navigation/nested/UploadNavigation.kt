@@ -4,6 +4,8 @@ import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraphBuilder
@@ -14,12 +16,14 @@ import androidx.navigation.toRoute
 import com.acon.acon.core.designsystem.animation.bottomUpEnterTransition
 import com.acon.acon.core.designsystem.animation.topDownExitTransition
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.feature.spot.SpotRoute
-import com.acon.acon.feature.upload.UploadRoute
+import com.acon.acon.core.navigation.route.SpotRoute
+import com.acon.acon.core.navigation.route.UploadRoute
+import com.acon.acon.core.navigation.type.simpleSpotNavType
+import com.acon.acon.feature.upload.screen.composable.add.UploadPlaceScreen
 import com.acon.acon.feature.upload.screen.composable.complete.UploadCompleteScreenContainer
+import com.acon.acon.feature.upload.screen.composable.menu.UploadEnterMenuScreenContainer
 import com.acon.acon.feature.upload.screen.composable.review.UploadReviewScreenContainer
 import com.acon.acon.feature.upload.screen.composable.search.UploadSearchScreenContainer
-import com.acon.feature.common.navigation.simpleSpotNavType
 
 internal fun NavGraphBuilder.uploadNavigation(
     navController: NavHostController
@@ -38,15 +42,32 @@ internal fun NavGraphBuilder.uploadNavigation(
                 topDownExitTransition()
             }
         ) {
-
             UploadSearchScreenContainer(
+                onNavigateBack = navController::popBackStack,
+                onNavigateToEnterMenu = { spot ->
+                    navController.navigate(UploadRoute.EnterMenu(spot))
+                },
+                onNavigateToPlace = {
+                    navController.navigate(UploadRoute.Place)
+                },
+                modifier = Modifier
+                    .background(AconTheme.color.Gray900)
+                    .systemBarsPadding()
+                    .fillMaxSize()
+            )
+        }
+
+        composable<UploadRoute.EnterMenu>(
+            typeMap = mapOf(simpleSpotNavType)
+        ) {
+            UploadEnterMenuScreenContainer(
                 onNavigateBack = navController::popBackStack,
                 onNavigateToReview = { spot ->
                     navController.navigate(UploadRoute.Review(spot))
                 },
                 modifier = Modifier
                     .background(AconTheme.color.Gray900)
-                    .systemBarsPadding()
+                    .statusBarsPadding()
                     .fillMaxSize()
             )
         }
@@ -89,6 +110,26 @@ internal fun NavGraphBuilder.uploadNavigation(
                     .background(AconTheme.color.Gray900)
                     .systemBarsPadding()
                     .fillMaxSize()
+            )
+        }
+
+        composable<UploadRoute.Place>(
+            exitTransition = {
+                ExitTransition.None
+            }
+        ) {
+            UploadPlaceScreen(
+                onNavigateHome = {
+                    navController.navigate(SpotRoute.Graph) {
+                        popUpTo(UploadRoute.Search) {
+                            inclusive = true
+                        }
+                    }
+                },
+                modifier = Modifier
+                    .background(AconTheme.color.Gray900)
+                    .fillMaxSize()
+                    .navigationBarsPadding()
             )
         }
     }

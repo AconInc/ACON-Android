@@ -4,18 +4,14 @@ import android.location.Location
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
-import com.acon.acon.domain.model.spot.SpotDetail
+import com.acon.acon.core.analytics.amplitude.AconAmplitude
+import com.acon.acon.core.analytics.constants.EventNames
+import com.acon.acon.core.analytics.constants.PropertyKeys
+import com.acon.acon.core.navigation.route.SpotRoute
+import com.acon.acon.core.navigation.type.spotNavigationParameterNavType
+import com.acon.acon.core.ui.base.BaseContainerHost
+import com.acon.acon.domain.repository.ProfileRepository
 import com.acon.acon.domain.repository.SpotRepository
-import com.acon.acon.domain.repository.UserRepository
-import com.acon.acon.domain.type.TagType
-import com.acon.acon.domain.type.TransportMode
-import com.acon.acon.domain.type.UserType
-import com.acon.acon.feature.spot.SpotRoute
-import com.acon.core.analytics.amplitude.AconAmplitude
-import com.acon.core.analytics.constants.EventNames
-import com.acon.core.analytics.constants.PropertyKeys
-import com.acon.feature.common.base.BaseContainerHost
-import com.acon.feature.common.navigation.spotNavigationParameterNavType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
@@ -27,8 +23,8 @@ import javax.inject.Inject
 @OptIn(OrbitExperimental::class)
 @HiltViewModel
 class SpotDetailViewModel @Inject constructor(
-    private val userRepository: UserRepository,
     private val spotRepository: SpotRepository,
+    private val profileRepository: ProfileRepository,
     savedStateHandle: SavedStateHandle
 ) : BaseContainerHost<SpotDetailUiState, SpotDetailSideEffect>() {
 
@@ -49,7 +45,7 @@ class SpotDetailViewModel @Inject constructor(
         container<SpotDetailUiState, SpotDetailSideEffect>(SpotDetailUiState.Loading) {
             userType.collect {
                 when (it) {
-                    UserType.GUEST -> {
+                    com.acon.acon.core.model.type.UserType.GUEST -> {
                         if (spotNavData.isFromDeepLink == true) {
                             fetchedSpotDetail()
                         } else {
@@ -86,8 +82,8 @@ class SpotDetailViewModel @Inject constructor(
 
         // GUEST 인 경우 빈 리스트
         val verifiedAreaListDeferred = viewModelScope.async {
-            if (userType.value != UserType.GUEST) {
-                userRepository.fetchVerifiedAreaList()
+            if (userType.value != com.acon.acon.core.model.type.UserType.GUEST) {
+                profileRepository.fetchVerifiedAreaList()
             } else {
                 Result.success(emptyList())
             }
@@ -225,7 +221,7 @@ class SpotDetailViewModel @Inject constructor(
                             longitude = state.spotDetail.longitude
                         },
                         destinationName = state.spotDetail.name,
-                        transportMode = state.transportMode ?: TransportMode.WALKING,
+                        transportMode = state.transportMode ?: com.acon.acon.core.model.type.TransportMode.WALKING,
                         isPublic = false
                     )
                 )
@@ -278,30 +274,30 @@ sealed interface SpotDetailUiState {
     @Immutable
     data class Success(
         val isAreaVerified: Boolean = false,
-        val tags: List<TagType>? = emptyList(),
-        val transportMode: TransportMode? = TransportMode.WALKING,
+        val tags: List<com.acon.acon.core.model.type.TagType>? = emptyList(),
+        val transportMode: com.acon.acon.core.model.type.TransportMode? = com.acon.acon.core.model.type.TransportMode.WALKING,
         val eta: Int? = 0,
         val isFromDeepLink: Boolean? = false,
         val navFromProfile: Boolean? = null,
-        val spotDetail: SpotDetail,
+        val spotDetail: com.acon.acon.core.model.model.spot.SpotDetail,
         val menuBoardList: List<String> = emptyList(),
         val menuBoardListLoad: Boolean = false,
         val showMenuBoardDialog: Boolean = false,
         val showReportErrorModal: Boolean = false,
         val showFindWayModal: Boolean = false
     ) : SpotDetailUiState {
-        val storeTags: List<TagType>
+        val storeTags: List<com.acon.acon.core.model.type.TagType>
             get() = if (navFromProfile == true || isFromDeepLink == true) {
                 runCatching {
-                    spotDetail.tagList.map { TagType.valueOf(it) }
+                    spotDetail.tagList.map { com.acon.acon.core.model.type.TagType.valueOf(it) }
                 }.getOrElse { emptyList() }
             } else {
                 tags ?: emptyList()
             }
 
         fun getTransportLabel(): String = when (transportMode) {
-            TransportMode.WALKING -> "도보"
-            TransportMode.BIKING -> "자전거"
+            com.acon.acon.core.model.type.TransportMode.WALKING -> "도보"
+            com.acon.acon.core.model.type.TransportMode.BIKING -> "자전거"
             else -> ""
         }
     }
@@ -318,7 +314,7 @@ sealed interface SpotDetailSideEffect {
         val destination: Location,
         val destinationName: String,
         val isPublic: Boolean,
-        val transportMode: TransportMode? = null
+        val transportMode: com.acon.acon.core.model.type.TransportMode? = null
     ) : SpotDetailSideEffect
 
     data object ShowErrorToast : SpotDetailSideEffect

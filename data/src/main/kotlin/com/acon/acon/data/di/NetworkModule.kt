@@ -3,6 +3,8 @@ package com.acon.acon.data.di
 import com.acon.acon.core.common.Auth
 import com.acon.acon.core.common.Naver
 import com.acon.acon.core.common.NaverAuthInterceptor
+import com.acon.acon.core.common.NaverDevelopers
+import com.acon.acon.core.common.NaverDevelopersAuthInterceptor
 import com.acon.acon.core.common.NoAuth
 import com.acon.acon.core.common.TokenInterceptor
 import com.acon.acon.core.common.UrlConstants
@@ -47,6 +49,26 @@ internal object NetworkModule {
                     })
                 }
             }.addInterceptor(naverAuthInterceptor)
+            .build()
+    }
+
+    @NaverDevelopers
+    @Singleton
+    @Provides
+    fun provideNaverDevelopersClient(
+        @NaverDevelopersAuthInterceptor naverDevelopersAuthInterceptor: Interceptor,
+    ): OkHttpClient {
+        return OkHttpClient.Builder()
+            .connectTimeout(30, TimeUnit.SECONDS)
+            .readTimeout(30, TimeUnit.SECONDS)
+            .writeTimeout(30, TimeUnit.SECONDS)
+            .apply {
+                if (BuildConfig.DEBUG) {
+                    addInterceptor(HttpLoggingInterceptor().apply {
+                        level = HttpLoggingInterceptor.Level.BODY
+                    })
+                }
+            }.addInterceptor(naverDevelopersAuthInterceptor)
             .build()
     }
 
@@ -100,6 +122,20 @@ internal object NetworkModule {
         val json = Json { ignoreUnknownKeys = true }
         return Retrofit.Builder()
             .baseUrl(UrlConstants.NAVER_OPEN_API)
+            .client(client)
+            .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
+            .build()
+    }
+
+    @NaverDevelopers
+    @Singleton
+    @Provides
+    fun provideNaverDevelopersRetrofit(
+        @NaverDevelopers client: OkHttpClient
+    ): Retrofit {
+        val json = Json { ignoreUnknownKeys = true }
+        return Retrofit.Builder()
+            .baseUrl(UrlConstants.NAVER_DEVELOPERS_OPEN_API)
             .client(client)
             .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
             .build()
@@ -162,6 +198,19 @@ internal object NetworkModule {
             val newRequest: Request = chain.request().newBuilder()
                 .addHeader("x-ncp-apigw-api-key-id", BuildConfig.NAVER_CLIENT_ID)
                 .addHeader("x-ncp-apigw-api-key", BuildConfig.NAVER_CLIENT_SECRET)
+                .build()
+            chain.proceed(newRequest)
+        }
+    }
+
+    @NaverDevelopersAuthInterceptor
+    @Provides
+    @Singleton
+    fun provideNaverDevelopersAuthInterceptor() : Interceptor {
+        return Interceptor { chain: Interceptor.Chain ->
+            val newRequest: Request = chain.request().newBuilder()
+                .addHeader("X-Naver-Client-Id", BuildConfig.NAVER_DEVELOPERS_CLIENT_ID)
+                .addHeader("X-Naver-Client-Secret", BuildConfig.NAVER_DEVELOPERS_CLIENT_SECRET)
                 .build()
             chain.proceed(newRequest)
         }

@@ -1,19 +1,16 @@
 package com.acon.acon.domain.error.profile
 
-import com.acon.acon.domain.error.ErrorFactory
 import com.acon.acon.domain.error.RootError
 
-sealed class SaveSpotError : RootError() {
+open class SaveSpotError : RootError() {
 
-    class NotExistSpot : ValidateNicknameError() {
+    class NotExistSpot : SaveSpotError() {
         override val code: Int = 40403
     }
 
-    companion object : ErrorFactory {
-        override fun createErrorInstances(): Array<RootError> {
-            return arrayOf(
-                NotExistSpot(),
-            )
-        }
+    final override fun createErrorInstances(): Array<RootError> {
+        return arrayOf(
+            NotExistSpot(),
+        )
     }
 }

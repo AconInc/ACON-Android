@@ -38,8 +38,8 @@ import com.acon.acon.feature.profile.composable.screen.bookmark.BookmarkUiState
 import com.acon.acon.feature.profile.composable.screen.mockSpotList
 import com.acon.acon.feature.profile.composable.screen.profile.composable.BookmarkItem
 import com.acon.acon.feature.profile.composable.screen.profile.composable.BookmarkSkeletonItem
-import com.acon.feature.common.compose.LocalOnRetry
-import com.acon.feature.common.compose.getScreenHeight
+import com.acon.acon.core.ui.compose.LocalOnRetry
+import com.acon.acon.core.ui.compose.getScreenHeight
 import dev.chrisbanes.haze.hazeSource
 
 @Composable

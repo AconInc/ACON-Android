@@ -1,11 +1,10 @@
 package com.acon.acon.domain.repository
 
-import com.acon.acon.domain.model.area.LegalArea
-import com.acon.acon.domain.model.profile.SavedSpot
-import com.acon.acon.domain.model.spot.Condition
-import com.acon.acon.domain.model.spot.MenuBoardList
-import com.acon.acon.domain.model.spot.SpotDetail
-import com.acon.acon.domain.model.spot.v2.SpotList
+import com.acon.acon.core.model.model.profile.SavedSpot
+import com.acon.acon.core.model.model.spot.Condition
+import com.acon.acon.core.model.model.spot.MenuBoardList
+import com.acon.acon.core.model.model.spot.SpotDetail
+import com.acon.acon.core.model.model.spot.SpotList
 
 interface SpotRepository {
 
@@ -23,11 +22,6 @@ interface SpotRepository {
         spotId: Long,
         isDeepLink: Boolean,
     ): Result<SpotDetail>
-
-    suspend fun getLegalDong(
-        latitude: Double,
-        longitude: Double,
-    ): Result<LegalArea>
 
     suspend fun fetchMenuBoards(
         spotId: Long

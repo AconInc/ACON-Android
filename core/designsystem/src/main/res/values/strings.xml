@@ -8,9 +8,15 @@
     <string name="done">완료</string>
     <string name="exit">나가기</string>
     <string name="save">저장</string>
+    <string name="remove">삭제</string>
     <string name="select">선택</string>
     <string name="submit">제출하기</string>
+    <string name="end">끝내기</string>
+    <string name="quit">그만두기</string>
+    <string name="report">제보하기</string>
     <string name="continue_writing">계속 작성</string>
+    <string name="next">다음</string>
+    <string name="previous">이전</string>
     <string name="title_spot">추천</string>
     <string name="title_upload">업로드</string>
     <string name="title_profile">프로필</string>
@@ -23,6 +29,12 @@
     <string name="ellipsis">…</string>
     <string name="fail_to_load_image">이미지 로딩에 실패했어요</string>
     <string name="top">Top %d</string>
+    <string name="do_next">다음에 하기</string>
+    <string name="go_home">홈으로 가기</string>
+
+    <!-- label -->
+    <string name="slide_up_offset">slide_up_offset</string>
+    <string name="slide_up_alpha">slide_up_alpha</string>
 
     <!-- Etc -->
     <string name="restart">마무리 하기</string>
@@ -70,6 +82,9 @@
     <string name="content_description_invalid_language">지원하지 않는 언어</string>
     <string name="content_description_invalid_birthday">잘못된 생년월일</string>
     <string name="content_description_delete_area">인증 지역 삭제</string>
+    <string name="content_description_select_upload_place_image">선택한 업로드할 가게 사진</string>
+    <string name="content_description_upload_place_image">장소 사진 등록</string>
+    <string name="content_description_delete_uploaded_place_image">등록한 장소 사진 삭제</string>
 
     <!-- SignIn BottomSheet -->
     <string name="sign_in_bottom_sheet_title">Acon에 로그인</string>
@@ -87,6 +102,7 @@
     <string name="location_unsupported_area_content">문제가 발생했습니다.\n나중에 다시 시도해주세요.</string>
     <string name="location_permission_denied_title">\'Acon\'에 대한 위치접근\n권한이 없습니다.</string>
     <string name="location_permission_denied_content">설정에서 위치접근 권한을 허용해주세요.</string>
+    <string name="remove_upload_place_image_title">사진을 삭제 하시겠습니까?</string>
 
     <!-- SignIn -->
     <string name="signin_logo_title_content_description">acon 로고 이미지</string>
@@ -97,6 +113,11 @@
     <string name="sign_in_failed_toast">로그인에 실패했습니다.</string>
 
     <!-- AreaVerification -->
+    <string name="go_to_area_verification">지역 인증하러 가기</string>
+    <string name="request_area_verification_title">내 지역을 인증해 주세요!</string>
+    <string name="request_area_verification_content">내 지역에 남긴 리뷰는 로컬리뷰로 인정되어\n더 많은 사람들에게 추천돼요</string>
+    <string name="alert_about_skip_area_verification">현재 내 지역에 안 계시면 건너뛰기를 해주세요 </string>
+    <string name="skip_area_verification">건너뛰기</string>
     <string name="area_verification_settings">settings</string>
     <string name="area_verification_topbar">지역인증</string>
     <string name="area_verification_main_title">믿을 수 있는 리뷰를 위해\n지역인증이 필요해요</string>
@@ -179,12 +200,11 @@
 
     <!-- Upload -->
     <string name="close_upload">리뷰 그만두기</string>
-    <string name="next">다음</string>
     <string name="search_spot_placeholder">장소를 입력해주세요</string>
     <string name="no_search_result">앗… 검색 결과가 없어요</string>
     <string name="request_new_spot_description1">현재 장소를 바로 등록할 수 있어요</string>
     <string name="request_new_spot_description2">더욱 더 정확하게 추천이 가능해요</string>
-    <string name="go_to_register_spot">5초만에 등록하러 가기</string>
+    <string name="go_to_register_spot">장소 직접 등록하기</string>
     <string name="introduce_drop_acorn">도토리를 떨어트려 리뷰를 남겨 볼까요?</string>
     <string name="introduce_click_acorn">도토리를 선택해보세요</string>
     <string name="complete_drop_acorn">도토리로 리뷰 남기기</string>
@@ -194,6 +214,39 @@
     <string name="failed_verify_location">위치 인식 실패</string>
     <string name="failed_verify_location_description">현재 위치와 리뷰 등록 장소가\n오차범위 밖에 있습니다.\n좀 더 가까이 이동해보세요.</string>
     <string name="failed_verify_location_not_in_korea_description">문제가 발생했습니다. 나중에 다시 시도해주세요.</string>
+
+    <!-- Upload Place -->
+    <string name="upload_process_step_transition">upload_process_step_transition</string>
+    <string name="upload_place_exit">여기서 그만두면\n작성중인 내용이 사라져요</string>
+    <string name="upload_place_topbar">장소 등록</string>
+    <string name="required_field">필수 입력</string>
+    <string name="optional_field">선택 입력</string>
+    <string name="upload_place_search_title">등록하고 싶은 장소를\n검색해 주세요</string>
+    <string name="upload_place_search_placeholder">장소 찾기</string>
+    <string name="upload_place_select_place_title">이곳은 식당인가요?\n카페인가요?</string>
+    <string name="upload_place_select_place_sub_title">브런치는 카페로 분류해요!</string>
+    <string name="upload_place_select_cafe_title">여긴 어떤 카페인가요?</string>
+    <string name="upload_place_select_cafe_sub_title">중복선택이 가능해요</string>
+    <string name="upload_place_select_cafe_option1">네, 작업하기 좋아요</string>
+    <string name="upload_place_select_cafe_option2">아니요, 그저 그래요</string>
+    <string name="upload_place_select_restaurant_title">여긴 어떤 식당인가요??</string>
+    <string name="upload_place_select_restaurant_cafe">작업하기 좋은 카페인가요?</string>
+    <string name="upload_place_select_price_title">가성비는 어떤 편인가요?</string>
+    <string name="upload_place_select_price_option_1">가성비 최고예요</string>
+    <string name="upload_place_select_price_option_2">보통이에요</string>
+    <string name="upload_place_select_price_option_3">가성비 별로예요</string>
+    <string name="upload_place_image_title">식당 사진을 등록할 수 있어요</string>
+    <string name="upload_place_complete_title">새로운 장소를 등록했어요</string>
+    <string name="upload_place_complete_sub_title">등록한 장소는 검토 후 반영돼요</string>
+    <string name="upload_place_enter_menu_title">추천하는\n메뉴를 알려주세요</string>
+    <string name="upload_place_enter_menu_placeholder">메뉴를 입력해주세요</string>
+    <string name="upload_place_no_search_result">검색결과가 없습니다.</string>
+    <string name="upload_place_no_search_try_again">확인 후 다시 입력해주세요.</string>
+    <string name="upload_place_limit_dialog_title">장소 등록 마감</string>
+    <string name="upload_place_limit_dialog_content">오늘 너무 많은 장소가 등록돼서\n새로운 장소 등록이 불가능해요.\nAcon Instargram을 통해 제보할 수 있어요.</string>
+    <string name="upload_place_image_limit_toast">이미지는 최대 10장까지 넣을 수 있어요</string>
+    <string name="failed_upload_place">장소 등록에 실패했어요</string>
+    <string name="failed_upload_place_image">장소 이미지 등록에 실패했어요</string>
 
     <!-- Onboarding -->
     <string name="request_dislike_food_title">싫어하는 음식을\n알려줄 수 있나요?</string>

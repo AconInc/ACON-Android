@@ -45,17 +45,13 @@ import com.acon.acon.core.designsystem.effect.effect.shadowLayerBackground
 import com.acon.acon.core.designsystem.effect.effect.getOverlayColor
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.domain.model.spot.v2.Spot
-import com.acon.acon.domain.type.TransportMode
-import com.acon.acon.domain.type.UserType
 import com.acon.acon.feature.spot.screen.spotlist.SpotListUiStateV2
-import com.acon.core.ads_api.LocalSpotListAdProvider
-import com.acon.feature.common.compose.LocalRequestSignIn
-import com.acon.feature.common.compose.toDp
-import com.acon.feature.common.intent.GoogleNavigationAppHandler
-import com.acon.feature.common.intent.KakaoNavigationAppHandler
-import com.acon.feature.common.intent.NaverNavigationAppHandler
-import com.acon.feature.common.intent.NavigationAppHandler
+import com.acon.acon.core.ads_api.LocalSpotListAdProvider
+import com.acon.acon.core.ui.compose.LocalRequestSignIn
+import com.acon.acon.core.ui.compose.toDp
+import com.acon.acon.core.ui.android.KakaoNavigationAppHandler
+import com.acon.acon.core.ui.android.NaverNavigationAppHandler
+import com.acon.acon.core.ui.android.NavigationAppHandler
 import dev.chrisbanes.haze.hazeSource
 import kotlinx.collections.immutable.toImmutableList
 import kotlin.math.absoluteValue
@@ -67,9 +63,9 @@ private const val MAX_GUEST_AVAILABLE_COUNT = 5
 internal fun SpotListSuccessView(
     pagerState: PagerState,
     state: SpotListUiStateV2.Success,
-    userType: UserType,
-    onSpotClick: (Spot, rank: Int) -> Unit,
-    onTryFindWay: (Spot) -> Unit,
+    userType: com.acon.acon.core.model.type.UserType,
+    onSpotClick: (com.acon.acon.core.model.model.spot.Spot, rank: Int) -> Unit,
+    onTryFindWay: (com.acon.acon.core.model.model.spot.Spot) -> Unit,
     itemHeightPx: Float,
     modifier: Modifier = Modifier,
     onNavigationAppChoose: (NavigationAppHandler) -> Unit = {},
@@ -77,7 +73,7 @@ internal fun SpotListSuccessView(
 ) {
 
     val adInsertedSpot = remember(state.spotList) {
-        val list: MutableList<Spot?> = state.spotList.toMutableList()
+        val list: MutableList<com.acon.acon.core.model.model.spot.Spot?> = state.spotList.toMutableList()
 
         if (list.size >= 11) {
             list.add(11, null)
@@ -92,7 +88,7 @@ internal fun SpotListSuccessView(
     val context = LocalContext.current
     val onSignInRequired = LocalRequestSignIn.current
 
-    if (state.transportMode == TransportMode.BIKING) {
+    if (state.transportMode == com.acon.acon.core.model.type.TransportMode.BIKING) {
         SpotEmptyView(
             userType = userType,
             otherSpots = state.spotList.toImmutableList(),
@@ -239,7 +235,7 @@ internal fun SpotListSuccessView(
                     )
                 }
                 if (spot != null) {
-                    if (page >= MAX_GUEST_AVAILABLE_COUNT && userType == UserType.GUEST) {
+                    if (page >= MAX_GUEST_AVAILABLE_COUNT && userType == com.acon.acon.core.model.type.UserType.GUEST) {
                         SpotGuestItem(
                             spot = spot,
                             onItemClick = { onSignInRequired("click_locked_detail_guest?") },

@@ -26,14 +26,14 @@ import com.acon.acon.core.common.UrlConstants
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.core.utils.feature.toast.showToast
-import com.acon.acon.domain.model.spot.v2.Spot
-import com.acon.acon.domain.type.TransportMode
-import com.acon.acon.domain.type.UserType
+import com.acon.acon.core.ui.android.showToast
+import com.acon.acon.core.model.model.spot.Spot
+import com.acon.acon.core.model.type.TransportMode
+import com.acon.acon.core.model.type.UserType
 import com.acon.acon.feature.spot.mock.spotListUiStateRestaurantMock
-import com.acon.feature.common.compose.LocalRequestSignIn
-import com.acon.feature.common.compose.getScreenHeight
-import com.acon.feature.common.compose.toDp
+import com.acon.acon.core.ui.compose.LocalRequestSignIn
+import com.acon.acon.core.ui.compose.getScreenHeight
+import com.acon.acon.core.ui.compose.toDp
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
@@ -41,10 +41,10 @@ private const val MAX_GUEST_AVAILABLE_COUNT = 5
 
 @Composable
 internal fun SpotEmptyView(
-    userType: UserType,
-    otherSpots: ImmutableList<Spot>,
-    onSpotClick: (Spot, rank: Int) -> Unit,
-    onTryFindWay: (Spot) -> Unit,
+    userType: com.acon.acon.core.model.type.UserType,
+    otherSpots: ImmutableList<com.acon.acon.core.model.model.spot.Spot>,
+    onSpotClick: (com.acon.acon.core.model.model.spot.Spot, rank: Int) -> Unit,
+    onTryFindWay: (com.acon.acon.core.model.model.spot.Spot) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val screenHeightDp = getScreenHeight()
@@ -89,7 +89,7 @@ internal fun SpotEmptyView(
                         fontWeight = FontWeight.SemiBold,
                         modifier = Modifier.padding(top = 60.dp, bottom = 24.dp)
                     )
-                if (index >= MAX_GUEST_AVAILABLE_COUNT && userType == UserType.GUEST) {
+                if (index >= MAX_GUEST_AVAILABLE_COUNT && userType == com.acon.acon.core.model.type.UserType.GUEST) {
                     SpotGuestItem(
                         spot = spot,
                         modifier = Modifier
@@ -101,7 +101,7 @@ internal fun SpotEmptyView(
                 } else {
                     SpotItem(
                         spot = spot,
-                        transportMode = TransportMode.BIKING,
+                        transportMode = com.acon.acon.core.model.type.TransportMode.BIKING,
                         onItemClick = { onSpotClick(spot, index + 1) },
                         onFindWayButtonClick = onTryFindWay,
                         modifier = Modifier
@@ -145,7 +145,7 @@ internal fun SpotEmptyView(
 @Composable
 private fun SpotListEmptyView1Preview() {
     SpotEmptyView(
-        userType = UserType.GUEST,
+        userType = com.acon.acon.core.model.type.UserType.GUEST,
         otherSpots = spotListUiStateRestaurantMock.spotList.toImmutableList(),
         onSpotClick = { _, _ -> },
         onTryFindWay = {},
@@ -157,8 +157,8 @@ private fun SpotListEmptyView1Preview() {
 @Composable
 private fun SpotListEmptyView2Preview() {
     SpotEmptyView(
-        userType = UserType.GUEST,
-        otherSpots = listOf<Spot>().toImmutableList(),
+        userType = com.acon.acon.core.model.type.UserType.GUEST,
+        otherSpots = listOf<com.acon.acon.core.model.model.spot.Spot>().toImmutableList(),
         onSpotClick = { _, _ -> },
         onTryFindWay = {},
         modifier = Modifier.fillMaxSize()

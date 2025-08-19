@@ -58,6 +58,8 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
                 packaging {
                     resources {
                         excludes += "/META-INF/{AL2.0,LGPL2.1}"
+                        excludes += "META-INF/LICENSE.md"
+                        excludes += "META-INF/LICENSE-notice.md"
                     }
                 }
             }
@@ -68,11 +70,6 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
                     implementation(catalog.findBundle("android-defaults").get())
                     implementation(catalog.findBundle("play-app-update").get())
                     implementation(catalog.findLibrary("timber").get())
-
-                    testImplementation(catalog.findLibrary("junit").get())
-                    androidTestImplementation(catalog.findLibrary("androidx-junit").get())
-                    androidTestImplementation(catalog.findLibrary("androidx-espresso-core").get())
-                    androidTestImplementation(catalog.findLibrary("androidx-ui-test-junit4").get())
                 }
             }
         }

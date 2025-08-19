@@ -8,16 +8,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.acon.acon.domain.model.spot.SpotNavigationParameter
-import com.acon.acon.domain.model.spot.v2.Spot
-import com.acon.acon.domain.type.TransportMode
-import com.acon.acon.domain.type.UserType
+import com.acon.acon.core.model.model.spot.SpotNavigationParameter
+import com.acon.acon.core.model.model.spot.Spot
+import com.acon.acon.core.model.type.TransportMode
+import com.acon.acon.core.model.type.UserType
 import com.acon.acon.feature.spot.screen.spotlist.SpotListSideEffectV2
 import com.acon.acon.feature.spot.screen.spotlist.SpotListViewModel
-import com.acon.feature.common.compose.LocalDeepLinkHandler
-import com.acon.feature.common.compose.LocalOnRetry
-import com.acon.feature.common.compose.LocalRequestSignIn
-import com.acon.feature.common.compose.LocalUserType
+import com.acon.acon.core.ui.compose.LocalDeepLinkHandler
+import com.acon.acon.core.ui.compose.LocalOnRetry
+import com.acon.acon.core.ui.compose.LocalRequestSignIn
+import com.acon.acon.core.ui.compose.LocalUserType
+import com.acon.acon.feature.spot.screen.spotlist.SpotListUiStateV2
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.filter
 import org.orbitmvi.orbit.compose.collectAsState
@@ -28,6 +29,7 @@ fun SpotListScreenContainer(
     onNavigateToUploadScreen: () -> Unit,
     onNavigateToProfileScreen: () -> Unit,
     onNavigateToSpotDetailScreen: (Spot, TransportMode) -> Unit,
+    onNavigateToAreaVerificationScreen: (latitude: Double, longitude: Double) -> Unit,
     modifier: Modifier = Modifier,
     onNavigateToDeeplinkSpotDetailScreen: (spotNav: SpotNavigationParameter) -> Unit = {},
     viewModel: SpotListViewModel = hiltViewModel()
@@ -76,13 +78,19 @@ fun SpotListScreenContainer(
             onCafeFilterSaved = viewModel::onCafeFilterSaved,
             modifier = modifier.fillMaxSize(),
             onNavigateToUploadScreen = onNavigateToUploadScreen,
-            onNavigateToProfileScreen = onNavigateToProfileScreen
+            onNavigateToProfileScreen = onNavigateToProfileScreen,
+            onDismissAreaVerificationModalRequest = viewModel::onDismissAreaVerificationModal,
+            onNavigateToAreaVerificationScreen = {
+                val lat = (state as? SpotListUiStateV2.Success)?.currentLocation?.latitude ?: 0.0
+                val lon = (state as? SpotListUiStateV2.Success)?.currentLocation?.longitude ?: 0.0
+                onNavigateToAreaVerificationScreen(lat, lon)
+            }
         )
     }
 
     viewModel.requestLocationPermission()
-    viewModel.emitUserType()
-    viewModel.emitLiveLocation()
+    viewModel.useUserType()
+    viewModel.useLiveLocation()
     viewModel.collectSideEffect {
         when (it) {
             is SpotListSideEffectV2.ShowToastMessage -> {

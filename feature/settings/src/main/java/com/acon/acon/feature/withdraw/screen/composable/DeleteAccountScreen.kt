@@ -33,7 +33,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
@@ -54,16 +53,13 @@ import com.acon.acon.core.designsystem.effect.defaultHazeEffect
 import com.acon.acon.core.designsystem.effect.keyboardAsState
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.feature.withdraw.amplitude.deleteAccountAmplitudeExitReason
-import com.acon.acon.feature.withdraw.amplitude.deleteAccountAmplitudeSubmit
-import com.acon.acon.feature.withdraw.amplitude.deleteAccountAmplitudeWithDraw
 import com.acon.acon.feature.withdraw.component.DeleteAccountBottomSheet
 import com.acon.acon.feature.withdraw.component.DeleteAccountTextField
 import com.acon.acon.feature.withdraw.screen.DeleteAccountUiState
 import com.acon.acon.feature.withdraw.type.DeleteReasonType
-import com.acon.core.analytics.amplitude.AconAmplitude
-import com.acon.core.analytics.constants.EventNames
-import com.acon.core.analytics.constants.PropertyKeys
+import com.acon.acon.core.analytics.amplitude.AconAmplitude
+import com.acon.acon.core.analytics.constants.EventNames
+import com.acon.acon.core.analytics.constants.PropertyKeys
 import dev.chrisbanes.haze.hazeSource
 
 @Composable

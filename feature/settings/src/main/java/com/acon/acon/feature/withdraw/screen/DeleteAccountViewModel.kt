@@ -1,7 +1,7 @@
 package com.acon.acon.feature.withdraw.screen
 
 import androidx.compose.runtime.Immutable
-import com.acon.feature.common.base.BaseContainerHost
+import com.acon.acon.core.ui.base.BaseContainerHost
 import com.acon.acon.domain.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.orbitmvi.orbit.annotation.OrbitExperimental

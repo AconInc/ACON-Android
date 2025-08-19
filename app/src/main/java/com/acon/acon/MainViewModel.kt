@@ -5,7 +5,7 @@ import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.acon.acon.domain.repository.UserRepository
-import com.acon.acon.domain.type.UserType
+import com.acon.acon.core.model.type.UserType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -57,7 +57,7 @@ class MainViewModel @Inject constructor(
 @Immutable
 data class AconAppState(
     val snackbarHostState: SnackbarHostState = SnackbarHostState(),
-    val userType: UserType = UserType.GUEST,
+    val userType: com.acon.acon.core.model.type.UserType = com.acon.acon.core.model.type.UserType.GUEST,
     val showSignInBottomSheet: Boolean = false,
     val showPermissionDialog: Boolean = false,
     val propertyKey: String = "",

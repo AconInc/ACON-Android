@@ -28,9 +28,6 @@ import com.acon.acon.core.designsystem.animation.defaultPopExitTransition
 import com.acon.acon.core.designsystem.component.popup.AconToastPopup
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.domain.model.spot.SpotNavigationParameter
-import com.acon.acon.feature.signin.screen.SignInRoute
-import com.acon.acon.feature.spot.SpotRoute
 import com.acon.acon.navigation.nested.areaVerificationNavigation
 import com.acon.acon.navigation.nested.onboardingNavigationNavigation
 import com.acon.acon.navigation.nested.profileNavigation
@@ -38,9 +35,12 @@ import com.acon.acon.navigation.nested.settingsNavigation
 import com.acon.acon.navigation.nested.signInNavigationNavigation
 import com.acon.acon.navigation.nested.spotNavigation
 import com.acon.acon.navigation.nested.uploadNavigation
-import com.acon.feature.common.compose.LocalDeepLinkHandler
-import com.acon.feature.common.compose.LocalNavController
-import com.acon.feature.common.compose.LocalSnackbarHostState
+import com.acon.acon.core.model.model.spot.SpotNavigationParameter
+import com.acon.acon.core.navigation.LocalNavController
+import com.acon.acon.core.navigation.route.SignInRoute
+import com.acon.acon.core.navigation.route.SpotRoute
+import com.acon.acon.core.ui.compose.LocalDeepLinkHandler
+import com.acon.acon.core.ui.compose.LocalSnackbarHostState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.take
@@ -69,7 +69,7 @@ fun AconNavigation(
                             delay(400)
                             navController.navigate(
                                 SpotRoute.SpotDetail(
-                                    SpotNavigationParameter(
+                                    com.acon.acon.core.model.model.spot.SpotNavigationParameter(
                                         spotId = spotId,
                                         tags = emptyList(),
                                         transportMode = null,

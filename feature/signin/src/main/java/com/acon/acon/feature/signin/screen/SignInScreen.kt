@@ -40,17 +40,16 @@ import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.button.AconGoogleSignInButton
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.domain.type.UserType
 import com.acon.acon.feature.signin.screen.component.SignInTopBar
 import com.acon.acon.feature.signin.utils.SplashAudioManager
-import com.acon.core.analytics.amplitude.AconAmplitude
-import com.acon.core.analytics.constants.EventNames
-import com.acon.core.analytics.constants.PropertyKeys
-import com.acon.feature.common.compose.LocalDeepLinkHandler
-import com.acon.feature.common.compose.LocalUserType
-import com.acon.feature.common.compose.getScreenHeight
-import com.acon.feature.common.compose.getScreenWidth
-import com.acon.feature.common.remember.rememberSocialRepository
+import com.acon.acon.core.analytics.amplitude.AconAmplitude
+import com.acon.acon.core.analytics.constants.EventNames
+import com.acon.acon.core.analytics.constants.PropertyKeys
+import com.acon.acon.core.ui.compose.LocalDeepLinkHandler
+import com.acon.acon.core.ui.compose.LocalUserType
+import com.acon.acon.core.ui.compose.getScreenHeight
+import com.acon.acon.core.ui.compose.getScreenWidth
+import com.acon.acon.feature.signin.utils.rememberSocialRepository
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
@@ -64,6 +63,7 @@ fun SignInScreen(
     modifier: Modifier = Modifier,
     navigateToSpotListView: () -> Unit,
     navigateToAreaVerification: () -> Unit,
+    navigateToOnboarding: () -> Unit,
     onClickTermsOfUse: () -> Unit,
     onClickPrivacyPolicy: () -> Unit,
     onAnimationEnd:() -> Unit,
@@ -91,7 +91,7 @@ fun SignInScreen(
         snapshotFlow { logoAnimationState.value }
             .collect { animationValue ->
                 if (animationValue == 1f) {
-                    if(deepLinkHandler.hasDeepLink.value && userType == UserType.GUEST) {
+                    if(deepLinkHandler.hasDeepLink.value && userType == com.acon.acon.core.model.type.UserType.GUEST) {
                         navigateToSpotListView()
                     } else {
                         onAnimationEnd()
@@ -187,10 +187,12 @@ fun SignInScreen(
                                                         PropertyKeys.SIGN_IN_OR_NOT to true
                                                     )
                                                 )
-                                                if (it.hasVerifiedArea) {
-                                                    navigateToSpotListView()
-                                                } else {
+                                                if (it.hasVerifiedArea.not()) {
                                                     navigateToAreaVerification()
+                                                } else if (it.hasPreference.not()) {
+                                                    navigateToOnboarding()
+                                                } else {
+                                                    navigateToSpotListView()
                                                 }
                                                 AconAmplitude.setUserId(it.externalUUID)
                                             }.onFailure {
@@ -267,6 +269,7 @@ private fun PreviewSignInScreen() {
             onClickTermsOfUse = {},
             onClickPrivacyPolicy = {},
             onAnimationEnd = {},
+            navigateToOnboarding = {}
         )
     }
 }

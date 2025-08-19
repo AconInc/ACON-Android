@@ -1,9 +1,10 @@
 package com.acon.acon.domain.repository
 
-import com.acon.acon.domain.model.profile.PreSignedUrl
-import com.acon.acon.domain.model.profile.ProfileInfo
-import com.acon.acon.domain.model.profile.SavedSpot
-import com.acon.acon.domain.type.UpdateProfileType
+import com.acon.acon.core.model.model.area.Area
+import com.acon.acon.core.model.model.profile.PreSignedUrl
+import com.acon.acon.core.model.model.profile.ProfileInfo
+import com.acon.acon.core.model.model.profile.SavedSpot
+import com.acon.acon.core.model.type.UpdateProfileType
 import kotlinx.coroutines.flow.Flow
 
 interface ProfileRepository {
@@ -24,4 +25,19 @@ interface ProfileRepository {
     suspend fun fetchSavedSpots(): Result<List<SavedSpot>>
 
     suspend fun saveSpot(spotId: Long): Result<Unit>
+
+    suspend fun verifyArea(
+        latitude: Double,
+        longitude: Double
+    ): Result<Unit>
+
+    suspend fun fetchVerifiedAreaList(): Result<List<Area>>
+
+    suspend fun replaceVerifiedArea(
+        previousVerifiedAreaId: Long,
+        latitude: Double,
+        longitude: Double
+    ): Result<Unit>
+
+    suspend fun deleteVerifiedArea(verifiedAreaId: Long): Result<Unit>
 }

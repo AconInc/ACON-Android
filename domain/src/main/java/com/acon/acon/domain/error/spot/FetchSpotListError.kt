@@ -1,9 +1,8 @@
 package com.acon.acon.domain.error.spot
 
-import com.acon.acon.domain.error.ErrorFactory
 import com.acon.acon.domain.error.RootError
 
-sealed class FetchSpotListError : RootError() {
+open class FetchSpotListError : RootError() {
 
     class InvalidSpotType : FetchSpotListError() {
         override val code: Int = 40015
@@ -24,16 +23,14 @@ sealed class FetchSpotListError : RootError() {
         override val code: Int = 40405
     }
 
-    companion object : ErrorFactory {
-        override fun createErrorInstances(): Array<RootError> {
-            return arrayOf(
-                InvalidSpotType(),
-                InvalidCategory(),
-                InvalidOption(),
-                NonMatchingSpotTypeAndCategory(),
-                NonMatchingCategoryAndOption(),
-                OutOfServiceArea()
-            )
-        }
+    final override fun createErrorInstances(): Array<RootError> {
+        return arrayOf(
+            InvalidSpotType(),
+            InvalidCategory(),
+            InvalidOption(),
+            NonMatchingSpotTypeAndCategory(),
+            NonMatchingCategoryAndOption(),
+            OutOfServiceArea()
+        )
     }
 }

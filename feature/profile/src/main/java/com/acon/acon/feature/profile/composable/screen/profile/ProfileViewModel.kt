@@ -2,10 +2,10 @@ package com.acon.acon.feature.profile.composable.screen.profile
 
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.viewModelScope
-import com.acon.acon.domain.model.profile.ProfileInfo
+import com.acon.acon.core.model.model.profile.ProfileInfo
 import com.acon.acon.domain.repository.ProfileRepository
-import com.acon.acon.domain.type.UserType
-import com.acon.feature.common.base.BaseContainerHost
+import com.acon.acon.core.model.type.UserType
+import com.acon.acon.core.ui.base.BaseContainerHost
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.viewmodel.container
@@ -19,7 +19,7 @@ class ProfileViewModel @Inject constructor(
     val updateProfileState = profileRepository.getProfileType()
 
     override val container =
-        container<ProfileUiState, ProfileUiSideEffect>(ProfileUiState.Success(ProfileInfo.Empty)) {
+        container<ProfileUiState, ProfileUiSideEffect>(ProfileUiState.Success(com.acon.acon.core.model.model.profile.ProfileInfo.Empty)) {
             userType.collect {
                 when(it) {
                     UserType.GUEST -> reduce { ProfileUiState.Guest }
@@ -62,7 +62,7 @@ class ProfileViewModel @Inject constructor(
 sealed interface ProfileUiState {
     @Immutable
     data class Success(
-        val profileInfo: ProfileInfo
+        val profileInfo: com.acon.acon.core.model.model.profile.ProfileInfo
     ) : ProfileUiState
 
     data object Guest : ProfileUiState

@@ -1,3 +1,5 @@
+import utils.androidTestImplementation
+
 /** See AndroidApplicationConventionPlugin.kt */
 
 plugins {
@@ -36,16 +38,16 @@ android {
 dependencies {
 
     implementation(projects.core.designsystem)
-    implementation(projects.core.utils.feature)
     implementation(projects.core.map)
     implementation(projects.core.adsApi)
     implementation(projects.core.analytics)
+    implementation(projects.core.navigation)
+    implementation(projects.core.ui)
+    implementation(projects.core.launcher)
 
     implementation(projects.domain)
     implementation(projects.data)
 
-    implementation(projects.feature.common)
-    implementation(projects.feature.adsImpl)
     implementation(projects.feature.signin)
     implementation(projects.feature.spot)
     implementation(projects.feature.onboarding)
@@ -54,9 +56,20 @@ dependencies {
     implementation(projects.feature.settings)
     implementation(projects.feature.profile)
 
+    implementation(projects.provider.adsImpl)
+
     implementation(libs.branch.io)
     implementation(libs.google.services.ads)
     implementation(libs.play.services.location)
+    implementation(libs.startup)
 
     implementation(libs.androidx.core.splashscreen)
+
+    testImplementation(libs.bundles.non.android.test)
+    testRuntimeOnly(libs.bundles.junit5.runtime)
+    androidTestImplementation(libs.bundles.android.test)
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
 }

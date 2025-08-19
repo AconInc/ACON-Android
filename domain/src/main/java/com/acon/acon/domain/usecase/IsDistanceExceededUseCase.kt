@@ -28,8 +28,9 @@ class IsDistanceExceededUseCase @Inject constructor() {
 
     /**
      * 두 좌표 간 거리 계산 (km)
+     * 하버사인 공식 사용
      */
-    private fun getDistance(
+    internal fun getDistance(
         latitude1: Double,
         longitude1: Double,
         latitude2: Double,

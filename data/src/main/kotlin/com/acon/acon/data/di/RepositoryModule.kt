@@ -1,19 +1,23 @@
 package com.acon.acon.data.di
 
+import com.acon.acon.data.session.SessionHandler
+import com.acon.acon.data.session.SessionHandlerImpl
 import com.acon.acon.data.repository.AconAppRepositoryImpl
 import com.acon.acon.data.repository.MapRepositoryImpl
+import com.acon.acon.data.repository.MapSearchRepositoryImpl
 import com.acon.acon.data.repository.OnboardingRepositoryImpl
 import com.acon.acon.data.repository.ProfileRepositoryImpl
 import com.acon.acon.data.repository.SpotRepositoryImpl
-import com.acon.acon.data.repository.TokenRepositoryImpl
+import com.acon.acon.data.repository.TimeRepositoryImpl
 import com.acon.acon.data.repository.UploadRepositoryImpl
 import com.acon.acon.data.repository.UserRepositoryImpl
 import com.acon.acon.domain.repository.AconAppRepository
 import com.acon.acon.domain.repository.MapRepository
+import com.acon.acon.domain.repository.MapSearchRepository
 import com.acon.acon.domain.repository.OnboardingRepository
 import com.acon.acon.domain.repository.ProfileRepository
 import com.acon.acon.domain.repository.SpotRepository
-import com.acon.acon.domain.repository.TokenRepository
+import com.acon.acon.domain.repository.TimeRepository
 import com.acon.acon.domain.repository.UploadRepository
 import com.acon.acon.domain.repository.UserRepository
 import dagger.Binds
@@ -34,15 +38,15 @@ internal abstract class RepositoryModule {
 
     @Singleton
     @Binds
-    abstract fun bindsSpotRepository(
-        impl: SpotRepositoryImpl
-    ): SpotRepository
+    abstract fun bindsSessionHandler(
+        impl: SessionHandlerImpl
+    ): SessionHandler
 
     @Singleton
     @Binds
-    abstract fun bindsTokenLocalRepository(
-        impl: TokenRepositoryImpl
-    ): TokenRepository
+    abstract fun bindsSpotRepository(
+        impl: SpotRepositoryImpl
+    ): SpotRepository
 
     @Singleton
     @Binds
@@ -70,7 +74,19 @@ internal abstract class RepositoryModule {
 
     @Singleton
     @Binds
+    abstract fun bindsMapSearchRepository(
+        impl: MapSearchRepositoryImpl
+    ): MapSearchRepository
+
+    @Singleton
+    @Binds
     abstract fun bindsAconAppRepository(
         impl: AconAppRepositoryImpl
     ): AconAppRepository
+
+    @Singleton
+    @Binds
+    abstract fun bindsTimeRepository(
+        impl: TimeRepositoryImpl
+    ): TimeRepository
 }

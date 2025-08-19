@@ -2,16 +2,18 @@ package com.acon.acon.data.di
 
 import com.acon.acon.core.common.Auth
 import com.acon.acon.core.common.Naver
+import com.acon.acon.core.common.NaverDevelopers
 import com.acon.acon.core.common.NoAuth
-import com.acon.acon.data.api.remote.AconAppApi
+import com.acon.acon.data.api.remote.noauth.AconAppNoAuthApi
 import com.acon.acon.data.api.remote.MapApi
-import com.acon.acon.data.api.remote.OnboardingApi
-import com.acon.acon.data.api.remote.ProfileApi
-import com.acon.acon.data.api.remote.ReissueTokenApi
-import com.acon.acon.data.api.remote.SpotAuthApi
-import com.acon.acon.data.api.remote.SpotNoAuthApi
-import com.acon.acon.data.api.remote.UploadApi
-import com.acon.acon.data.api.remote.UserApi
+import com.acon.acon.data.api.remote.MapSearchApi
+import com.acon.acon.data.api.remote.auth.OnboardingAuthApi
+import com.acon.acon.data.api.remote.auth.ProfileAuthApi
+import com.acon.acon.data.api.remote.auth.SpotAuthApi
+import com.acon.acon.data.api.remote.noauth.SpotNoAuthApi
+import com.acon.acon.data.api.remote.auth.UploadAuthApi
+import com.acon.acon.data.api.remote.auth.UserAuthApi
+import com.acon.acon.data.api.remote.noauth.UserNoAuthApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -27,15 +29,17 @@ internal object ApiModule {
     @Provides
     fun providesUserApi(
         @Auth retrofit: Retrofit
-    ): UserApi {
-        return retrofit.create(UserApi::class.java)
+    ): UserAuthApi {
+        return retrofit.create(UserAuthApi::class.java)
     }
 
-    @Provides
     @Singleton
-    fun provideReissueTokenApi(
-       @NoAuth retrofit: Retrofit
-    ) : ReissueTokenApi = retrofit.create(ReissueTokenApi::class.java)
+    @Provides
+    fun providesUserNoAuthApi(
+        @NoAuth retrofit: Retrofit
+    ): UserNoAuthApi {
+        return retrofit.create(UserNoAuthApi::class.java)
+    }
 
     @Singleton
     @Provides
@@ -57,24 +61,24 @@ internal object ApiModule {
     @Provides
     fun providesOnboardingApi(
         @Auth retrofit: Retrofit
-    ): OnboardingApi {
-        return retrofit.create(OnboardingApi::class.java)
+    ): OnboardingAuthApi {
+        return retrofit.create(OnboardingAuthApi::class.java)
     }
 
     @Singleton
     @Provides
     fun providesUploadApi(
         @Auth retrofit: Retrofit
-    ): UploadApi {
-        return retrofit.create(UploadApi::class.java)
+    ): UploadAuthApi {
+        return retrofit.create(UploadAuthApi::class.java)
     }
 
     @Singleton
     @Provides
     fun providesProfileApi(
         @Auth retrofit: Retrofit
-    ): ProfileApi {
-        return retrofit.create(ProfileApi::class.java)
+    ): ProfileAuthApi {
+        return retrofit.create(ProfileAuthApi::class.java)
     }
 
     @Singleton
@@ -87,9 +91,17 @@ internal object ApiModule {
 
     @Singleton
     @Provides
+    fun provideMapSearchApi(
+        @NaverDevelopers retrofit: Retrofit
+    ): MapSearchApi {
+        return retrofit.create(MapSearchApi::class.java)
+    }
+
+    @Singleton
+    @Provides
     fun providesAconAppApi(
         @NoAuth retrofit: Retrofit
-    ): AconAppApi {
-        return retrofit.create(AconAppApi::class.java)
+    ): AconAppNoAuthApi {
+        return retrofit.create(AconAppNoAuthApi::class.java)
     }
 }

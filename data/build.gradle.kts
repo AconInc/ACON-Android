@@ -1,3 +1,4 @@
+import utils.androidTestImplementation
 import java.util.Properties
 
 plugins {
@@ -18,14 +19,16 @@ android {
         buildConfigField("String", "BASE_URL", "\"${localProperties["BASE_URL"]}\"")
         buildConfigField("String", "NAVER_CLIENT_ID", "\"${localProperties["naver_client_id"]}\"")
         buildConfigField("String", "NAVER_CLIENT_SECRET", "\"${localProperties["naver_client_secret"]}\"")
+        buildConfigField("String", "NAVER_DEVELOPERS_CLIENT_ID", "\"${localProperties["naver_developers_client_id"]}\"")
+        buildConfigField("String", "NAVER_DEVELOPERS_CLIENT_SECRET", "\"${localProperties["naver_developers_client_secret"]}\"")
     }
 }
 
 dependencies {
 
     implementation(projects.domain)
-    implementation(projects.core.utils.feature)
     implementation(projects.core.analytics)
+    implementation(projects.core.launcher)
 
     implementation(platform(libs.okhttp.bom))
     implementation(libs.okhttp)
@@ -40,4 +43,12 @@ dependencies {
     implementation(libs.bundles.googleSignIn)
 
     implementation(libs.preferences.datastore)
+    
+    testImplementation(libs.bundles.non.android.test)
+    testRuntimeOnly(libs.bundles.junit5.runtime)
+    androidTestImplementation(libs.bundles.android.test)
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
 }

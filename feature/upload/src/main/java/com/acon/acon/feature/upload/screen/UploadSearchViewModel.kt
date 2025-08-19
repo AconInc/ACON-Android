@@ -2,17 +2,17 @@ package com.acon.acon.feature.upload.screen
 
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.viewModelScope
+import com.acon.acon.core.analytics.amplitude.AconAmplitude
+import com.acon.acon.core.analytics.constants.EventNames
+import com.acon.acon.core.analytics.constants.PropertyKeys
+import com.acon.acon.core.model.model.spot.SimpleSpot
+import com.acon.acon.core.model.model.upload.SearchedSpot
+import com.acon.acon.core.model.model.upload.UploadSpotSuggestion
+import com.acon.acon.core.ui.base.BaseContainerHost
 import com.acon.acon.domain.error.upload.GetVerifySpotLocationError
-import com.acon.acon.domain.model.spot.SimpleSpot
-import com.acon.acon.domain.model.upload.UploadSpotSuggestion
-import com.acon.acon.domain.model.upload.SearchedSpot
 import com.acon.acon.domain.repository.UploadRepository
 import com.acon.acon.feature.upload.BuildConfig
 import com.acon.acon.feature.upload.mock.uploadSearchUiStateMock
-import com.acon.core.analytics.amplitude.AconAmplitude
-import com.acon.core.analytics.constants.EventNames
-import com.acon.core.analytics.constants.PropertyKeys
-import com.acon.feature.common.base.BaseContainerHost
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -110,7 +110,10 @@ class UploadSearchViewModel @Inject constructor(
                 onSuccess()
                 reduce {
                     state.copy(
-                        selectedSpot = SimpleSpot(spot.spotId, spot.name),
+                        selectedSpot = SimpleSpot(
+                            spot.spotId,
+                            spot.name
+                        ),
                         showSearchedSpots = false
                     )
                 }
@@ -148,6 +151,10 @@ class UploadSearchViewModel @Inject constructor(
         }
     }
 
+    fun moveToUploadPlace() = intent {
+        postSideEffect(UploadSearchSideEffect.NavigatePlace)
+    }
+
     fun onBackAction() = intent {
         postSideEffect(UploadSearchSideEffect.NavigateBack)
     }
@@ -159,7 +166,7 @@ class UploadSearchViewModel @Inject constructor(
         )
         runOn<UploadSearchUiState.Success> {
             state.selectedSpot?.let {
-                postSideEffect(UploadSearchSideEffect.NavigateToReviewScreen(it))
+                postSideEffect(UploadSearchSideEffect.NavigateToEnterMenuScreen(it))
             }
         }
     }
@@ -178,6 +185,7 @@ sealed interface UploadSearchUiState {
 }
 
 sealed interface UploadSearchSideEffect {
-    data class NavigateToReviewScreen(val spot: SimpleSpot) : UploadSearchSideEffect
+    data class NavigateToEnterMenuScreen(val spot: SimpleSpot) : UploadSearchSideEffect
+    data object NavigatePlace : UploadSearchSideEffect
     data object NavigateBack : UploadSearchSideEffect
 }
