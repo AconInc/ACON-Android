@@ -38,7 +38,7 @@ internal fun RestaurantFeatureType.RestaurantType.getNameResId(): Int {
 
 internal fun CafeFeatureType.CafeType.getNameResId(): Int {
     return when(this) {
-        CafeFeatureType.CafeType.GOOD_FOR_WORK -> R.string.upload_place_select_cafe_option1
+        CafeFeatureType.CafeType.WORK_FRIENDLY -> R.string.upload_place_select_cafe_option1
         CafeFeatureType.CafeType.NOT_GOOD_FOR_WORK -> R.string.upload_place_select_cafe_option2
     }
 }

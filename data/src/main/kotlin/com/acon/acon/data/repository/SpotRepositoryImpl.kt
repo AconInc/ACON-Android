@@ -13,6 +13,7 @@ import com.acon.acon.data.dto.request.FilterListRequest
 import com.acon.acon.data.dto.request.RecentNavigationLocationRequest
 import com.acon.acon.data.dto.request.SpotListRequest
 import com.acon.acon.data.error.runCatchingWith
+import com.acon.acon.data.session.SessionHandler
 import com.acon.acon.domain.error.spot.AddBookmarkError
 import com.acon.acon.domain.error.spot.DeleteBookmarkError
 import com.acon.acon.domain.error.spot.FetchMenuBoardsError
@@ -21,12 +22,14 @@ import com.acon.acon.domain.error.spot.FetchSpotListError
 import com.acon.acon.domain.error.spot.GetSpotDetailInfoError
 import com.acon.acon.domain.repository.ProfileRepository
 import com.acon.acon.domain.repository.SpotRepository
+import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
 class SpotRepositoryImpl @Inject constructor(
     private val spotRemoteDataSource: SpotRemoteDataSource,
     private val profileInfoCache: ProfileInfoCache,
-    private val profileRepository: ProfileRepository
+    private val profileRepository: ProfileRepository,
+    private val sessionHandler: SessionHandler
 ) : SpotRepository {
 
     override suspend fun fetchSpotList(
@@ -48,7 +51,7 @@ class SpotRepositoryImpl @Inject constructor(
                             )
                         }
                     ),
-                )
+                ), sessionHandler.getUserType().first()
             ).toSpotList()
         }
     }

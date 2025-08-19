@@ -16,6 +16,7 @@ import com.acon.acon.domain.repository.MapSearchRepository
 import com.acon.acon.domain.repository.UploadRepository
 import com.acon.acon.feature.upload.BuildConfig
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -25,6 +26,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import okhttp3.ConnectionPool
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -33,6 +36,7 @@ import okhttp3.internal.toImmutableList
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.viewmodel.container
 import timber.log.Timber
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @OptIn(FlowPreview::class)
@@ -150,11 +154,7 @@ class UploadPlaceViewModel @Inject constructor(
     }
 
     fun updateCafeOptionType(cafeOption: CafeFeatureType.CafeType) = intent {
-        if(cafeOption == CafeFeatureType.CafeType.NOT_GOOD_FOR_WORK) {
-            reduce { state.copy(selectedCafeOption = null) }
-        } else {
-            reduce { state.copy(selectedCafeOption = cafeOption) }
-        }
+        reduce { state.copy(selectedFeature = SelectedFeature.Cafe(cafeOption)) }
     }
 
     fun updatePriceOptionType(priceOption: PriceFeatureType.PriceOptionType) = intent {
@@ -163,14 +163,14 @@ class UploadPlaceViewModel @Inject constructor(
 
     fun updateRestaurantType(type: RestaurantFeatureType.RestaurantType) = intent {
         reduce {
-            val currentSelectedTypes = state.selectedRestaurantTypes.toMutableList()
+            val currentSelectedTypes = (state.selectedFeature as? SelectedFeature.Restaurant)?.types?.toMutableList() ?: mutableListOf()
 
             if (currentSelectedTypes.contains(type)) {
                 currentSelectedTypes.remove(type)
             } else {
                 currentSelectedTypes.add(type)
             }
-            state.copy(selectedRestaurantTypes = currentSelectedTypes)
+            state.copy(selectedFeature = SelectedFeature.Restaurant(currentSelectedTypes))
         }
     }
 
@@ -270,6 +270,13 @@ class UploadPlaceViewModel @Inject constructor(
         }
     }
 
+    fun onSlideAnimationEnd(route: String) = intent {
+        reduce {
+            val updatedMap = state.hasAnimated.toMutableMap().apply { this[route] = true }
+            state.copy(hasAnimated = updatedMap)
+        }
+    }
+
     fun onNavigateToBack() = intent {
         postSideEffect(UploadPlaceSideEffect.OnNavigateToBack)
     }
@@ -281,27 +288,28 @@ class UploadPlaceViewModel @Inject constructor(
     private fun createFeatureList() = intent {
         val featureRequests = mutableListOf<Feature>()
 
-        when(state.selectedRestaurantTypes.isEmpty()) {
-            true -> {
-                state.selectedCafeOption?.let { cafeOption ->
+        when (val feature = state.selectedFeature) {
+            is SelectedFeature.Cafe -> {
+                if (feature.option == CafeFeatureType.CafeType.WORK_FRIENDLY) {
                     featureRequests.add(
                         Feature(
                             category = CategoryType.CAFE_FEATURE,
-                            optionList = listOf(cafeOption)
+                            optionList = listOf(feature.option)
                         )
                     )
                 }
             }
-            false -> {
+            is SelectedFeature.Restaurant -> {
                 featureRequests.add(
                     Feature(
                         category = CategoryType.RESTAURANT_FEATURE,
-                        optionList = state.selectedRestaurantTypes.map { it }
+                        optionList = feature.types
                     )
                 )
             }
-        }
 
+            null -> TODO()
+        }
         state.selectedPriceOption?.let { priceOption ->
             featureRequests.add(
                 Feature(
@@ -320,7 +328,7 @@ class UploadPlaceViewModel @Inject constructor(
 
     fun onSubmitUploadPlace(onSuccess:() -> Unit) = intent {
         createFeatureList()
-
+        reduce { state.copy(isNextBtnEnabled = false) }
         when (state.selectedImageUris?.isEmpty()) {
             true -> {
                 submitUploadPlace(onSuccess)
@@ -338,7 +346,6 @@ class UploadPlaceViewModel @Inject constructor(
         onSuccess:() -> Unit,
         imageList: List<String> = emptyList()
     ) = intent {
-
         uploadRepository.submitUploadPlace(
             spotName = state.selectedSpotByMap?.title ?: "",
             address = state.selectedSpotByMap?.address ?: "",
@@ -347,97 +354,118 @@ class UploadPlaceViewModel @Inject constructor(
             recommendedMenu = state.recommendMenu ?: "",
             imageList = imageList
         ).onSuccess {
+            reduce { state.copy(isNextBtnEnabled = true) }
             onSuccess()
         }.onFailure {
+            reduce { state.copy(isNextBtnEnabled = true) }
             postSideEffect(UploadPlaceSideEffect.ShowToastUploadFailed)
         }
     }
 
     private fun uploadAllImagesAndSubmit(onSuccess: () -> Unit) = intent {
-        val uris = state.selectedImageUris
+        val uris = state.selectedImageUris ?: emptyList()
 
-        val fileNames = try {
+        if (uris.isEmpty()) {
+            submitUploadPlace(onSuccess = onSuccess, imageList = emptyList())
+            return@intent
+        }
+
+        val presignedResults = runCatching {
             coroutineScope {
-                uris?.map { imageUri ->
-                    async {
-                        val presignedResult = try {
-                            uploadRepository.getUploadPlacePreSignedUrl().getOrThrow()
-                        } catch (e: Exception) {
-                            postSideEffect(UploadPlaceSideEffect.ShowToastUploadImageFailed)
-                            throw e
-                        }
-                        putPlaceImageToPreSignedUrl(imageUri, presignedResult.preSignedUrl)
-                        presignedResult.fileName
+                (0 until uris.size).map {
+                    async(Dispatchers.IO) {
+                        uploadRepository.getUploadPlacePreSignedUrl().getOrThrow()
                     }
-                }?.awaitAll()
+                }.awaitAll()
             }
-        } catch (e: Exception) {
+        }.onFailure {
             postSideEffect(UploadPlaceSideEffect.ShowToastUploadImageFailed)
-            null
+            return@intent
+        }.getOrThrow()
+
+        val uploadSuccessful = runCatching {
+            coroutineScope {
+                uris.zip(presignedResults).map { (imageUri, presignedResult) ->
+                    async(Dispatchers.IO) {
+                        putPlaceImageToPreSignedUrlOptimized(imageUri, presignedResult.preSignedUrl)
+                    }
+                }.awaitAll().all { it }
+            }
+        }.onFailure {
+            postSideEffect(UploadPlaceSideEffect.ShowToastUploadImageFailed)
+            return@intent
+        }.getOrThrow()
+
+        if (!uploadSuccessful) {
+            postSideEffect(UploadPlaceSideEffect.ShowToastUploadImageFailed)
+            return@intent
         }
 
-        val bucketUrls = fileNames?.map { fileName ->
-            "${BuildConfig.BUCKET_URL}$fileName"
-        }
-
-        submitUploadPlace(
-            onSuccess = onSuccess,
-            imageList = bucketUrls ?: emptyList()
-        )
+        val bucketUrls = presignedResults.map { "${BuildConfig.BUCKET_URL}${it.fileName}" }
+        submitUploadPlace(onSuccess = onSuccess, imageList = bucketUrls)
     }
 
-    private fun putPlaceImageToPreSignedUrl(
+    private suspend fun putPlaceImageToPreSignedUrlOptimized(
         imageUri: Uri,
         preSignedUrl: String
-    ) = intent {
+    ): Boolean = withContext(Dispatchers.IO) {
         val context = getApplication<Application>().applicationContext
-        val client = OkHttpClient()
 
-        try {
+        return@withContext try {
             val byteArray: ByteArray
             val mimeType: String
 
             if (imageUri.scheme == "content") {
-                val inputStream = context.contentResolver.openInputStream(imageUri)
-                byteArray = inputStream?.readBytes()
-                    ?: throw IllegalArgumentException("이미지 읽기 실패")
+                context.contentResolver.openInputStream(imageUri).use { inputStream ->
+                    byteArray = inputStream?.readBytes()
+                        ?: throw IllegalArgumentException("이미지 읽기 실패")
+                }
                 mimeType = context.contentResolver.getType(imageUri) ?: "image/jpeg"
-
             } else {
                 Timber.tag(TAG).e("지원하지 않는 URI scheme: %s", imageUri.toString())
                 throw IllegalArgumentException("지원하지 않는 URI scheme")
             }
 
-            val fileBody =
-                byteArray.toRequestBody(mimeType.toMediaTypeOrNull(), 0, byteArray.size)
-
+            val fileBody = byteArray.toRequestBody(mimeType.toMediaTypeOrNull(), 0, byteArray.size)
             val request = Request.Builder()
                 .url(preSignedUrl)
                 .put(fileBody)
                 .addHeader("Content-Type", mimeType)
                 .build()
 
-            val response = client.newCall(request).execute()
-
-            if (response.isSuccessful) {
-                Timber.tag(TAG).d("이미지 업로드 성공")
-            } else {
-                Timber.tag(TAG).e("이미지 업로드 실패, code: %d", response.code)
-                postSideEffect(UploadPlaceSideEffect.ShowToastUploadImageFailed)
+            client.newCall(request).execute().use { response ->
+                if (response.isSuccessful) {
+                    Timber.tag(TAG).d("이미지 업로드 성공")
+                    true
+                } else {
+                    Timber.tag(TAG).e("이미지 업로드 실패, code: ${response.code}")
+                    false
+                }
             }
         } catch (e: Exception) {
-            Timber.tag(TAG).e(e, "이미지 업로드 과정에서 예외 발생: %s", e.message)
-            postSideEffect(UploadPlaceSideEffect.ShowToastUploadImageFailed)
+            Timber.tag(TAG).e(e, "이미지 업로드 과정에서 예외 발생: ${e.message}")
+            false
         }
     }
 
     companion object {
+        private val client: OkHttpClient by lazy {
+            OkHttpClient.Builder()
+                .connectionPool(ConnectionPool(20, 5, TimeUnit.MINUTES))
+                .connectTimeout(30, TimeUnit.SECONDS)
+                .writeTimeout(30, TimeUnit.SECONDS)
+                .readTimeout(30, TimeUnit.SECONDS)
+                .retryOnConnectionFailure(true)
+                .build()
+        }
+
         const val TAG = "UploadPlaceViewModel"
     }
 }
 
 @Immutable
 data class UploadPlaceUiState(
+    val hasAnimated: Map<String, Boolean> = emptyMap(),
     val isPreviousBtnEnabled: Boolean = false,
     val isNextBtnEnabled: Boolean = false,
     val showExitUploadPlaceDialog: Boolean = false,
@@ -451,8 +479,7 @@ data class UploadPlaceUiState(
     val selectedSpotByMap: SearchedSpotByMap? = null,
     val selectedSpotType: SpotType? = null,
     val selectedPriceOption: PriceFeatureType.PriceOptionType? = null,
-    val selectedCafeOption: CafeFeatureType.CafeType? = null,
-    val selectedRestaurantTypes: List<RestaurantFeatureType.RestaurantType> = emptyList(),
+    val selectedFeature: SelectedFeature? = null,
     val recommendMenu: String? = "",
     val selectedImageUris: List<Uri>? = emptyList(),
     val uploadFileName: String = "",
@@ -461,6 +488,11 @@ data class UploadPlaceUiState(
     val maxImageCount: Int = 10,
     val currentStep: Int = 0
 )
+
+sealed class SelectedFeature {
+    data class Cafe(val option: CafeFeatureType.CafeType) : SelectedFeature()
+    data class Restaurant(val types: List<RestaurantFeatureType.RestaurantType>) : SelectedFeature()
+}
 
 sealed interface UploadPlaceSideEffect {
     data object ShowToastUploadFailed : UploadPlaceSideEffect

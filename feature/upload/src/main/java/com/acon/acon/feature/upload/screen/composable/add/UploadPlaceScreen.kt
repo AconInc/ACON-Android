@@ -5,6 +5,7 @@ import android.net.Uri
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.SizeTransform
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
@@ -58,6 +59,7 @@ import com.acon.acon.feature.upload.screen.composable.menu.UploadPlaceEnterMenuS
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
+private const val animationDuration = 500
 private const val maxStepIndex = 6
 
 @Composable
@@ -75,7 +77,11 @@ fun UploadPlaceScreen(
     val currentStep = state.currentStep
 
     BackHandler {
-        viewModel.onRequestExitUploadPlaceDialog()
+        if(currentStep != maxStepIndex) {
+            viewModel.onRequestExitUploadPlaceDialog()
+        } else {
+            viewModel.onNavigateToBack()
+        }
     }
 
     viewModel.collectSideEffect {
@@ -112,7 +118,7 @@ fun UploadPlaceScreen(
         AconTwoActionDialog(
             title = stringResource(R.string.upload_place_exit),
             action1 = stringResource(R.string.cancel),
-            action2 = stringResource(R.string.exit),
+            action2 = stringResource(R.string.quit),
             onDismissRequest = {},
             onAction1 = {
                 viewModel.onDismissExitUploadPlaceDialog()
@@ -120,7 +126,9 @@ fun UploadPlaceScreen(
             onAction2 = {
                 viewModel.onNavigateToBack()
             },
-            modifier = Modifier.width(dialogWidth)
+            isTextAlign = true,
+            modifier = Modifier
+                .width(dialogWidth)
         )
     }
 
@@ -180,9 +188,23 @@ fun UploadPlaceScreen(
                     targetState = currentStep,
                     transitionSpec = {
                         if (targetState > initialState) {
-                            slideInVertically { height -> height } togetherWith slideOutVertically { height -> -height }
+                            slideInVertically(
+                                animationSpec = tween(durationMillis = animationDuration)
+                            ) { height -> height }
+                                .togetherWith(
+                                    slideOutVertically(
+                                        animationSpec = tween(durationMillis = animationDuration)
+                                    ) { height -> -height }
+                                )
                         } else {
-                            slideInVertically { height -> -height } togetherWith slideOutVertically { height -> height }
+                            slideInVertically(
+                                animationSpec = tween(durationMillis = animationDuration)
+                            ) { height -> -height }
+                                .togetherWith(
+                                    slideOutVertically(animationSpec = tween(durationMillis = animationDuration)) {
+                                        height -> height
+                                    }
+                                )
                         }.using(SizeTransform(clip = true))
                     },
                     label = stringResource(R.string.upload_process_step_transition),
@@ -196,28 +218,33 @@ fun UploadPlaceScreen(
                             onClickReportPlace = viewModel::onClickReportPlace,
                             onHideSearchedPlaceList = viewModel::onHideSearchedPlaceList,
                             onSearchedSpotClick = viewModel::onSearchSpotByMapClicked,
-                            onSearchQueryOrSelectionChanged = viewModel::onSearchQueryOrSelectionChanged
+                            onSearchQueryOrSelectionChanged = viewModel::onSearchQueryOrSelectionChanged,
+                            onAnimationEnded = viewModel::onSlideAnimationEnd
                         )
                         1 -> UploadSelectPlaceScreen(
                             state = state,
                             onSelectSpotType = viewModel::updateSpotType,
-                            onUpdateNextPageBtnEnabled = viewModel::updateNextBtnEnabled
+                            onUpdateNextPageBtnEnabled = viewModel::updateNextBtnEnabled,
+                            onAnimationEnded = viewModel::onSlideAnimationEnd
                         )
                         2 -> UploadSelectPlaceDetailScreen(
                             state = state,
                             onUpdateCafeOptionType = viewModel::updateCafeOptionType,
                             onUpdateRestaurantType = viewModel::updateRestaurantType,
-                            onUpdateNextPageBtnEnabled = viewModel::updateNextBtnEnabled
+                            onUpdateNextPageBtnEnabled = viewModel::updateNextBtnEnabled,
+                            onAnimationEnded = viewModel::onSlideAnimationEnd
                         )
                         3 -> UploadPlaceEnterMenuScreen(
                             state = state,
                             onSearchQueryChanged = viewModel::onSearchQueryChanged,
-                            onUpdateNextPageBtnEnabled = viewModel::updateNextBtnEnabled
+                            onUpdateNextPageBtnEnabled = viewModel::updateNextBtnEnabled,
+                            onAnimationEnded = viewModel::onSlideAnimationEnd
                         )
                         4 -> UploadSelectPriceScreen(
                             state = state,
                             onUpdatePriceOptionType = viewModel::updatePriceOptionType,
-                            onUpdateNextPageBtnEnabled = viewModel::updateNextBtnEnabled
+                            onUpdateNextPageBtnEnabled = viewModel::updateNextBtnEnabled,
+                            onAnimationEnded = viewModel::onSlideAnimationEnd
                         )
                         5 -> UploadPlaceImageScreen(
                             state = state,
@@ -226,10 +253,11 @@ fun UploadPlaceScreen(
                             onAddSpotImageUri = viewModel::onAddImageUris,
                             onRemoveSpotImageUri = viewModel::onRemoveImageUri,
                             onUpdateNextPageBtnEnabled = viewModel::updateNextBtnEnabled,
-                            onRequestUploadPlaceLimitPouUp = viewModel::onRequestUploadPlaceLimitPouUp
+                            onRequestUploadPlaceLimitPouUp = viewModel::onRequestUploadPlaceLimitPouUp,
+                            onAnimationEnded = viewModel::onSlideAnimationEnd
                         )
                         6 -> UploadPlaceCompleteScreen(
-                            onClickGoHome = viewModel::onNavigateToBack
+                            onClickGoHome = viewModel::onNavigateToBack,
                         )
                     }
                 }
