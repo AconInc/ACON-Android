@@ -279,6 +279,8 @@
     <string name="introduce_local_review_content">도토리를 떨어트려 리뷰를 남길 수 있어요\n현지인이 남긴 도토리는 LOCAL 태그가 붙어요</string>
     <string name="introduce_top50_title">지역별 단 50곳만.</string>
     <string name="introduce_top50_content">아콘은 한 지역에 최대 50개의 맛집만 저장해요\n리뷰에 따라 맛집 랭킹이 변동돼요</string>
+    <string name="introduce_main_title">지금. 어디 갈지만 정해보세요.</string>
+    <string name="introduce_main_content">식당에 갈지 카페에 갈지만 정해보세요\n더 이상 맛집 찾느라 시간을 쏟지 마세요</string>
 
     <!-- Profile -->
     <string name="profile_topbar">프로필</string>
