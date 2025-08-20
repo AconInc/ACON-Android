@@ -22,9 +22,20 @@ import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.tag.AconTag
 import com.acon.acon.core.designsystem.effect.screenDefault
 import com.acon.acon.core.designsystem.theme.AconTheme
+import com.acon.acon.core.ui.base.ScreenProvider
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.rememberLottieComposition
+
+internal class IntroduceLocalReviewScreenProvider : ScreenProvider {
+
+    @Composable
+    override fun provide() {
+        IntroduceLocalReviewScreen(
+            modifier = Modifier.padding(top = 20.dp)
+        )
+    }
+}
 
 @Composable
 internal fun IntroduceLocalReviewScreen(

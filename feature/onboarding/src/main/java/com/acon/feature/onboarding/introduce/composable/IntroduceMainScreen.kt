@@ -22,6 +22,20 @@ import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.button.v2.AconFilledTextButton
 import com.acon.acon.core.designsystem.effect.screenDefault
 import com.acon.acon.core.designsystem.theme.AconTheme
+import com.acon.acon.core.ui.base.ScreenProvider
+
+internal class IntroduceMainScreenProvider(
+    private val onStartButtonClick: () -> Unit
+) : ScreenProvider {
+
+    @Composable
+    override fun provide() {
+        IntroduceMainScreen(
+            onStartButtonClick = onStartButtonClick,
+            modifier = Modifier.padding(top = 11.dp)
+        )
+    }
+}
 
 @Composable
 internal fun IntroduceMainScreen(
@@ -33,7 +47,7 @@ internal fun IntroduceMainScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 32.dp),
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
         ) {
             Image(
                 painter = painterResource(R.drawable.onboarding_main_spot_sample),

@@ -21,7 +21,18 @@ import androidx.compose.ui.unit.dp
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.effect.screenDefault
 import com.acon.acon.core.designsystem.theme.AconTheme
+import com.acon.acon.core.ui.base.ScreenProvider
 import com.acon.acon.core.ui.compose.getScreenWidth
+
+internal class IntroduceTop50ScreenProvider : ScreenProvider {
+
+    @Composable
+    override fun provide() {
+        IntroduceTop50Screen(
+            modifier = Modifier.padding(top = 20.dp)
+        )
+    }
+}
 
 @Composable
 internal fun IntroduceTop50Screen(
