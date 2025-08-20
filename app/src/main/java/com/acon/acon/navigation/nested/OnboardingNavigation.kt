@@ -1,20 +1,19 @@
 package com.acon.acon.navigation.nested
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
-import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.core.navigation.route.SettingsRoute
-import com.acon.acon.core.navigation.route.OnboardingRoute
-import com.acon.feature.onboarding.dislikes.composable.ChooseDislikesScreenContainer
+import com.acon.acon.core.designsystem.effect.screenDefault
 import com.acon.acon.core.navigation.LocalNavController
+import com.acon.acon.core.navigation.route.OnboardingRoute
+import com.acon.acon.core.navigation.route.SettingsRoute
 import com.acon.acon.core.navigation.route.SpotRoute
+import com.acon.acon.core.navigation.utils.navigateAndClear
+import com.acon.feature.onboarding.dislikes.composable.ChooseDislikesScreenContainer
+import com.acon.feature.onboarding.introduce.composable.IntroduceScreenContainer
 
 
 internal fun NavGraphBuilder.onboardingNavigationNavigation(
@@ -22,7 +21,7 @@ internal fun NavGraphBuilder.onboardingNavigationNavigation(
 ) {
 
     navigation<OnboardingRoute.Graph>(
-        startDestination = OnboardingRoute.ChooseDislikes
+        startDestination = OnboardingRoute.Introduce
     ) {
         composable<OnboardingRoute.ChooseDislikes> {
             val fromSetting = LocalNavController.current.previousBackStackEntry?.destination?.hasRoute(
@@ -37,10 +36,17 @@ internal fun NavGraphBuilder.onboardingNavigationNavigation(
                     }
                 },
                 fromSetting = fromSetting,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(AconTheme.color.Gray900)
-                    .systemBarsPadding()
+                modifier = Modifier.screenDefault()
+            )
+        }
+
+        composable<OnboardingRoute.Introduce> {
+
+            IntroduceScreenContainer(
+                modifier = Modifier.screenDefault(),
+                onNavigateToHome = {
+                    navController.navigateAndClear(SpotRoute.Graph)
+                }
             )
         }
     }
