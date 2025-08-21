@@ -1,5 +1,7 @@
 package com.acon.acon.navigation.nested
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.ui.Modifier
@@ -9,6 +11,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import com.acon.acon.core.designsystem.effect.screenDefault
+import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.core.navigation.LocalNavController
 import com.acon.acon.core.navigation.route.OnboardingRoute
 import com.acon.acon.core.navigation.route.SettingsRoute
@@ -45,7 +48,7 @@ internal fun NavGraphBuilder.onboardingNavigationNavigation(
         composable<OnboardingRoute.Introduce> {
 
             IntroduceScreenContainer(
-                modifier = Modifier.screenDefault().statusBarsPadding(),
+                modifier = Modifier.fillMaxSize().background(AconTheme.color.Black).statusBarsPadding(),
                 onNavigateToHome = {
                     navController.navigateAndClear(SpotRoute.Graph)
                 }
