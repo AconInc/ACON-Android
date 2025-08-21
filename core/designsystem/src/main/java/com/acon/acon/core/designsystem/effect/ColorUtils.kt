@@ -84,5 +84,5 @@ fun Modifier.imageGradientBottomLayer(
 
 @Stable
 fun Modifier.screenDefault() = then(
-    Modifier.fillMaxSize().background(AconColors.Gray900).systemBarsPadding()
+    Modifier.fillMaxSize().background(AconColors.Gray900)
 )

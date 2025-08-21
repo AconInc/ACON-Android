@@ -1,5 +1,7 @@
 package com.acon.acon.navigation.nested
 
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavGraphBuilder
@@ -36,14 +38,14 @@ internal fun NavGraphBuilder.onboardingNavigationNavigation(
                     }
                 },
                 fromSetting = fromSetting,
-                modifier = Modifier.screenDefault()
+                modifier = Modifier.screenDefault().systemBarsPadding()
             )
         }
 
         composable<OnboardingRoute.Introduce> {
 
             IntroduceScreenContainer(
-                modifier = Modifier.screenDefault(),
+                modifier = Modifier.screenDefault().statusBarsPadding(),
                 onNavigateToHome = {
                     navController.navigateAndClear(SpotRoute.Graph)
                 }
