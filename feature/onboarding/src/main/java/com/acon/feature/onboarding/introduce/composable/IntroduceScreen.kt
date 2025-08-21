@@ -49,7 +49,6 @@ internal fun IntroduceScreen(
         }
         HorizontalPager(
             state = pagerState,
-            beyondViewportPageCount = pagerState.pageCount,
             modifier = Modifier.fillMaxWidth().disableSwipeAnimation(
                 pagerState = pagerState,
                 flingThreshold = 400f
