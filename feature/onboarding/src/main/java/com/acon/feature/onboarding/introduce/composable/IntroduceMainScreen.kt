@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -16,9 +16,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.acon.acon.core.designsystem.R
+import com.acon.acon.core.designsystem.animation.slidingFadeIn
 import com.acon.acon.core.designsystem.component.button.v2.AconFilledTextButton
 import com.acon.acon.core.designsystem.effect.screenDefault
 import com.acon.acon.core.designsystem.theme.AconTheme
@@ -32,30 +32,52 @@ internal class IntroduceMainScreenProvider(
     override fun provide() {
         IntroduceMainScreen(
             onStartButtonClick = onStartButtonClick,
-            modifier = Modifier.padding(top = 11.dp)
+            modifier = Modifier.padding(top = 54.dp).navigationBarsPadding()
         )
     }
 }
+
+private const val COMMON_TWEEN_DELAY = 200
+private const val COMMON_APPEAR_ANIMATION_DURATION_MS = 500
 
 @Composable
 internal fun IntroduceMainScreen(
     onStartButtonClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+
+    val imageFadeInCompleteMillis = COMMON_TWEEN_DELAY + COMMON_APPEAR_ANIMATION_DURATION_MS
+
+    val messageAppearDelayMillis = imageFadeInCompleteMillis + COMMON_TWEEN_DELAY
+    val messageFadeInCompleteMillis = messageAppearDelayMillis + COMMON_APPEAR_ANIMATION_DURATION_MS
+    val startButtonAppearDelayMillis = messageFadeInCompleteMillis + COMMON_TWEEN_DELAY
+
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Box(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-        ) {
-            Image(
-                painter = painterResource(R.drawable.onboarding_main_spot_sample),
-                contentDescription = null,
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 32.dp)
-            )
+
+        Box() {
+            Column {
+                Image(
+                    painter = painterResource(R.drawable.onboarding_main_spot_sample),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 32.dp)
+                        .slidingFadeIn(
+                            delayMillis = COMMON_TWEEN_DELAY,
+                            durationMillis = COMMON_APPEAR_ANIMATION_DURATION_MS
+                        )
+                )
+                Spacer(Modifier.height(40.dp))
+            }
             Column(
-                modifier = Modifier.align(Alignment.BottomCenter)
+                modifier = Modifier.fillMaxWidth().align(Alignment.BottomCenter).slidingFadeIn(
+                    delayMillis = messageAppearDelayMillis,
+                    durationMillis = COMMON_APPEAR_ANIMATION_DURATION_MS
+                ),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
                     text = stringResource(R.string.introduce_main_title),
@@ -63,18 +85,15 @@ internal fun IntroduceMainScreen(
                     style = AconTheme.typography.Title2,
                     fontWeight = FontWeight.ExtraBold,
                 )
-                Spacer(modifier = Modifier.height(24.dp))
+                Text(
+                    text = stringResource(R.string.introduce_main_content),
+                    color = AconTheme.color.White,
+                    style = AconTheme.typography.Title4,
+                    modifier = Modifier.padding(top = 24.dp)
+                )
             }
         }
-        Text(
-            text = stringResource(R.string.introduce_main_content),
-            color = AconTheme.color.White,
-            style = AconTheme.typography.Title4,
-            modifier = Modifier.offset {
-                IntOffset(x = 0, y = -16)
-            }
-        )
-        Spacer(modifier = Modifier.weight(1f))
+        Spacer(Modifier.weight(1f))
         AconFilledTextButton(
             text = stringResource(R.string.start),
             onClick = onStartButtonClick,
@@ -82,6 +101,10 @@ internal fun IntroduceMainScreen(
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp)
                 .padding(bottom = 16.dp)
+                .slidingFadeIn(
+                    delayMillis = startButtonAppearDelayMillis,
+                    durationMillis = COMMON_APPEAR_ANIMATION_DURATION_MS
+                )
         )
     }
 }
