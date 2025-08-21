@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredWidth
@@ -21,6 +22,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -33,7 +35,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import com.acon.acon.core.common.utils.delay
 import com.acon.acon.core.designsystem.R
+import com.acon.acon.core.designsystem.animation.slidingFadeIn
 import com.acon.acon.core.designsystem.effect.screenDefault
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.core.ui.base.ScreenProvider
@@ -55,12 +59,23 @@ private const val UPWARD_IMAGE_MOVING_DISTANCE_ABS_PX = 560f
 private const val DOWNWARD_IMAGE_MOVING_DISTANCE_ABS_PX = 240f
 private const val IMAGE_ANIMATION_DURATION_MS = 800
 
+private const val COMMON_TWEEN_DELAY = 200
+private const val COMMON_APPEAR_ANIMATION_DURATION_MS = 500
+
 @Composable
 internal fun IntroduceTop50Screen(
     modifier: Modifier = Modifier
 ) {
 
     val screenWidth = getScreenWidth()
+
+    val messagesAppearDelayMillis = COMMON_TWEEN_DELAY
+    val messagesAppearDurationMillis = COMMON_APPEAR_ANIMATION_DURATION_MS
+
+    val imagesAppearDelayMillis = messagesAppearDelayMillis + messagesAppearDurationMillis + COMMON_TWEEN_DELAY
+    val imagesAppearFadeInAnimation = remember { Animatable(0f) }
+
+    val imagesMovingDelayMillis = imagesAppearDelayMillis + COMMON_APPEAR_ANIMATION_DURATION_MS + COMMON_TWEEN_DELAY
     val upwardImageMovingAnimation = remember { Animatable(0f) }
     val downwardImageMovingAnimation = remember { Animatable(0f) }
     val upwardImageAlphaAnimation = remember { Animatable(0f) }
@@ -72,26 +87,37 @@ internal fun IntroduceTop50Screen(
         ),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Text(
-            text = stringResource(R.string.introduce_top50_title),
-            color = AconTheme.color.White,
-            style = AconTheme.typography.Title2,
-            fontWeight = FontWeight.ExtraBold
-        )
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .slidingFadeIn(
+                    durationMillis = messagesAppearDurationMillis,
+                    delayMillis = messagesAppearDelayMillis
+                ),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = stringResource(R.string.introduce_top50_title),
+                color = AconTheme.color.White,
+                style = AconTheme.typography.Title2,
+                fontWeight = FontWeight.ExtraBold,
+            )
 
-        Text(
-            text = stringResource(R.string.introduce_top50_content),
-            color = AconTheme.color.White,
-            style = AconTheme.typography.Title4,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.padding(top = 24.dp)
-        )
+            Text(
+                text = stringResource(R.string.introduce_top50_content),
+                color = AconTheme.color.White,
+                style = AconTheme.typography.Title4,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(top = 24.dp)
+            )
+        }
 
         Row(
             modifier = Modifier
                 .padding(top = 32.dp)
                 .requiredWidth(screenWidth * 1.5f)
-                .zIndex(-1f),
+                .zIndex(-1f)
+                .alpha(imagesAppearFadeInAnimation.value),
             horizontalArrangement = Arrangement.Center
         ) {
             Image(
@@ -141,31 +167,44 @@ internal fun IntroduceTop50Screen(
 
     LaunchedEffect(Unit) {
         launch {
-            upwardImageMovingAnimation.animateTo(
-                targetValue = -UPWARD_IMAGE_MOVING_DISTANCE_ABS_PX,
-                animationSpec = tween(
-                    durationMillis = IMAGE_ANIMATION_DURATION_MS,
-                    easing = LinearEasing
-                )
-            )
-        }
-        launch {
-            downwardImageMovingAnimation.animateTo(
-                targetValue = DOWNWARD_IMAGE_MOVING_DISTANCE_ABS_PX,
-                animationSpec = tween(
-                    durationMillis = IMAGE_ANIMATION_DURATION_MS,
-                    easing = LinearEasing
-                )
-            )
-        }
-        launch {
-            upwardImageAlphaAnimation.animateTo(
+            delay(imagesAppearDelayMillis)
+            imagesAppearFadeInAnimation.animateTo(
                 targetValue = 1f,
                 animationSpec = tween(
-                    durationMillis = IMAGE_ANIMATION_DURATION_MS,
+                    durationMillis = COMMON_APPEAR_ANIMATION_DURATION_MS,
                     easing = LinearEasing
                 )
             )
+        }
+        launch {
+            delay(imagesMovingDelayMillis)
+            launch {
+                upwardImageMovingAnimation.animateTo(
+                    targetValue = -UPWARD_IMAGE_MOVING_DISTANCE_ABS_PX,
+                    animationSpec = tween(
+                        durationMillis = IMAGE_ANIMATION_DURATION_MS,
+                        easing = LinearEasing
+                    )
+                )
+            }
+            launch {
+                downwardImageMovingAnimation.animateTo(
+                    targetValue = DOWNWARD_IMAGE_MOVING_DISTANCE_ABS_PX,
+                    animationSpec = tween(
+                        durationMillis = IMAGE_ANIMATION_DURATION_MS,
+                        easing = LinearEasing
+                    )
+                )
+            }
+            launch {
+                upwardImageAlphaAnimation.animateTo(
+                    targetValue = 1f,
+                    animationSpec = tween(
+                        durationMillis = IMAGE_ANIMATION_DURATION_MS,
+                        easing = LinearEasing
+                    )
+                )
+            }
         }
     }
 }
