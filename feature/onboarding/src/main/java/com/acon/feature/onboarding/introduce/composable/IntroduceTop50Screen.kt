@@ -45,13 +45,22 @@ import com.acon.acon.core.ui.compose.getScreenWidth
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
-internal class IntroduceTop50ScreenProvider : ScreenProvider {
+internal class IntroduceTop50ScreenProvider(
+    private val onRendered: () -> Unit,
+    private val animationEnabled: () -> Boolean
+) : ScreenProvider {
 
     @Composable
     override fun provide() {
         IntroduceTop50Screen(
-            modifier = Modifier.fillMaxSize().padding(top = 54.dp)
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 54.dp),
+            animationEnabled = animationEnabled
         )
+        LaunchedEffect(Unit) {
+            onRendered()
+        }
     }
 }
 
@@ -64,6 +73,18 @@ private const val COMMON_APPEAR_ANIMATION_DURATION_MS = 500
 
 @Composable
 internal fun IntroduceTop50Screen(
+    modifier: Modifier = Modifier,
+    animationEnabled: () -> Boolean = { true }
+) {
+
+    if (animationEnabled())
+        AnimationEnabledIntroduceTop50Screen(modifier = modifier)
+    else
+        AnimationDisabledIntroduceTop50Screen(modifier = modifier)
+}
+
+@Composable
+private fun AnimationEnabledIntroduceTop50Screen(
     modifier: Modifier = Modifier
 ) {
 
@@ -123,9 +144,11 @@ internal fun IntroduceTop50Screen(
             Image(
                 painter = painterResource(R.drawable.onboarding_spot_samples1),
                 contentDescription = null,
-                modifier = Modifier.width(screenWidth * 0.4f).offset {
-                    IntOffset(x = 0, y = downwardImageMovingAnimation.value.roundToInt())
-                },
+                modifier = Modifier
+                    .width(screenWidth * 0.4f)
+                    .offset {
+                        IntOffset(x = 0, y = downwardImageMovingAnimation.value.roundToInt())
+                    },
                 contentScale = ContentScale.FillWidth,
                 alignment = Alignment.TopCenter
             )
@@ -133,22 +156,26 @@ internal fun IntroduceTop50Screen(
             Image(
                 painter = painterResource(R.drawable.onboarding_spot_samples2),
                 contentDescription = null,
-                modifier = Modifier.padding(top = 88.dp).width(screenWidth * 0.4f).offset {
-                    IntOffset(x = 0, y = upwardImageMovingAnimation.value.roundToInt())
-                }.drawWithContent {
-                    drawContent()
+                modifier = Modifier
+                    .padding(top = 88.dp)
+                    .width(screenWidth * 0.4f)
+                    .offset {
+                        IntOffset(x = 0, y = upwardImageMovingAnimation.value.roundToInt())
+                    }
+                    .drawWithContent {
+                        drawContent()
 
-                    drawRect(
-                        brush = Brush.verticalGradient(
-                            colorStops = arrayOf(
-                                0.0f  to Color.Black,
-                                0.16f to Color.Black,
-                                0.32f to Color.Black.copy(alpha = 0f)
-                            )
-                        ),
-                        alpha = upwardImageAlphaAnimation.value
-                    )
-                },
+                        drawRect(
+                            brush = Brush.verticalGradient(
+                                colorStops = arrayOf(
+                                    0.0f to Color.Black,
+                                    0.16f to Color.Black,
+                                    0.32f to Color.Black.copy(alpha = 0f)
+                                )
+                            ),
+                            alpha = upwardImageAlphaAnimation.value
+                        )
+                    },
                 contentScale = ContentScale.FillWidth,
                 alignment = Alignment.TopCenter
             )
@@ -156,9 +183,11 @@ internal fun IntroduceTop50Screen(
             Image(
                 painter = painterResource(R.drawable.onboarding_spot_samples3),
                 contentDescription = null,
-                modifier = Modifier.width(screenWidth * 0.4f).offset {
-                    IntOffset(x = 0, y = downwardImageMovingAnimation.value.roundToInt())
-                },
+                modifier = Modifier
+                    .width(screenWidth * 0.4f)
+                    .offset {
+                        IntOffset(x = 0, y = downwardImageMovingAnimation.value.roundToInt())
+                    },
                 contentScale = ContentScale.FillWidth,
                 alignment = Alignment.TopCenter
             )
@@ -210,9 +239,107 @@ internal fun IntroduceTop50Screen(
 }
 
 @Composable
+private fun AnimationDisabledIntroduceTop50Screen(
+    modifier: Modifier = Modifier
+) {
+
+    val screenWidth = getScreenWidth()
+
+    Column(
+        modifier = modifier.verticalScroll(
+            state = rememberScrollState(),
+            enabled = false
+        ),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = stringResource(R.string.introduce_top50_title),
+                color = AconTheme.color.White,
+                style = AconTheme.typography.Title2,
+                fontWeight = FontWeight.ExtraBold,
+            )
+
+            Text(
+                text = stringResource(R.string.introduce_top50_content),
+                color = AconTheme.color.White,
+                style = AconTheme.typography.Title4,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(top = 24.dp)
+            )
+        }
+
+        Row(
+            modifier = Modifier
+                .padding(top = 32.dp)
+                .requiredWidth(screenWidth * 1.5f)
+                .zIndex(-1f),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Image(
+                painter = painterResource(R.drawable.onboarding_spot_samples1),
+                contentDescription = null,
+                modifier = Modifier
+                    .width(screenWidth * 0.4f)
+                    .offset {
+                        IntOffset(x = 0, y = DOWNWARD_IMAGE_MOVING_DISTANCE_ABS_PX.roundToInt())
+                    },
+                contentScale = ContentScale.FillWidth,
+                alignment = Alignment.TopCenter
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+            Image(
+                painter = painterResource(R.drawable.onboarding_spot_samples2),
+                contentDescription = null,
+                modifier = Modifier
+                    .padding(top = 88.dp)
+                    .width(screenWidth * 0.4f)
+                    .offset {
+                        IntOffset(x = 0, y = -UPWARD_IMAGE_MOVING_DISTANCE_ABS_PX.roundToInt())
+                    }
+                    .drawWithContent {
+                        drawContent()
+
+                        drawRect(
+                            brush = Brush.verticalGradient(
+                                colorStops = arrayOf(
+                                    0.0f to Color.Black,
+                                    0.16f to Color.Black,
+                                    0.32f to Color.Black.copy(alpha = 0f)
+                                )
+                            ),
+                        )
+                    },
+                contentScale = ContentScale.FillWidth,
+                alignment = Alignment.TopCenter
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+            Image(
+                painter = painterResource(R.drawable.onboarding_spot_samples3),
+                contentDescription = null,
+                modifier = Modifier
+                    .width(screenWidth * 0.4f)
+                    .offset {
+                        IntOffset(x = 0, y = DOWNWARD_IMAGE_MOVING_DISTANCE_ABS_PX.roundToInt())
+                    },
+                contentScale = ContentScale.FillWidth,
+                alignment = Alignment.TopCenter
+            )
+        }
+    }
+}
+
+@Composable
 @Preview
 private fun IntroduceTop50ScreenPreview() {
     IntroduceTop50Screen(
-        modifier = Modifier.screenDefault().padding(top = 54.dp)
+        modifier = Modifier
+            .screenDefault()
+            .padding(top = 54.dp),
+        animationEnabled = { false }
     )
 }

@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -25,15 +26,26 @@ import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.core.ui.base.ScreenProvider
 
 internal class IntroduceMainScreenProvider(
-    private val onStartButtonClick: () -> Unit
+    private val onStartButtonClick: () -> Unit,
+    private val onRendered: () -> Unit,
+    private val onDisposed: () -> Unit,
+    private val animationEnabled: () -> Boolean
 ) : ScreenProvider {
 
     @Composable
     override fun provide() {
         IntroduceMainScreen(
             onStartButtonClick = onStartButtonClick,
-            modifier = Modifier.padding(top = 54.dp).navigationBarsPadding()
+            modifier = Modifier.padding(top = 54.dp).navigationBarsPadding(),
+            animationEnabled = animationEnabled
         )
+        DisposableEffect(Unit) {
+            onRendered()
+
+            onDispose {
+                onDisposed()
+            }
+        }
     }
 }
 
@@ -43,9 +55,27 @@ private const val COMMON_APPEAR_ANIMATION_DURATION_MS = 500
 @Composable
 internal fun IntroduceMainScreen(
     onStartButtonClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    animationEnabled: () -> Boolean = { true }
 ) {
 
+    if (animationEnabled())
+        AnimationEnabledIntroduceMainScreen(
+            modifier = modifier,
+            onStartButtonClick = onStartButtonClick
+        )
+    else
+        AnimationDisabledIntroduceMainScreen(
+            modifier = modifier,
+            onStartButtonClick = onStartButtonClick
+        )
+}
+
+@Composable
+private fun AnimationEnabledIntroduceMainScreen(
+    onStartButtonClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     val imageFadeInCompleteMillis = COMMON_TWEEN_DELAY + COMMON_APPEAR_ANIMATION_DURATION_MS
 
     val messageAppearDelayMillis = imageFadeInCompleteMillis + COMMON_TWEEN_DELAY
@@ -108,12 +138,64 @@ internal fun IntroduceMainScreen(
         )
     }
 }
+@Composable
+private fun AnimationDisabledIntroduceMainScreen(
+    onStartButtonClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+
+        Box() {
+            Column {
+                Image(
+                    painter = painterResource(R.drawable.onboarding_main_spot_sample),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 32.dp)
+                )
+                Spacer(Modifier.height(40.dp))
+            }
+            Column(
+                modifier = Modifier.fillMaxWidth().align(Alignment.BottomCenter),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = stringResource(R.string.introduce_main_title),
+                    color = AconTheme.color.White,
+                    style = AconTheme.typography.Title2,
+                    fontWeight = FontWeight.ExtraBold,
+                )
+                Text(
+                    text = stringResource(R.string.introduce_main_content),
+                    color = AconTheme.color.White,
+                    style = AconTheme.typography.Title4,
+                    modifier = Modifier.padding(top = 24.dp)
+                )
+            }
+        }
+        Spacer(Modifier.weight(1f))
+        AconFilledTextButton(
+            text = stringResource(R.string.start),
+            onClick = onStartButtonClick,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+                .padding(bottom = 16.dp)
+        )
+    }
+}
 
 @Composable
 @Preview
 private fun IntroduceMainScreenPreview() {
     IntroduceMainScreen(
         onStartButtonClick = {},
-        modifier = Modifier.screenDefault().padding(top = 11.dp)
+        modifier = Modifier.screenDefault().padding(top = 11.dp),
+        animationEnabled = { false }
     )
 }

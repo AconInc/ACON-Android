@@ -9,7 +9,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -18,7 +17,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -49,27 +47,42 @@ import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import kotlinx.coroutines.delay
 
-internal class IntroduceLocalReviewScreenProvider : ScreenProvider {
+internal class IntroduceLocalReviewScreenProvider(
+    private val animationEnabled: () -> Boolean
+) : ScreenProvider {
 
     @Composable
     override fun provide() {
         IntroduceLocalReviewScreen(
             modifier = Modifier
                 .navigationBarsPadding()
-                .padding(top = 54.dp)
+                .padding(top = 54.dp),
+            animationEnabled = animationEnabled
         )
     }
 }
 
-private const val LOCAL_TAG_ALPHA_ANIMATION_DURATION_MS = 1000
+@Composable
+internal fun IntroduceLocalReviewScreen(
+    modifier: Modifier = Modifier,
+    animationEnabled: () -> Boolean = { true }
+) {
+
+    if (animationEnabled())
+        AnimationEnabledIntroduceLocalReviewScreen(modifier = modifier)
+    else
+        AnimationDisabledIntroduceLocalReviewScreen(modifier = modifier)
+}
+
+private const val LOCAL_TAG_ALPHA_ANIMATION_DURATION_MS = 2000
+private const val ACORN_LOTTIE_SPEED_RATIO = 1.25f
 private const val MESSAGE_APPEAR_ANIMATION_DELAY_MS = 200
 private const val MESSAGE_APPEAR_ANIMATION_DURATION_MS = 500
 
 @Composable
-internal fun IntroduceLocalReviewScreen(
+private fun AnimationEnabledIntroduceLocalReviewScreen(
     modifier: Modifier = Modifier
 ) {
-
     var playAcornLottieAnimation by remember {
         mutableStateOf(false)
     }
@@ -80,7 +93,7 @@ internal fun IntroduceLocalReviewScreen(
         composition = acornLottieComposition,
         isPlaying = playAcornLottieAnimation,
         iterations = 1,
-        speed = 1f
+        speed = ACORN_LOTTIE_SPEED_RATIO
     )
 
     var isAcornLottieAnimationEnded by remember {
@@ -96,16 +109,6 @@ internal fun IntroduceLocalReviewScreen(
                 isAcornLottieAnimationEnded = true
         }
     }
-
-    val localTagAlphaAnimation by rememberInfiniteTransition(label = "tagAlphaInfinite").animateFloat(
-        initialValue = 0f,
-        targetValue = 1f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = LOCAL_TAG_ALPHA_ANIMATION_DURATION_MS, easing = LinearEasing),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "tagAlphaAnimation"
-    )
 
     Column(
         modifier = modifier,
@@ -139,7 +142,6 @@ internal fun IntroduceLocalReviewScreen(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(1f)
                 .padding(top = 40.dp),
             contentAlignment = Alignment.Center
         ) {
@@ -147,6 +149,101 @@ internal fun IntroduceLocalReviewScreen(
                 LottieAnimation(
                     composition = acornLottieComposition,
                     progress = { acornLottieProgress.progress },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(1f)
+                )
+            else {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(AconTheme.color.Gray700),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(text = "로띠 영역", color = AconTheme.color.White)
+                }
+            }
+        }
+
+        if (isAcornLottieAnimationEnded) {
+            val localTagAlphaAnimation by rememberInfiniteTransition(label = "tagAlphaInfinite").animateFloat(
+                initialValue = 0f,
+                targetValue = 1f,
+                animationSpec = infiniteRepeatable(
+                    animation = tween(
+                        durationMillis = LOCAL_TAG_ALPHA_ANIMATION_DURATION_MS,
+                        easing = LinearEasing
+                    ),
+                    repeatMode = RepeatMode.Reverse
+                ),
+                label = "tagAlphaAnimation"
+            )
+
+            AconTag(
+                text = stringResource(R.string.store_tag_local),
+                backgroundColor = AconTheme.color.TagLocal,
+                modifier = Modifier
+                    .padding(top = 40.dp)
+                    .shadowLayerBackground(
+                        shadowColor = AconTheme.color.TagLocal,
+                        shadowAlpha = localTagAlphaAnimation,
+                        shadowRadius = 100f
+                    )
+                    .alpha(localTagAlphaAnimation),
+                textStyle = AconTheme.typography.Body1.copy(
+                    color = AconTheme.color.White,
+                    fontWeight = FontWeight.SemiBold
+                ),
+                contentPadding = PaddingValues(horizontal = 14.dp, vertical = 5.dp)
+            )
+        }
+
+        Spacer(modifier = Modifier.height(137.dp))
+    }
+}
+
+@Composable
+private fun AnimationDisabledIntroduceLocalReviewScreen(
+    modifier: Modifier = Modifier
+) {
+
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = stringResource(R.string.introduce_local_review_title),
+                color = AconTheme.color.White,
+                style = AconTheme.typography.Title2,
+                fontWeight = FontWeight.ExtraBold
+            )
+
+            Text(
+                text = stringResource(R.string.introduce_local_review_content),
+                color = AconTheme.color.White,
+                style = AconTheme.typography.Title4,
+                modifier = Modifier.padding(top = 24.dp),
+                textAlign = TextAlign.Center
+            )
+        }
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+                .padding(top = 40.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            if (LocalInspectionMode.current.not())
+                LottieAnimation(
+                    composition = rememberLottieComposition(
+                        spec = LottieCompositionSpec.RawRes(R.raw.acorn5)
+                    ).value,
+                    progress = { 1f },
                     modifier = Modifier
                         .fillMaxSize()
                         .aspectRatio(1f)
@@ -163,34 +260,36 @@ internal fun IntroduceLocalReviewScreen(
             }
         }
 
-        Box(
-            modifier = Modifier
-                .height(IntrinsicSize.Min)
-                .width(IntrinsicSize.Min)
-        ) {
-            AconTag(
-                text = stringResource(R.string.store_tag_local),
-                backgroundColor = AconTheme.color.TagLocal,
-                modifier = Modifier
-                    .padding(top = 40.dp)
-                    .then(
-                        if (isAcornLottieAnimationEnded)
-                            Modifier
-                                .shadowLayerBackground(
-                                    shadowColor = AconTheme.color.TagLocal,
-                                    shadowAlpha = localTagAlphaAnimation,
-                                    shadowRadius = 100f
-                                )
-                                .alpha(localTagAlphaAnimation)
-                        else Modifier.alpha(0f)
-                    ),
-                textStyle = AconTheme.typography.Body1.copy(
-                    color = AconTheme.color.White,
-                    fontWeight = FontWeight.SemiBold
+        val localTagAlphaAnimation by rememberInfiniteTransition(label = "tagAlphaInfinite").animateFloat(
+            initialValue = 0f,
+            targetValue = 1f,
+            animationSpec = infiniteRepeatable(
+                animation = tween(
+                    durationMillis = LOCAL_TAG_ALPHA_ANIMATION_DURATION_MS,
+                    easing = LinearEasing
                 ),
-                contentPadding = PaddingValues(horizontal = 14.dp, vertical = 5.dp)
-            )
-        }
+                repeatMode = RepeatMode.Reverse
+            ),
+            label = "tagAlphaAnimation"
+        )
+
+        AconTag(
+            text = stringResource(R.string.store_tag_local),
+            backgroundColor = AconTheme.color.TagLocal,
+            modifier = Modifier
+                .padding(top = 40.dp)
+                .shadowLayerBackground(
+                    shadowColor = AconTheme.color.TagLocal,
+                    shadowAlpha = localTagAlphaAnimation,
+                    shadowRadius = 100f
+                )
+                .alpha(localTagAlphaAnimation),
+            textStyle = AconTheme.typography.Body1.copy(
+                color = AconTheme.color.White,
+                fontWeight = FontWeight.SemiBold
+            ),
+            contentPadding = PaddingValues(horizontal = 14.dp, vertical = 5.dp)
+        )
 
         Spacer(modifier = Modifier.height(137.dp))
     }
@@ -202,6 +301,7 @@ private fun IntroduceReviewScreenPreview() {
     IntroduceLocalReviewScreen(
         modifier = Modifier
             .screenDefault()
-            .padding(top = 54.dp)
+            .padding(top = 54.dp),
+        animationEnabled = { false }
     )
 }
