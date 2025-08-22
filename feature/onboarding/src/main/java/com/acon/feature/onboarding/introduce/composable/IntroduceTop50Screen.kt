@@ -66,9 +66,9 @@ internal class IntroduceTop50ScreenProvider(
 
 private const val UPWARD_IMAGE_MOVING_DISTANCE_ABS_PX = 560f
 private const val DOWNWARD_IMAGE_MOVING_DISTANCE_ABS_PX = 240f
-private const val IMAGE_ANIMATION_DURATION_MS = 800
+private const val IMAGE_MOVING_ANIMATION_DURATION_MS = 800
 
-private const val COMMON_TWEEN_DELAY = 200
+private const val COMMON_TWEEN_DELAY_MS = 200
 private const val COMMON_APPEAR_ANIMATION_DURATION_MS = 500
 
 @Composable
@@ -90,13 +90,18 @@ private fun AnimationEnabledIntroduceTop50Screen(
 
     val screenWidth = getScreenWidth()
 
-    val messagesAppearDelayMillis = COMMON_TWEEN_DELAY
-    val messagesAppearDurationMillis = COMMON_APPEAR_ANIMATION_DURATION_MS
+    val titleAppearDelayMillis = COMMON_TWEEN_DELAY_MS
+    val titleAppearDurationMillis = COMMON_APPEAR_ANIMATION_DURATION_MS
 
-    val imagesAppearDelayMillis = messagesAppearDelayMillis + messagesAppearDurationMillis + COMMON_TWEEN_DELAY
+    val messageAppearDelayMillis = titleAppearDelayMillis + titleAppearDurationMillis
+    val messageAppearDurationMillis = COMMON_APPEAR_ANIMATION_DURATION_MS
+
+    val imagesAppearDelayMillis = messageAppearDelayMillis + messageAppearDurationMillis + COMMON_TWEEN_DELAY_MS
+    val imageAppearDurationMillis = COMMON_APPEAR_ANIMATION_DURATION_MS
     val imagesAppearFadeInAnimation = remember { Animatable(0f) }
 
-    val imagesMovingDelayMillis = imagesAppearDelayMillis + COMMON_APPEAR_ANIMATION_DURATION_MS + COMMON_TWEEN_DELAY
+    val imagesMovingDelayMillis = imagesAppearDelayMillis + imageAppearDurationMillis + COMMON_TWEEN_DELAY_MS
+    val imagesMovingDurationMillis = IMAGE_MOVING_ANIMATION_DURATION_MS
     val upwardImageMovingAnimation = remember { Animatable(0f) }
     val downwardImageMovingAnimation = remember { Animatable(0f) }
     val upwardImageAlphaAnimation = remember { Animatable(0f) }
@@ -108,30 +113,27 @@ private fun AnimationEnabledIntroduceTop50Screen(
         ),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .slidingFadeIn(
-                    durationMillis = messagesAppearDurationMillis,
-                    delayMillis = messagesAppearDelayMillis
-                ),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = stringResource(R.string.introduce_top50_title),
-                color = AconTheme.color.White,
-                style = AconTheme.typography.Title2,
-                fontWeight = FontWeight.ExtraBold,
+        Text(
+            text = stringResource(R.string.introduce_top50_title),
+            color = AconTheme.color.White,
+            style = AconTheme.typography.Title2,
+            fontWeight = FontWeight.ExtraBold,
+            modifier = Modifier.slidingFadeIn(
+                durationMillis = titleAppearDurationMillis,
+                delayMillis = titleAppearDelayMillis
             )
+        )
 
-            Text(
-                text = stringResource(R.string.introduce_top50_content),
-                color = AconTheme.color.White,
-                style = AconTheme.typography.Title4,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(top = 24.dp)
+        Text(
+            text = stringResource(R.string.introduce_top50_content),
+            color = AconTheme.color.White,
+            style = AconTheme.typography.Title4,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(top = 24.dp).slidingFadeIn(
+                durationMillis = messageAppearDurationMillis,
+                delayMillis = messageAppearDelayMillis
             )
-        }
+        )
 
         Row(
             modifier = Modifier
@@ -201,7 +203,7 @@ private fun AnimationEnabledIntroduceTop50Screen(
             imagesAppearFadeInAnimation.animateTo(
                 targetValue = 1f,
                 animationSpec = tween(
-                    durationMillis = COMMON_APPEAR_ANIMATION_DURATION_MS,
+                    durationMillis = imageAppearDurationMillis,
                     easing = LinearEasing
                 )
             )
@@ -212,7 +214,7 @@ private fun AnimationEnabledIntroduceTop50Screen(
                 upwardImageMovingAnimation.animateTo(
                     targetValue = -UPWARD_IMAGE_MOVING_DISTANCE_ABS_PX,
                     animationSpec = tween(
-                        durationMillis = IMAGE_ANIMATION_DURATION_MS,
+                        durationMillis = imagesMovingDurationMillis,
                         easing = LinearEasing
                     )
                 )
@@ -221,7 +223,7 @@ private fun AnimationEnabledIntroduceTop50Screen(
                 downwardImageMovingAnimation.animateTo(
                     targetValue = DOWNWARD_IMAGE_MOVING_DISTANCE_ABS_PX,
                     animationSpec = tween(
-                        durationMillis = IMAGE_ANIMATION_DURATION_MS,
+                        durationMillis = imagesMovingDurationMillis,
                         easing = LinearEasing
                     )
                 )
@@ -230,7 +232,7 @@ private fun AnimationEnabledIntroduceTop50Screen(
                 upwardImageAlphaAnimation.animateTo(
                     targetValue = 1f,
                     animationSpec = tween(
-                        durationMillis = IMAGE_ANIMATION_DURATION_MS,
+                        durationMillis = imagesMovingDurationMillis,
                         easing = LinearEasing
                     )
                 )
