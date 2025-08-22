@@ -76,11 +76,17 @@ private fun AnimationEnabledIntroduceMainScreen(
     onStartButtonClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val imageFadeInCompleteMillis = COMMON_TWEEN_DELAY + COMMON_APPEAR_ANIMATION_DURATION_MS
+    val imageAppearDelayMillis = COMMON_TWEEN_DELAY
+    val imageAppearDurationMillis = COMMON_APPEAR_ANIMATION_DURATION_MS
 
-    val messageAppearDelayMillis = imageFadeInCompleteMillis + COMMON_TWEEN_DELAY
-    val messageFadeInCompleteMillis = messageAppearDelayMillis + COMMON_APPEAR_ANIMATION_DURATION_MS
-    val startButtonAppearDelayMillis = messageFadeInCompleteMillis + COMMON_TWEEN_DELAY
+    val titleAppearDelayMillis = imageAppearDelayMillis + imageAppearDurationMillis + COMMON_TWEEN_DELAY
+    val titleAppearDurationMillis = COMMON_APPEAR_ANIMATION_DURATION_MS
+
+    val messageAppearDelayMillis = titleAppearDelayMillis + titleAppearDurationMillis
+    val messageAppearDurationMillis = COMMON_APPEAR_ANIMATION_DURATION_MS
+
+    val startButtonAppearDelayMillis = messageAppearDelayMillis + messageAppearDurationMillis + COMMON_TWEEN_DELAY
+    val startButtonAppearDurationMillis = COMMON_APPEAR_ANIMATION_DURATION_MS
 
     Column(
         modifier = modifier,
@@ -103,10 +109,7 @@ private fun AnimationEnabledIntroduceMainScreen(
                 Spacer(Modifier.height(40.dp))
             }
             Column(
-                modifier = Modifier.fillMaxWidth().align(Alignment.BottomCenter).slidingFadeIn(
-                    delayMillis = messageAppearDelayMillis,
-                    durationMillis = COMMON_APPEAR_ANIMATION_DURATION_MS
-                ),
+                modifier = Modifier.fillMaxWidth().align(Alignment.BottomCenter),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
@@ -114,12 +117,19 @@ private fun AnimationEnabledIntroduceMainScreen(
                     color = AconTheme.color.White,
                     style = AconTheme.typography.Title2,
                     fontWeight = FontWeight.ExtraBold,
+                    modifier = Modifier.slidingFadeIn(
+                        delayMillis = titleAppearDelayMillis,
+                        durationMillis = titleAppearDurationMillis
+                    )
                 )
                 Text(
                     text = stringResource(R.string.introduce_main_content),
                     color = AconTheme.color.White,
                     style = AconTheme.typography.Title4,
-                    modifier = Modifier.padding(top = 24.dp)
+                    modifier = Modifier.padding(top = 24.dp).slidingFadeIn(
+                        delayMillis = messageAppearDelayMillis,
+                        durationMillis = messageAppearDurationMillis
+                    )
                 )
             }
         }
@@ -133,7 +143,7 @@ private fun AnimationEnabledIntroduceMainScreen(
                 .padding(bottom = 16.dp)
                 .slidingFadeIn(
                     delayMillis = startButtonAppearDelayMillis,
-                    durationMillis = COMMON_APPEAR_ANIMATION_DURATION_MS
+                    durationMillis = startButtonAppearDurationMillis
                 )
         )
     }
