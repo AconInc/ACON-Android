@@ -11,9 +11,9 @@ import javax.inject.Inject
 @HiltViewModel
 class IntroduceViewModel @Inject constructor(
     private val onboardingRepository: OnboardingRepository
-) : BaseContainerHost<IntroduceState, Unit>() {
+) : BaseContainerHost<IntroduceState, IntroduceSideEffect>() {
 
-    override val container: Container<IntroduceState, Unit> = container(
+    override val container = container<IntroduceState, IntroduceSideEffect>(
         initialState = IntroduceState()
     )
 
@@ -40,6 +40,10 @@ class IntroduceViewModel @Inject constructor(
             )
         }
     }
+
+    fun onStartButtonClicked() = intent {
+        postSideEffect(IntroduceSideEffect.OnNavigateToHomeScreen)
+    }
 }
 
 @Immutable
@@ -48,3 +52,7 @@ data class IntroduceState(
     val shouldShowTop50ScreenAnimation: Boolean = true,
     val shouldShowMainScreenAnimation: Boolean = true
 )
+
+sealed interface IntroduceSideEffect {
+    data object OnNavigateToHomeScreen : IntroduceSideEffect
+}

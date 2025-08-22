@@ -7,9 +7,11 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.acon.feature.onboarding.introduce.viewmodel.IntroduceSideEffect
 import com.acon.feature.onboarding.introduce.viewmodel.IntroduceViewModel
 import kotlinx.collections.immutable.toImmutableList
 import org.orbitmvi.orbit.compose.collectAsState
+import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
 fun IntroduceScreenContainer(
@@ -30,7 +32,7 @@ fun IntroduceScreenContainer(
                 animationEnabled = { state.shouldShowTop50ScreenAnimation }
             ),
             IntroduceMainScreenProvider(
-                onStartButtonClick = onNavigateToHome,
+                onStartButtonClick = viewModel::onStartButtonClicked,
                 onDisposed = viewModel::onIntroduceMainScreenDisposed,
                 animationEnabled = { state.shouldShowMainScreenAnimation }
             )
@@ -44,4 +46,10 @@ fun IntroduceScreenContainer(
         pagerState = pagerState,
         introduceScreenProviders = introduceScreenProviders.toImmutableList(),
     )
+
+    viewModel.collectSideEffect { sideEffect ->
+        when (sideEffect) {
+            IntroduceSideEffect.OnNavigateToHomeScreen -> onNavigateToHome()
+        }
+    }
 }
