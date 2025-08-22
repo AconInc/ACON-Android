@@ -1,5 +1,9 @@
 package com.acon.acon.feature.signin.screen
 
+import com.acon.acon.core.analytics.amplitude.AconAmplitude
+import com.acon.acon.core.analytics.constants.EventNames
+import com.acon.acon.core.analytics.constants.PropertyKeys
+import com.acon.acon.core.model.model.user.VerificationStatus
 import com.acon.acon.core.model.type.UserType
 import com.acon.acon.core.ui.base.BaseContainerHost
 import com.acon.acon.domain.repository.OnboardingRepository
@@ -47,12 +51,6 @@ class SignInViewModel @Inject constructor(
         }
     }
 
-    fun navigateToSpotListView() = intent {
-        postSideEffect(
-            SignInSideEffect.NavigateToSpotListView
-        )
-    }
-
     fun onSkipButtonClicked() = intent {
         if (onboardingRepository.getDidOnboarding().getOrDefault(true)) {
             postSideEffect(SignInSideEffect.NavigateToSpotListView)
@@ -61,22 +59,33 @@ class SignInViewModel @Inject constructor(
         }
     }
 
-    fun navigateToAreaVerification() = intent {
-        postSideEffect(
-            SignInSideEffect.NavigateToAreaVerification
+    fun onSignInComplete(verificationStatus: VerificationStatus) = intent {
+        AconAmplitude.trackEvent(
+            eventName = EventNames.SIGN_IN,
+            properties = mapOf(
+                PropertyKeys.SIGN_IN_OR_NOT to true
+            )
         )
-    }
-
-    fun navigateToOnboarding() = intent {
-        postSideEffect(
-            SignInSideEffect.NavigateToOnboarding
-        )
+        if (verificationStatus.hasVerifiedArea.not()) {
+            postSideEffect(SignInSideEffect.NavigateToAreaVerification)
+        } else if (verificationStatus.hasPreference.not()) {
+            postSideEffect(SignInSideEffect.NavigateToOnboarding)
+        } else if (onboardingRepository.getDidOnboarding().getOrDefault(true)) {
+            postSideEffect(SignInSideEffect.NavigateToSpotListView)
+        } else {
+            postSideEffect(SignInSideEffect.NavigateToIntroduce)
+        }
+        AconAmplitude.setUserId(verificationStatus.externalUUID)
     }
 
     fun onClickTermsOfUse() = intent {
         postSideEffect(
             SignInSideEffect.OnClickTermsOfUse
         )
+    }
+
+    fun navigateToSpotListView() = intent {
+        postSideEffect(SignInSideEffect.NavigateToSpotListView)
     }
 
     fun onClickPrivacyPolicy() = intent {
