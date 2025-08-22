@@ -34,6 +34,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.acon.acon.core.common.utils.delay
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.animation.slidingFadeIn
 import com.acon.acon.core.designsystem.component.tag.AconTag
@@ -45,7 +46,6 @@ import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
-import kotlinx.coroutines.delay
 
 internal class IntroduceLocalReviewScreenProvider(
     private val animationEnabled: () -> Boolean
@@ -76,13 +76,16 @@ internal fun IntroduceLocalReviewScreen(
 
 private const val LOCAL_TAG_ALPHA_ANIMATION_DURATION_MS = 2000
 private const val ACORN_LOTTIE_SPEED_RATIO = 1.25f
-private const val MESSAGE_APPEAR_ANIMATION_DELAY_MS = 200
-private const val MESSAGE_APPEAR_ANIMATION_DURATION_MS = 500
+private const val TITLE_APPEAR_ANIMATION_DELAY_MS = 200
+private const val TEXT_APPEAR_ANIMATION_DURATION_MS = 500
 
 @Composable
 private fun AnimationEnabledIntroduceLocalReviewScreen(
     modifier: Modifier = Modifier
 ) {
+    val totalTitleAppearDurationMillis = TITLE_APPEAR_ANIMATION_DELAY_MS + TEXT_APPEAR_ANIMATION_DURATION_MS
+    val totalMessageAppearDurationMillis = TITLE_APPEAR_ANIMATION_DELAY_MS + TEXT_APPEAR_ANIMATION_DURATION_MS
+
     var playAcornLottieAnimation by remember {
         mutableStateOf(false)
     }
@@ -95,12 +98,12 @@ private fun AnimationEnabledIntroduceLocalReviewScreen(
         iterations = 1,
         speed = ACORN_LOTTIE_SPEED_RATIO
     )
-
+    val acornLottiePlayDelayMillis = totalTitleAppearDurationMillis + totalMessageAppearDurationMillis
     var isAcornLottieAnimationEnded by remember {
         mutableStateOf(false)
     }
     LaunchedEffect(Unit) {
-        delay((MESSAGE_APPEAR_ANIMATION_DELAY_MS + MESSAGE_APPEAR_ANIMATION_DURATION_MS).toLong())
+        delay(acornLottiePlayDelayMillis)
         playAcornLottieAnimation = true
 
         delay(100)
@@ -114,30 +117,29 @@ private fun AnimationEnabledIntroduceLocalReviewScreen(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .slidingFadeIn(
-                    durationMillis = MESSAGE_APPEAR_ANIMATION_DURATION_MS,
-                    delayMillis = MESSAGE_APPEAR_ANIMATION_DELAY_MS
-                ),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = stringResource(R.string.introduce_local_review_title),
-                color = AconTheme.color.White,
-                style = AconTheme.typography.Title2,
-                fontWeight = FontWeight.ExtraBold
+        Text(
+            text = stringResource(R.string.introduce_local_review_title),
+            color = AconTheme.color.White,
+            style = AconTheme.typography.Title2,
+            fontWeight = FontWeight.ExtraBold,
+            modifier = Modifier.slidingFadeIn(
+                durationMillis = TEXT_APPEAR_ANIMATION_DURATION_MS,
+                delayMillis = TITLE_APPEAR_ANIMATION_DELAY_MS
             )
+        )
 
-            Text(
-                text = stringResource(R.string.introduce_local_review_content),
-                color = AconTheme.color.White,
-                style = AconTheme.typography.Title4,
-                modifier = Modifier.padding(top = 24.dp),
-                textAlign = TextAlign.Center
-            )
-        }
+        Text(
+            text = stringResource(R.string.introduce_local_review_content),
+            color = AconTheme.color.White,
+            style = AconTheme.typography.Title4,
+            modifier = Modifier
+                .padding(top = 24.dp)
+                .slidingFadeIn(
+                    durationMillis = TEXT_APPEAR_ANIMATION_DURATION_MS,
+                    delayMillis = totalTitleAppearDurationMillis
+                ),
+            textAlign = TextAlign.Center
+        )
 
         Box(
             modifier = Modifier
