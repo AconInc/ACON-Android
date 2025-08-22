@@ -7,9 +7,11 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -57,6 +59,7 @@ internal class IntroduceLocalReviewScreenProvider(
     override fun provide() {
         IntroduceLocalReviewScreen(
             modifier = Modifier
+                .fillMaxSize()
                 .navigationBarsPadding()
                 .padding(top = 54.dp),
             animationEnabled = animationEnabled
@@ -82,9 +85,8 @@ internal fun IntroduceLocalReviewScreen(
         AnimationDisabledIntroduceLocalReviewScreen(modifier = modifier)
 }
 
-private const val LOCAL_TAG_ALPHA_ANIMATION_DURATION_MS = 2000
 private const val ACORN_LOTTIE_SPEED_RATIO = 1.25f
-private const val TITLE_APPEAR_ANIMATION_DELAY_MS = 200
+private const val TITLE_APPEAR_ANIMATION_DELAY_MS = 0
 private const val TEXT_APPEAR_ANIMATION_DURATION_MS = 500
 
 @Composable
@@ -92,13 +94,12 @@ private fun AnimationEnabledIntroduceLocalReviewScreen(
     modifier: Modifier = Modifier
 ) {
 
+    val acornLottiePlayDelayMillis = 0
+
     val titleAppearDelayMillis = TITLE_APPEAR_ANIMATION_DELAY_MS
     val titleAppearDurationMillis = TEXT_APPEAR_ANIMATION_DURATION_MS
 
     val messageAppearDelayMillis = titleAppearDelayMillis + titleAppearDurationMillis
-    val messageAppearDurationMillis = TEXT_APPEAR_ANIMATION_DURATION_MS
-
-    val acornLottiePlayDelayMillis = messageAppearDelayMillis + messageAppearDurationMillis
 
     var isAcornLottieAnimationEnded by remember {
         mutableStateOf(false)
@@ -131,34 +132,9 @@ private fun AnimationEnabledIntroduceLocalReviewScreen(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            text = stringResource(R.string.introduce_local_review_title),
-            color = AconTheme.color.White,
-            style = AconTheme.typography.Title2,
-            fontWeight = FontWeight.ExtraBold,
-            modifier = Modifier.slidingFadeIn(
-                durationMillis = TEXT_APPEAR_ANIMATION_DURATION_MS,
-                delayMillis = TITLE_APPEAR_ANIMATION_DELAY_MS
-            )
-        )
-
-        Text(
-            text = stringResource(R.string.introduce_local_review_content),
-            color = AconTheme.color.White,
-            style = AconTheme.typography.Title4,
-            modifier = Modifier
-                .padding(top = 24.dp)
-                .slidingFadeIn(
-                    durationMillis = TEXT_APPEAR_ANIMATION_DURATION_MS,
-                    delayMillis = messageAppearDelayMillis
-                ),
-            textAlign = TextAlign.Center
-        )
 
         Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 40.dp),
+            modifier = Modifier.fillMaxWidth(),
             contentAlignment = Alignment.Center
         ) {
             if (LocalInspectionMode.current.not())
@@ -180,41 +156,70 @@ private fun AnimationEnabledIntroduceLocalReviewScreen(
                 }
             }
         }
-
         if (isAcornLottieAnimationEnded) {
-            val localTagAlphaAnimation by rememberInfiniteTransition(label = "tagAlphaInfinite").animateFloat(
-                initialValue = 0f,
-                targetValue = 1f,
-                animationSpec = infiniteRepeatable(
-                    animation = tween(
-                        durationMillis = LOCAL_TAG_ALPHA_ANIMATION_DURATION_MS,
-                        easing = LinearEasing
-                    ),
-                    repeatMode = RepeatMode.Reverse
-                ),
-                label = "tagAlphaAnimation"
-            )
-
-            AconTag(
-                text = stringResource(R.string.store_tag_local),
-                backgroundColor = AconTheme.color.TagLocal,
+            Text(
+                text = stringResource(R.string.introduce_local_review_title),
+                color = AconTheme.color.White,
+                style = AconTheme.typography.Title2,
+                fontWeight = FontWeight.ExtraBold,
                 modifier = Modifier
-                    .padding(top = 40.dp)
-                    .shadowLayerBackground(
-                        shadowColor = AconTheme.color.TagLocal,
-                        shadowAlpha = localTagAlphaAnimation,
-                        shadowRadius = 100f
+                    .padding(top = 64.dp)
+                    .slidingFadeIn(
+                        durationMillis = TEXT_APPEAR_ANIMATION_DURATION_MS,
+                        delayMillis = TITLE_APPEAR_ANIMATION_DELAY_MS
                     )
-                    .alpha(localTagAlphaAnimation),
-                textStyle = AconTheme.typography.Body1.copy(
-                    color = AconTheme.color.White,
-                    fontWeight = FontWeight.SemiBold
-                ),
-                contentPadding = PaddingValues(horizontal = 14.dp, vertical = 5.dp)
             )
+            Column(
+                modifier = Modifier
+                    .padding(top = 24.dp)
+                    .slidingFadeIn(
+                        durationMillis = TEXT_APPEAR_ANIMATION_DURATION_MS,
+                        delayMillis = messageAppearDelayMillis
+                    ),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = stringResource(R.string.introduce_local_review_content1),
+                    color = AconTheme.color.White,
+                    style = AconTheme.typography.Title4,
+                    modifier = Modifier,
+                    textAlign = TextAlign.Center
+                )
+                Row(
+                    modifier = Modifier.padding(top = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Text(
+                        text = stringResource(R.string.introduce_local_review_content2_1),
+                        color = AconTheme.color.White,
+                        style = AconTheme.typography.Title4,
+                        textAlign = TextAlign.Center
+                    )
+                    AconTag(
+                        text = stringResource(R.string.store_tag_local),
+                        backgroundColor = AconTheme.color.TagLocal,
+                        modifier = Modifier
+                            .shadowLayerBackground(
+                                shadowColor = AconTheme.color.TagLocal,
+                                shadowAlpha = 1f,
+                                shadowRadius = 100f
+                            ),
+                        textStyle = AconTheme.typography.Body1.copy(
+                            color = AconTheme.color.White,
+                            fontWeight = FontWeight.SemiBold
+                        ),
+                        contentPadding = PaddingValues(horizontal = 14.dp, vertical = 5.dp)
+                    )
+                    Text(
+                        text = stringResource(R.string.introduce_local_review_content2_2),
+                        color = AconTheme.color.White,
+                        style = AconTheme.typography.Title4,
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
         }
-
-        Spacer(modifier = Modifier.height(137.dp))
     }
 }
 
@@ -227,31 +232,9 @@ private fun AnimationDisabledIntroduceLocalReviewScreen(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = stringResource(R.string.introduce_local_review_title),
-                color = AconTheme.color.White,
-                style = AconTheme.typography.Title2,
-                fontWeight = FontWeight.ExtraBold
-            )
-
-            Text(
-                text = stringResource(R.string.introduce_local_review_content),
-                color = AconTheme.color.White,
-                style = AconTheme.typography.Title4,
-                modifier = Modifier.padding(top = 24.dp),
-                textAlign = TextAlign.Center
-            )
-        }
 
         Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
-                .padding(top = 40.dp),
+            modifier = Modifier.fillMaxWidth(),
             contentAlignment = Alignment.Center
         ) {
             if (LocalInspectionMode.current.not())
@@ -261,13 +244,13 @@ private fun AnimationDisabledIntroduceLocalReviewScreen(
                     ).value,
                     progress = { 1f },
                     modifier = Modifier
-                        .fillMaxSize()
+                        .fillMaxWidth()
                         .aspectRatio(1f)
                 )
             else {
                 Box(
                     modifier = Modifier
-                        .fillMaxSize()
+                        .fillMaxWidth()
                         .background(AconTheme.color.Gray700),
                     contentAlignment = Alignment.Center
                 ) {
@@ -275,39 +258,60 @@ private fun AnimationDisabledIntroduceLocalReviewScreen(
                 }
             }
         }
-
-        val localTagAlphaAnimation by rememberInfiniteTransition(label = "tagAlphaInfinite").animateFloat(
-            initialValue = 0f,
-            targetValue = 1f,
-            animationSpec = infiniteRepeatable(
-                animation = tween(
-                    durationMillis = LOCAL_TAG_ALPHA_ANIMATION_DURATION_MS,
-                    easing = LinearEasing
-                ),
-                repeatMode = RepeatMode.Reverse
-            ),
-            label = "tagAlphaAnimation"
-        )
-
-        AconTag(
-            text = stringResource(R.string.store_tag_local),
-            backgroundColor = AconTheme.color.TagLocal,
+        Text(
+            text = stringResource(R.string.introduce_local_review_title),
+            color = AconTheme.color.White,
+            style = AconTheme.typography.Title2,
+            fontWeight = FontWeight.ExtraBold,
             modifier = Modifier
-                .padding(top = 40.dp)
-                .shadowLayerBackground(
-                    shadowColor = AconTheme.color.TagLocal,
-                    shadowAlpha = localTagAlphaAnimation,
-                    shadowRadius = 100f
-                )
-                .alpha(localTagAlphaAnimation),
-            textStyle = AconTheme.typography.Body1.copy(
-                color = AconTheme.color.White,
-                fontWeight = FontWeight.SemiBold
-            ),
-            contentPadding = PaddingValues(horizontal = 14.dp, vertical = 5.dp)
+                .padding(top = 64.dp)
         )
-
-        Spacer(modifier = Modifier.height(137.dp))
+        Column(
+            modifier = Modifier
+                .padding(top = 24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = stringResource(R.string.introduce_local_review_content1),
+                color = AconTheme.color.White,
+                style = AconTheme.typography.Title4,
+                modifier = Modifier,
+                textAlign = TextAlign.Center
+            )
+            Row(
+                modifier = Modifier.padding(top = 8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text(
+                    text = stringResource(R.string.introduce_local_review_content2_1),
+                    color = AconTheme.color.White,
+                    style = AconTheme.typography.Title4,
+                    textAlign = TextAlign.Center
+                )
+                AconTag(
+                    text = stringResource(R.string.store_tag_local),
+                    backgroundColor = AconTheme.color.TagLocal,
+                    modifier = Modifier
+                        .shadowLayerBackground(
+                            shadowColor = AconTheme.color.TagLocal,
+                            shadowAlpha = 1f,
+                            shadowRadius = 100f
+                        ),
+                    textStyle = AconTheme.typography.Body1.copy(
+                        color = AconTheme.color.White,
+                        fontWeight = FontWeight.SemiBold
+                    ),
+                    contentPadding = PaddingValues(horizontal = 14.dp, vertical = 5.dp)
+                )
+                Text(
+                    text = stringResource(R.string.introduce_local_review_content2_2),
+                    color = AconTheme.color.White,
+                    style = AconTheme.typography.Title4,
+                    textAlign = TextAlign.Center
+                )
+            }
+        }
     }
 }
 
