@@ -19,6 +19,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.acon.acon.core.designsystem.R
+import com.acon.acon.core.designsystem.animation.fadeIn
 import com.acon.acon.core.designsystem.animation.slidingFadeIn
 import com.acon.acon.core.designsystem.component.button.v2.AconFilledTextButton
 import com.acon.acon.core.designsystem.effect.screenDefault
@@ -139,7 +140,7 @@ private fun AnimationEnabledIntroduceMainScreen(
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp)
                 .padding(bottom = 16.dp)
-                .slidingFadeIn(
+                .fadeIn(
                     delayMillis = startButtonAppearDelayMillis,
                     durationMillis = startButtonAppearDurationMillis
                 )
