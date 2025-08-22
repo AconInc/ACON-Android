@@ -67,6 +67,7 @@ fun SignInScreen(
     onClickTermsOfUse: () -> Unit,
     onClickPrivacyPolicy: () -> Unit,
     onAnimationEnd:() -> Unit,
+    onSkipButtonClick: () -> Unit
 ) {
     val scope = rememberCoroutineScope()
     val socialRepository = rememberSocialRepository()
@@ -140,7 +141,7 @@ fun SignInScreen(
                             .alpha(alpha),
                         onClickText = {
                             if (alpha >= 0.75f) {
-                                navigateToSpotListView()
+                                onSkipButtonClick()
                             }
                         }
                     )
@@ -269,7 +270,8 @@ private fun PreviewSignInScreen() {
             onClickTermsOfUse = {},
             onClickPrivacyPolicy = {},
             onAnimationEnd = {},
-            navigateToOnboarding = {}
+            navigateToOnboarding = {},
+            onSkipButtonClick = {}
         )
     }
 }

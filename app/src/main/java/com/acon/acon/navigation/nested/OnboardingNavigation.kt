@@ -26,7 +26,7 @@ internal fun NavGraphBuilder.onboardingNavigationNavigation(
 ) {
 
     navigation<OnboardingRoute.Graph>(
-        startDestination = OnboardingRoute.Introduce
+        startDestination = OnboardingRoute.ChooseDislikes
     ) {
         composable<OnboardingRoute.ChooseDislikes> {
             val fromSetting = LocalNavController.current.previousBackStackEntry?.destination?.hasRoute(

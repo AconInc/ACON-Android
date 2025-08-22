@@ -2,6 +2,7 @@ package com.acon.acon.feature.signin.screen
 
 import com.acon.acon.core.model.type.UserType
 import com.acon.acon.core.ui.base.BaseContainerHost
+import com.acon.acon.domain.repository.OnboardingRepository
 import com.acon.acon.domain.repository.ProfileRepository
 import com.acon.acon.domain.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -13,6 +14,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SignInViewModel @Inject constructor(
     private val profileRepository: ProfileRepository,
+    private val onboardingRepository: OnboardingRepository,
     private val userRepository: UserRepository
 ) : BaseContainerHost<SignInUiState, SignInSideEffect>() {
 
@@ -45,6 +47,14 @@ class SignInViewModel @Inject constructor(
         postSideEffect(
             SignInSideEffect.NavigateToSpotListView
         )
+    }
+
+    fun onSkipButtonClicked() = intent {
+        if (onboardingRepository.getDidOnboarding().getOrDefault(true)) {
+            postSideEffect(SignInSideEffect.NavigateToSpotListView)
+        } else {
+            postSideEffect(SignInSideEffect.NavigateToIntroduce)
+        }
     }
 
     fun navigateToAreaVerification() = intent {
@@ -85,4 +95,5 @@ sealed interface SignInSideEffect {
     data object NavigateToOnboarding : SignInSideEffect
     data object OnClickTermsOfUse : SignInSideEffect
     data object OnClickPrivacyPolicy : SignInSideEffect
+    data object NavigateToIntroduce : SignInSideEffect
 }

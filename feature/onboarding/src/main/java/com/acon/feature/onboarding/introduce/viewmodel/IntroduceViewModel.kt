@@ -4,7 +4,6 @@ import androidx.compose.runtime.Immutable
 import com.acon.acon.core.ui.base.BaseContainerHost
 import com.acon.acon.domain.repository.OnboardingRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.viewmodel.container
 import javax.inject.Inject
 
@@ -42,6 +41,7 @@ class IntroduceViewModel @Inject constructor(
     }
 
     fun onStartButtonClicked() = intent {
+        onboardingRepository.saveDidOnboarding(true)
         postSideEffect(IntroduceSideEffect.OnNavigateToHomeScreen)
     }
 }

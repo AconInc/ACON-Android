@@ -19,6 +19,7 @@ fun SignInScreenContainer(
     navigateToSpotListView: () -> Unit,
     navigateToAreaVerification: () -> Unit,
     navigateToOnboarding: () -> Unit,
+    navigateToIntroduce: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: SignInViewModel = hiltViewModel()
 ) {
@@ -34,6 +35,7 @@ fun SignInScreenContainer(
         onClickTermsOfUse = viewModel::onClickTermsOfUse,
         onClickPrivacyPolicy = viewModel::onClickPrivacyPolicy,
         onAnimationEnd = viewModel::signIn,
+        onSkipButtonClick = viewModel::onSkipButtonClicked
     )
 
     viewModel.useUserType()
@@ -53,6 +55,7 @@ fun SignInScreenContainer(
                 context.startActivity(intent)
             }
             is SignInSideEffect.NavigateToOnboarding -> navigateToOnboarding()
+            is SignInSideEffect.NavigateToIntroduce -> navigateToIntroduce()
         }
     }
 }
