@@ -153,6 +153,7 @@ private fun AnimationEnabledIntroduceTop50Screen(
                 alignment = Alignment.TopCenter
             )
             Spacer(modifier = Modifier.width(16.dp))
+            val centerImageGradientColor = AconTheme.color.Gray900
             Image(
                 painter = painterResource(R.drawable.onboarding_spot_samples2),
                 contentDescription = null,
@@ -168,9 +169,9 @@ private fun AnimationEnabledIntroduceTop50Screen(
                         drawRect(
                             brush = Brush.verticalGradient(
                                 colorStops = arrayOf(
-                                    0.0f to Color.Black,
-                                    0.16f to Color.Black,
-                                    0.32f to Color.Black.copy(alpha = 0f)
+                                    0.0f to centerImageGradientColor,
+                                    0.16f to centerImageGradientColor,
+                                    0.32f to centerImageGradientColor.copy(alpha = 0f)
                                 )
                             ),
                             alpha = upwardImageAlphaAnimation.value
