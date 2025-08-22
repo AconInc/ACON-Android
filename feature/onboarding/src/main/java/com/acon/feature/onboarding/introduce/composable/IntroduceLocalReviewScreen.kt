@@ -83,9 +83,19 @@ private const val TEXT_APPEAR_ANIMATION_DURATION_MS = 500
 private fun AnimationEnabledIntroduceLocalReviewScreen(
     modifier: Modifier = Modifier
 ) {
-    val totalTitleAppearDurationMillis = TITLE_APPEAR_ANIMATION_DELAY_MS + TEXT_APPEAR_ANIMATION_DURATION_MS
-    val totalMessageAppearDurationMillis = TITLE_APPEAR_ANIMATION_DELAY_MS + TEXT_APPEAR_ANIMATION_DURATION_MS
 
+    val titleAppearDelayMillis = TITLE_APPEAR_ANIMATION_DELAY_MS
+    val titleAppearDurationMillis = TEXT_APPEAR_ANIMATION_DURATION_MS
+
+    val messageAppearDelayMillis = titleAppearDelayMillis + titleAppearDurationMillis
+    val messageAppearDurationMillis = TEXT_APPEAR_ANIMATION_DURATION_MS
+
+    val acornLottiePlayDelayMillis = messageAppearDelayMillis + messageAppearDurationMillis
+
+    var isAcornLottieAnimationEnded by remember {
+        mutableStateOf(false)
+    }
+    
     var playAcornLottieAnimation by remember {
         mutableStateOf(false)
     }
@@ -98,10 +108,6 @@ private fun AnimationEnabledIntroduceLocalReviewScreen(
         iterations = 1,
         speed = ACORN_LOTTIE_SPEED_RATIO
     )
-    val acornLottiePlayDelayMillis = totalTitleAppearDurationMillis + totalMessageAppearDurationMillis
-    var isAcornLottieAnimationEnded by remember {
-        mutableStateOf(false)
-    }
     LaunchedEffect(Unit) {
         delay(acornLottiePlayDelayMillis)
         playAcornLottieAnimation = true
@@ -136,7 +142,7 @@ private fun AnimationEnabledIntroduceLocalReviewScreen(
                 .padding(top = 24.dp)
                 .slidingFadeIn(
                     durationMillis = TEXT_APPEAR_ANIMATION_DURATION_MS,
-                    delayMillis = totalTitleAppearDurationMillis
+                    delayMillis = messageAppearDelayMillis
                 ),
             textAlign = TextAlign.Center
         )
