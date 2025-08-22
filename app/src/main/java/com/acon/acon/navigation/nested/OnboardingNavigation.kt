@@ -48,7 +48,7 @@ internal fun NavGraphBuilder.onboardingNavigationNavigation(
         composable<OnboardingRoute.Introduce> {
 
             IntroduceScreenContainer(
-                modifier = Modifier.fillMaxSize().background(AconTheme.color.Black).statusBarsPadding(),
+                modifier = Modifier.screenDefault().statusBarsPadding(),
                 onNavigateToHome = {
                     navController.navigateAndClear(SpotRoute.Graph)
                 }
