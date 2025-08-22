@@ -27,7 +27,6 @@ import com.acon.acon.core.ui.base.ScreenProvider
 
 internal class IntroduceMainScreenProvider(
     private val onStartButtonClick: () -> Unit,
-    private val onRendered: () -> Unit,
     private val onDisposed: () -> Unit,
     private val animationEnabled: () -> Boolean
 ) : ScreenProvider {
@@ -40,7 +39,6 @@ internal class IntroduceMainScreenProvider(
             animationEnabled = animationEnabled
         )
         DisposableEffect(Unit) {
-            onRendered()
 
             onDispose {
                 onDisposed()

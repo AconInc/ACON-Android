@@ -18,6 +18,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -46,7 +47,7 @@ import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 internal class IntroduceTop50ScreenProvider(
-    private val onRendered: () -> Unit,
+    private val onDisposed: () -> Unit,
     private val animationEnabled: () -> Boolean
 ) : ScreenProvider {
 
@@ -58,8 +59,11 @@ internal class IntroduceTop50ScreenProvider(
                 .padding(top = 54.dp),
             animationEnabled = animationEnabled
         )
-        LaunchedEffect(Unit) {
-            onRendered()
+        DisposableEffect(Unit) {
+
+            onDispose {
+                onDisposed()
+            }
         }
     }
 }

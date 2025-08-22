@@ -17,7 +17,7 @@ class IntroduceViewModel @Inject constructor(
         initialState = IntroduceState()
     )
 
-    fun onIntroduceTop50ScreenRendered() = intent {
+    fun onIntroduceLocalReviewScreenDisposed() = intent {
         reduce {
             state.copy(
                 shouldShowLocalReviewScreenAnimation = false
@@ -25,7 +25,7 @@ class IntroduceViewModel @Inject constructor(
         }
     }
 
-    fun onIntroduceMainScreenRendered() = intent {
+    fun onIntroduceTop50ScreenDisposed() = intent {
         reduce {
             state.copy(
                 shouldShowTop50ScreenAnimation = false

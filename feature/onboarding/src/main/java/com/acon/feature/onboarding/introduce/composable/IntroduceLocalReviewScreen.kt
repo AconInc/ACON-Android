@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -48,6 +49,7 @@ import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 
 internal class IntroduceLocalReviewScreenProvider(
+    private val onDisposed: () -> Unit,
     private val animationEnabled: () -> Boolean
 ) : ScreenProvider {
 
@@ -59,6 +61,12 @@ internal class IntroduceLocalReviewScreenProvider(
                 .padding(top = 54.dp),
             animationEnabled = animationEnabled
         )
+        DisposableEffect(Unit) {
+
+            onDispose {
+                onDisposed()
+            }
+        }
     }
 }
 

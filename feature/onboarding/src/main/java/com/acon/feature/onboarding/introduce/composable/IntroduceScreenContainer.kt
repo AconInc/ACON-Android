@@ -22,15 +22,15 @@ fun IntroduceScreenContainer(
     val introduceScreenProviders = remember {
         mutableStateListOf(
             IntroduceLocalReviewScreenProvider(
+                onDisposed = viewModel::onIntroduceLocalReviewScreenDisposed,
                 animationEnabled = { state.shouldShowLocalReviewScreenAnimation }
             ),
             IntroduceTop50ScreenProvider(
-                onRendered = viewModel::onIntroduceTop50ScreenRendered,
+                onDisposed = viewModel::onIntroduceTop50ScreenDisposed,
                 animationEnabled = { state.shouldShowTop50ScreenAnimation }
             ),
             IntroduceMainScreenProvider(
                 onStartButtonClick = onNavigateToHome,
-                onRendered = viewModel::onIntroduceMainScreenRendered,
                 onDisposed = viewModel::onIntroduceMainScreenDisposed,
                 animationEnabled = { state.shouldShowMainScreenAnimation }
             )
