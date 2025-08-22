@@ -20,6 +20,7 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 @Composable
 fun ChooseDislikesScreenContainer(
     onNavigateToHome: () -> Unit,
+    onNavigateToIntroduce: () -> Unit,
     modifier: Modifier = Modifier,
     fromSetting: Boolean = false,
     viewModel: ChooseDislikesViewModel = hiltViewModel()
@@ -55,6 +56,7 @@ fun ChooseDislikesScreenContainer(
                 onNavigateToHome()
             }
             is ChooseDislikesSideEffect.ShowErrorToast -> context.showToast(R.string.unknown_error_message)
+            is ChooseDislikesSideEffect.NavigateToIntroduce -> onNavigateToIntroduce()
         }
     }
 }

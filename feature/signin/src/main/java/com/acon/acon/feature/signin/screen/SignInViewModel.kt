@@ -30,8 +30,12 @@ class SignInViewModel @Inject constructor(
             userRepository.getDidOnboarding().onSuccess { did ->
                 if (!did)
                     postSideEffect(SignInSideEffect.NavigateToOnboarding)
-                else
-                    postSideEffect(SignInSideEffect.NavigateToSpotListView)
+                else {
+                    if (onboardingRepository.getDidOnboarding().getOrDefault(true))
+                        postSideEffect(SignInSideEffect.NavigateToSpotListView)
+                    else
+                        postSideEffect(SignInSideEffect.NavigateToIntroduce)
+                }
             }
         }
         userType.collectLatest {

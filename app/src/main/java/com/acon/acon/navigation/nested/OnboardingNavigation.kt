@@ -40,6 +40,9 @@ internal fun NavGraphBuilder.onboardingNavigationNavigation(
                         }
                     }
                 },
+                onNavigateToIntroduce = {
+                    navController.navigateAndClear(OnboardingRoute.Introduce)
+                },
                 fromSetting = fromSetting,
                 modifier = Modifier.screenDefault().systemBarsPadding()
             )
