@@ -33,7 +33,7 @@ internal fun UploadPlaceCompleteScreen(
     onClickGoHome: () -> Unit,
 ) {
     val composition by rememberLottieComposition(
-        spec = LottieCompositionSpec.RawRes(R.raw.upload_success)
+        spec = LottieCompositionSpec.RawRes(R.raw.green_check)
     )
     var isPlaying by remember { mutableStateOf(false) }
 
@@ -50,30 +50,29 @@ internal fun UploadPlaceCompleteScreen(
             .navigationBarsPadding(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
+        LottieAnimation(
+            composition = composition,
+            modifier = Modifier
+                .padding(top = 84.dp)
+                .fillMaxWidth(),
+            iterations = 1,
+            isPlaying = true
+        )
+
         Text(
             text = stringResource(R.string.upload_place_complete_title),
             style = AconTheme.typography.Headline3,
             color = AconTheme.color.White,
-            modifier = Modifier
-                .padding(top = 50.dp)
+            modifier = Modifier.padding(top = 40.dp)
         )
 
-        Spacer(Modifier.height(10.dp))
         Text(
             text = stringResource(R.string.upload_place_complete_sub_title),
             style = AconTheme.typography.Title5,
             color = AconTheme.color.Gray500,
             fontWeight = FontWeight.Normal,
-            modifier = Modifier.padding(2.dp)
-        )
-
-        LottieAnimation(
-            composition = composition,
-            modifier = Modifier
-                .padding(top = 54.dp)
-                .fillMaxWidth(.8f),
-            iterations = 1,
-            isPlaying = true
+            modifier = Modifier.padding(top = 10.dp)
         )
 
         Spacer(Modifier.weight(1f))
@@ -85,7 +84,7 @@ internal fun UploadPlaceCompleteScreen(
             onClick = { onClickGoHome() },
             content = {
                 Text(
-                    text = stringResource(R.string.go_home),
+                    text = stringResource(R.string.done),
                     style = AconTheme.typography.Title4,
                     fontWeight = FontWeight.SemiBold
                 )

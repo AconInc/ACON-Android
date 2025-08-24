@@ -4,8 +4,8 @@ projectApplicationId = "com.acon.acon"
 projectCompileSdk = "35"
 projectTargetSdk = "35"
 projectMinSdk = "28"
-projectVersionCode = "20010001"
-projectVersionName = "2.1.0"
+projectVersionCode = "20010010"
+projectVersionName = "2.1.1"
 #######################################
 
 composeCompilerVersion = "1.5.1"

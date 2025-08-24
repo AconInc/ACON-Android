@@ -9,4 +9,7 @@ sealed interface OnboardingRoute {
 
     @Serializable
     data object ChooseDislikes : OnboardingRoute
+
+    @Serializable
+    data object Introduce : OnboardingRoute
 }

@@ -1,4 +1,4 @@
-package com.acon.acon.feature.onboarding.screen.composable
+package com.acon.feature.onboarding.dislikes.composable
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.padding
@@ -12,14 +12,15 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.ui.android.showToast
-import com.acon.acon.feature.onboarding.screen.ChooseDislikesSideEffect
-import com.acon.acon.feature.onboarding.screen.ChooseDislikesViewModel
+import com.acon.feature.onboarding.dislikes.viewmodel.ChooseDislikesSideEffect
+import com.acon.feature.onboarding.dislikes.viewmodel.ChooseDislikesViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
 fun ChooseDislikesScreenContainer(
     onNavigateToHome: () -> Unit,
+    onNavigateToIntroduce: () -> Unit,
     modifier: Modifier = Modifier,
     fromSetting: Boolean = false,
     viewModel: ChooseDislikesViewModel = hiltViewModel()
@@ -55,6 +56,7 @@ fun ChooseDislikesScreenContainer(
                 onNavigateToHome()
             }
             is ChooseDislikesSideEffect.ShowErrorToast -> context.showToast(R.string.unknown_error_message)
+            is ChooseDislikesSideEffect.NavigateToIntroduce -> onNavigateToIntroduce()
         }
     }
 }

@@ -153,7 +153,6 @@
     <string name="buffet">뷔페</string>
     <string name="drink_bar">술/Bar</string>
     <string name="for_work">작업하기 좋은 곳</string>
-    <string name="exclude_franchise">프랜차이즈 제외</string>
     <string name="after_12am">밤 12시 이후</string>
     <string name="after_10pm">밤 10시 이후</string>
     <string name="cost_effectiveness">가성비</string>
@@ -236,7 +235,7 @@
     <string name="upload_place_select_price_option_2">보통이에요</string>
     <string name="upload_place_select_price_option_3">가성비 별로예요</string>
     <string name="upload_place_image_title">식당 사진을 등록할 수 있어요</string>
-    <string name="upload_place_complete_title">새로운 장소를 등록했어요</string>
+    <string name="upload_place_complete_title">새로운 장소를 등록했어요!</string>
     <string name="upload_place_complete_sub_title">등록한 장소는 검토 후 반영돼요</string>
     <string name="upload_place_enter_menu_title">추천하는\n메뉴를 알려주세요</string>
     <string name="upload_place_enter_menu_placeholder">메뉴를 입력해주세요</string>
@@ -275,6 +274,16 @@
     <string name="keep_going">계속하기</string>
     <string name="stop">그만두기</string>
     <string name="success_save">저장되었습니다</string>
+    <string name="introduce_local_review_title">인증된 로컬 맛집 리뷰</string>
+    <string name="introduce_local_review_content1">도토리를 떨어트려 리뷰를 남길 수 있어요</string>
+    <string name="introduce_local_review_content2_1">현지인 인증 맛집에는</string>
+    <string name="introduce_local_review_content2_2">태그가 붙어요</string>
+    <string name="introduce_top50_title">지역별 단 50곳만</string>
+    <string name="introduce_top50_content1">아콘은 한 지역에</string>
+    <string name="introduce_top50_content2">" 최대 50개 "</string>
+    <string name="introduce_top50_content3">의 맛집만 저장해요\n리뷰에 따라 맛집 랭킹이 변동돼요</string>
+    <string name="introduce_main_title">더 이상 맛집 고민은 끝.</string>
+    <string name="introduce_main_content">식당에 갈지 카페에 갈지만 정해보세요\n더 이상 맛집 찾느라 시간을 쏟지 마세요</string>
 
     <!-- Profile -->
     <string name="profile_topbar">프로필</string>
