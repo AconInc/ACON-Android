@@ -180,8 +180,8 @@ private fun AnimationEnabledIntroduceLocalReviewScreen(
             Text(
                 text = stringResource(R.string.introduce_local_review_title),
                 color = AconTheme.color.White,
-                style = AconTheme.typography.Title2,
-                fontWeight = FontWeight.ExtraBold,
+                style = AconTheme.typography.Headline3,
+                fontWeight = FontWeight.Bold,
                 modifier = Modifier
                     .padding(top = 64.dp)
                     .slidingFadeIn(
@@ -281,8 +281,8 @@ private fun AnimationDisabledIntroduceLocalReviewScreen(
         Text(
             text = stringResource(R.string.introduce_local_review_title),
             color = AconTheme.color.White,
-            style = AconTheme.typography.Title2,
-            fontWeight = FontWeight.ExtraBold,
+            style = AconTheme.typography.Headline3,
+            fontWeight = FontWeight.Bold,
             modifier = Modifier
                 .padding(top = 64.dp)
         )

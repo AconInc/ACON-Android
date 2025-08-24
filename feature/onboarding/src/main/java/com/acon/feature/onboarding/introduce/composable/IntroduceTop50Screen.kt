@@ -122,8 +122,8 @@ private fun AnimationEnabledIntroduceTop50Screen(
         Text(
             text = stringResource(R.string.introduce_top50_title),
             color = AconTheme.color.White,
-            style = AconTheme.typography.Title2,
-            fontWeight = FontWeight.ExtraBold,
+            style = AconTheme.typography.Headline3,
+            fontWeight = FontWeight.Bold,
             modifier = Modifier.slidingFadeIn(
                 durationMillis = titleAppearDurationMillis,
                 delayMillis = titleAppearDelayMillis
@@ -279,8 +279,8 @@ private fun AnimationDisabledIntroduceTop50Screen(
             Text(
                 text = stringResource(R.string.introduce_top50_title),
                 color = AconTheme.color.White,
-                style = AconTheme.typography.Title2,
-                fontWeight = FontWeight.ExtraBold,
+                style = AconTheme.typography.Headline3,
+                fontWeight = FontWeight.Bold,
             )
 
             Text(
