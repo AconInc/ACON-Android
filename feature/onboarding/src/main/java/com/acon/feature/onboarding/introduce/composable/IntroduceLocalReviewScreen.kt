@@ -18,10 +18,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -40,6 +43,9 @@ import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
 internal class IntroduceLocalReviewScreenProvider(
     private val onDisposed: () -> Unit,
@@ -108,14 +114,37 @@ private fun AnimationEnabledIntroduceLocalReviewScreen(
         iterations = 1,
         speed = ACORN_LOTTIE_SPEED_RATIO
     )
-    LaunchedEffect(Unit) {
-        delay(acornLottiePlayDelayMillis)
-        playAcornLottieAnimation = true
+    val haptic = LocalHapticFeedback.current
+    val scope = rememberCoroutineScope()
 
-        delay(100)
-        snapshotFlow { acornLottieProgress.isAtEnd }.collect { isEnded ->
-            if (isEnded)
-                isAcornLottieAnimationEnded = true
+    DisposableEffect(Unit) {
+        var hapticJob: Job? = null
+        scope.launch {
+            delay(acornLottiePlayDelayMillis)
+            playAcornLottieAnimation = true
+
+            hapticJob = launch {
+                delay(250)
+                repeat(3) {
+                    launch(Dispatchers.Main.immediate) {
+                        repeat(4) {
+                            haptic.performHapticFeedback(HapticFeedbackType.Confirm)
+                            delay(500)
+                        }
+                    }
+                    delay(180)
+                }
+            }
+
+            delay(100)
+            snapshotFlow { acornLottieProgress.isAtEnd }.collect { isEnded ->
+                if (isEnded)
+                    isAcornLottieAnimationEnded = true
+            }
+        }
+
+        onDispose {
+            hapticJob?.cancel()
         }
     }
 
