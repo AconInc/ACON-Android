@@ -29,8 +29,11 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -128,14 +131,24 @@ private fun AnimationEnabledIntroduceTop50Screen(
         )
 
         Text(
-            text = stringResource(R.string.introduce_top50_content),
+            text = buildAnnotatedString {
+                append(stringResource(R.string.introduce_top50_content1))
+
+                withStyle(style = SpanStyle(color = AconTheme.color.PrimaryDefault)) {
+                    append(stringResource(R.string.introduce_top50_content2))
+                }
+
+                append(stringResource(R.string.introduce_top50_content3))
+            },
             color = AconTheme.color.White,
             style = AconTheme.typography.Title4,
             textAlign = TextAlign.Center,
-            modifier = Modifier.padding(top = 24.dp).slidingFadeIn(
-                durationMillis = messageAppearDurationMillis,
-                delayMillis = messageAppearDelayMillis
-            )
+            modifier = Modifier
+                .padding(top = 24.dp)
+                .slidingFadeIn(
+                    durationMillis = messageAppearDurationMillis,
+                    delayMillis = messageAppearDelayMillis
+                )
         )
 
         Row(
@@ -271,7 +284,15 @@ private fun AnimationDisabledIntroduceTop50Screen(
             )
 
             Text(
-                text = stringResource(R.string.introduce_top50_content),
+                text = buildAnnotatedString {
+                    append(stringResource(R.string.introduce_top50_content1))
+
+                    withStyle(style = SpanStyle(color = AconTheme.color.PrimaryDefault)) {
+                        append(stringResource(R.string.introduce_top50_content2))
+                    }
+
+                    append(stringResource(R.string.introduce_top50_content3))
+                },
                 color = AconTheme.color.White,
                 style = AconTheme.typography.Title4,
                 textAlign = TextAlign.Center,
