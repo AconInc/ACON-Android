@@ -28,6 +28,11 @@ import com.acon.acon.core.designsystem.animation.defaultPopExitTransition
 import com.acon.acon.core.designsystem.component.popup.AconToastPopup
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
+import com.acon.acon.core.navigation.LocalNavController
+import com.acon.acon.core.navigation.route.SignInRoute
+import com.acon.acon.core.navigation.route.SpotRoute
+import com.acon.acon.core.ui.compose.LocalDeepLinkHandler
+import com.acon.acon.core.ui.compose.LocalSnackbarHostState
 import com.acon.acon.navigation.nested.areaVerificationNavigation
 import com.acon.acon.navigation.nested.onboardingNavigationNavigation
 import com.acon.acon.navigation.nested.profileNavigation
@@ -35,12 +40,6 @@ import com.acon.acon.navigation.nested.settingsNavigation
 import com.acon.acon.navigation.nested.signInNavigationNavigation
 import com.acon.acon.navigation.nested.spotNavigation
 import com.acon.acon.navigation.nested.uploadNavigation
-import com.acon.acon.core.model.model.spot.SpotNavigationParameter
-import com.acon.acon.core.navigation.LocalNavController
-import com.acon.acon.core.navigation.route.SignInRoute
-import com.acon.acon.core.navigation.route.SpotRoute
-import com.acon.acon.core.ui.compose.LocalDeepLinkHandler
-import com.acon.acon.core.ui.compose.LocalSnackbarHostState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.take

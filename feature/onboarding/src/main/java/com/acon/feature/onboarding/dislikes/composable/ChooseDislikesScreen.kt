@@ -1,4 +1,4 @@
-package com.acon.acon.feature.onboarding.screen.composable
+package com.acon.feature.onboarding.dislikes.composable
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -30,7 +30,7 @@ import com.acon.acon.core.designsystem.component.chip.AconChip
 import com.acon.acon.core.designsystem.component.dialog.v2.AconTwoActionDialog
 import com.acon.acon.core.designsystem.effect.effect.shadowLayerBackground
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.feature.onboarding.screen.ChooseDislikesUiState
+import com.acon.feature.onboarding.dislikes.viewmodel.ChooseDislikesUiState
 import com.acon.acon.core.navigation.LocalNavController
 import com.acon.acon.core.model.type.FoodType
 import com.acon.acon.core.ui.ext.getNameResId
@@ -40,7 +40,7 @@ internal fun ChooseDislikesScreen(
     state: ChooseDislikesUiState,
     onComplete: () -> Unit,
     onNoneChosen: () -> Unit,
-    onDislikeFoodChosen: (com.acon.acon.core.model.type.FoodType) -> Unit,
+    onDislikeFoodChosen: (FoodType) -> Unit,
     modifier: Modifier = Modifier,
     onDismissStopModal: (() -> Unit) -> Unit = {},
 ) {
@@ -103,7 +103,7 @@ internal fun ChooseDislikesScreen(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    com.acon.acon.core.model.type.FoodType.entries.fastForEach { foodType ->
+                    FoodType.entries.fastForEach { foodType ->
                         AconChip(
                             title = stringResource(foodType.getNameResId()),
                             isSelected = state.selectedDislikes.contains(foodType),

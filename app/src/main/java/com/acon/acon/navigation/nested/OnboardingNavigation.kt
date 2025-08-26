@@ -2,6 +2,7 @@ package com.acon.acon.navigation.nested
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavDestination.Companion.hasRoute
@@ -9,12 +10,15 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
+import com.acon.acon.core.designsystem.effect.screenDefault
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.core.navigation.route.SettingsRoute
-import com.acon.acon.core.navigation.route.OnboardingRoute
-import com.acon.acon.feature.onboarding.screen.composable.ChooseDislikesScreenContainer
 import com.acon.acon.core.navigation.LocalNavController
+import com.acon.acon.core.navigation.route.OnboardingRoute
+import com.acon.acon.core.navigation.route.SettingsRoute
 import com.acon.acon.core.navigation.route.SpotRoute
+import com.acon.acon.core.navigation.utils.navigateAndClear
+import com.acon.feature.onboarding.dislikes.composable.ChooseDislikesScreenContainer
+import com.acon.feature.onboarding.introduce.composable.IntroduceScreenContainer
 
 
 internal fun NavGraphBuilder.onboardingNavigationNavigation(
@@ -36,11 +40,21 @@ internal fun NavGraphBuilder.onboardingNavigationNavigation(
                         }
                     }
                 },
+                onNavigateToIntroduce = {
+                    navController.navigateAndClear(OnboardingRoute.Introduce)
+                },
                 fromSetting = fromSetting,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(AconTheme.color.Gray900)
-                    .systemBarsPadding()
+                modifier = Modifier.screenDefault().systemBarsPadding()
+            )
+        }
+
+        composable<OnboardingRoute.Introduce> {
+
+            IntroduceScreenContainer(
+                modifier = Modifier.screenDefault().statusBarsPadding(),
+                onNavigateToHome = {
+                    navController.navigateAndClear(SpotRoute.Graph)
+                }
             )
         }
     }

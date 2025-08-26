@@ -6,48 +6,46 @@ import com.acon.acon.core.model.type.FilterType
 import com.acon.acon.core.model.type.RestaurantFilterType
 import com.acon.acon.core.model.type.SpotType
 
-internal fun com.acon.acon.core.model.type.SpotType.getNameResId(): Int {
+internal fun SpotType.getNameResId(): Int {
     return when (this) {
-        com.acon.acon.core.model.type.SpotType.RESTAURANT -> R.string.restaurant
-        com.acon.acon.core.model.type.SpotType.CAFE -> R.string.cafe
+        SpotType.RESTAURANT -> R.string.restaurant
+        SpotType.CAFE -> R.string.cafe
     }
 }
 
-internal fun com.acon.acon.core.model.type.FilterType.getNameResId(): Int {
+internal fun FilterType.getNameResId(): Int {
     return when (this) {
-        is com.acon.acon.core.model.type.RestaurantFilterType.RestaurantType -> {
+        is RestaurantFilterType.RestaurantType -> {
             when(this) {
-                com.acon.acon.core.model.type.RestaurantFilterType.RestaurantType.KOREAN -> com.acon.acon.core.designsystem.R.string.korean
-                com.acon.acon.core.model.type.RestaurantFilterType.RestaurantType.CHINESE -> com.acon.acon.core.designsystem.R.string.chinese
-                com.acon.acon.core.model.type.RestaurantFilterType.RestaurantType.JAPANESE -> com.acon.acon.core.designsystem.R.string.japanese
-                com.acon.acon.core.model.type.RestaurantFilterType.RestaurantType.WESTERN -> com.acon.acon.core.designsystem.R.string.western
-                com.acon.acon.core.model.type.RestaurantFilterType.RestaurantType.ASIAN -> com.acon.acon.core.designsystem.R.string.asian
-                com.acon.acon.core.model.type.RestaurantFilterType.RestaurantType.FUSION -> com.acon.acon.core.designsystem.R.string.fusion
-                com.acon.acon.core.model.type.RestaurantFilterType.RestaurantType.BUNSIK -> com.acon.acon.core.designsystem.R.string.korean_street
-                com.acon.acon.core.model.type.RestaurantFilterType.RestaurantType.BUFFET -> com.acon.acon.core.designsystem.R.string.buffet
-                com.acon.acon.core.model.type.RestaurantFilterType.RestaurantType.DRINKING_PLACE -> com.acon.acon.core.designsystem.R.string.drink_bar
-                com.acon.acon.core.model.type.RestaurantFilterType.RestaurantType.EXCLUDE_FRANCHISE -> com.acon.acon.core.designsystem.R.string.exclude_franchise
+                RestaurantFilterType.RestaurantType.KOREAN -> com.acon.acon.core.designsystem.R.string.korean
+                RestaurantFilterType.RestaurantType.CHINESE -> com.acon.acon.core.designsystem.R.string.chinese
+                RestaurantFilterType.RestaurantType.JAPANESE -> com.acon.acon.core.designsystem.R.string.japanese
+                RestaurantFilterType.RestaurantType.WESTERN -> com.acon.acon.core.designsystem.R.string.western
+                RestaurantFilterType.RestaurantType.ASIAN -> com.acon.acon.core.designsystem.R.string.asian
+                RestaurantFilterType.RestaurantType.FUSION -> com.acon.acon.core.designsystem.R.string.fusion
+                RestaurantFilterType.RestaurantType.BUNSIK -> com.acon.acon.core.designsystem.R.string.korean_street
+                RestaurantFilterType.RestaurantType.BUFFET -> com.acon.acon.core.designsystem.R.string.buffet
+                RestaurantFilterType.RestaurantType.DRINKING_PLACE -> com.acon.acon.core.designsystem.R.string.drink_bar
             }
         }
-        is com.acon.acon.core.model.type.CafeFilterType.CafeType -> {
+        is CafeFilterType.CafeType -> {
             when(this) {
-                com.acon.acon.core.model.type.CafeFilterType.CafeType.WORK_FRIENDLY -> com.acon.acon.core.designsystem.R.string.for_work
-                com.acon.acon.core.model.type.CafeFilterType.CafeType.EXCLUDE_FRANCHISE -> com.acon.acon.core.designsystem.R.string.exclude_franchise
+                CafeFilterType.CafeType.WORK_FRIENDLY -> com.acon.acon.core.designsystem.R.string.for_work
             }
         }
-        is com.acon.acon.core.model.type.RestaurantFilterType.RestaurantOperationType -> {
+        is RestaurantFilterType.RestaurantOperationType -> {
             when(this) {
-                com.acon.acon.core.model.type.RestaurantFilterType.RestaurantOperationType.OPEN_AFTER_10PM -> com.acon.acon.core.designsystem.R.string.after_10pm
+                RestaurantFilterType.RestaurantOperationType.OPEN_AFTER_10PM -> com.acon.acon.core.designsystem.R.string.after_10pm
             }
         }
-        is com.acon.acon.core.model.type.CafeFilterType.CafeOperationType -> {
+        is CafeFilterType.CafeOperationType -> {
             when(this) {
-                com.acon.acon.core.model.type.CafeFilterType.CafeOperationType.OPEN_AFTER_10PM -> com.acon.acon.core.designsystem.R.string.after_10pm
+                CafeFilterType.CafeOperationType.OPEN_AFTER_10PM -> com.acon.acon.core.designsystem.R.string.after_10pm
             }
         }
-        is com.acon.acon.core.model.type.RestaurantFilterType.RestaurantPriceType -> {
+        is RestaurantFilterType.RestaurantPriceType -> {
             when(this) {
-                com.acon.acon.core.model.type.RestaurantFilterType.RestaurantPriceType.VALUE_FOR_MONEY -> com.acon.acon.core.designsystem.R.string.cost_effectiveness
+                RestaurantFilterType.RestaurantPriceType.VALUE_FOR_MONEY -> com.acon.acon.core.designsystem.R.string.cost_effectiveness
             }
         }
 
