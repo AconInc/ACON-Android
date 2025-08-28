@@ -46,6 +46,9 @@ internal fun NavGraphBuilder.signInNavigationNavigation(
                 },
                 navigateToOnboarding = {
                     navController.navigateAndClear(OnboardingRoute.Graph)
+                },
+                navigateToIntroduce = {
+                    navController.navigateAndClear(OnboardingRoute.Introduce)
                 }
             )
         }

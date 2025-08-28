@@ -19,6 +19,7 @@ object DataStoreModule {
     private val Context.aconAppDataStore: DataStore<Preferences> by preferencesDataStore(name = "acon_app.ds")
     private val Context.timeDataStore: DataStore<Preferences> by preferencesDataStore(name = "time.ds")
     private val Context.userDataStore: DataStore<Preferences> by preferencesDataStore(name = "user.ds")
+    private val Context.onboardingDataStore: DataStore<Preferences> by preferencesDataStore(name = "onboarding.ds")
 
     @Provides
     @Singleton
@@ -40,6 +41,13 @@ object DataStoreModule {
     fun providesUserDataStore(
         @ApplicationContext context: Context
     ) = context.userDataStore
+
+    @Provides
+    @Singleton
+    @OnboardingDataStore
+    fun providesOnboardingDataStore(
+        @ApplicationContext context: Context
+    ) = context.onboardingDataStore
 }
 
 @Qualifier
@@ -53,4 +61,8 @@ annotation class TimeDataStore
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
 annotation class UserDataStore
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class OnboardingDataStore
 

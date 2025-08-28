@@ -45,6 +45,7 @@ import com.acon.acon.feature.signin.utils.SplashAudioManager
 import com.acon.acon.core.analytics.amplitude.AconAmplitude
 import com.acon.acon.core.analytics.constants.EventNames
 import com.acon.acon.core.analytics.constants.PropertyKeys
+import com.acon.acon.core.model.model.user.VerificationStatus
 import com.acon.acon.core.ui.compose.LocalDeepLinkHandler
 import com.acon.acon.core.ui.compose.LocalUserType
 import com.acon.acon.core.ui.compose.getScreenHeight
@@ -62,11 +63,11 @@ fun SignInScreen(
     state: SignInUiState,
     modifier: Modifier = Modifier,
     navigateToSpotListView: () -> Unit,
-    navigateToAreaVerification: () -> Unit,
-    navigateToOnboarding: () -> Unit,
     onClickTermsOfUse: () -> Unit,
     onClickPrivacyPolicy: () -> Unit,
+    onSignInComplete: (VerificationStatus) -> Unit,
     onAnimationEnd:() -> Unit,
+    onSkipButtonClick: () -> Unit
 ) {
     val scope = rememberCoroutineScope()
     val socialRepository = rememberSocialRepository()
@@ -140,7 +141,7 @@ fun SignInScreen(
                             .alpha(alpha),
                         onClickText = {
                             if (alpha >= 0.75f) {
-                                navigateToSpotListView()
+                                onSkipButtonClick()
                             }
                         }
                     )
@@ -181,20 +182,7 @@ fun SignInScreen(
                                     scope.launch {
                                         socialRepository.googleSignIn()
                                             .onSuccess {
-                                                AconAmplitude.trackEvent(
-                                                    eventName = EventNames.SIGN_IN,
-                                                    properties = mapOf(
-                                                        PropertyKeys.SIGN_IN_OR_NOT to true
-                                                    )
-                                                )
-                                                if (it.hasVerifiedArea.not()) {
-                                                    navigateToAreaVerification()
-                                                } else if (it.hasPreference.not()) {
-                                                    navigateToOnboarding()
-                                                } else {
-                                                    navigateToSpotListView()
-                                                }
-                                                AconAmplitude.setUserId(it.externalUUID)
+                                                onSignInComplete(it)
                                             }.onFailure {
                                             }
                                     }
@@ -265,11 +253,11 @@ private fun PreviewSignInScreen() {
         SignInScreen(
             state = SignInUiState.SignIn(),
             navigateToSpotListView = {},
-            navigateToAreaVerification = {},
             onClickTermsOfUse = {},
             onClickPrivacyPolicy = {},
             onAnimationEnd = {},
-            navigateToOnboarding = {}
+            onSkipButtonClick = {},
+            onSignInComplete = {}
         )
     }
 }

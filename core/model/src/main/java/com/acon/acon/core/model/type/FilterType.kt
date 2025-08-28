@@ -10,9 +10,9 @@ interface FilterType {
     }
 }
 
-sealed interface RestaurantFilterType : com.acon.acon.core.model.type.FilterType {
+sealed interface RestaurantFilterType : FilterType {
 
-    enum class RestaurantType: com.acon.acon.core.model.type.FilterType {
+    enum class RestaurantType: FilterType {
         KOREAN,
         CHINESE,
         JAPANESE,
@@ -22,26 +22,24 @@ sealed interface RestaurantFilterType : com.acon.acon.core.model.type.FilterType
         BUNSIK,
         BUFFET,
         DRINKING_PLACE,
-        EXCLUDE_FRANCHISE;
     }
 
-    enum class RestaurantOperationType: com.acon.acon.core.model.type.FilterType {
+    enum class RestaurantOperationType: FilterType {
         OPEN_AFTER_10PM
     }
 
-    enum class RestaurantPriceType: com.acon.acon.core.model.type.FilterType {
+    enum class RestaurantPriceType: FilterType {
         VALUE_FOR_MONEY
     }
 }
 
-sealed interface CafeFilterType : com.acon.acon.core.model.type.FilterType {
+sealed interface CafeFilterType : FilterType {
 
-    enum class CafeType: com.acon.acon.core.model.type.FilterType {
+    enum class CafeType: FilterType {
         WORK_FRIENDLY,
-        EXCLUDE_FRANCHISE;
     }
 
-    enum class CafeOperationType: com.acon.acon.core.model.type.FilterType {
+    enum class CafeOperationType: FilterType {
         OPEN_AFTER_10PM
     }
 }

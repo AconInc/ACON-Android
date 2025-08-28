@@ -1,6 +1,9 @@
 package com.acon.acon.core.designsystem.effect
 
 import androidx.annotation.FloatRange
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
@@ -78,3 +81,8 @@ fun Modifier.imageGradientBottomLayer(
         }
     )
 }
+
+@Stable
+fun Modifier.screenDefault() = then(
+    Modifier.fillMaxSize().background(AconColors.Gray900)
+)
