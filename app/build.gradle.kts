@@ -44,9 +44,9 @@ dependencies {
     implementation(projects.core.navigation)
     implementation(projects.core.ui)
     implementation(projects.core.launcher)
+    implementation(projects.core.data)
 
     implementation(projects.domain)
-    implementation(projects.data)
 
     implementation(projects.feature.signin)
     implementation(projects.feature.spot)

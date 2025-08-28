@@ -1,0 +1,18 @@
+package com.acon.core.data.repository
+
+import com.acon.core.data.datasource.remote.AconAppRemoteDataSource
+import com.acon.core.data.error.runCatchingWith
+import com.acon.acon.domain.error.app.FetchShouldUpdateError
+import com.acon.acon.domain.repository.AconAppRepository
+import javax.inject.Inject
+
+class AconAppRepositoryImpl @Inject constructor(
+    private val aconAppRemoteDataSource: AconAppRemoteDataSource
+) : AconAppRepository {
+
+    override suspend fun shouldUpdateApp(currentVersion: String): Result<Boolean> {
+        return runCatchingWith(FetchShouldUpdateError()) {
+            aconAppRemoteDataSource.fetchShouldUpdateApp(currentVersion).shouldUpdate ?: false
+        }
+    }
+}
