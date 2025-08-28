@@ -40,7 +40,6 @@ import com.acon.acon.core.ads_api.LocalSpotListAdProvider
 import com.acon.acon.core.analytics.amplitude.AconAmplitude
 import com.acon.acon.core.analytics.constants.EventNames
 import com.acon.acon.core.common.DeepLinkHandler
-import com.acon.acon.core.common.utils.firstNotNull
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.bottomsheet.SignInBottomSheet
 import com.acon.acon.core.designsystem.component.dialog.AconPermissionDialog
@@ -82,14 +81,18 @@ import com.google.android.play.core.install.model.ActivityResult
 import com.google.android.play.core.install.model.InstallStatus
 import dagger.hilt.android.AndroidEntryPoint
 import io.branch.referral.Branch
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
@@ -124,12 +127,16 @@ class MainActivity : ComponentActivity() {
     }
     private val appUpdateActivityResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
-            if (result.resultCode == RESULT_OK) {   // Immediate에서는 받을 일 없음
-                Timber.d("유저 업데이트 수락")
-            } else if (result.resultCode == RESULT_CANCELED) {
-                Timber.d("유저 업데이트 거부")
-            } else if (result.resultCode == ActivityResult.RESULT_IN_APP_UPDATE_FAILED) {
-                Timber.d("업데이트 실패")
+            when (result.resultCode) {
+                RESULT_OK -> {   // Immediate에서는 받을 일 없음
+                    Timber.d("유저 업데이트 수락")
+                }
+                RESULT_CANCELED -> {
+                    Timber.d("유저 업데이트 거부")
+                }
+                ActivityResult.RESULT_IN_APP_UPDATE_FAILED -> {
+                    Timber.d("업데이트 실패")
+                }
             }
         }
 
@@ -184,42 +191,43 @@ class MainActivity : ComponentActivity() {
     )
 
     @SuppressLint("MissingPermission")
-    private val currentLocationFlow = callbackFlow<Location> {
-        isLocationPermissionGranted.collect { granted ->
-            if (granted) {
-                val fusedLocationClient =
-                    LocationServices.getFusedLocationProviderClient(this@MainActivity.applicationContext)
-                trySend(
-                    fusedLocationClient.getCurrentLocation(
-                        Priority.PRIORITY_HIGH_ACCURACY,
-                        null
-                    ).await()
-                )
+    val liveLocationFlow = callbackFlow<Location> {
+        val fusedLocationClient =
+            LocationServices.getFusedLocationProviderClient(this@MainActivity.applicationContext)
+        trySend(
+            fusedLocationClient.getCurrentLocation(
+                Priority.PRIORITY_HIGH_ACCURACY,
+                null
+            ).await()
+        )
 
-                val locationRequest = LocationRequest.Builder(3_000).setPriority(
-                    Priority.PRIORITY_HIGH_ACCURACY
-                ).build()
+        val locationRequest = LocationRequest.Builder(3_000).setPriority(
+            Priority.PRIORITY_HIGH_ACCURACY
+        ).build()
 
-                val locationCallback = object : LocationCallback() {
-                    override fun onLocationResult(locationResult: LocationResult) {
-                        for (location in locationResult.locations) {
-                            Timber.d("새 좌표 획득: [${location.latitude}, ${location.longitude}]")
-                            trySend(location)
-                        }
-                    }
-                }
-
-                fusedLocationClient.requestLocationUpdates(
-                    locationRequest,
-                    locationCallback,
-                    Looper.getMainLooper()
-                )
-
-                awaitClose {
-                    fusedLocationClient.removeLocationUpdates(locationCallback)
+        val locationCallback = object : LocationCallback() {
+            override fun onLocationResult(locationResult: LocationResult) {
+                for (location in locationResult.locations) {
+                    Timber.d("새 좌표 획득: [${location.latitude}, ${location.longitude}]")
+                    trySend(location)
                 }
             }
         }
+
+        fusedLocationClient.requestLocationUpdates(
+            locationRequest,
+            locationCallback,
+            Looper.getMainLooper()
+        )
+
+        awaitClose {
+            fusedLocationClient.removeLocationUpdates(locationCallback)
+        }
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private val currentLocationFlow = isLocationPermissionGranted.filter { it }.flatMapLatest {
+        liveLocationFlow
     }.stateIn(
         scope = lifecycleScope,
         started = SharingStarted.WhileSubscribed(5_000),
