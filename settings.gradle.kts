@@ -41,7 +41,6 @@ include(
     ":feature:onboarding"
 )
 
-include(":data")
 include(":domain")
 include(":feature:profile")
 include(":feature:settings")
