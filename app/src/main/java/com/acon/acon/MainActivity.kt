@@ -60,13 +60,13 @@ import com.acon.acon.core.ui.compose.LocalRequestSignIn
 import com.acon.acon.core.ui.compose.LocalSnackbarHostState
 import com.acon.acon.core.ui.compose.LocalUserType
 import com.acon.acon.domain.repository.AconAppRepository
-import com.acon.acon.domain.repository.SocialRepository
 import com.acon.acon.domain.repository.UserRepository
 import com.acon.acon.navigation.AconNavigation
 import com.acon.acon.provider.ads_impl.SpotListAdProvider
 import com.acon.acon.update.AppUpdateHandler
 import com.acon.acon.update.AppUpdateHandlerImpl
 import com.acon.acon.update.UpdateState
+import com.acon.core.social.client.GoogleAuthClient
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -97,8 +97,6 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    @Inject
-    lateinit var socialRepository: SocialRepository
 
     @Inject
     lateinit var userRepository: UserRepository
@@ -335,9 +333,12 @@ class MainActivity : ComponentActivity() {
                             onDismissRequest = { viewModel.updateShowSignInBottomSheet(false) },
                             onGoogleSignIn = {
                                 scope.launch {
-                                    socialRepository.googleSignIn()
-                                        .onSuccess {
-                                            if (it.hasVerifiedArea) {
+                                    val client = GoogleAuthClient(this@MainActivity)
+                                    val code = client.getCredentialCode() ?: return@launch
+
+                                    userRepository.signIn(client.platform, code)
+                                        .onSuccess { verificationStatus ->
+                                            if (verificationStatus.hasVerifiedArea) {
                                                 navController.navigate(SpotRoute.SpotList) {
                                                     popUpTo(navController.graph.id) {
                                                         inclusive = true
@@ -361,11 +362,10 @@ class MainActivity : ComponentActivity() {
                                                     property = appState.propertyKey to true
                                                 )
                                             }
-                                            AconAmplitude.setUserId(it.externalUUID)
-                                        }.onFailure {
-
+                                            AconAmplitude.setUserId(verificationStatus.externalUUID)
+                                        }.onFailure { e ->
+                                            Timber.e(e)
                                         }
-                                    viewModel.updateShowSignInBottomSheet(false)
                                 }
                             }, modifier = Modifier
                         )

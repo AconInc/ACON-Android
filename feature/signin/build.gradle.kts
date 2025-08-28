@@ -12,6 +12,8 @@ android {
 }
 
 dependencies {
+    
+    implementation(projects.core.social)
 
     implementation(libs.lottie.compose)
 }

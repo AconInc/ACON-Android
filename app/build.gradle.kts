@@ -45,6 +45,7 @@ dependencies {
     implementation(projects.core.ui)
     implementation(projects.core.launcher)
     implementation(projects.core.data)
+    implementation(projects.core.social)
 
     implementation(projects.domain)
 

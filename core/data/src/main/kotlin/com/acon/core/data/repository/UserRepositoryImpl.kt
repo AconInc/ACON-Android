@@ -1,19 +1,20 @@
 package com.acon.core.data.repository
 
+import com.acon.acon.core.model.model.user.CredentialCode
+import com.acon.acon.core.model.model.user.SocialPlatform
 import com.acon.acon.core.model.model.user.VerificationStatus
-import com.acon.acon.core.model.type.SocialType
+import com.acon.acon.data.dto.request.DeleteAccountRequest
+import com.acon.acon.domain.error.user.PostSignInError
+import com.acon.acon.domain.error.user.PostSignOutError
+import com.acon.acon.domain.repository.UserRepository
 import com.acon.core.data.cache.ProfileInfoCache
-import com.acon.core.data.session.SessionHandler
 import com.acon.core.data.datasource.local.TokenLocalDataSource
 import com.acon.core.data.datasource.local.UserLocalDataSource
 import com.acon.core.data.datasource.remote.UserRemoteDataSource
-import com.acon.acon.data.dto.request.DeleteAccountRequest
 import com.acon.core.data.dto.request.SignInRequest
 import com.acon.core.data.dto.request.SignOutRequest
 import com.acon.core.data.error.runCatchingWith
-import com.acon.acon.domain.error.user.PostSignOutError
-import com.acon.acon.domain.error.user.PostSignInError
-import com.acon.acon.domain.repository.UserRepository
+import com.acon.core.data.session.SessionHandler
 import javax.inject.Inject
 
 class UserRepositoryImpl @Inject constructor(
@@ -27,14 +28,14 @@ class UserRepositoryImpl @Inject constructor(
     override fun getUserType() = sessionHandler.getUserType()
 
     override suspend fun signIn(
-        socialType: SocialType,
-        idToken: String
+        socialType: SocialPlatform,
+        code: CredentialCode
     ): Result<VerificationStatus> {
         return runCatchingWith(PostSignInError()) {
             val signInResponse = userRemoteDataSource.signIn(
                 SignInRequest(
-                    socialType = socialType,
-                    idToken = idToken
+                    platform = socialType,
+                    idToken = code.value
                 )
             )
 

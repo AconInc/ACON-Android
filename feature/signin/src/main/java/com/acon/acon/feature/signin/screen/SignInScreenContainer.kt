@@ -30,7 +30,7 @@ fun SignInScreenContainer(
         state = state,
         modifier = modifier.fillMaxSize(),
         navigateToSpotListView = viewModel::navigateToSpotListView,
-        onSignInComplete = viewModel::onSignInComplete,
+        onSignInButtonClick = viewModel::onSignInButtonClicked,
         onClickTermsOfUse = viewModel::onClickTermsOfUse,
         onClickPrivacyPolicy = viewModel::onClickPrivacyPolicy,
         onAnimationEnd = viewModel::signIn,

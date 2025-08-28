@@ -7,8 +7,8 @@ import com.acon.acon.core.model.model.user.VerificationStatus
 import com.acon.acon.core.model.type.UserType
 import com.acon.acon.core.ui.base.BaseContainerHost
 import com.acon.acon.domain.repository.OnboardingRepository
-import com.acon.acon.domain.repository.ProfileRepository
 import com.acon.acon.domain.repository.UserRepository
+import com.acon.core.social.client.SocialAuthClient
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import org.orbitmvi.orbit.Container
@@ -17,7 +17,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SignInViewModel @Inject constructor(
-    private val profileRepository: ProfileRepository,
     private val onboardingRepository: OnboardingRepository,
     private val userRepository: UserRepository
 ) : BaseContainerHost<SignInUiState, SignInSideEffect>() {
@@ -59,7 +58,18 @@ class SignInViewModel @Inject constructor(
         }
     }
 
-    fun onSignInComplete(verificationStatus: VerificationStatus) = intent {
+    fun onSignInButtonClicked(socialAuthClient: SocialAuthClient) = intent {
+        val platform = socialAuthClient.platform
+        val code = socialAuthClient.getCredentialCode()
+
+        userRepository.signIn(platform, code ?: return@intent).onSuccess { verificationStatus ->
+            onSignInComplete(verificationStatus)
+        }.onFailure {
+            postSideEffect(SignInSideEffect.ShowToastMessage)
+        }
+    }
+
+    private fun onSignInComplete(verificationStatus: VerificationStatus) = intent {
         AconAmplitude.trackEvent(
             eventName = EventNames.SIGN_IN,
             properties = mapOf(
