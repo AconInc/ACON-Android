@@ -32,7 +32,7 @@ fun NavGraphBuilder.areaVerificationNavigation(
                 onNavigateToVerifyInMap = {
                     navController.navigate(AreaVerificationRoute.VerifyInMap)
                 },
-                backGestureEnabled = LocalNavController.current.hasPreviousBackStackEntry(),
+                skippable = LocalNavController.current.hasPreviousBackStackEntry().not(),
                 onNavigateToChooseDislikes = { navController.navigateAndClear(OnboardingRoute.ChooseDislikes) },
             )
         }

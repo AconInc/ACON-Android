@@ -22,10 +22,10 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 fun AreaVerificationScreenContainer(
     onNavigateToVerifyInMap: () -> Unit,
     onNavigateToChooseDislikes: () -> Unit,
-    backGestureEnabled: Boolean,
+    skippable: Boolean,
     modifier: Modifier = Modifier,
     viewModel: AreaVerificationViewModel = hiltViewModel(creationCallback = { factory: AreaVerificationViewModel.Factory ->
-        factory.create(shouldShowSkipButton = backGestureEnabled.not())
+        factory.create(shouldShowSkipButton = skippable)
     })
 ) {
     val context = LocalContext.current
@@ -78,8 +78,6 @@ fun AreaVerificationScreenContainer(
 
     val navController = LocalNavController.current
     BackHandler {
-        if (backGestureEnabled) {
-            navController.popBackStack()
-        }
+        navController.navigateUp()
     }
 }
