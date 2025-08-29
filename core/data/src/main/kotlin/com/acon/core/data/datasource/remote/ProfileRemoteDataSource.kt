@@ -4,7 +4,6 @@ import com.acon.core.data.dto.request.UpdateProfileRequest
 import com.acon.core.data.dto.response.profile.PreSignedUrlResponse
 import com.acon.core.data.dto.response.profile.ProfileResponse
 import com.acon.core.data.api.remote.auth.ProfileAuthApi
-import com.acon.core.data.dto.request.AreaVerificationRequest
 import com.acon.core.data.dto.request.ReplaceVerifiedAreaRequest
 import com.acon.core.data.dto.request.SaveSpotRequest
 import com.acon.core.data.dto.response.area.VerifiedAreaListResponse
@@ -34,18 +33,6 @@ class ProfileRemoteDataSource @Inject constructor(
 
     suspend fun fetchSavedSpots() = profileAuthApi.fetchSavedSpots()
     suspend fun saveSpot(saveSpotRequest: SaveSpotRequest) = profileAuthApi.saveSpot(saveSpotRequest)
-
-    suspend fun verifyArea(
-        latitude: Double,
-        longitude: Double
-    ) {
-        return profileAuthApi.verifyArea(
-            request = AreaVerificationRequest(
-                latitude = latitude,
-                longitude = longitude
-            )
-        )
-    }
 
     suspend fun fetchVerifiedAreaList() : VerifiedAreaListResponse {
         return profileAuthApi.fetchVerifiedAreaList()

@@ -9,9 +9,9 @@ import androidx.navigation.compose.navigation
 import com.acon.acon.core.navigation.route.AreaVerificationRoute
 import com.acon.acon.core.navigation.route.OnboardingRoute
 import com.acon.acon.core.navigation.route.SignInRoute
-import com.acon.acon.feature.signin.screen.SignInScreenContainer
 import com.acon.acon.core.navigation.route.SpotRoute
 import com.acon.acon.core.navigation.utils.navigateAndClear
+import com.acon.acon.feature.signin.screen.SignInScreenContainer
 
 internal fun NavGraphBuilder.signInNavigation(
     navController: NavHostController,
@@ -34,10 +34,7 @@ internal fun NavGraphBuilder.signInNavigation(
                 },
                 navigateToAreaVerification = {
                     navController.navigate(
-                        AreaVerificationRoute.AreaVerification(
-                            verifiedAreaId = null,
-                            route = "onboarding"
-                        )
+                        AreaVerificationRoute.AreaVerification
                     ) {
                         popUpTo(SignInRoute.Graph) {
                             inclusive = true

@@ -9,16 +9,8 @@ sealed interface AreaVerificationRoute {
     data object Graph : AreaVerificationRoute
 
     @Serializable
-    data class AreaVerification(
-        val verifiedAreaId: Long? = null,
-        val route: String? = null
-    ) : AreaVerificationRoute
+    data object AreaVerification : AreaVerificationRoute
 
     @Serializable
-    data class CheckInMap(
-        val latitude: Double,
-        val longitude: Double,
-        val verifiedAreaId: Long,
-        val route: String? = null,
-    ) : AreaVerificationRoute
+    data object VerifyInMap: AreaVerificationRoute
 }

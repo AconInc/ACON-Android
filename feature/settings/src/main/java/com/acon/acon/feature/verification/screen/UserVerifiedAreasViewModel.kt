@@ -12,12 +12,12 @@ import javax.inject.Inject
 
 @OptIn(OrbitExperimental::class)
 @HiltViewModel
-class LocalVerificationViewModel @Inject constructor(
+class UserVerifiedAreasViewModel @Inject constructor(
     private val profileRepository: ProfileRepository
-) : BaseContainerHost<LocalVerificationUiState, LocalVerificationSideEffect>() {
+) : BaseContainerHost<UserVerifiedAreasUiState, UserVerifiedAreasSideEffect>() {
 
-    override val container: Container<LocalVerificationUiState, LocalVerificationSideEffect> =
-        container(LocalVerificationUiState.Loading) {
+    override val container: Container<UserVerifiedAreasUiState, UserVerifiedAreasSideEffect> =
+        container(UserVerifiedAreasUiState.Loading) {
             fetchVerifiedAreaList()
         }
 
@@ -25,21 +25,21 @@ class LocalVerificationViewModel @Inject constructor(
         profileRepository.fetchVerifiedAreaList()
             .onSuccess {
                 reduce {
-                    LocalVerificationUiState.Success(verificationAreaList = it)
+                    UserVerifiedAreasUiState.Success(verificationAreaList = it)
                 }
             }
             .onFailure {
-                LocalVerificationUiState.LoadFailed
+                UserVerifiedAreasUiState.LoadFailed
             }
     }
 
     fun retry() = intent {
-        reduce { LocalVerificationUiState.Loading }
+        reduce { UserVerifiedAreasUiState.Loading }
         fetchVerifiedAreaList()
     }
 
     private fun showAreaDeleteFailDialog() = intent {
-        runOn<LocalVerificationUiState.Success> {
+        runOn<UserVerifiedAreasUiState.Success> {
             reduce {
                 state.copy(showAreaDeleteFailDialog = true)
             }
@@ -47,7 +47,7 @@ class LocalVerificationViewModel @Inject constructor(
     }
 
     fun dismissAreaDeleteFailDialog() = intent {
-        runOn<LocalVerificationUiState.Success> {
+        runOn<UserVerifiedAreasUiState.Success> {
             reduce {
                 state.copy(showAreaDeleteFailDialog = false)
             }
@@ -55,7 +55,7 @@ class LocalVerificationViewModel @Inject constructor(
     }
 
     fun showEditAreaDialog() = intent {
-        runOn<LocalVerificationUiState.Success> {
+        runOn<UserVerifiedAreasUiState.Success> {
             reduce {
                 state.copy(showEditAreaDialog = true)
             }
@@ -63,7 +63,7 @@ class LocalVerificationViewModel @Inject constructor(
     }
 
     fun dismissEditAreaDialog() = intent {
-        runOn<LocalVerificationUiState.Success> {
+        runOn<UserVerifiedAreasUiState.Success> {
             reduce {
                 state.copy(showEditAreaDialog = false)
             }
@@ -79,7 +79,7 @@ class LocalVerificationViewModel @Inject constructor(
                 when (error) {
                     is DeleteVerifiedAreaError.InvalidVerifiedArea -> {
                         Timber.e(TAG, "유효하지 않은 인증 지역입니다.")
-                        postSideEffect(LocalVerificationSideEffect.ShowUnKnownErrorToast)
+                        postSideEffect(UserVerifiedAreasSideEffect.ShowUnKnownErrorToast)
                     }
 
                     is DeleteVerifiedAreaError.VerifiedAreaLimitViolation -> {
@@ -94,23 +94,23 @@ class LocalVerificationViewModel @Inject constructor(
 
                     is DeleteVerifiedAreaError.VerifiedAreaNotFound -> {
                         Timber.e(TAG, "존재하지 않는 인증 동네입니다.")
-                        postSideEffect(LocalVerificationSideEffect.ShowUnKnownErrorToast)
+                        postSideEffect(UserVerifiedAreasSideEffect.ShowUnKnownErrorToast)
                     }
 
                     else -> {
                         Timber.e(TAG, error.message)
-                        postSideEffect(LocalVerificationSideEffect.ShowUnKnownErrorToast)
+                        postSideEffect(UserVerifiedAreasSideEffect.ShowUnKnownErrorToast)
                     }
                 }
             }
     }
 
     fun onNavigateToSettingsScreen() = intent {
-        postSideEffect(LocalVerificationSideEffect.NavigateToSettingsScreen)
+        postSideEffect(UserVerifiedAreasSideEffect.NavigateToSettingsScreen)
     }
 
     fun onNavigateToAreaVerification(verifiedAreaId: Long) = intent {
-        postSideEffect(LocalVerificationSideEffect.NavigateToAreaVerification(verifiedAreaId))
+        postSideEffect(UserVerifiedAreasSideEffect.NavigateToAreaVerification(verifiedAreaId))
     }
 
     companion object {
@@ -118,20 +118,20 @@ class LocalVerificationViewModel @Inject constructor(
     }
 }
 
-sealed interface LocalVerificationUiState {
+sealed interface UserVerifiedAreasUiState {
     data class Success(
         val selectedAreaId: Long? = null,
         val verificationAreaList: List<com.acon.acon.core.model.model.area.Area>,
         val showAreaDeleteFailDialog: Boolean = false,
         val showEditAreaDialog: Boolean = false
-    ) : LocalVerificationUiState
+    ) : UserVerifiedAreasUiState
 
-    data object Loading : LocalVerificationUiState
-    data object LoadFailed : LocalVerificationUiState
+    data object Loading : UserVerifiedAreasUiState
+    data object LoadFailed : UserVerifiedAreasUiState
 }
 
-sealed interface LocalVerificationSideEffect {
-    data object ShowUnKnownErrorToast : LocalVerificationSideEffect
-    data object NavigateToSettingsScreen : LocalVerificationSideEffect
-    data class NavigateToAreaVerification(val verifiedAreaId: Long) : LocalVerificationSideEffect
+sealed interface UserVerifiedAreasSideEffect {
+    data object ShowUnKnownErrorToast : UserVerifiedAreasSideEffect
+    data object NavigateToSettingsScreen : UserVerifiedAreasSideEffect
+    data class NavigateToAreaVerification(val verifiedAreaId: Long) : UserVerifiedAreasSideEffect
 }

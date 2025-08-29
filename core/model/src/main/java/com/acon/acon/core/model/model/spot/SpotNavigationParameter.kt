@@ -7,8 +7,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class SpotNavigationParameter(
     val spotId: Long,
-    val tags: List<com.acon.acon.core.model.type.TagType>,
-    val transportMode: com.acon.acon.core.model.type.TransportMode?,
+    val tags: List<TagType>,
+    val transportMode: TransportMode?,
     val eta: Int?,
     val isFromDeepLink: Boolean?,
     val navFromProfile: Boolean?

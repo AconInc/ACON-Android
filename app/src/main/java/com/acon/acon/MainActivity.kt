@@ -51,6 +51,7 @@ import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.core.navigation.LocalNavController
 import com.acon.acon.core.navigation.route.AreaVerificationRoute
 import com.acon.acon.core.navigation.route.SpotRoute
+import com.acon.acon.core.navigation.utils.navigateAndClear
 import com.acon.acon.core.ui.android.launchPlayStore
 import com.acon.acon.core.ui.compose.LocalDeepLinkHandler
 import com.acon.acon.core.ui.compose.LocalLocation
@@ -85,14 +86,12 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
@@ -353,16 +352,9 @@ class MainActivity : ComponentActivity() {
                                                     }
                                                 }
                                             } else {
-                                                navController.navigate(
-                                                    AreaVerificationRoute.AreaVerification(
-                                                        verifiedAreaId = null,
-                                                        route = "onboarding"
-                                                    )
-                                                ) {
-                                                    popUpTo(navController.graph.id) {
-                                                        inclusive = true
-                                                    }
-                                                }
+                                                navController.navigateAndClear(
+                                                    AreaVerificationRoute.AreaVerification
+                                                )
                                             }
                                             if (appState.propertyKey.isNotBlank()) {
                                                 AconAmplitude.trackEvent(

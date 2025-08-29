@@ -23,7 +23,7 @@ fun SettingsScreenContainer(
     onNavigateToSignInScreen: () -> Unit = {},
     onNavigateToProfileScreen: () -> Unit = {},
     onNavigateToOnboardingScreen: () -> Unit = {},
-    onNavigateLocalVerificationScreen: () -> Unit = {},
+    onNavigateUserVerifiedAreasScreen: () -> Unit = {},
     onNavigateToDeleteAccountScreen: () -> Unit = {},
     viewModel: SettingsViewModel = hiltViewModel()
 ) {
@@ -42,7 +42,7 @@ fun SettingsScreenContainer(
         onTermOfUse = viewModel::onTermOfUse,
         onPrivatePolicy = viewModel::onPrivatePolicy,
         onRetryOnBoarding = viewModel::onRetryOnBoarding,
-        onAreaVerification = viewModel::onNavigateToLocalVerification,
+        onAreaVerification = viewModel::onNavigateToUserVerifiedAreas,
         onUpdateVersion = viewModel::onUpdateVersion,
         onSignOut = viewModel::onSignOut,
         onDeleteAccountScreen = viewModel::onDeleteAccount,
@@ -67,7 +67,7 @@ fun SettingsScreenContainer(
                 context.startActivity(intent)
             }
             is SettingsSideEffect.NavigateToOnboarding -> onNavigateToOnboardingScreen()
-            is SettingsSideEffect.NavigateToLocalVerification -> onNavigateLocalVerificationScreen()
+            is SettingsSideEffect.NavigateToUserVerifiedAreas -> onNavigateUserVerifiedAreasScreen()
             is SettingsSideEffect.NavigateToDeleteAccount -> onNavigateToDeleteAccountScreen()
         }
     }

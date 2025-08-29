@@ -11,7 +11,7 @@ data class SpotDetail(
     val nextOpening: String,
     val hasMenuboardImage: Boolean,
     val isSaved: Boolean,
-    val signatureMenuList: List<com.acon.acon.core.model.model.spot.SignatureMenu>,
+    val signatureMenuList: List<SignatureMenu>,
     val latitude: Double,
     val longitude: Double
 )

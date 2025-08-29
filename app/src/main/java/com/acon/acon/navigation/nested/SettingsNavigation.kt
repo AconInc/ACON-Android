@@ -9,13 +9,13 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import com.acon.acon.BuildConfig
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.core.navigation.route.SettingsRoute
 import com.acon.acon.core.navigation.route.AreaVerificationRoute
 import com.acon.acon.core.navigation.route.OnboardingRoute
 import com.acon.acon.core.navigation.route.ProfileRoute
-import com.acon.acon.feature.settings.screen.composable.SettingsScreenContainer
+import com.acon.acon.core.navigation.route.SettingsRoute
 import com.acon.acon.core.navigation.route.SignInRoute
-import com.acon.acon.feature.verification.screen.composable.LocalVerificationScreenContainer
+import com.acon.acon.feature.settings.screen.composable.SettingsScreenContainer
+import com.acon.acon.feature.verification.screen.composable.UserVerifiedAreasScreenContainer
 import com.acon.acon.feature.withdraw.screen.composable.DeleteAccountScreenContainer
 
 internal fun NavGraphBuilder.settingsNavigation(
@@ -40,8 +40,8 @@ internal fun NavGraphBuilder.settingsNavigation(
                 onNavigateToOnboardingScreen = {
                     navController.navigate(OnboardingRoute.Graph)
                 },
-                onNavigateLocalVerificationScreen = {
-                    navController.navigate(SettingsRoute.LocalVerification)
+                onNavigateUserVerifiedAreasScreen = {
+                    navController.navigate(SettingsRoute.UserVerifiedAreas)
                 },
                 onNavigateToSignInScreen = {
                     navController.navigate(SignInRoute.SignIn) {
@@ -56,16 +56,13 @@ internal fun NavGraphBuilder.settingsNavigation(
             )
         }
 
-        composable<SettingsRoute.LocalVerification> {
-            LocalVerificationScreenContainer(
+        composable<SettingsRoute.UserVerifiedAreas> {
+            UserVerifiedAreasScreenContainer(
                 modifier = Modifier.fillMaxSize().background(AconTheme.color.Gray900),
-                navigateToSettingsScreen = { navController.popBackStack() },
+                navigateToSettingsScreen = navController::popBackStack,
                 navigateToAreaVerification = {
                     navController.navigate(
-                        AreaVerificationRoute.AreaVerification(
-                            verifiedAreaId = it,
-                            route = "settings"
-                        )
+                        AreaVerificationRoute.AreaVerification
                     )
                 }
             )

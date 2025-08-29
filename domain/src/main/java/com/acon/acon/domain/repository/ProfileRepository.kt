@@ -26,11 +26,6 @@ interface ProfileRepository {
 
     suspend fun saveSpot(spotId: Long): Result<Unit>
 
-    suspend fun verifyArea(
-        latitude: Double,
-        longitude: Double
-    ): Result<Unit>
-
     suspend fun fetchVerifiedAreaList(): Result<List<Area>>
 
     suspend fun replaceVerifiedArea(

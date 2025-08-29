@@ -1,74 +1,65 @@
 package com.acon.acon.navigation.nested
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
-import androidx.navigation.toRoute
-import com.acon.acon.core.designsystem.theme.AconTheme
+import com.acon.acon.core.designsystem.effect.screenDefault
+import com.acon.acon.core.navigation.LocalNavController
 import com.acon.acon.core.navigation.route.AreaVerificationRoute
 import com.acon.acon.core.navigation.route.OnboardingRoute
 import com.acon.acon.core.navigation.route.SettingsRoute
 import com.acon.acon.core.navigation.route.SpotRoute
+import com.acon.acon.core.navigation.utils.contains
+import com.acon.acon.core.navigation.utils.hasPreviousBackStackEntry
 import com.acon.acon.core.navigation.utils.navigateAndClear
-import com.acon.acon.core.ui.android.showToast
 import com.acon.feature.onboarding.area.composable.AreaVerificationScreenContainer
-import com.acon.feature.onboarding.area.composable.PreferenceMapScreen
+import com.acon.feature.onboarding.area.composable.VerifyInMapScreenContainer
 
 fun NavGraphBuilder.areaVerificationNavigation(
     navController: NavHostController
 ) {
     navigation<AreaVerificationRoute.Graph>(
-        startDestination = AreaVerificationRoute.AreaVerification()
+        startDestination = AreaVerificationRoute.AreaVerification
     ) {
-        composable<AreaVerificationRoute.AreaVerification> { backStackEntry ->
-            val routeData = backStackEntry.toRoute<AreaVerificationRoute.AreaVerification>()
-
+        composable<AreaVerificationRoute.AreaVerification> {
             AreaVerificationScreenContainer(
-                modifier = Modifier.fillMaxSize().background(AconTheme.color.Gray900).statusBarsPadding(),
-                route = routeData.route ?: "onboarding",
-                onNextScreen = { latitude, longitude ->
-                    navController.navigate(
-                        AreaVerificationRoute.CheckInMap(
-                            latitude = latitude,
-                            longitude = longitude,
-                            verifiedAreaId = routeData.verifiedAreaId ?: -1,
-                            route = routeData.route
-                        )
-                    )
-                }, onNavigateToChooseDislikes = { navController.navigateAndClear(OnboardingRoute.Graph) },
-                onNavigateToSpotList = { navController.navigateAndClear(SpotRoute.Graph) }
+                modifier = Modifier
+                    .screenDefault()
+                    .statusBarsPadding(),
+                onNavigateToVerifyInMap = {
+                    navController.navigate(AreaVerificationRoute.VerifyInMap)
+                },
+                backGestureEnabled = LocalNavController.current.hasPreviousBackStackEntry(),
+                onNavigateToChooseDislikes = { navController.navigateAndClear(OnboardingRoute.ChooseDislikes) },
             )
         }
 
-        composable<AreaVerificationRoute.CheckInMap> { backStackEntry ->
-            val route = backStackEntry.toRoute<AreaVerificationRoute.CheckInMap>()
-            val context = LocalContext.current
-
-            PreferenceMapScreen(
-                latitude = route.latitude,
-                longitude = route.longitude,
-                previousVerifiedAreaId = route.verifiedAreaId,
-                onNavigateToNext = { didOnboarding ->
-                    if (route.route == "settings") {
-                        context.showToast("인증 되었습니다")
-                        navController.popBackStack(route = SettingsRoute.LocalVerification, inclusive = false)
-                    } else if (didOnboarding) {
-                        navController.navigateAndClear(SpotRoute.Graph)
-                    } else {
-                        navController.navigate(OnboardingRoute.Graph) {
-                            popUpTo(0) { inclusive = true }
-                        }
+        composable<AreaVerificationRoute.VerifyInMap> {
+            VerifyInMapScreenContainer(
+                onNavigateToNextScreen = {
+                    if (navController.contains<SettingsRoute.UserVerifiedAreas>()) {
+                        navController.popBackStack(
+                            route = SettingsRoute.UserVerifiedAreas,
+                            inclusive = false
+                        )
+                    }
+                    else if (navController.contains<SpotRoute.SpotList>()) {
+                        navController.popBackStack(
+                            route = SpotRoute.SpotList,
+                            inclusive = false
+                        )
+                    }
+                    else {
+                        navController.navigateAndClear(OnboardingRoute.ChooseDislikes)
                     }
                 },
-                onBackClick = {
-                    navController.popBackStack()
-                }
+                onNavigateBack = { navController.popBackStack() },
+                modifier = Modifier
+                    .screenDefault()
+                    .statusBarsPadding()
             )
         }
     }

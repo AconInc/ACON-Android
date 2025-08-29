@@ -10,14 +10,14 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.acon.acon.core.designsystem.theme.AconTheme
+import com.acon.acon.core.model.model.spot.SpotNavigationParameter
 import com.acon.acon.core.navigation.route.AreaVerificationRoute
 import com.acon.acon.core.navigation.route.ProfileRoute
 import com.acon.acon.core.navigation.route.SpotRoute
-import com.acon.acon.feature.spot.screen.spotdetail.composable.SpotDetailScreenContainer
-import com.acon.acon.feature.spot.screen.spotlist.composable.SpotListScreenContainer
-import com.acon.acon.core.model.model.spot.SpotNavigationParameter
 import com.acon.acon.core.navigation.route.UploadRoute
 import com.acon.acon.core.navigation.type.spotNavigationParameterNavType
+import com.acon.acon.feature.spot.screen.spotdetail.composable.SpotDetailScreenContainer
+import com.acon.acon.feature.spot.screen.spotlist.composable.SpotListScreenContainer
 
 internal fun NavGraphBuilder.spotNavigation(
     navController: NavHostController
@@ -55,12 +55,7 @@ internal fun NavGraphBuilder.spotNavigation(
                     navController.navigate(SpotRoute.SpotDetail(spotNav))
                 },
                 onNavigateToAreaVerificationScreen = { lat, lon ->
-                    navController.navigate(AreaVerificationRoute.CheckInMap(
-                        latitude = lat,
-                        longitude = lon,
-                        verifiedAreaId = -1,
-                        route = "spotlist"
-                    ))
+                    navController.navigate(AreaVerificationRoute.VerifyInMap)
                 },
                 modifier = Modifier
                     .fillMaxSize()

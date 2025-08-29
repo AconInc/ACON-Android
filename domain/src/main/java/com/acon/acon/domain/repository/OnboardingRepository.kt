@@ -8,6 +8,11 @@ interface OnboardingRepository {
         dislikeFoods: List<FoodType>
     ): Result<Unit>
 
+    suspend fun verifyArea(
+        latitude: Double,
+        longitude: Double
+    ): Result<Unit>
+
     suspend fun updateHasTastePreference(hasPreference: Boolean): Result<Unit>
     suspend fun updateShouldShowIntroduce(shouldShow: Boolean): Result<Unit>
     suspend fun updateHasVerifiedArea(hasVerifiedArea: Boolean): Result<Unit>

@@ -11,7 +11,7 @@ val localProperties = Properties().apply {
 }
 
 android {
-    namespace = "com.acon.acon.core.map"
+    namespace = "com.acon.core.map"
 
     defaultConfig {
         buildConfigField("String", "NAVER_NCP_KEY_ID", "\"${localProperties["naver_ncp_key_id"]}\"")
@@ -20,6 +20,7 @@ android {
 
 dependencies {
 
-    implementation(projects.core.ui)
+    implementation(projects.core.designsystem)
+
     implementation(libs.play.services.location)
 }

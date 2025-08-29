@@ -100,17 +100,6 @@ class ProfileRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun verifyArea(
-        latitude: Double,
-        longitude: Double
-    ): Result<Unit> = runCatchingWith() {
-        // TODO - 동네인증 API Error 처리 안됨
-        profileRemoteDataSource.verifyArea(
-            latitude = latitude,
-            longitude = longitude
-        )
-    }
-
     override suspend fun fetchVerifiedAreaList(): Result<List<Area>> {
         // TODO - 인증 지역 조회 API Error 처리 안됨
         return runCatchingWith() {

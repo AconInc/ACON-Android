@@ -1,6 +1,5 @@
 package com.acon.feature.onboarding.area.composable
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -22,8 +21,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.paint
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -36,21 +35,19 @@ import com.acon.acon.core.designsystem.component.button.v2.AconFilledButton
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.core.ui.compose.getScreenHeight
-import com.acon.feature.onboarding.area.viewmodel.AreaVerificationUiState
+import com.acon.feature.onboarding.area.viewmodel.AreaVerificationState
 
 @Composable
 internal fun AreaVerificationScreen(
-    state: AreaVerificationUiState,
-    route: String,
+    state: AreaVerificationState,
     onNextButtonClick: () -> Unit,
     modifier: Modifier = Modifier,
-    onSkip: () -> Unit = {}
+    onSkipClick: () -> Unit = {}
 ) {
     val screenHeightDp = getScreenHeight()
     val offsetY = (screenHeightDp * 0.65f)
 
     val infiniteTransition = rememberInfiniteTransition(label = "infinite transition")
-
     val skipAlertTextAlpha by infiniteTransition.animateFloat(
         initialValue = 1f,
         targetValue = 0f,
@@ -60,8 +57,6 @@ internal fun AreaVerificationScreen(
         ), label = "alpha"
     )
 
-    BackHandler {  }
-
     Box(
         modifier = modifier
             .paint(
@@ -69,25 +64,37 @@ internal fun AreaVerificationScreen(
                 contentScale = ContentScale.FillWidth
             )
     ) {
-        Text(
-            text = stringResource(R.string.skip_area_verification),
-            style = AconTheme.typography.Body1,
-            color = AconTheme.color.White,
-            fontWeight = FontWeight.W400,
-            modifier = Modifier.align(Alignment.TopEnd).padding(
-                end = 16.dp, top = 10.dp
-            ).noRippleClickable {
-                onSkip()
-            }.padding(8.dp)
-        )
+        if (state.shouldShowSkipButton) {
+            Text(
+                text = stringResource(R.string.skip_area_verification),
+                style = AconTheme.typography.Body1,
+                color = AconTheme.color.White,
+                fontWeight = FontWeight.W400,
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(
+                        end = 16.dp, top = 10.dp
+                    )
+                    .noRippleClickable {
+                        onSkipClick()
+                    }
+                    .padding(8.dp)
+            )
+        }
+
         Text(
             text = stringResource(R.string.alert_about_skip_area_verification),
             style = AconTheme.typography.Body1,
             color = AconTheme.color.Gray500,
             fontWeight = FontWeight.W400,
-            modifier = Modifier.align(Alignment.TopCenter).padding(
-                top = 96.dp
-            ).alpha(skipAlertTextAlpha),
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .padding(
+                    top = 96.dp
+                )
+                .graphicsLayer {
+                    alpha = skipAlertTextAlpha
+                },
             textAlign = TextAlign.Center
         )
         Column(
@@ -114,7 +121,7 @@ internal fun AreaVerificationScreen(
             Spacer(Modifier.weight(1f))
 
             AconFilledButton(
-                onClick = { onNextButtonClick() },
+                onClick = onNextButtonClick,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 16.dp, bottom = 20.dp)
@@ -134,12 +141,12 @@ internal fun AreaVerificationScreen(
 @Preview
 @Composable
 private fun AreaVerificationHomeScreenPreview() {
-    AconTheme {
-        AreaVerificationScreen(
-            modifier = Modifier.fillMaxSize().background(AconTheme.color.Gray900).statusBarsPadding(),
-            state = AreaVerificationUiState(),
-            route = "",
-            onNextButtonClick = {}
-        )
-    }
+    AreaVerificationScreen(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(AconTheme.color.Gray900)
+            .statusBarsPadding(),
+        onNextButtonClick = {},
+        state = AreaVerificationState(shouldShowSkipButton = true)
+    )
 }

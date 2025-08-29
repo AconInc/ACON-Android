@@ -30,12 +30,12 @@ import com.acon.acon.core.designsystem.component.error.NetworkErrorView
 import com.acon.acon.core.designsystem.component.topbar.AconTopBar
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.feature.verification.component.VerifiedAreaChipRow
-import com.acon.acon.feature.verification.screen.LocalVerificationUiState
+import com.acon.acon.feature.verification.screen.UserVerifiedAreasUiState
 import com.acon.acon.core.ui.compose.LocalOnRetry
 
 @Composable
-fun LocalVerificationScreen(
-    state: LocalVerificationUiState,
+fun UserVerifiedAreasScreen(
+    state: UserVerifiedAreasUiState,
     onNavigateBack: () -> Unit,
     onclickAreaVerification: (Long) -> Unit,
     onDeleteVerifiedAreaChip: (Long) -> Unit,
@@ -45,7 +45,7 @@ fun LocalVerificationScreen(
     modifier: Modifier = Modifier
 ) {
     when (state) {
-        is LocalVerificationUiState.Success -> {
+        is UserVerifiedAreasUiState.Success -> {
             if (state.showAreaDeleteFailDialog) {
                 AconDefaultDialog(
                     title = stringResource(R.string.delete_area_dialog_fail_title),
@@ -62,7 +62,6 @@ fun LocalVerificationScreen(
                     }
                 )
             }
-
 
             if (state.showEditAreaDialog) {
                 AconTwoActionDialog(
@@ -164,8 +163,8 @@ fun LocalVerificationScreen(
             }
         }
 
-        is LocalVerificationUiState.Loading -> {}
-        is LocalVerificationUiState.LoadFailed -> {
+        is UserVerifiedAreasUiState.Loading -> {}
+        is UserVerifiedAreasUiState.LoadFailed -> {
             NetworkErrorView(
                 onRetry = LocalOnRetry.current,
                 modifier = Modifier.fillMaxSize()
@@ -176,10 +175,10 @@ fun LocalVerificationScreen(
 
 @Preview
 @Composable
-fun LocalVerificationScreenPreview() {
+fun UserVerifiedAreasScreenPreview() {
     AconTheme {
-        LocalVerificationScreen(
-            state = LocalVerificationUiState.Success(
+        UserVerifiedAreasScreen(
+            state = UserVerifiedAreasUiState.Success(
                 verificationAreaList = emptyList()
             ),
             onNavigateBack = {},

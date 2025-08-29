@@ -1,6 +1,5 @@
 package com.acon.core.data.api.remote.auth
 
-import com.acon.core.data.dto.request.AreaVerificationRequest
 import com.acon.core.data.dto.request.ReplaceVerifiedAreaRequest
 import com.acon.core.data.dto.request.SaveSpotRequest
 import com.acon.core.data.dto.request.UpdateProfileRequest
@@ -40,11 +39,6 @@ interface ProfileAuthApi {
     @POST("/api/v1/saved-spots")
     suspend fun saveSpot(
         @Body saveSpotRequest: SaveSpotRequest
-    )
-
-    @POST("/api/v1/verified-areas")
-    suspend fun verifyArea(
-        @Body request: AreaVerificationRequest
     )
 
     @GET("/api/v1/verified-areas")

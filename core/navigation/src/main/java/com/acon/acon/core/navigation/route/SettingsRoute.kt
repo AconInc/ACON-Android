@@ -10,7 +10,7 @@ interface SettingsRoute {
     data object Settings : SettingsRoute
 
     @Serializable
-    data object LocalVerification : SettingsRoute
+    data object UserVerifiedAreas : SettingsRoute
 
     @Serializable
     data object DeleteAccount : SettingsRoute

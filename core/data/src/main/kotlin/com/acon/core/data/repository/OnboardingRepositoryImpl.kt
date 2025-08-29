@@ -3,6 +3,7 @@ package com.acon.core.data.repository
 import com.acon.acon.core.model.model.OnboardingPreferences
 import com.acon.acon.core.model.type.FoodType
 import com.acon.acon.domain.error.onboarding.PostTastePreferenceResultError
+import com.acon.acon.domain.error.onboarding.VerifyAreaError
 import com.acon.acon.domain.repository.OnboardingRepository
 import com.acon.core.data.datasource.local.OnboardingLocalDataSource
 import com.acon.core.data.datasource.remote.OnboardingRemoteDataSource
@@ -23,6 +24,17 @@ class OnboardingRepositoryImpl @Inject constructor(
             onboardingRemoteDataSource.submitTastePreferenceResult(request)
             onboardingLocalDataSource.updateHasPreference(true)
         }
+    }
+
+    override suspend fun verifyArea(
+        latitude: Double,
+        longitude: Double
+    ): Result<Unit> = runCatchingWith(VerifyAreaError()) {
+        onboardingRemoteDataSource.verifyArea(
+            latitude = latitude,
+            longitude = longitude
+        )
+        onboardingLocalDataSource.updateHasVerifiedArea(true)
     }
 
     override suspend fun updateHasTastePreference(hasPreference: Boolean): Result<Unit> {
