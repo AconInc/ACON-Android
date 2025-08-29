@@ -1,4 +1,4 @@
-package com.acon.acon.feature.areaverification.composable
+package com.acon.feature.onboarding.area.composable
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.LinearEasing
@@ -36,6 +36,7 @@ import com.acon.acon.core.designsystem.component.button.v2.AconFilledButton
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.core.ui.compose.getScreenHeight
+import com.acon.feature.onboarding.area.viewmodel.AreaVerificationUiState
 
 @Composable
 internal fun AreaVerificationScreen(

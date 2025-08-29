@@ -1,4 +1,4 @@
-package com.acon.acon.feature.areaverification.composable
+package com.acon.feature.onboarding.area.viewmodel
 
 import android.Manifest
 import android.app.Application

@@ -17,8 +17,8 @@ import com.acon.acon.core.navigation.route.SettingsRoute
 import com.acon.acon.core.navigation.route.SpotRoute
 import com.acon.acon.core.navigation.utils.navigateAndClear
 import com.acon.acon.core.ui.android.showToast
-import com.acon.acon.feature.areaverification.composable.AreaVerificationScreenContainer
-import com.acon.acon.feature.areaverification.composable.PreferenceMapScreen
+import com.acon.feature.onboarding.area.composable.AreaVerificationScreenContainer
+import com.acon.feature.onboarding.area.composable.PreferenceMapScreen
 
 fun NavGraphBuilder.areaVerificationNavigation(
     navController: NavHostController

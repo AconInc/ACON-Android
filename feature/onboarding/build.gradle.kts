@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.acon.android.library.orbit)
     alias(libs.plugins.acon.android.library.haze)
     alias(libs.plugins.acon.android.library.coil)
+    alias(libs.plugins.acon.android.library.naver.map)
 }
 
 android {
@@ -14,5 +15,8 @@ android {
 
 dependencies {
 
+    implementation(projects.core.map)
+
+    implementation(libs.play.services.location)
     implementation(libs.lottie.compose)
 }

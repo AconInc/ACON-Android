@@ -1,4 +1,4 @@
-package com.acon.acon.feature.areaverification.composable
+package com.acon.feature.onboarding.area.composable
 
 import android.content.Intent
 import android.net.Uri
@@ -11,6 +11,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.acon.acon.core.ui.permission.checkLocationPermission
 import com.acon.acon.core.ui.android.showToast
 import com.acon.acon.core.ui.compose.LocalRequestLocationPermission
+import com.acon.feature.onboarding.area.viewmodel.AreaVerificationSideEffect
+import com.acon.feature.onboarding.area.viewmodel.AreaVerificationViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 

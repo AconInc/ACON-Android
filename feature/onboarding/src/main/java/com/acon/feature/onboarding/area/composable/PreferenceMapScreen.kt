@@ -1,4 +1,4 @@
-package com.acon.acon.feature.areaverification.composable
+package com.acon.feature.onboarding.area.composable
 
 import android.app.Activity
 import android.content.Intent
@@ -31,6 +31,8 @@ import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.designsystem.component.dialog.v2.AconDefaultDialog
 import com.acon.acon.core.designsystem.component.topbar.AconTopBar
 import com.acon.acon.core.designsystem.theme.AconTheme
+import com.acon.feature.onboarding.area.viewmodel.AreaVerificationSideEffect
+import com.acon.feature.onboarding.area.viewmodel.AreaVerificationViewModel
 import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable

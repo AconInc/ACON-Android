@@ -52,7 +52,6 @@ dependencies {
     implementation(projects.feature.signin)
     implementation(projects.feature.spot)
     implementation(projects.feature.onboarding)
-    implementation(projects.feature.areaverification)
     implementation(projects.feature.upload)
     implementation(projects.feature.settings)
     implementation(projects.feature.profile)

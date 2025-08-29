@@ -1,4 +1,4 @@
-package com.acon.acon.feature.areaverification.composable
+package com.acon.feature.onboarding.area.composable
 
 import android.location.Location
 import androidx.compose.foundation.layout.Box
