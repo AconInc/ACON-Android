@@ -8,7 +8,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.acon.acon.core.navigation.route.AreaVerificationRoute
 import com.acon.acon.core.ui.permission.checkLocationPermission
 import com.acon.acon.core.ui.android.showToast
 import com.acon.acon.core.ui.compose.LocalRequestLocationPermission
@@ -19,7 +18,7 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 fun AreaVerificationScreenContainer(
     route: String,
     onNextScreen: (Double, Double) -> Unit,
-    onNavigateToOnboarding: () -> Unit,
+    onNavigateToChooseDislikes: () -> Unit,
     onNavigateToSpotList: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: AreaVerificationViewModel = hiltViewModel()
@@ -69,7 +68,7 @@ fun AreaVerificationScreenContainer(
                 context.showToast(it.errorMessage)
             }
 
-            is AreaVerificationSideEffect.NavigateToOnboarding -> onNavigateToOnboarding()
+            is AreaVerificationSideEffect.NavigateToOnboarding -> onNavigateToChooseDislikes()
             is AreaVerificationSideEffect.NavigateToSpotList -> onNavigateToSpotList()
         }
     }

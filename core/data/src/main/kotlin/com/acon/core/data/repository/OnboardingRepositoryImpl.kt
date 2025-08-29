@@ -1,40 +1,56 @@
 package com.acon.core.data.repository
 
-import com.acon.core.data.datasource.remote.OnboardingRemoteDataSource
-import com.acon.core.data.dto.request.OnboardingRequest
-import com.acon.core.data.error.runCatchingWith
-import com.acon.acon.domain.error.onboarding.PostOnboardingResultError
-import com.acon.acon.domain.repository.OnboardingRepository
+import com.acon.acon.core.model.model.OnboardingPreferences
 import com.acon.acon.core.model.type.FoodType
+import com.acon.acon.domain.error.onboarding.PostTastePreferenceResultError
+import com.acon.acon.domain.repository.OnboardingRepository
 import com.acon.core.data.datasource.local.OnboardingLocalDataSource
-import com.acon.acon.domain.repository.UserRepository
+import com.acon.core.data.datasource.remote.OnboardingRemoteDataSource
+import com.acon.core.data.dto.request.TastePreferenceRequest
+import com.acon.core.data.error.runCatchingWith
 import javax.inject.Inject
 
 class OnboardingRepositoryImpl @Inject constructor(
     private val onboardingRemoteDataSource: OnboardingRemoteDataSource,
     private val onboardingLocalDataSource: OnboardingLocalDataSource,
-    private val userRepository: UserRepository
 ) : OnboardingRepository {
 
-    override suspend fun submitOnboardingResult(
-        dislikeFoodList: List<FoodType>
+    override suspend fun submitTastePreferenceResult(
+        dislikeFoods: List<FoodType>
     ): Result<Unit> {
-        return runCatchingWith(PostOnboardingResultError()) {
-            val request = OnboardingRequest(dislikeFoods = dislikeFoodList.map { it.name })
-            onboardingRemoteDataSource.submitOnboardingResult(request)
-            userRepository.saveDidOnboarding(true)
+        return runCatchingWith(PostTastePreferenceResultError()) {
+            val request = TastePreferenceRequest(dislikeFoods = dislikeFoods.map { it.name })
+            onboardingRemoteDataSource.submitTastePreferenceResult(request)
+            onboardingLocalDataSource.updateHasPreference(true)
         }
     }
 
-    override suspend fun saveDidOnboarding(didOnboarding: Boolean): Result<Unit> {
+    override suspend fun updateHasTastePreference(hasPreference: Boolean): Result<Unit> {
         return runCatchingWith {
-            onboardingLocalDataSource.saveDidOnboarding(didOnboarding)
+            onboardingLocalDataSource.updateHasPreference(hasPreference)
         }
     }
 
-    override suspend fun getDidOnboarding(): Result<Boolean> {
+    override suspend fun updateShouldShowIntroduce(shouldShow: Boolean): Result<Unit> {
         return runCatchingWith {
-            onboardingLocalDataSource.getDidOnboarding()
+            onboardingLocalDataSource.updateShouldShowIntroduce(shouldShow)
+        }
+    }
+
+    override suspend fun updateHasVerifiedArea(hasVerifiedArea: Boolean): Result<Unit> {
+        return runCatchingWith {
+            onboardingLocalDataSource.updateHasVerifiedArea(hasVerifiedArea)
+        }
+    }
+
+    override suspend fun getOnboardingPreferences(): Result<OnboardingPreferences> {
+        return runCatchingWith {
+            val entity = onboardingLocalDataSource.getOnboardingPreferences()
+            OnboardingPreferences(
+                shouldShowIntroduce = entity.shouldShowIntroduce,
+                hasTastePreference = entity.hasTastePreference,
+                hasVerifiedArea = entity.hasVerifiedArea
+            )
         }
     }
 }

@@ -49,7 +49,7 @@ internal fun ChooseDislikesScreen(
         is ChooseDislikesUiState.Success -> {
             if (state.showStopModal) {
                 AconTwoActionDialog(
-                    title = stringResource(R.string.stop_onboarding),
+                    title = stringResource(R.string.stop_choose_dislikes),
                     action1 = stringResource(R.string.keep_going),
                     action2 = stringResource(R.string.stop),
                     onAction1 = { onDismissStopModal{} },

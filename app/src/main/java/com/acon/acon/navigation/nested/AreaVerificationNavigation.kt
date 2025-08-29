@@ -41,7 +41,7 @@ fun NavGraphBuilder.areaVerificationNavigation(
                             route = routeData.route
                         )
                     )
-                }, onNavigateToOnboarding = { navController.navigateAndClear(OnboardingRoute.Graph) },
+                }, onNavigateToChooseDislikes = { navController.navigateAndClear(OnboardingRoute.Graph) },
                 onNavigateToSpotList = { navController.navigateAndClear(SpotRoute.Graph) }
             )
         }

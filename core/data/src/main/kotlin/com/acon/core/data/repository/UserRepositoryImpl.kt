@@ -6,23 +6,26 @@ import com.acon.acon.core.model.model.user.VerificationStatus
 import com.acon.acon.data.dto.request.DeleteAccountRequest
 import com.acon.acon.domain.error.user.PostSignInError
 import com.acon.acon.domain.error.user.PostSignOutError
+import com.acon.acon.domain.repository.OnboardingRepository
 import com.acon.acon.domain.repository.UserRepository
 import com.acon.core.data.cache.ProfileInfoCache
 import com.acon.core.data.datasource.local.TokenLocalDataSource
-import com.acon.core.data.datasource.local.UserLocalDataSource
 import com.acon.core.data.datasource.remote.UserRemoteDataSource
 import com.acon.core.data.dto.request.SignInRequest
 import com.acon.core.data.dto.request.SignOutRequest
 import com.acon.core.data.error.runCatchingWith
 import com.acon.core.data.session.SessionHandler
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import javax.inject.Inject
 
 class UserRepositoryImpl @Inject constructor(
     private val userRemoteDataSource: UserRemoteDataSource,
     private val tokenLocalDataSource: TokenLocalDataSource,
-    private val userLocalDataSource: UserLocalDataSource,
     private val sessionHandler: SessionHandler,
-    private val profileInfoCache: ProfileInfoCache
+    private val profileInfoCache: ProfileInfoCache,
+    private val onboardingRepository: OnboardingRepository
 ) : UserRepository {
 
     override fun getUserType() = sessionHandler.getUserType()
@@ -43,7 +46,17 @@ class UserRepositoryImpl @Inject constructor(
                 signInResponse.accessToken.orEmpty(),
                 signInResponse.refreshToken.orEmpty()
             )
-            saveDidOnboarding(signInResponse.toVerificationStatus().hasPreference)
+
+            coroutineScope {
+                val verifiedAreaJob = async {
+                    onboardingRepository.updateHasVerifiedArea(signInResponse.toVerificationStatus().hasVerifiedArea)
+                }
+                val tastePreferenceJob = async {
+                    onboardingRepository.updateHasTastePreference(signInResponse.toVerificationStatus().hasPreference)
+                }
+
+                awaitAll(verifiedAreaJob, tastePreferenceJob)
+            }
 
             signInResponse.toVerificationStatus()
         }
@@ -56,7 +69,8 @@ class UserRepositoryImpl @Inject constructor(
                 SignOutRequest(refreshToken = refreshToken)
             )
         }.onSuccess {
-            saveDidOnboarding(false)
+            onboardingRepository.updateHasVerifiedArea(false)
+            onboardingRepository.updateHasTastePreference(false)
             clearSession()
         }
     }
@@ -71,20 +85,9 @@ class UserRepositoryImpl @Inject constructor(
                 )
             )
         }.onSuccess {
-            saveDidOnboarding(false)
+            onboardingRepository.updateHasVerifiedArea(false)
+            onboardingRepository.updateHasTastePreference(false)
             clearSession()
-        }
-    }
-
-    override suspend fun saveDidOnboarding(didOnboarding: Boolean): Result<Unit> {
-        return runCatchingWith {
-            userLocalDataSource.saveDidOnboarding(didOnboarding)
-        }
-    }
-
-    override suspend fun getDidOnboarding(): Result<Boolean> {
-        return runCatchingWith {
-            userLocalDataSource.getDidOnboarding()
         }
     }
 

@@ -8,7 +8,7 @@ import com.acon.acon.core.common.NaverDevelopersAuthInterceptor
 import com.acon.acon.core.common.NoAuth
 import com.acon.acon.core.common.TokenInterceptor
 import com.acon.acon.core.common.UrlConstants
-import com.acon.acon.data.BuildConfig
+import com.acon.core.data.BuildConfig
 import com.acon.core.data.datasource.local.TokenLocalDataSource
 import com.acon.core.data.error.RemoteErrorCallAdapterFactory
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory

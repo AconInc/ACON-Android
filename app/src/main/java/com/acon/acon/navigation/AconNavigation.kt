@@ -34,10 +34,10 @@ import com.acon.acon.core.navigation.route.SpotRoute
 import com.acon.acon.core.ui.compose.LocalDeepLinkHandler
 import com.acon.acon.core.ui.compose.LocalSnackbarHostState
 import com.acon.acon.navigation.nested.areaVerificationNavigation
-import com.acon.acon.navigation.nested.onboardingNavigationNavigation
+import com.acon.acon.navigation.nested.onboardingNavigation
 import com.acon.acon.navigation.nested.profileNavigation
 import com.acon.acon.navigation.nested.settingsNavigation
-import com.acon.acon.navigation.nested.signInNavigationNavigation
+import com.acon.acon.navigation.nested.signInNavigation
 import com.acon.acon.navigation.nested.spotNavigation
 import com.acon.acon.navigation.nested.uploadNavigation
 import kotlinx.coroutines.delay
@@ -142,11 +142,11 @@ fun AconNavigation(
                 defaultPopExitTransition()
             }
         ) {
-            signInNavigationNavigation(navController)
+            signInNavigation(navController)
 
             areaVerificationNavigation(navController)
 
-            onboardingNavigationNavigation(navController)
+            onboardingNavigation(navController)
 
             spotNavigation(navController)
 

@@ -2,8 +2,11 @@ package com.acon.core.data.di
 
 import android.content.Context
 import androidx.datastore.core.DataStore
+import androidx.datastore.dataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
+import com.acon.core.data.dto.entity.OnboardingPreferencesEntity
+import com.acon.core.data.serializer.OnboardingPreferencesSerializer
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -18,8 +21,10 @@ object DataStoreModule {
 
     private val Context.aconAppDataStore: DataStore<Preferences> by preferencesDataStore(name = "acon_app.ds")
     private val Context.timeDataStore: DataStore<Preferences> by preferencesDataStore(name = "time.ds")
-    private val Context.userDataStore: DataStore<Preferences> by preferencesDataStore(name = "user.ds")
-    private val Context.onboardingDataStore: DataStore<Preferences> by preferencesDataStore(name = "onboarding.ds")
+    private val Context.onboardingDataStore: DataStore<OnboardingPreferencesEntity> by dataStore(
+        fileName = "onboarding.ds",
+        serializer = OnboardingPreferencesSerializer()
+    )
 
     @Provides
     @Singleton
@@ -37,14 +42,6 @@ object DataStoreModule {
 
     @Provides
     @Singleton
-    @UserDataStore
-    fun providesUserDataStore(
-        @ApplicationContext context: Context
-    ) = context.userDataStore
-
-    @Provides
-    @Singleton
-    @OnboardingDataStore
     fun providesOnboardingDataStore(
         @ApplicationContext context: Context
     ) = context.onboardingDataStore
@@ -57,12 +54,3 @@ annotation class AconAppDataStore
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
 annotation class TimeDataStore
-
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
-annotation class UserDataStore
-
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
-annotation class OnboardingDataStore
-

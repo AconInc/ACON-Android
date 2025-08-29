@@ -72,7 +72,7 @@ fun PreferenceMapScreen(
 
     LaunchedEffect(state.isVerifySuccess) {
         if (state.isVerifySuccess) {
-            onNavigateToNext(state.didOnboarding)
+            onNavigateToNext(state.hasTastePreference)
         }
     }
 

@@ -1,7 +1,7 @@
 package com.acon.core.data.datasource.local
 
+import android.content.SharedPreferences
 import androidx.core.content.edit
-import androidx.security.crypto.EncryptedSharedPreferences
 import com.acon.acon.core.common.IODispatcher
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
@@ -9,7 +9,7 @@ import javax.inject.Inject
 
 class TokenLocalDataSource @Inject constructor(
     @IODispatcher private val dispatcher: CoroutineDispatcher,
-    private val preferences: EncryptedSharedPreferences
+    private val preferences: SharedPreferences
 ) {
 
     internal suspend fun saveAccessToken(

@@ -53,7 +53,7 @@ fun SignInScreenContainer(
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
                 context.startActivity(intent)
             }
-            is SignInSideEffect.NavigateToOnboarding -> navigateToOnboarding()
+            is SignInSideEffect.NavigateToChooseDislikes -> navigateToOnboarding()
             is SignInSideEffect.NavigateToIntroduce -> navigateToIntroduce()
         }
     }

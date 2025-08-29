@@ -30,14 +30,14 @@ class SignInViewModel @Inject constructor(
                 SignInUiState.SignIn(showSignInInfo = true)
             }
         } else {
-            userRepository.getDidOnboarding().onSuccess { did ->
-                if (!did)
-                    postSideEffect(SignInSideEffect.NavigateToOnboarding)
+            onboardingRepository.getOnboardingPreferences().onSuccess {
+                if(it.hasTastePreference.not())
+                    postSideEffect(SignInSideEffect.NavigateToChooseDislikes)
                 else {
-                    if (onboardingRepository.getDidOnboarding().getOrDefault(true))
-                        postSideEffect(SignInSideEffect.NavigateToSpotListView)
-                    else
+                    if (it.shouldShowIntroduce)
                         postSideEffect(SignInSideEffect.NavigateToIntroduce)
+                    else
+                        postSideEffect(SignInSideEffect.NavigateToSpotListView)
                 }
             }
         }
@@ -51,10 +51,10 @@ class SignInViewModel @Inject constructor(
     }
 
     fun onSkipButtonClicked() = intent {
-        if (onboardingRepository.getDidOnboarding().getOrDefault(true)) {
-            postSideEffect(SignInSideEffect.NavigateToSpotListView)
-        } else {
+        if (onboardingRepository.getOnboardingPreferences().getOrNull()?.shouldShowIntroduce == true) {
             postSideEffect(SignInSideEffect.NavigateToIntroduce)
+        } else {
+            postSideEffect(SignInSideEffect.NavigateToSpotListView)
         }
     }
 
@@ -79,11 +79,11 @@ class SignInViewModel @Inject constructor(
         if (verificationStatus.hasVerifiedArea.not()) {
             postSideEffect(SignInSideEffect.NavigateToAreaVerification)
         } else if (verificationStatus.hasPreference.not()) {
-            postSideEffect(SignInSideEffect.NavigateToOnboarding)
-        } else if (onboardingRepository.getDidOnboarding().getOrDefault(true)) {
-            postSideEffect(SignInSideEffect.NavigateToSpotListView)
-        } else {
+            postSideEffect(SignInSideEffect.NavigateToChooseDislikes)
+        } else if (onboardingRepository.getOnboardingPreferences().getOrNull()?.shouldShowIntroduce == true) {
             postSideEffect(SignInSideEffect.NavigateToIntroduce)
+        } else {
+            postSideEffect(SignInSideEffect.NavigateToSpotListView)
         }
         AconAmplitude.setUserId(verificationStatus.externalUUID)
     }
@@ -115,7 +115,7 @@ sealed interface SignInSideEffect {
     data object ShowToastMessage : SignInSideEffect
     data object NavigateToSpotListView : SignInSideEffect
     data object NavigateToAreaVerification : SignInSideEffect
-    data object NavigateToOnboarding : SignInSideEffect
+    data object NavigateToChooseDislikes : SignInSideEffect
     data object OnClickTermsOfUse : SignInSideEffect
     data object OnClickPrivacyPolicy : SignInSideEffect
     data object NavigateToIntroduce : SignInSideEffect

@@ -2,9 +2,9 @@ package com.acon.acon.domain.error.onboarding
 
 import com.acon.acon.domain.error.RootError
 
-open class PostOnboardingResultError : RootError() {
+open class PostTastePreferenceResultError : RootError() {
 
-    class InvalidDislikeFood : PostOnboardingResultError() {
+    class InvalidDislikeFood : PostTastePreferenceResultError() {
         override val code: Int = 40013
     }
 

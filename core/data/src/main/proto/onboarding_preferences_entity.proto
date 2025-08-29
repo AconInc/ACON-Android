@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+option java_package = "com.acon.core.data.dto.entity";
+option java_multiple_files = true;
+
+message OnboardingPreferencesEntity {
+  bool should_show_introduce = 1;
+  bool has_taste_preference = 2;
+  bool has_verified_area = 3;
+}

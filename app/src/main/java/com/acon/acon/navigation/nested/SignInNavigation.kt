@@ -13,7 +13,7 @@ import com.acon.acon.feature.signin.screen.SignInScreenContainer
 import com.acon.acon.core.navigation.route.SpotRoute
 import com.acon.acon.core.navigation.utils.navigateAndClear
 
-internal fun NavGraphBuilder.signInNavigationNavigation(
+internal fun NavGraphBuilder.signInNavigation(
     navController: NavHostController,
 ) {
 

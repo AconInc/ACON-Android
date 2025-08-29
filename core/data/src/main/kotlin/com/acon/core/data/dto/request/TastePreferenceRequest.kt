@@ -4,6 +4,6 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class OnboardingRequest(
+data class TastePreferenceRequest(
     @SerialName("dislikeFoodList") val dislikeFoods: List<String>
 )

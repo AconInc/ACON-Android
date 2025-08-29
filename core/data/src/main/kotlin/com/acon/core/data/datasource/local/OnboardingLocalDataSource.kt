@@ -1,31 +1,50 @@
 package com.acon.core.data.datasource.local
 
 import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.booleanPreferencesKey
-import androidx.datastore.preferences.core.edit
-import com.acon.core.data.di.OnboardingDataStore
+import com.acon.core.data.dto.entity.OnboardingPreferencesEntity
+import com.acon.core.data.dto.entity.copy
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class OnboardingLocalDataSource @Inject constructor(
-    @OnboardingDataStore private val onboardingDataStore: DataStore<Preferences>
+    private val onboardingDataStore: DataStore<OnboardingPreferencesEntity>
 ) {
 
-    suspend fun saveDidOnboarding(didOnboarding: Boolean) {
-        onboardingDataStore.edit { prefs ->
-            prefs[DID_ONBOARDING] = didOnboarding
+    suspend fun updateOnboardingPreferences(pref: OnboardingPreferencesEntity) {
+        onboardingDataStore.updateData { prefs ->
+            prefs.copy {
+                shouldShowIntroduce = pref.shouldShowIntroduce
+                hasTastePreference = pref.hasTastePreference
+                hasVerifiedArea = pref.hasVerifiedArea
+            }
         }
     }
 
-    suspend fun getDidOnboarding(): Boolean {
-        return onboardingDataStore.data.map { prefs ->
-            prefs[DID_ONBOARDING] ?: false
-        }.first()
+    suspend fun updateShouldShowIntroduce(shouldShow: Boolean) {
+        onboardingDataStore.updateData { prefs ->
+            prefs.copy {
+                shouldShowIntroduce = shouldShow
+            }
+        }
     }
 
-    companion object {
-        private val DID_ONBOARDING = booleanPreferencesKey("did_onboarding")
+    suspend fun updateHasPreference(hasPreference: Boolean) {
+        onboardingDataStore.updateData { prefs ->
+            prefs.copy {
+                this.hasTastePreference = hasPreference
+            }
+        }
+    }
+
+    suspend fun updateHasVerifiedArea(verifiedArea: Boolean) {
+        onboardingDataStore.updateData { prefs ->
+            prefs.copy {
+                this.hasVerifiedArea = verifiedArea
+            }
+        }
+    }
+
+    suspend fun getOnboardingPreferences(): OnboardingPreferencesEntity {
+        return onboardingDataStore.data.first()
     }
 }

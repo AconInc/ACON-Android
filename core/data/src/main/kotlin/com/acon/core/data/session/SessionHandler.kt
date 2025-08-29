@@ -4,6 +4,7 @@ import com.acon.acon.core.analytics.amplitude.AconAmplitude
 import com.acon.acon.core.common.IODispatcher
 import com.acon.acon.core.model.type.UserType
 import com.acon.core.data.datasource.local.TokenLocalDataSource
+import com.acon.core.data.dto.response.SignInResponse
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,6 +16,8 @@ interface SessionHandler {
     suspend fun clearSession()
     suspend fun completeSignIn(accessToken: String, refreshToken: String)
     fun getUserType(): Flow<UserType>
+
+    suspend fun onSignInResponse(response: SignInResponse)
 }
 
 class SessionHandlerImpl @Inject constructor(
@@ -47,6 +50,13 @@ class SessionHandlerImpl @Inject constructor(
 
     override suspend fun completeSignIn(accessToken: String, refreshToken: String) {
         _userType.value = UserType.USER
+        tokenLocalDataSource.saveAccessToken(accessToken)
+        tokenLocalDataSource.saveRefreshToken(refreshToken)
+    }
+
+    override suspend fun onSignInResponse(response: SignInResponse) {
+        val accessToken = response.accessToken ?: throw IllegalStateException("Access token is null")
+        val refreshToken = response.refreshToken ?: throw IllegalStateException("Refresh token is null")
         tokenLocalDataSource.saveAccessToken(accessToken)
         tokenLocalDataSource.saveRefreshToken(refreshToken)
     }

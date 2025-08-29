@@ -92,11 +92,11 @@ class ChooseDislikesViewModel @Inject constructor(
 
     fun onCompletion() = intent {
         runOn<ChooseDislikesUiState.Success> {
-            onboardingRepository.submitOnboardingResult(state.selectedDislikes.toList()).onSuccess {
-                if (onboardingRepository.getDidOnboarding().getOrDefault(true))
-                    postSideEffect(ChooseDislikesSideEffect.NavigateToHome)
-                else
+            onboardingRepository.submitTastePreferenceResult(state.selectedDislikes.toList()).onSuccess {
+                if (onboardingRepository.getOnboardingPreferences().getOrNull()?.shouldShowIntroduce == true)
                     postSideEffect(ChooseDislikesSideEffect.NavigateToIntroduce)
+                else
+                    postSideEffect(ChooseDislikesSideEffect.NavigateToHome)
             }.onFailure {
                 postSideEffect(ChooseDislikesSideEffect.ShowErrorToast)
             }

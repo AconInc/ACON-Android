@@ -24,6 +24,7 @@ import com.acon.acon.core.ui.android.NavigationAppHandler
 import com.acon.acon.core.ui.android.isInKorea
 import com.acon.acon.core.ui.base.BaseContainerHost
 import com.acon.acon.domain.error.spot.FetchSpotListError
+import com.acon.acon.domain.repository.OnboardingRepository
 import com.acon.acon.domain.repository.ProfileRepository
 import com.acon.acon.domain.repository.SpotRepository
 import com.acon.acon.domain.repository.TimeRepository
@@ -43,7 +44,7 @@ import kotlin.reflect.KClass
 class SpotListViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val spotRepository: SpotRepository,
-    private val profileRepository: ProfileRepository,
+    private val onboardingRepository: OnboardingRepository,
     private val timeRepository: TimeRepository,
     private val isDistanceExceededUseCase: IsDistanceExceededUseCase,
     private val isCooldownExpiredUseCase: IsCooldownExpiredUseCase
@@ -77,9 +78,10 @@ class SpotListViewModel @Inject constructor(
                 initialLocation = location
                 if (location.isInKorea(context)) {
                     var showAreaVerificationModal = false
-                    if (isCooldownExpiredUseCase(UserActionType.SKIP_AREA_VERIFICATION, 24 * 60 * 60) && userType.value != UserType.GUEST)
-                        showAreaVerificationModal =
-                            profileRepository.fetchVerifiedAreaList().takeIf { it.isSuccess }?.getOrNull()?.isEmpty() == true
+                    if (isCooldownExpiredUseCase(UserActionType.SKIP_AREA_VERIFICATION, 24 * 60 * 60) && userType.value != UserType.GUEST) {
+                        showAreaVerificationModal = onboardingRepository.getOnboardingPreferences()
+                            .getOrNull()?.hasVerifiedArea == false
+                    }
                     fetchSpotList(location,
                         Condition(
                             state.selectedSpotType,

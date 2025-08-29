@@ -375,6 +375,7 @@ class MainActivity : ComponentActivity() {
                                             Timber.e(e)
                                         }
                                 }
+                                viewModel.updateShowSignInBottomSheet(false)
                             }, modifier = Modifier
                         )
                     }

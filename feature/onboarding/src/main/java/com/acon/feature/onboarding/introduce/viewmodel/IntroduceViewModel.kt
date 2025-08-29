@@ -41,7 +41,7 @@ class IntroduceViewModel @Inject constructor(
     }
 
     fun onStartButtonClicked() = intent {
-        onboardingRepository.saveDidOnboarding(true)
+        onboardingRepository.updateShouldShowIntroduce(false)
         postSideEffect(IntroduceSideEffect.OnNavigateToHomeScreen)
     }
 }

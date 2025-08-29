@@ -1,6 +1,6 @@
 package com.acon.core.data.repository
 
-import com.acon.acon.domain.error.onboarding.PostOnboardingResultError
+import com.acon.acon.domain.error.onboarding.PostTastePreferenceResultError
 import com.acon.core.data.assertValidErrorMapping
 import com.acon.core.data.createErrorStream
 import com.acon.core.data.createFakeRemoteError
@@ -27,7 +27,7 @@ class OnboardingRepositoryImplTest {
     companion object {
         @JvmStatic
         fun postOnboardingResultErrorScenarios() = createErrorStream(
-            40013 to PostOnboardingResultError.InvalidDislikeFood::class
+            40013 to PostTastePreferenceResultError.InvalidDislikeFood::class
         )
     }
 
@@ -35,14 +35,14 @@ class OnboardingRepositoryImplTest {
     @MethodSource("postOnboardingResultErrorScenarios")
     fun `싫어하는 음식 API 실패 시 에러 객체를 반환한다`(
         errorCode: Int,
-        expectedErrorClass: KClass<PostOnboardingResultError>
+        expectedErrorClass: KClass<PostTastePreferenceResultError>
     ) = runTest {
         // Given
         val fakeRemoteError = createFakeRemoteError(errorCode)
-        coEvery { onboardingRemoteDataSource.submitOnboardingResult(any()) } throws fakeRemoteError
+        coEvery { onboardingRemoteDataSource.submitTastePreferenceResult(any()) } throws fakeRemoteError
 
         // When
-        val result = onboardingRepository.submitOnboardingResult(listOf())
+        val result = onboardingRepository.submitTastePreferenceResult(listOf())
 
         // Then
         assertValidErrorMapping(result, expectedErrorClass)
