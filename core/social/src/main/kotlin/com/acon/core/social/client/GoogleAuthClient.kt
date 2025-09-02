@@ -13,7 +13,7 @@ import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import dagger.hilt.android.qualifiers.ActivityContext
 import timber.log.Timber
 
-class GoogleAuthClient(
+class GoogleAuthClient internal constructor(
     @ActivityContext private val context: Context,
     getSignInWithGoogleOption: GetSignInWithGoogleOption,
     private val credentialManager: CredentialManager,
