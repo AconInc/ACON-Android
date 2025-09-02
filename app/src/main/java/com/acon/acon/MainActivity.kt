@@ -52,6 +52,7 @@ import com.acon.acon.core.navigation.LocalNavController
 import com.acon.acon.core.navigation.route.AreaVerificationRoute
 import com.acon.acon.core.navigation.route.SpotRoute
 import com.acon.acon.core.navigation.utils.navigateAndClear
+import com.acon.acon.core.ui.activityComponentEntryPoint
 import com.acon.acon.core.ui.android.launchPlayStore
 import com.acon.acon.core.ui.compose.LocalDeepLinkHandler
 import com.acon.acon.core.ui.compose.LocalLocation
@@ -340,7 +341,7 @@ class MainActivity : ComponentActivity() {
                             onDismissRequest = { viewModel.updateShowSignInBottomSheet(false) },
                             onGoogleSignIn = {
                                 scope.launch {
-                                    val client = GoogleAuthClient(this@MainActivity)
+                                    val client = activityComponentEntryPoint<GoogleAuthClient>()
                                     val code = client.getCredentialCode() ?: return@launch
 
                                     userRepository.signIn(client.platform, code)

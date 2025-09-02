@@ -22,3 +22,11 @@ fun Context.findActivity(): Activity {
     }
     throw IllegalStateException("No activity found in context")
 }
+
+fun Context.findActivityOrNull() : Activity? {
+    return try {
+        findActivity()
+    } catch (_: IllegalStateException) {
+        null
+    }
+}

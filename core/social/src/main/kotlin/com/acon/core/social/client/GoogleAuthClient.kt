@@ -8,23 +8,21 @@ import androidx.credentials.PasswordCredential
 import androidx.credentials.PublicKeyCredential
 import com.acon.acon.core.model.model.user.CredentialCode
 import com.acon.acon.core.model.model.user.SocialPlatform
-import com.acon.core.social.BuildConfig
 import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import dagger.hilt.android.qualifiers.ActivityContext
 import timber.log.Timber
 
-class GoogleAuthClient(@ActivityContext private val context: Context) : SocialAuthClient {
+class GoogleAuthClient(
+    @ActivityContext private val context: Context,
+    getSignInWithGoogleOption: GetSignInWithGoogleOption,
+    private val credentialManager: CredentialManager,
+) : SocialAuthClient {
 
     override val platform = SocialPlatform.GOOGLE
 
-    val credentialOption: GetSignInWithGoogleOption =
-        GetSignInWithGoogleOption.Builder(BuildConfig.GOOGLE_CLIENT_ID).build()
-
-    val credentialManager: CredentialManager = CredentialManager.create(context)
-
-    val request = GetCredentialRequest.Builder()
-        .addCredentialOption(credentialOption)
+    private val request = GetCredentialRequest.Builder()
+        .addCredentialOption(getSignInWithGoogleOption)
         .build()
 
     override suspend fun getCredentialCode(): CredentialCode? {

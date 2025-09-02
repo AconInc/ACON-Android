@@ -43,10 +43,11 @@ import com.acon.acon.core.ui.compose.LocalDeepLinkHandler
 import com.acon.acon.core.ui.compose.LocalUserType
 import com.acon.acon.core.ui.compose.getScreenHeight
 import com.acon.acon.core.ui.compose.getScreenWidth
+import com.acon.acon.core.ui.rememberActivityComponentEntryPoint
 import com.acon.acon.feature.signin.screen.component.SignInTopBar
 import com.acon.acon.feature.signin.utils.SplashAudioManager
-import com.acon.core.social.client.GoogleAuthClient
 import com.acon.core.social.client.SocialAuthClient
+import com.acon.core.social.di.AuthClientEntryPoint
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
@@ -64,6 +65,8 @@ fun SignInScreen(
     onAnimationEnd:() -> Unit,
     onSkipButtonClick: () -> Unit
 ) {
+
+    val authClientEntryPoint = rememberActivityComponentEntryPoint<AuthClientEntryPoint>()
 
     val context = LocalContext.current
     val activity = context as? Activity
@@ -172,7 +175,7 @@ fun SignInScreen(
                                 .alpha(alpha),
                             onClick = {
                                 if (alpha >= 0.75f) {
-                                    onSignInButtonClick(GoogleAuthClient(context))
+                                    onSignInButtonClick(authClientEntryPoint.googleAuthClient())
                                 }
                             }
                         )
