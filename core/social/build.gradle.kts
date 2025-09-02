@@ -23,4 +23,11 @@ dependencies {
     implementation(projects.core.model)
 
     implementation(libs.bundles.googleSignIn)
+
+    testImplementation(libs.bundles.non.android.test)
+    testRuntimeOnly(libs.bundles.junit5.runtime)
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
 }
