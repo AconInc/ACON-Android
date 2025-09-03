@@ -2,16 +2,16 @@ package com.acon.core.data.repository
 
 import com.acon.acon.core.common.IODispatcher
 import com.acon.acon.core.model.model.area.Area
-import com.acon.core.data.cache.ProfileInfoCache
-import com.acon.core.data.datasource.remote.ProfileRemoteDataSource
+import com.acon.core.data.cache.ProfileInfoCacheLegacy
+import com.acon.core.data.datasource.remote.ProfileRemoteDataSourceLegacy
 import com.acon.core.data.dto.request.SaveSpotRequest
 import com.acon.core.data.error.runCatchingWith
 import com.acon.acon.domain.error.profile.SaveSpotError
 import com.acon.acon.domain.error.profile.ValidateNicknameError
 import com.acon.acon.core.model.model.profile.PreSignedUrl
-import com.acon.acon.core.model.model.profile.ProfileInfo
-import com.acon.acon.core.model.model.profile.SavedSpot
-import com.acon.acon.domain.repository.ProfileRepository
+import com.acon.acon.core.model.model.profile.ProfileInfoLegacy
+import com.acon.acon.core.model.model.profile.SavedSpotLegacy
+import com.acon.acon.domain.repository.ProfileRepositoryLegacy
 import com.acon.acon.core.model.type.UpdateProfileType
 import com.acon.acon.domain.error.area.DeleteVerifiedAreaError
 import com.acon.acon.domain.error.area.ReplaceVerifiedArea
@@ -24,42 +24,42 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
-class ProfileRepositoryImpl @Inject constructor(
+class ProfileRepositoryLegacyImpl @Inject constructor(
     @IODispatcher private val scope: CoroutineScope,
-    private val profileRemoteDataSource: ProfileRemoteDataSource,
-    private val profileInfoCache: ProfileInfoCache
-) : ProfileRepository {
+    private val profileRemoteDataSourceLegacy: ProfileRemoteDataSourceLegacy,
+    private val profileInfoCacheLegacy: ProfileInfoCacheLegacy
+) : ProfileRepositoryLegacy {
 
-    override fun fetchProfile(): Flow<Result<ProfileInfo>> {
+    override fun fetchProfile(): Flow<Result<ProfileInfoLegacy>> {
         return flow {
             emit(runCatchingWith {
-                profileRemoteDataSource.fetchProfile().toProfile()
+                profileRemoteDataSourceLegacy.fetchProfile().toProfile()
             })
         }
-        return  profileInfoCache.data
+        return  profileInfoCacheLegacy.data
     }
 
     override suspend fun getPreSignedUrl(): Result<PreSignedUrl> {
         return runCatchingWith() {
-            profileRemoteDataSource.getPreSignedUrl().toPreSignedUrl()
+            profileRemoteDataSourceLegacy.getPreSignedUrl().toPreSignedUrl()
         }
     }
 
     override suspend fun validateNickname(nickname: String): Result<Unit> {
         return runCatchingWith(ValidateNicknameError()) {
-            profileRemoteDataSource.validateNickname(nickname)
+            profileRemoteDataSourceLegacy.validateNickname(nickname)
         }
     }
 
     override suspend fun updateProfile(fileName: String, nickname: String, birthday: String?, uri: String): Result<Unit> {
         return runCatchingWith() {
-            profileRemoteDataSource.updateProfile(fileName, nickname, birthday)
-            profileInfoCache.updateData(
-                ProfileInfo(
+            profileRemoteDataSourceLegacy.updateProfile(fileName, nickname, birthday)
+            profileInfoCacheLegacy.updateData(
+                ProfileInfoLegacy(
                     nickname = nickname,
                     birthDate = birthday,
                     image = uri,
-                    savedSpots = profileInfoCache.data.value.getOrNull()?.savedSpots.orEmpty()
+                    savedSpotLegacies = profileInfoCacheLegacy.data.value.getOrNull()?.savedSpotLegacies.orEmpty()
                 )
             )
         }
@@ -86,9 +86,9 @@ class ProfileRepositoryImpl @Inject constructor(
         _updateProfileType.emit(UpdateProfileType.IDLE)
     }
 
-    override suspend fun fetchSavedSpots(): Result<List<SavedSpot>> {
+    override suspend fun fetchSavedSpots(): Result<List<SavedSpotLegacy>> {
         return runCatchingWith() {
-            profileRemoteDataSource.fetchSavedSpots().savedSpotResponseList?.map {
+            profileRemoteDataSourceLegacy.fetchSavedSpots().savedSpotResponseLegacyList?.map {
                 it.toSavedSpot()
             }.orEmpty()
         }
@@ -96,14 +96,14 @@ class ProfileRepositoryImpl @Inject constructor(
 
     override suspend fun saveSpot(spotId: Long): Result<Unit> {
         return runCatchingWith(SaveSpotError()) {
-            profileRemoteDataSource.saveSpot(SaveSpotRequest(spotId))
+            profileRemoteDataSourceLegacy.saveSpot(SaveSpotRequest(spotId))
         }
     }
 
     override suspend fun fetchVerifiedAreaList(): Result<List<Area>> {
         // TODO - 인증 지역 조회 API Error 처리 안됨
         return runCatchingWith() {
-            profileRemoteDataSource.fetchVerifiedAreaList().verifiedAreaList
+            profileRemoteDataSourceLegacy.fetchVerifiedAreaList().verifiedAreaList
                 .map { it.toVerifiedArea() }
         }
     }
@@ -114,7 +114,7 @@ class ProfileRepositoryImpl @Inject constructor(
         longitude: Double
     ): Result<Unit> {
         return runCatchingWith(ReplaceVerifiedArea()) {
-            profileRemoteDataSource.replaceVerifiedArea(
+            profileRemoteDataSourceLegacy.replaceVerifiedArea(
                 previousVerifiedAreaId = previousVerifiedAreaId,
                 latitude = latitude,
                 longitude = longitude
@@ -124,7 +124,7 @@ class ProfileRepositoryImpl @Inject constructor(
 
     override suspend fun deleteVerifiedArea(verifiedAreaId: Long): Result<Unit> {
         return runCatchingWith(DeleteVerifiedAreaError()) {
-            profileRemoteDataSource.deleteVerifiedArea(verifiedAreaId)
+            profileRemoteDataSourceLegacy.deleteVerifiedArea(verifiedAreaId)
         }
     }
 }

@@ -1,20 +1,20 @@
 package com.acon.core.data.dto.response.profile
 
-import com.acon.acon.core.model.model.profile.ProfileInfo
+import com.acon.acon.core.model.model.profile.ProfileInfoLegacy
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ProfileResponse(
+data class ProfileResponseLegacy(
     @SerialName("profileImage") val image: String,
     @SerialName("nickname") val nickname: String,
     @SerialName("birthDate") val birthDate: String? = null,
-    @SerialName("savedSpotList") val savedSpotList: List<SavedSpotResponse>,
+    @SerialName("savedSpotList") val savedSpotList: List<SavedSpotResponseLegacy>,
 ) {
-    fun toProfile() = ProfileInfo(
+    fun toProfile() = ProfileInfoLegacy(
         image = image,
         nickname = nickname,
         birthDate = birthDate,
-        savedSpots = savedSpotList.map { it.toSavedSpot() }
+        savedSpotLegacies = savedSpotList.map { it.toSavedSpot() }
     )
 }

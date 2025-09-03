@@ -6,7 +6,7 @@ import androidx.compose.runtime.Immutable
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.acon.acon.domain.error.profile.ValidateNicknameError
-import com.acon.acon.domain.repository.ProfileRepository
+import com.acon.acon.domain.repository.ProfileRepositoryLegacy
 import com.acon.acon.feature.profile.BuildConfig
 import com.acon.acon.feature.profile.composable.type.BirthdayValidationStatus
 import com.acon.acon.feature.profile.composable.type.FocusType
@@ -31,20 +31,20 @@ import javax.inject.Inject
 
 @OptIn(OrbitExperimental::class)
 @HiltViewModel
-class ProfileModViewModel @Inject constructor(
-    private val profileRepository: ProfileRepository,
+class ProfileModViewModelLegacy @Inject constructor(
+    private val profileRepositoryLegacy: ProfileRepositoryLegacy,
     application: Application
-) : AndroidViewModel(application), ContainerHost<ProfileModState, ProfileModSideEffect> {
+) : AndroidViewModel(application), ContainerHost<ProfileModStateLegacy, ProfileModSideEffectLegacy> {
 
     private var nicknameValidationJob: Job? = null
 
     override val container =
-        container<ProfileModState, ProfileModSideEffect>(ProfileModState.Loading) {
+        container<ProfileModStateLegacy, ProfileModSideEffectLegacy>(ProfileModStateLegacy.Loading) {
             fetchUserProfileInfo()
         }
 
     fun onFocusChanged(isFocused: Boolean, field: FocusType) = intent {
-        runOn<ProfileModState.Success> {
+        runOn<ProfileModStateLegacy.Success> {
             reduce {
                 when (field) {
                     FocusType.Nickname -> state.copy(
@@ -60,10 +60,10 @@ class ProfileModViewModel @Inject constructor(
     }
 
     private fun fetchUserProfileInfo() = intent {
-        profileRepository.fetchProfile().collect {
+        profileRepositoryLegacy.fetchProfile().collect {
             it.onSuccess { profile ->
                 reduce {
-                    ProfileModState.Success(
+                    ProfileModStateLegacy.Success(
                         fetchedNickname = profile.nickname,
                         fetchedBirthday = profile.birthDate?.filter { it.isDigit() } ?: "",
                         fetchedPhotoUri = profile.image
@@ -78,7 +78,7 @@ class ProfileModViewModel @Inject constructor(
     private suspend fun validateNickname(
         nickname: String
     ): NicknameErrorType? {
-        return profileRepository.validateNickname(nickname)
+        return profileRepositoryLegacy.validateNickname(nickname)
             .map { null }
             .recover { throwable ->
                 when (throwable) {
@@ -91,7 +91,7 @@ class ProfileModViewModel @Inject constructor(
     }
 
     fun onNicknameChanged(text: String, delayValidation: Boolean = false) = intent {
-        runOn<ProfileModState.Success> {
+        runOn<ProfileModStateLegacy.Success> {
             val (limitedText, count) = text.limitedNickname()
 
             val localErrorType: NicknameErrorType? = when {
@@ -139,7 +139,7 @@ class ProfileModViewModel @Inject constructor(
     }
 
     fun onBirthdayChanged(text: String) = intent {
-        runOn<ProfileModState.Success> {
+        runOn<ProfileModStateLegacy.Success> {
             val digitsOnly = text.filter { it.isDigit() }
             val limitedDigits = digitsOnly.take(8)
 
@@ -187,11 +187,11 @@ class ProfileModViewModel @Inject constructor(
     }
 
     fun navigateToBack() = intent {
-        postSideEffect(ProfileModSideEffect.NavigateBack)
+        postSideEffect(ProfileModSideEffectLegacy.NavigateBack)
     }
 
     fun onRequestExitDialog() = intent {
-        runOn<ProfileModState.Success> {
+        runOn<ProfileModStateLegacy.Success> {
             reduce {
                 state.copy(showExitDialog = true)
             }
@@ -199,7 +199,7 @@ class ProfileModViewModel @Inject constructor(
     }
 
     fun onDisMissExitDialog() = intent {
-        runOn<ProfileModState.Success> {
+        runOn<ProfileModStateLegacy.Success> {
             reduce {
                 state.copy(showExitDialog = false)
             }
@@ -207,7 +207,7 @@ class ProfileModViewModel @Inject constructor(
     }
 
     fun updateProfileImage(selectedPhotoUri: String) = intent {
-        runOn<ProfileModState.Success> {
+        runOn<ProfileModStateLegacy.Success> {
             reduce {
                 state.copy(selectedPhotoUri = selectedPhotoUri)
             }
@@ -215,7 +215,7 @@ class ProfileModViewModel @Inject constructor(
     }
 
     fun onRequestProfileEditModal() = intent {
-        runOn<ProfileModState.Success> {
+        runOn<ProfileModStateLegacy.Success> {
             reduce {
                 state.copy(showPhotoEditModal = true)
             }
@@ -223,7 +223,7 @@ class ProfileModViewModel @Inject constructor(
     }
 
     fun onDisMissProfileEditModal() = intent {
-        runOn<ProfileModState.Success> {
+        runOn<ProfileModStateLegacy.Success> {
             reduce {
                 state.copy(showPhotoEditModal = false)
             }
@@ -231,7 +231,7 @@ class ProfileModViewModel @Inject constructor(
     }
 
     fun getPreSignedUrl() = intent {
-        runOn<ProfileModState.Success> {
+        runOn<ProfileModStateLegacy.Success> {
             Timber.tag(TAG).d("getPreSignedUrl() 호출됨")
             val nickname = state.nickname
             val isBirthdayValid = state.birthdayValidationStatus == BirthdayValidationStatus.Valid
@@ -260,7 +260,7 @@ class ProfileModViewModel @Inject constructor(
 
                 else -> {
                     Timber.tag(TAG).d("selectedPhotoUri가 커스텀 이미지 → presigned URL 요청")
-                    profileRepository.getPreSignedUrl()
+                    profileRepositoryLegacy.getPreSignedUrl()
                         .onSuccess { result ->
                             reduce { state.copy(uploadFileName = result.fileName) }
                             putPhotoToPreSignedUrl(
@@ -284,7 +284,7 @@ class ProfileModViewModel @Inject constructor(
         imageUri: Uri,
         preSignedUrl: String
     ) = intent {
-        runOn<ProfileModState.Success> {
+        runOn<ProfileModStateLegacy.Success> {
             val context = getApplication<Application>().applicationContext
             val client = OkHttpClient()
 
@@ -357,14 +357,14 @@ class ProfileModViewModel @Inject constructor(
 
     private fun updateProfile(fileName: String, nickname: String, birthday: String?, uri: String) =
         intent {
-            profileRepository.updateProfile(fileName, nickname, birthday, uri)
+            profileRepositoryLegacy.updateProfile(fileName, nickname, birthday, uri)
                 .onSuccess {
-                    profileRepository.updateProfileType(com.acon.acon.core.model.type.UpdateProfileType.SUCCESS)
-                    postSideEffect(ProfileModSideEffect.NavigateToProfile)
+                    profileRepositoryLegacy.updateProfileType(com.acon.acon.core.model.type.UpdateProfileType.SUCCESS)
+                    postSideEffect(ProfileModSideEffectLegacy.NavigateToProfileLegacy)
                 }
                 .onFailure {
-                    profileRepository.updateProfileType(com.acon.acon.core.model.type.UpdateProfileType.FAILURE)
-                    postSideEffect(ProfileModSideEffect.NavigateToProfile)
+                    profileRepositoryLegacy.updateProfileType(com.acon.acon.core.model.type.UpdateProfileType.FAILURE)
+                    postSideEffect(ProfileModSideEffectLegacy.NavigateToProfileLegacy)
                 }
         }
 
@@ -373,7 +373,7 @@ class ProfileModViewModel @Inject constructor(
     }
 }
 
-sealed interface ProfileModState {
+sealed interface ProfileModStateLegacy {
     @Immutable
     data class Success(
         val fetchedNickname: String = "",
@@ -394,7 +394,7 @@ sealed interface ProfileModState {
         val isEdited: Boolean = false,
         val showExitDialog: Boolean = false,
         val showPhotoEditModal: Boolean = false,
-    ) : ProfileModState {
+    ) : ProfileModStateLegacy {
         val isEditButtonEnabled: Boolean
             get() {
                 val isProfileImageChanged = when {
@@ -412,12 +412,12 @@ sealed interface ProfileModState {
             }
     }
 
-    data object Loading : ProfileModState
-    data object LoadFailed : ProfileModState
+    data object Loading : ProfileModStateLegacy
+    data object LoadFailed : ProfileModStateLegacy
 }
 
-sealed interface ProfileModSideEffect {
-    data object NavigateBack : ProfileModSideEffect
-    data class UpdateProfileImage(val imageUri: String?) : ProfileModSideEffect
-    data object NavigateToProfile : ProfileModSideEffect
+sealed interface ProfileModSideEffectLegacy {
+    data object NavigateBack : ProfileModSideEffectLegacy
+    data class UpdateProfileImageLegacy(val imageUri: String?) : ProfileModSideEffectLegacy
+    data object NavigateToProfileLegacy : ProfileModSideEffectLegacy
 }

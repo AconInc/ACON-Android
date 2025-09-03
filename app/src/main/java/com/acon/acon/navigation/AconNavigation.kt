@@ -35,7 +35,7 @@ import com.acon.acon.core.ui.compose.LocalDeepLinkHandler
 import com.acon.acon.core.ui.compose.LocalSnackbarHostState
 import com.acon.acon.navigation.nested.areaVerificationNavigation
 import com.acon.acon.navigation.nested.onboardingNavigation
-import com.acon.acon.navigation.nested.profileNavigation
+import com.acon.acon.navigation.nested.profileNavigationLegacy
 import com.acon.acon.navigation.nested.settingsNavigation
 import com.acon.acon.navigation.nested.signInNavigation
 import com.acon.acon.navigation.nested.spotNavigation
@@ -152,7 +152,7 @@ fun AconNavigation(
 
             uploadNavigation(navController)
 
-            profileNavigation(navController, snackbarHostState)
+            profileNavigationLegacy(navController, snackbarHostState)
 
             settingsNavigation(navController)
         }

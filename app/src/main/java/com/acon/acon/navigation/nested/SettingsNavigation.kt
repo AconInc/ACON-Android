@@ -11,7 +11,7 @@ import com.acon.acon.BuildConfig
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.core.navigation.route.AreaVerificationRoute
 import com.acon.acon.core.navigation.route.OnboardingRoute
-import com.acon.acon.core.navigation.route.ProfileRoute
+import com.acon.acon.core.navigation.route.ProfileRouteLegacy
 import com.acon.acon.core.navigation.route.SettingsRoute
 import com.acon.acon.core.navigation.route.SignInRoute
 import com.acon.acon.feature.settings.screen.composable.SettingsScreenContainer
@@ -31,7 +31,7 @@ internal fun NavGraphBuilder.settingsNavigation(
                 modifier = Modifier.fillMaxSize(),
                 versionName = versionName,
                 onNavigateToProfileScreen = {
-                    navController.navigate(ProfileRoute.Profile) {
+                    navController.navigate(ProfileRouteLegacy.ProfileLegacy) {
                         popUpTo(SettingsRoute.Graph) {
                             inclusive = true
                         }

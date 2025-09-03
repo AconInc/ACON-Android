@@ -14,25 +14,25 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.core.navigation.route.ProfileRoute
+import com.acon.acon.core.navigation.route.ProfileRouteLegacy
 import com.acon.acon.core.navigation.route.SettingsRoute
 import com.acon.acon.core.navigation.route.SpotRoute
 import com.acon.acon.core.navigation.route.UploadRoute
 import com.acon.acon.feature.profile.composable.screen.bookmark.composable.BookmarkScreenContainer
-import com.acon.acon.feature.profile.composable.screen.profile.composable.ProfileScreenContainer
-import com.acon.acon.feature.profile.composable.screen.profileMod.composable.ProfileModScreenContainer
+import com.acon.acon.feature.profile.composable.screen.profile.composable.ProfileScreenContainerLegacy
+import com.acon.acon.feature.profile.composable.screen.profileMod.composable.ProfileModScreenContainerLegacy
 
-internal fun NavGraphBuilder.profileNavigation(
+internal fun NavGraphBuilder.profileNavigationLegacy(
     navController: NavHostController,
     snackbarHostState: SnackbarHostState
 ) {
-    navigation<ProfileRoute.Graph>(
-        startDestination = ProfileRoute.Profile,
+    navigation<ProfileRouteLegacy.Graph>(
+        startDestination = ProfileRouteLegacy.ProfileLegacy,
         enterTransition = { EnterTransition.None },
         exitTransition = { ExitTransition.None }
     ) {
-        composable<ProfileRoute.Profile> {
-            ProfileScreenContainer(
+        composable<ProfileRouteLegacy.ProfileLegacy> {
+            ProfileScreenContainerLegacy(
                 snackbarHostState = snackbarHostState,
                 modifier = Modifier
                     .fillMaxSize()
@@ -53,7 +53,7 @@ internal fun NavGraphBuilder.profileNavigation(
                     )
                 },
                 onNavigateToBookMarkScreen = {
-                    navController.navigate(ProfileRoute.Bookmark)
+                    navController.navigate(ProfileRouteLegacy.Bookmark)
                 },
                 onNavigateToSpotListScreen = {
                     navController.popBackStack(
@@ -64,7 +64,7 @@ internal fun NavGraphBuilder.profileNavigation(
                 onNavigateToSettingsScreen = { navController.navigate(SettingsRoute.Settings) },
                 onNavigateToProfileEditScreen = {
                     navController.navigate(
-                        ProfileRoute.ProfileMod(
+                        ProfileRouteLegacy.ProfileModLegacy(
                             null
                         )
                     )
@@ -75,13 +75,13 @@ internal fun NavGraphBuilder.profileNavigation(
             )
         }
 
-        composable<ProfileRoute.ProfileMod> { backStackEntry ->
+        composable<ProfileRouteLegacy.ProfileModLegacy> { backStackEntry ->
             val savedStateHandle = backStackEntry.savedStateHandle
             val selectedPhotoId by savedStateHandle
                 .getStateFlow<String?>("selectedPhotoId", null)
                 .collectAsState()
 
-            ProfileModScreenContainer(
+            ProfileModScreenContainerLegacy(
                 modifier = Modifier.fillMaxSize(),
                 selectedPhotoId = selectedPhotoId,
                 onNavigateToBack = {
@@ -93,7 +93,7 @@ internal fun NavGraphBuilder.profileNavigation(
             )
         }
 
-        composable<ProfileRoute.Bookmark> {
+        composable<ProfileRouteLegacy.Bookmark> {
             BookmarkScreenContainer(
                 modifier = Modifier.fillMaxSize(),
                 onNavigateToBack = {

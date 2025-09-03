@@ -5,15 +5,15 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.acon.acon.feature.profile.composable.screen.profileMod.ProfileModSideEffect
-import com.acon.acon.feature.profile.composable.screen.profileMod.ProfileModViewModel
+import com.acon.acon.feature.profile.composable.screen.profileMod.ProfileModSideEffectLegacy
+import com.acon.acon.feature.profile.composable.screen.profileMod.ProfileModViewModelLegacy
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
-fun ProfileModScreenContainer(
+fun ProfileModScreenContainerLegacy(
     modifier: Modifier = Modifier,
-    viewModel: ProfileModViewModel = hiltViewModel(),
+    viewModel: ProfileModViewModelLegacy = hiltViewModel(),
     selectedPhotoId: String? = null,
     onNavigateToBack: () -> Unit = {},
     onClickComplete: () -> Unit = {},
@@ -28,23 +28,23 @@ fun ProfileModScreenContainer(
 
     viewModel.collectSideEffect { effect ->
         when (effect) {
-            is ProfileModSideEffect.NavigateBack -> {
+            is ProfileModSideEffectLegacy.NavigateBack -> {
                 onNavigateToBack()
             }
 
-            is ProfileModSideEffect.UpdateProfileImage -> {
+            is ProfileModSideEffectLegacy.UpdateProfileImageLegacy -> {
                 selectedPhotoId.let {
                     viewModel.updateProfileImage(selectedPhotoId ?: "")
                 }
             }
 
-            is ProfileModSideEffect.NavigateToProfile -> {
+            is ProfileModSideEffectLegacy.NavigateToProfileLegacy -> {
                 onClickComplete()
             }
         }
     }
 
-    ProfileModScreen(
+    ProfileModScreenLegacy(
         modifier = modifier,
         state = state,
         navigateToBack = viewModel::navigateToBack,

@@ -53,7 +53,7 @@ import com.acon.acon.feature.profile.composable.component.NicknameValidMessageRo
 import com.acon.acon.feature.profile.composable.component.ProfilePhotoBox
 import com.acon.acon.feature.profile.composable.component.ProfileTextField
 import com.acon.acon.feature.profile.composable.component.addFocusCleaner
-import com.acon.acon.feature.profile.composable.screen.profileMod.ProfileModState
+import com.acon.acon.feature.profile.composable.screen.profileMod.ProfileModStateLegacy
 import com.acon.acon.feature.profile.composable.type.BirthdayValidationStatus
 import com.acon.acon.feature.profile.composable.type.FocusType
 import com.acon.acon.feature.profile.composable.type.NicknameValidationStatus
@@ -65,9 +65,9 @@ import com.acon.acon.core.ui.compose.getScreenWidth
 import dev.chrisbanes.haze.hazeSource
 
 @Composable
-internal fun ProfileModScreen(
+internal fun ProfileModScreenLegacy(
     modifier: Modifier = Modifier,
-    state: ProfileModState,
+    state: ProfileModStateLegacy,
     navigateToBack: () -> Unit,
     onNicknameChanged: (String) -> Unit = {},
     onBirthdayChanged: (String) -> Unit = {},
@@ -100,9 +100,9 @@ internal fun ProfileModScreen(
     val birthDayFocusRequester = remember { FocusRequester() }
 
     when (state) {
-        ProfileModState.LoadFailed -> {}
-        ProfileModState.Loading -> {}
-        is ProfileModState.Success -> {
+        ProfileModStateLegacy.LoadFailed -> {}
+        ProfileModStateLegacy.Loading -> {}
+        is ProfileModStateLegacy.Success -> {
 
             BackHandler(enabled = true) {
                 if(state.isEdited) {
@@ -431,9 +431,9 @@ internal fun ProfileModScreen(
 @Composable
 private fun ProfileModScreenPreview() {
     AconTheme {
-        ProfileModScreen(
+        ProfileModScreenLegacy(
             modifier = Modifier,
-            state = ProfileModState.Success(),
+            state = ProfileModStateLegacy.Success(),
             navigateToBack = {},
             onNicknameChanged = {},
             onBirthdayChanged = {},

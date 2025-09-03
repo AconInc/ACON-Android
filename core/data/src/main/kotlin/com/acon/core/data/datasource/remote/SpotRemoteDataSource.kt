@@ -9,7 +9,7 @@ import com.acon.core.data.dto.request.SpotListRequest
 import com.acon.core.data.dto.response.MenuBoardListResponse
 import com.acon.core.data.dto.response.SpotDetailResponse
 import com.acon.core.data.dto.response.SpotListResponse
-import com.acon.core.data.dto.response.profile.SavedSpotsResponse
+import com.acon.core.data.dto.response.profile.SavedSpotsResponseLegacy
 import javax.inject.Inject
 
 class SpotRemoteDataSource @Inject constructor(
@@ -39,7 +39,7 @@ class SpotRemoteDataSource @Inject constructor(
         return spotAuthApi.fetchSpotDetailFromUser(spotId)
     }
 
-    suspend fun fetchSavedSpotList(): SavedSpotsResponse {
+    suspend fun fetchSavedSpotList(): SavedSpotsResponseLegacy {
         return spotAuthApi.fetchSavedSpotList()
     }
 

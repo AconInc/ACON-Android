@@ -12,7 +12,7 @@ import androidx.navigation.navigation
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.core.model.model.spot.SpotNavigationParameter
 import com.acon.acon.core.navigation.route.AreaVerificationRoute
-import com.acon.acon.core.navigation.route.ProfileRoute
+import com.acon.acon.core.navigation.route.ProfileRouteLegacy
 import com.acon.acon.core.navigation.route.SpotRoute
 import com.acon.acon.core.navigation.route.UploadRoute
 import com.acon.acon.core.navigation.type.spotNavigationParameterNavType
@@ -35,7 +35,7 @@ internal fun NavGraphBuilder.spotNavigation(
                     navController.navigate(UploadRoute.Graph)
                 },
                 onNavigateToProfileScreen = {
-                    navController.navigate(ProfileRoute.Graph)
+                    navController.navigate(ProfileRouteLegacy.Graph)
                 },
                 onNavigateToSpotDetailScreen = { spot, tm ->
                     navController.navigate(

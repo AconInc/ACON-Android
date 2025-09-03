@@ -2,13 +2,13 @@ package com.acon.acon.domain.repository
 
 import com.acon.acon.core.model.model.area.Area
 import com.acon.acon.core.model.model.profile.PreSignedUrl
-import com.acon.acon.core.model.model.profile.ProfileInfo
-import com.acon.acon.core.model.model.profile.SavedSpot
+import com.acon.acon.core.model.model.profile.ProfileInfoLegacy
+import com.acon.acon.core.model.model.profile.SavedSpotLegacy
 import com.acon.acon.core.model.type.UpdateProfileType
 import kotlinx.coroutines.flow.Flow
 
-interface ProfileRepository {
-    fun fetchProfile(): Flow<Result<ProfileInfo>>
+interface ProfileRepositoryLegacy {
+    fun fetchProfile(): Flow<Result<ProfileInfoLegacy>>
 
     suspend fun getPreSignedUrl(): Result<PreSignedUrl>
 
@@ -22,7 +22,7 @@ interface ProfileRepository {
 
     suspend fun resetProfileType()
 
-    suspend fun fetchSavedSpots(): Result<List<SavedSpot>>
+    suspend fun fetchSavedSpots(): Result<List<SavedSpotLegacy>>
 
     suspend fun saveSpot(spotId: Long): Result<Unit>
 

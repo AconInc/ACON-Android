@@ -12,8 +12,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.acon.acon.core.designsystem.R
 import com.acon.acon.core.ui.android.showToast
-import com.acon.acon.core.model.type.UpdateProfileType
-import com.acon.acon.feature.profile.composable.screen.profile.ProfileUiSideEffect
+import com.acon.acon.feature.profile.composable.screen.profile.ProfileUiSideEffectLegacy
 import com.acon.acon.feature.profile.composable.screen.profile.ProfileViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -21,7 +20,7 @@ import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
-fun ProfileScreenContainer(
+fun ProfileScreenContainerLegacy(
     snackbarHostState: SnackbarHostState,
     modifier: Modifier = Modifier,
     onNavigateToSpotDetailScreen: (Long) -> Unit = {},
@@ -56,7 +55,7 @@ fun ProfileScreenContainer(
         }
     }
 
-    ProfileScreen(
+    ProfileScreenLegacy(
         state = state,
         modifier = modifier,
         onBookmark = viewModel::onBookmark,
@@ -70,12 +69,12 @@ fun ProfileScreenContainer(
     viewModel.useUserType()
     viewModel.collectSideEffect {
         when(it) {
-            is ProfileUiSideEffect.OnNavigateToSpotDetailScreen -> { onNavigateToSpotDetailScreen(it.spotId) }
-            is ProfileUiSideEffect.OnNavigateToBookmarkScreen -> { onNavigateToBookMarkScreen() }
-            is ProfileUiSideEffect.OnNavigateToSpotListScreen -> { onNavigateToSpotListScreen() }
-            is ProfileUiSideEffect.OnNavigateToSettingsScreen -> { onNavigateToSettingsScreen() }
-            is ProfileUiSideEffect.OnNavigateToProfileEditScreen -> { onNavigateToProfileEditScreen() }
-            is ProfileUiSideEffect.FailedToLoadProfileInfo -> { context.showToast(R.string.unknown_error) }
+            is ProfileUiSideEffectLegacy.OnNavigateToSpotDetailScreen -> { onNavigateToSpotDetailScreen(it.spotId) }
+            is ProfileUiSideEffectLegacy.OnNavigateToBookmarkScreen -> { onNavigateToBookMarkScreen() }
+            is ProfileUiSideEffectLegacy.OnNavigateToSpotListScreen -> { onNavigateToSpotListScreen() }
+            is ProfileUiSideEffectLegacy.OnNavigateToSettingsScreen -> { onNavigateToSettingsScreen() }
+            is ProfileUiSideEffectLegacy.OnNavigateToProfileEditScreenLegacy -> { onNavigateToProfileEditScreen() }
+            is ProfileUiSideEffectLegacy.FailedToLoadProfileInfoLegacy -> { context.showToast(R.string.unknown_error) }
         }
     }
 }

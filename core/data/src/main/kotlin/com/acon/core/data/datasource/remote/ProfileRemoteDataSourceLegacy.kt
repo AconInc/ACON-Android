@@ -1,41 +1,41 @@
 package com.acon.core.data.datasource.remote
 
-import com.acon.core.data.dto.request.UpdateProfileRequest
+import com.acon.core.data.dto.request.UpdateProfileRequestLegacy
 import com.acon.core.data.dto.response.profile.PreSignedUrlResponse
-import com.acon.core.data.dto.response.profile.ProfileResponse
-import com.acon.core.data.api.remote.auth.ProfileAuthApi
+import com.acon.core.data.dto.response.profile.ProfileResponseLegacy
+import com.acon.core.data.api.remote.auth.ProfileAuthApiLegacy
 import com.acon.core.data.dto.request.ReplaceVerifiedAreaRequest
 import com.acon.core.data.dto.request.SaveSpotRequest
 import com.acon.core.data.dto.response.area.VerifiedAreaListResponse
 import retrofit2.Response
 import javax.inject.Inject
 
-class ProfileRemoteDataSource @Inject constructor(
-    private val profileAuthApi: ProfileAuthApi
+class ProfileRemoteDataSourceLegacy @Inject constructor(
+    private val profileAuthApiLegacy: ProfileAuthApiLegacy
 ) {
-    suspend fun fetchProfile(): ProfileResponse {
-        return profileAuthApi.fetchProfile()
+    suspend fun fetchProfile(): ProfileResponseLegacy {
+        return profileAuthApiLegacy.fetchProfile()
     }
 
     suspend fun getPreSignedUrl(): PreSignedUrlResponse {
-        return profileAuthApi.getPreSignedUrl()
+        return profileAuthApiLegacy.getPreSignedUrl()
     }
 
     suspend fun validateNickname(nickname: String): Response<Unit> {
-        return profileAuthApi.validateNickname(nickname)
+        return profileAuthApiLegacy.validateNickname(nickname)
     }
 
     suspend fun updateProfile(fileName: String, nickname: String, birthday: String?): Response<Unit> {
-        return profileAuthApi.updateProfile(
-            request = UpdateProfileRequest(profileImage = fileName, nickname = nickname, birthDate = formatBirthday(birthday))
+        return profileAuthApiLegacy.updateProfile(
+            request = UpdateProfileRequestLegacy(profileImage = fileName, nickname = nickname, birthDate = formatBirthday(birthday))
         )
     }
 
-    suspend fun fetchSavedSpots() = profileAuthApi.fetchSavedSpots()
-    suspend fun saveSpot(saveSpotRequest: SaveSpotRequest) = profileAuthApi.saveSpot(saveSpotRequest)
+    suspend fun fetchSavedSpots() = profileAuthApiLegacy.fetchSavedSpots()
+    suspend fun saveSpot(saveSpotRequest: SaveSpotRequest) = profileAuthApiLegacy.saveSpot(saveSpotRequest)
 
     suspend fun fetchVerifiedAreaList() : VerifiedAreaListResponse {
-        return profileAuthApi.fetchVerifiedAreaList()
+        return profileAuthApiLegacy.fetchVerifiedAreaList()
     }
 
     suspend fun replaceVerifiedArea(
@@ -43,7 +43,7 @@ class ProfileRemoteDataSource @Inject constructor(
         latitude: Double,
         longitude: Double
     ) {
-        return profileAuthApi.replaceVerifiedArea(
+        return profileAuthApiLegacy.replaceVerifiedArea(
             request = ReplaceVerifiedAreaRequest(
                 previousVerifiedAreaId = previousVerifiedAreaId,
                 latitude = latitude,
@@ -53,7 +53,7 @@ class ProfileRemoteDataSource @Inject constructor(
     }
 
     suspend fun deleteVerifiedArea(verifiedAreaId: Long) {
-        return profileAuthApi.deleteVerifiedArea(verifiedAreaId)
+        return profileAuthApiLegacy.deleteVerifiedArea(verifiedAreaId)
     }
 }
 

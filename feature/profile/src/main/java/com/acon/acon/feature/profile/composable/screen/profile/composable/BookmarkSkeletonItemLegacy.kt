@@ -13,7 +13,7 @@ import com.acon.acon.core.designsystem.animation.skeleton
 import com.acon.acon.core.designsystem.component.loading.SkeletonItem
 
 @Composable
-fun BookmarkSkeletonItem(
+fun BookmarkSkeletonItemLegacy(
     skeletonHeight: Dp,
     modifier: Modifier = Modifier
 ) {

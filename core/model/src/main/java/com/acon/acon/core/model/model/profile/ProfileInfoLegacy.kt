@@ -1,13 +1,13 @@
 package com.acon.acon.core.model.model.profile
 
-data class ProfileInfo(
+data class ProfileInfoLegacy(
     val image: String,
     val nickname: String,
     val birthDate: String?,
-    val savedSpots: List<com.acon.acon.core.model.model.profile.SavedSpot>,
+    val savedSpotLegacies: List<com.acon.acon.core.model.model.profile.SavedSpotLegacy>,
 ) {
     companion object {
-        val Empty = com.acon.acon.core.model.model.profile.ProfileInfo("", "", null, emptyList())
+        val Empty = com.acon.acon.core.model.model.profile.ProfileInfoLegacy("", "", null, emptyList())
     }
 }
 

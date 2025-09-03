@@ -1,11 +1,11 @@
 package com.acon.core.data.repository
 
-import com.acon.acon.core.model.model.profile.SavedSpot
+import com.acon.acon.core.model.model.profile.SavedSpotLegacy
 import com.acon.acon.core.model.model.spot.Condition
 import com.acon.acon.core.model.model.spot.MenuBoardList
 import com.acon.acon.core.model.model.spot.SpotDetail
 import com.acon.acon.core.model.model.spot.SpotList
-import com.acon.core.data.cache.ProfileInfoCache
+import com.acon.core.data.cache.ProfileInfoCacheLegacy
 import com.acon.core.data.datasource.remote.SpotRemoteDataSource
 import com.acon.core.data.dto.request.AddBookmarkRequest
 import com.acon.core.data.dto.request.ConditionRequest
@@ -20,15 +20,15 @@ import com.acon.acon.domain.error.spot.FetchMenuBoardsError
 import com.acon.acon.domain.error.spot.FetchRecentNavigationLocationError
 import com.acon.acon.domain.error.spot.FetchSpotListError
 import com.acon.acon.domain.error.spot.GetSpotDetailInfoError
-import com.acon.acon.domain.repository.ProfileRepository
+import com.acon.acon.domain.repository.ProfileRepositoryLegacy
 import com.acon.acon.domain.repository.SpotRepository
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
 class SpotRepositoryImpl @Inject constructor(
     private val spotRemoteDataSource: SpotRemoteDataSource,
-    private val profileInfoCache: ProfileInfoCache,
-    private val profileRepository: ProfileRepository,
+    private val profileInfoCacheLegacy: ProfileInfoCacheLegacy,
+    private val profileRepositoryLegacy: ProfileRepositoryLegacy,
     private val sessionHandler: SessionHandler
 ) : SpotRepository {
 
@@ -89,9 +89,9 @@ class SpotRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun fetchSavedSpotList(): Result<List<SavedSpot>> {
+    override suspend fun fetchSavedSpotList(): Result<List<SavedSpotLegacy>> {
         return runCatchingWith() {
-            spotRemoteDataSource.fetchSavedSpotList().savedSpotResponseList?.map {
+            spotRemoteDataSource.fetchSavedSpotList().savedSpotResponseLegacyList?.map {
                 it.toSavedSpot()
             }.orEmpty()
         }
@@ -101,10 +101,10 @@ class SpotRepositoryImpl @Inject constructor(
         return runCatchingWith(AddBookmarkError()) {
             spotRemoteDataSource.addBookmark(AddBookmarkRequest(spotId))
 
-            profileRepository.fetchSavedSpots().onSuccess { fetched ->
-                (profileInfoCache.data.value.getOrNull()
+            profileRepositoryLegacy.fetchSavedSpots().onSuccess { fetched ->
+                (profileInfoCacheLegacy.data.value.getOrNull()
                     ?: return@onSuccess).let { profileInfo ->
-                    profileInfoCache.updateData(profileInfo.copy(savedSpots = fetched))
+                    profileInfoCacheLegacy.updateData(profileInfo.copy(savedSpotLegacies = fetched))
                 }
             }
         }
@@ -114,10 +114,10 @@ class SpotRepositoryImpl @Inject constructor(
         return runCatchingWith(DeleteBookmarkError()) {
             spotRemoteDataSource.deleteBookmark(spotId)
 
-            profileRepository.fetchSavedSpots().onSuccess { fetched ->
-                (profileInfoCache.data.value.getOrNull()
+            profileRepositoryLegacy.fetchSavedSpots().onSuccess { fetched ->
+                (profileInfoCacheLegacy.data.value.getOrNull()
                     ?: return@onSuccess).let { profileInfo ->
-                    profileInfoCache.updateData(profileInfo.copy(savedSpots = fetched))
+                    profileInfoCacheLegacy.updateData(profileInfo.copy(savedSpotLegacies = fetched))
                 }
             }
         }

@@ -4,7 +4,6 @@ import android.content.Context
 import android.location.Location
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.util.fastForEach
-import androidx.lifecycle.viewModelScope
 import com.acon.acon.core.analytics.amplitude.AconAmplitude
 import com.acon.acon.core.analytics.constants.EventNames
 import com.acon.acon.core.analytics.constants.PropertyKeys
@@ -25,14 +24,12 @@ import com.acon.acon.core.ui.android.isInKorea
 import com.acon.acon.core.ui.base.BaseContainerHost
 import com.acon.acon.domain.error.spot.FetchSpotListError
 import com.acon.acon.domain.repository.OnboardingRepository
-import com.acon.acon.domain.repository.ProfileRepository
 import com.acon.acon.domain.repository.SpotRepository
 import com.acon.acon.domain.repository.TimeRepository
 import com.acon.acon.domain.usecase.IsCooldownExpiredUseCase
 import com.acon.acon.domain.usecase.IsDistanceExceededUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.viewmodel.container

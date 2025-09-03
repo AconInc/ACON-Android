@@ -8,7 +8,7 @@ import com.acon.core.data.api.remote.noauth.AconAppNoAuthApi
 import com.acon.core.data.api.remote.MapApi
 import com.acon.core.data.api.remote.MapSearchApi
 import com.acon.core.data.api.remote.auth.OnboardingAuthApi
-import com.acon.core.data.api.remote.auth.ProfileAuthApi
+import com.acon.core.data.api.remote.auth.ProfileAuthApiLegacy
 import com.acon.core.data.api.remote.auth.SpotAuthApi
 import com.acon.core.data.api.remote.noauth.SpotNoAuthApi
 import com.acon.core.data.api.remote.auth.UploadAuthApi
@@ -77,8 +77,8 @@ internal object ApiModule {
     @Provides
     fun providesProfileApi(
         @Auth retrofit: Retrofit
-    ): ProfileAuthApi {
-        return retrofit.create(ProfileAuthApi::class.java)
+    ): ProfileAuthApiLegacy {
+        return retrofit.create(ProfileAuthApiLegacy::class.java)
     }
 
     @Singleton

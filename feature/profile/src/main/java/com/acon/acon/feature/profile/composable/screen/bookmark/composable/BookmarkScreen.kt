@@ -36,8 +36,8 @@ import com.acon.acon.core.designsystem.effect.defaultHazeEffect
 import com.acon.acon.core.designsystem.theme.AconTheme
 import com.acon.acon.feature.profile.composable.screen.bookmark.BookmarkUiState
 import com.acon.acon.feature.profile.composable.screen.mockSpotList
-import com.acon.acon.feature.profile.composable.screen.profile.composable.BookmarkItem
-import com.acon.acon.feature.profile.composable.screen.profile.composable.BookmarkSkeletonItem
+import com.acon.acon.feature.profile.composable.screen.profile.composable.BookmarkItemLegacy
+import com.acon.acon.feature.profile.composable.screen.profile.composable.BookmarkSkeletonItemLegacy
 import com.acon.acon.core.ui.compose.LocalOnRetry
 import com.acon.acon.core.ui.compose.getScreenHeight
 import dev.chrisbanes.haze.hazeSource
@@ -105,7 +105,7 @@ fun BookmarkScreen(
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             rowItems.forEach { spot ->
-                                BookmarkSkeletonItem(
+                                BookmarkSkeletonItemLegacy(
                                     skeletonHeight = skeletonHeight,
                                     modifier = Modifier
                                         .weight(1f)
@@ -166,7 +166,7 @@ fun BookmarkScreen(
                         .verticalScroll(rememberScrollState())
                         .hazeSource(LocalHazeState.current)
                 ) {
-                    state.savedSpots?.chunked(2)?.fastForEach { rowItems ->
+                    state.savedSpotLegacies?.chunked(2)?.fastForEach { rowItems ->
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -174,7 +174,7 @@ fun BookmarkScreen(
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             rowItems.forEach { spot ->
-                                BookmarkItem(
+                                BookmarkItemLegacy(
                                     spot = spot,
                                     onClickSpotItem = { onSpotClick(spot.spotId) },
                                     modifier = Modifier

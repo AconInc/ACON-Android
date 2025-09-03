@@ -41,9 +41,7 @@ import com.acon.acon.core.designsystem.effect.LocalHazeState
 import com.acon.acon.core.designsystem.effect.defaultHazeEffect
 import com.acon.acon.core.designsystem.noRippleClickable
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.core.model.model.profile.ProfileInfo
-import com.acon.acon.core.model.type.UserType
-import com.acon.acon.feature.profile.composable.screen.profile.ProfileUiState
+import com.acon.acon.feature.profile.composable.screen.profile.ProfileUiStateLegacy
 import com.acon.acon.core.ui.compose.LocalRequestSignIn
 import com.acon.acon.core.ui.compose.LocalUserType
 import com.acon.acon.core.ui.compose.getScreenHeight
@@ -51,8 +49,8 @@ import dev.chrisbanes.haze.hazeSource
 
 @SuppressLint("ConfigurationScreenWidthHeight")
 @Composable
-fun ProfileScreen(
-    state: ProfileUiState,
+fun ProfileScreenLegacy(
+    state: ProfileUiStateLegacy,
     modifier: Modifier = Modifier,
     onSpotDetail: (Long) -> Unit = {},
     onBookmark: () -> Unit = {},
@@ -71,7 +69,7 @@ fun ProfileScreen(
 
     Column(modifier) {
         when (state) {
-            is ProfileUiState.Success -> {
+            is ProfileUiStateLegacy.Success -> {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -108,7 +106,7 @@ fun ProfileScreen(
                             .padding(horizontal = 16.dp)
                     ) {
                         Row {
-                            if (state.profileInfo.image.isEmpty()) {
+                            if (state.profileInfoLegacy.image.isEmpty()) {
                                 Image(
                                     imageVector = ImageVector.vectorResource(R.drawable.ic_default_profile),
                                     contentDescription = stringResource(R.string.content_description_default_profile_image),
@@ -118,7 +116,7 @@ fun ProfileScreen(
                                 )
                             } else {
                                 AsyncImage(
-                                    model = state.profileInfo.image,
+                                    model = state.profileInfoLegacy.image,
                                     contentDescription = stringResource(R.string.content_description_profile_image),
                                     modifier = Modifier
                                         .size(profileImageHeight)
@@ -134,7 +132,7 @@ fun ProfileScreen(
                                     .padding(start = 16.dp)
                             ) {
                                 Text(
-                                    text = state.profileInfo.nickname,
+                                    text = state.profileInfoLegacy.nickname,
                                     style = AconTheme.typography.Headline4,
                                     color = AconTheme.color.White
                                 )
@@ -163,7 +161,7 @@ fun ProfileScreen(
                         // TODO - saveSpot = isEmpty -> 저장한 장소가 없어요.
 
                         Spacer(Modifier.height(42.dp))
-                        if (state.profileInfo != com.acon.acon.core.model.model.profile.ProfileInfo.Empty) {
+                        if (state.profileInfoLegacy != com.acon.acon.core.model.model.profile.ProfileInfoLegacy.Empty) {
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -177,7 +175,7 @@ fun ProfileScreen(
                                 )
 
                                 Spacer(Modifier.weight(1f))
-                                if (state.profileInfo.savedSpots.isNotEmpty()) {
+                                if (state.profileInfoLegacy.savedSpotLegacies.isNotEmpty()) {
                                     Text(
                                         text = stringResource(R.string.show_saved_all_store),
                                         color = AconTheme.color.Action,
@@ -192,7 +190,7 @@ fun ProfileScreen(
                             }
 
                             Spacer(Modifier.height(8.dp))
-                            if (state.profileInfo.savedSpots.isNotEmpty()) {
+                            if (state.profileInfoLegacy.savedSpotLegacies.isNotEmpty()) {
                                 LazyRow(
                                     modifier = Modifier
                                         .fillMaxWidth()
@@ -200,10 +198,10 @@ fun ProfileScreen(
                                     horizontalArrangement = Arrangement.spacedBy(10.dp)
                                 ) {
                                     items(
-                                        items = state.profileInfo.savedSpots,
+                                        items = state.profileInfoLegacy.savedSpotLegacies,
                                         key = { it.spotId }
                                     ) { spot ->
-                                        BookmarkItem(
+                                        BookmarkItemLegacy(
                                             spot = spot,
                                             onClickSpotItem = { onSpotDetail(spot.spotId) },
                                             modifier = Modifier.aspectRatio(150f / 217f)
@@ -219,7 +217,7 @@ fun ProfileScreen(
                                 )
                             }
                         }
-                        Spacer(Modifier.height(if (state.profileInfo.savedSpots.isEmpty()) 40.dp else 20.dp))
+                        Spacer(Modifier.height(if (state.profileInfoLegacy.savedSpotLegacies.isEmpty()) 40.dp else 20.dp))
 //                        ProfileNativeAd(
 //                            screenHeight = admobHeight,
 //                            modifier = Modifier.padding(bottom = 23.dp)
@@ -228,7 +226,7 @@ fun ProfileScreen(
                 }
             }
 
-            is ProfileUiState.Guest -> {
+            is ProfileUiStateLegacy.Guest -> {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -341,8 +339,8 @@ fun ProfileScreen(
 @Composable
 private fun ProfileScreenPreview() {
     AconTheme {
-        ProfileScreen(
-            state = ProfileUiState.Guest
+        ProfileScreenLegacy(
+            state = ProfileUiStateLegacy.Guest
         )
     }
 }

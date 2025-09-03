@@ -24,11 +24,10 @@ import com.acon.acon.core.designsystem.effect.imageGradientLayer
 import com.acon.acon.core.designsystem.effect.imageGradientTopLayer
 import com.acon.acon.core.designsystem.image.rememberDefaultLoadImageErrorPainter
 import com.acon.acon.core.designsystem.theme.AconTheme
-import com.acon.acon.core.model.model.profile.SavedSpot
 
 @Composable
-internal fun BookmarkItem(
-    spot: com.acon.acon.core.model.model.profile.SavedSpot,
+internal fun BookmarkItemLegacy(
+    spot: com.acon.acon.core.model.model.profile.SavedSpotLegacy,
     onClickSpotItem:() -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -96,8 +95,8 @@ internal fun BookmarkItem(
 @Composable
 private fun BookmarkItemPreview() {
     AconTheme {
-        BookmarkItem(
-            spot = com.acon.acon.core.model.model.profile.SavedSpot(1, "", ""),
+        BookmarkItemLegacy(
+            spot = com.acon.acon.core.model.model.profile.SavedSpotLegacy(1, "", ""),
             onClickSpotItem = {}
         )
     }

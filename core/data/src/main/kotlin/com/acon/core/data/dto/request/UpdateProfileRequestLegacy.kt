@@ -6,7 +6,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class UpdateProfileRequest @OptIn(ExperimentalSerializationApi::class) constructor(
+data class UpdateProfileRequestLegacy @OptIn(ExperimentalSerializationApi::class) constructor(
     @SerialName("profileImage") val profileImage: String? = null,
     @SerialName("nickname") val nickname: String,
     @SerialName("birthDate") @EncodeDefault(EncodeDefault.Mode.NEVER) val birthDate: String? = null
