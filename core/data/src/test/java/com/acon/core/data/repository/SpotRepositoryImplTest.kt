@@ -78,7 +78,7 @@ class SpotRepositoryImplTest {
     ) = runTest {
         // Given
         val fakeRemoteError = createFakeRemoteError(errorCode)
-        coEvery { spotRemoteDataSource.fetchSpotList(any()) } throws fakeRemoteError
+        coEvery { spotRemoteDataSource.fetchSpotList(any(), any()) } throws fakeRemoteError
 
         // When
         val result = spotRepositoryImpl.fetchSpotList(.0, .0, mockk(relaxed = true))
