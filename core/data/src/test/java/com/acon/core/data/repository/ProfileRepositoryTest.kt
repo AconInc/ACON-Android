@@ -277,8 +277,8 @@ class ProfileRepositoryTest {
 
         @JvmStatic
         fun validateNicknameErrorScenarios() = createErrorStream(
-            -1 to ValidateNicknameError.InvalidNicknameFormat::class,
-            -2 to ValidateNicknameError.AlreadyExistNickname::class
+            -1 to ValidateNicknameError.InvalidFormat::class,
+            -2 to ValidateNicknameError.AlreadyExist::class
         )
     }
 }

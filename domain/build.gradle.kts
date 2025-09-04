@@ -10,3 +10,7 @@ dependencies {
 
     testImplementation(libs.bundles.non.android.test)
 }
+
+tasks.withType<Test> {
+    useJUnitPlatform()
+}
