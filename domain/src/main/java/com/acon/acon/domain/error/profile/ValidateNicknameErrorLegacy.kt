@@ -2,12 +2,12 @@ package com.acon.acon.domain.error.profile
 
 import com.acon.acon.domain.error.RootError
 
-open class ValidateNicknameError : RootError() {
+open class ValidateNicknameErrorLegacy : RootError() {
 
-    class UnsatisfiedCondition : ValidateNicknameError() {
+    class UnsatisfiedCondition : ValidateNicknameErrorLegacy() {
         override val code: Int = 40051
     }
-    class AlreadyUsedNickname : ValidateNicknameError() {
+    class AlreadyUsedNickname : ValidateNicknameErrorLegacy() {
         override val code: Int = 40901
     }
 

@@ -7,7 +7,7 @@ import com.acon.core.data.datasource.remote.ProfileRemoteDataSourceLegacy
 import com.acon.core.data.dto.request.SaveSpotRequest
 import com.acon.core.data.error.runCatchingWith
 import com.acon.acon.domain.error.profile.SaveSpotError
-import com.acon.acon.domain.error.profile.ValidateNicknameError
+import com.acon.acon.domain.error.profile.ValidateNicknameErrorLegacy
 import com.acon.acon.core.model.model.profile.PreSignedUrl
 import com.acon.acon.core.model.model.profile.ProfileInfoLegacy
 import com.acon.acon.core.model.model.profile.SavedSpotLegacy
@@ -46,7 +46,7 @@ class ProfileRepositoryLegacyImpl @Inject constructor(
     }
 
     override suspend fun validateNickname(nickname: String): Result<Unit> {
-        return runCatchingWith(ValidateNicknameError()) {
+        return runCatchingWith(ValidateNicknameErrorLegacy()) {
             profileRemoteDataSourceLegacy.validateNickname(nickname)
         }
     }

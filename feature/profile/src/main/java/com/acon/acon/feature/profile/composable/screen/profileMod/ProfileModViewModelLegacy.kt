@@ -5,7 +5,7 @@ import android.net.Uri
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.acon.acon.domain.error.profile.ValidateNicknameError
+import com.acon.acon.domain.error.profile.ValidateNicknameErrorLegacy
 import com.acon.acon.domain.repository.ProfileRepositoryLegacy
 import com.acon.acon.feature.profile.BuildConfig
 import com.acon.acon.feature.profile.composable.type.BirthdayValidationStatus
@@ -82,8 +82,8 @@ class ProfileModViewModelLegacy @Inject constructor(
             .map { null }
             .recover { throwable ->
                 when (throwable) {
-                    is ValidateNicknameError.UnsatisfiedCondition -> NicknameErrorType.Invalid
-                    is ValidateNicknameError.AlreadyUsedNickname -> NicknameErrorType.Duplicate
+                    is ValidateNicknameErrorLegacy.UnsatisfiedCondition -> NicknameErrorType.Invalid
+                    is ValidateNicknameErrorLegacy.AlreadyUsedNickname -> NicknameErrorType.Duplicate
                     else -> null
                 }
             }
