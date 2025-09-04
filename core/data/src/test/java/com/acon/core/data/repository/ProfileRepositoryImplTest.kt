@@ -3,7 +3,7 @@ package com.acon.core.data.repository
 import com.acon.acon.domain.error.area.DeleteVerifiedAreaError
 import com.acon.acon.domain.error.area.ReplaceVerifiedArea
 import com.acon.acon.domain.error.profile.SaveSpotError
-import com.acon.acon.domain.error.profile.ValidateNicknameError
+import com.acon.acon.domain.error.profile.ValidateNicknameErrorLegacy
 import com.acon.core.data.assertValidErrorMapping
 import com.acon.core.data.cache.ProfileInfoCacheLegacy
 import com.acon.core.data.createErrorStream
@@ -38,8 +38,8 @@ class ProfileRepositoryImplTest {
     companion object {
         @JvmStatic
         fun validNicknameErrorScenarios() = createErrorStream(
-            40051 to ValidateNicknameError.UnsatisfiedCondition::class,
-            40901 to ValidateNicknameError.AlreadyUsedNickname::class
+            40051 to ValidateNicknameErrorLegacy.UnsatisfiedCondition::class,
+            40901 to ValidateNicknameErrorLegacy.AlreadyUsedNickname::class
         )
         @JvmStatic
         fun saveSpotErrorScenarios() = createErrorStream(
@@ -77,7 +77,7 @@ class ProfileRepositoryImplTest {
     @MethodSource("validNicknameErrorScenarios")
     fun `닉네임 유효성 검사 API 실패 시 에러 객체를 반환한다`(
         errorCode: Int,
-        expectedErrorClass: KClass<ValidateNicknameError>
+        expectedErrorClass: KClass<ValidateNicknameErrorLegacy>
     ) = runTest {
         // Given
         val fakeRemoteError = createFakeRemoteError(errorCode)
